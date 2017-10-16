@@ -1,0 +1,17 @@
+
+[#BOOST_OPENMETHOD_NAME]
+
+## BOOST_OPENMETHOD_NAME
+
+### Synopsis
+
+Defined in <boost/openmethod/macros/name.hpp>.
+
+```c++
+#define BOOST_OPENMETHOD_NAME(NAME) boost_openmethod_#NAME
+```
+
+### Description
+
+Generate a long name from a short name, hopefully avoiding conflicts with
+user-defined names.

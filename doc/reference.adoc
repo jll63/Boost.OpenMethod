@@ -1,0 +1,45 @@
+
+# Reference
+:toc:
+:toc-title:
+:idprefix: ref_
+
+// include::headers.adoc[]
+
+include::BOOST_OPENMETHOD.adoc[]
+include::BOOST_OPENMETHOD_OVERRIDE.adoc[]
+include::BOOST_OPENMETHOD_INLINE_OVERRIDE.adoc[]
+include::BOOST_OPENMETHOD_REGISTER.adoc[]
+include::BOOST_OPENMETHOD_CLASSES.adoc[]
+include::BOOST_OPENMETHOD_DEFAULT_POLICY.adoc[]
+include::BOOST_OPENMETHOD_NAME.adoc[]
+include::BOOST_OPENMETHOD_OVERRIDERS.adoc[]
+
+include::typedefs.adoc[]
+include::method.adoc[]
+include::method_override.adoc[]
+include::virtual_ptr.adoc[]
+include::virtual_traits.adoc[]
+include::use_classes.adoc[]
+include::virtual_.adoc[]
+include::with_vptr.adoc[]
+
+include::abstract_policy.adoc[]
+include::domain.adoc[]
+include::basic_policy.adoc[]
+include::rtti.adoc[]
+include::std_rtti.adoc[]
+include::deferred_static_rtti.adoc[]
+include::minimal_rtti.adoc[]
+include::vptr.adoc[]
+include::vector_vptr.adoc[]
+include::map_vptr.adoc[]
+include::type_hash.adoc[]
+include::error_handler.adoc[]
+include::vectored_error_handler.adoc[]
+include::throw_error_handler.adoc[]
+include::error_output.adoc[]
+include::basic_error_output.adoc[]
+include::trace_output.adoc[]
+include::basic_trace_output.adoc[]
+include::restricted_output_stream.adoc[]

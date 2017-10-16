@@ -1,0 +1,110 @@
+
+## vptr
+
+### Synopsis
+
+Defined in <boost/openmethod/policies/basic_policy.hpp>.
+
+```c++
+namespace boost::openmethod::policies {
+
+struct vptr {};
+
+}
+```
+
+### Description
+
+`vptr` is a facet that obtains a pointer to the v-table for an object.
+
+OpenMethod implements method dispatch in a way similar to native virtual
+function dispatch: for each virtual argument, fetch a pointer to the dispatch
+data (known as the v-table), and use it to select a pointer to a function.
+OpenMethod v-tables contain pointers to functions for unary methods, and, for
+multi-methods, pointers to, and coordinates in, a multi-dimensional table of
+pointers to functions.
+
+The `vptr` facet is used during method call to fetch the vptr for virtual
+arguments corresponding to the `virtual_` parameters in the method
+declaration. It is also used by the constructor of `virtual_ptr` to obtain a
+vptr on the basis of an object's dynamic type.
+
+`virtual_ptr::final`, and the related convenience functions, assume that the
+static and dynamic types of their argument are the same. The vptr is obtained
+statically from the policy's `static_vptr<Class>` member. It is conceivable
+to organize an entire program around the "final" constructs; thus, the `vptr`
+facet is optional.
+
+### Requirements
+
+#### dynamic_vptr;
+
+```c++
+template<class Class>
+static auto dynamic_vptr(const Class& obj) -> const vptr_type&;
+```
+
+Returns a pointer to the v-table for `obj`.
+
+NOTE: `dynamic_vptr` _must_ return a reference to the pointer, not a value. This
+is required for indirect `virtual_ptr`{empty}s.
+
+## extern_vptr
+
+### Synopsis
+
+```c++
+struct extern_vptr : virtual vptr {};
+```
+
+### Description
+
+`extern_vptr` is a specialization of `vptr` that stores vptrs outside of the
+objects.
+
+### Requirements
+
+The requirements of `vptr`, plus the following.
+
+#### register_vptrs
+
+```c++
+template<typename ForwardIterator>
+auto register_vptrs(ForwardIterator first, ForwardIterator last) -> void;
+```
+
+`ForwardIterator` is a forward iterator over a range of objects that contain
+information about the type ids and the vptr of a registered class. They have the
+following member functions:
+
+```c++
+auto type_id_begin() const -> type_id_forward_iterator;
+auto type_id_end() const -> type_id_forward_iterator;
+auto vptr() const -> const vptr_type&;
+```
+
+`type_id_begin` and `type_id_end` return iterators delimiting a range of
+`type_id`s for the class.
+
+`vptr` returns a _reference_ to a _static_ variable containing a pointer to the
+v-table for a registered class. Its value is set by `initialize`. While the
+value of the variable changes with each call to `initialize`, the variable
+itself remains the same.
+
+## indirect_vptr
+
+### Synopsis
+
+```c++
+struct indirect_vptr {};
+```
+
+### Description
+
+`indirect_vptr` is a facet that makes `virtual_ptr`{empty}s and `with_vptr` use
+pointers to pointers to v-tables, instead of straight pointers. As a
+consequence, they remain valid after a call to `initialize`.
+
+### Requirements
+
+None. The facet is its own implementation.

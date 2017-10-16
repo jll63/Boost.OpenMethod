@@ -1,0 +1,144 @@
+
+## basic_policy
+
+### Synopsis
+
+Defined in <boost/openmethod/policies/basic_policy.hpp>.
+
+```c++
+namespace boost::openmethod {
+
+namespace policies {
+
+template<class Policy, class... Facets>
+struct basic_policy : virtual abstract_policy,
+                      virtual domain<Policy>,
+                      virtual Facets... {
+    template<class Facet>
+    static constexpr bool has_facet = /*unspecified*/;
+
+    template<class NewPolicy>
+    using fork = /*unspecified*/;
+
+    template<class... MoreFacets>
+    using add = /*unspecified*/;
+
+    template<class Base, class Facet>
+    using replace = /*unspecified*/;
+
+    template<class Base>
+    using remove = /*unspecified*/;
+};
+
+struct release : basic_policy<release, ...> {};
+
+struct debug : release::add<...> {};
+
+} // policies
+
+#ifdef NDEBUG
+using default_policy = policies::release;
+#else
+using default_policy = policies::debug;
+#endif
+
+} // boost::openmethod
+```
+
+### Description
+
+`basic_policy` implements a policy, which consists of a a collection of methods,
+classes, dispatch data, and facets, which specify how to obtain a pointer to a
+v-table from an object, how to report errors, whether to perform runtime sanity
+checks, etc.
+
+Some of these functionalities require static variables local to the policy.
+Forthis reason, `basic_policy` uses the CRTP pattern to provide ensure that two
+different policies - and the facets they contain - get their own copies of the
+static state.
+
+### Members
+
+#### has_facet
+
+```c++
+template<class Facet>
+static constexpr bool has_facet;
+```
+
+Evaluates to `true` if _Policy_ contains _Facet_.
+
+#### fork
+
+```c++
+template<class NewPolicy>
+using fork;
+```
+
+Creates a new policy from an existing one. _NewPolicy_, and the facets it
+contains, do not share static variables with the original _Policy_. The new
+policy does not retain any knowledge of the classes and methods registered in
+the original.
+
+#### add
+
+```c++
+template<class... MoreFacets>
+using add;
+```
+
+Creates a new policy by adding _MoreFacets_ to the original policy's collection
+of facets. The original policy and the new one share static variables.
+
+#### replace
+
+```c++
+template<class Base, class NewFacet>
+using replace;
+```
+
+Creates a new policy by replacing the facet in _Policy_ that derives from _Base_
+with _NewFacet_. It is not an error if _policy_ does not contain such a facet;
+in that case, the new policy contains the same facet as the original one.
+
+The original policy and the new one share static variables.
+
+#### remove
+
+```c++
+template<class Base>
+using remove;
+```
+
+Creates a new policy by removing the facet in _Policy_ that derives from _Base_.
+It is not an error if _policy_ does not contain such a facet; in that case, the
+new policy contains the same facet as the original one.
+
+The original policy and the new one share static variables.
+
+### Non-members
+
+#### release
+
+```c++
+struct release;
+```
+
+A policy that contains facet implementations `std_rtti`, `fast_perfect_hash`,
+`vptr_vector` and `vectored_error_handler`.
+
+#### debug
+
+```c++
+struct debug;
+```
+
+The `release` policy with additional facet implementations `runtime_checks`,
+`basic_error_output` and basic_trace_output.
+
+NOTE: `debug` extends `release` but it does not a fork it. Both policies use the
+same `domain`.
+
+#### default_policy
+
+An alias for `release` if `NDEBUG` is defined, and for `debug` otherwise.

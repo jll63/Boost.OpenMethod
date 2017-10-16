@@ -1,0 +1,58 @@
+
+## vptr_vector
+
+### Synopsis
+
+Defined in <boost/openmethod/policies/vptr_vector.hpp>.
+
+```c++
+namespace boost::openmethod::policies {
+
+template<class Policy, typename UseIndirectVptrs = void>
+class vptr_vector : Base {
+  public:
+    template<typename ForwardIterator>
+    static auto register_vptrs(ForwardIterator first, ForwardIterator last) -> void;
+
+    template<class Class>
+    static auto dynamic_vptr(const Class& arg) -> const vptr_type&;
+};
+
+}
+```
+
+### Description
+
+`vptr_vector` is an implementation or `external_vptr` that keeps the pointers
+to the v-tables in a `std::vector`. If `UseIndirectVptrs` is `indirect_vptr`,
+stores pointers to pointers to the v-tables.
+
+`Policy` is the policy containing the facet.
+
+### Members
+
+#### register_vptrs
+
+```c++
+template<typename ForwardIterator>
+auto register_vptrs(ForwardIterator first, ForwardIterator last) -> void;
+```
+
+Stores the pointers to v-tables in a vector, indexed by the (possibly hashed)
+`type_id`s of the classes registered in `Policy`.
+
+If `Policy` contains a `type_hash` facet, call its `hash_initialize`
+function, and uses it to convert the `type_id`{empty}s to an index.
+
+#### dynamic_vptr
+
+```c++
+template<class Class>
+auto dynamic_vptr(const Class& object) -> const vptr_type&;
+```
+
+Returns a pointer to the v-table for `object` (by reference).
+
+Obtains a `type_id` for `object` using `Policy::dynamic_type`. If _Policy_
+contains a `type_hash` facet, uses it to convert the result to an index;
+otherwise, uses the `type_id` as the index.

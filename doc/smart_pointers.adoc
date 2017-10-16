@@ -1,0 +1,21 @@
+
+## Smart Pointers
+
+`virtual_ptr` can also be used in combination with smart pointers.
+`virtual_ptr<std::shared_ptr<Class>>` (aliased to `shared_virtual_ptr<Class>`)
+and `virtual_ptr<std::unique_ptr<Class>>` (aliased to
+`unique_virtual_ptr<Class>`) deliver the convenience of automatic memory
+management with the speed of `virtual_ptr`. Convenience functions
+`make_shared_virtual` and `make_unique_virtual` create an object and return a
+smart virtual_ptr to it. Since the exact type of the object is known, the vptr
+is read from a static variable, without incuring the cost of a hash table
+lookup.
+
+Here is a variaton of the AST example that uses dynamic allocation and unique
+pointers:
+
+
+[source,c++]
+----
+include::{examplesdir}/ast_unique_ptr.cpp[tag=ast,indent=0]
+----

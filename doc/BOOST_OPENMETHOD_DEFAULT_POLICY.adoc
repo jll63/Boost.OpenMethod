@@ -1,0 +1,22 @@
+
+[#BOOST_OPENMETHOD_DEFAULT_POLICY]
+
+## BOOST_OPENMETHOD_DEFAULT_POLICY
+
+### Description
+
+The name of the default policy.
+
+`BOOST_OPENMETHOD_DEFAULT_POLICY` is the default value for the `Policy` template
+parameter of `method`, `use_classes`, and other constructs defined in
+`<boost/openmethod/core.hpp>`. If it is not defined,
+`::boost::openmethod::policy::default_policy` is used.
+
+`BOOST_OPENMETHOD_DEFAULT_POLICY` can be defined by a program to change the
+default policy globally. Once `<boost/openmethod/core.hpp>` has been included,
+redefining the symbol has no effect. To override the default policy, proceed as
+follows:
+
+1. Include headers under `boost/openmethod/policies/` as needed.
+2. Create a policy class, and set `BOOST_OPENMETHOD_DEFAULT_POLICY`.
+3. Include `<boost/openmethod/core.hpp>`.

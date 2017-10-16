@@ -1,0 +1,62 @@
+
+## vptr_map
+
+### Synopsis
+
+```c++
+namespace boost::openmethod::policies {
+
+### Synopsis
+
+template<
+    class Policy, bool IndirectVptr,
+    class Map = std::unordered_map<
+        type_id,
+        std::conditional_t<IndirectVptr, const vptr_type*, vptr_type>>>
+class vptr_map : extern_vptr {
+    static Map vptrs;
+
+    template<typename ForwardIterator>
+    static auto register_vptrs(ForwardIterator first, ForwardIterator last) -> void;
+
+    template<class Class>
+    static auto dynamic_vptr(const Class& arg) -> const vptr_type&;
+};
+
+}
+```
+
+### Description
+
+`vptr_map` is an implementation of `external_vptr that stores the pointers to
+the v-tables in a map.
+
+`Policy` is the policy containing the facet.
+
+`Map` is an `AssociativeContainer`. The `mapped_type` is a pointer to a
+`vptr_type` if `UseIndirectVptrs` is `void`, or a pointer to a `vptr_type` if
+`UseIndirectVptrs` is `indirect_vptr`.
+
+### Members
+
+#### register_vptrs
+
+```c++
+template<typename ForwardIterator>
+auto register_vptrs(ForwardIterator first, ForwardIterator last) -> void;
+```
+
+Stores the pointers to v-tables in a _Map_.
+
+#### dynamic_vptr
+
+```c++
+template<class Class>
+auto dynamic_vptr(const Class& object) -> const vptr_type&;
+```
+
+Returns a pointer to the v-table for `object` (by reference).
+
+If _Policy_ contains the `runtime_checks` facet, checks if _Class_ is
+registered. If it is not, and _Policy_ contains a `error_handler` facet, calls
+its `error` function; then calls `abort`.

@@ -1,0 +1,23 @@
+
+[#BOOST_OPENMETHOD_CLASSES]
+
+## BOOST_OPENMETHOD_CLASSES
+
+### Synopsis
+
+Defined in <boost/openmethod/macros.hpp>.
+
+```c++
+BOOST_OPENMETHOD_CLASSES(CLASSES...[, POLICY]);
+```
+
+### Description
+
+Register `CLASSES` in POLICY.
+
+NOTE: The default value for `POLICY` is the value of
+`BOOST_OPENMETHOD_DEFAULT_POLICY` when `<boost/openmethod/core.hpp>` is
+included. Subsequently changing it has no retroactive effect.
+
+This macro is a wrapper around `use_classes`; see its documentation for more
+details.

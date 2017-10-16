@@ -1,0 +1,16 @@
+
+[#BOOST_OPENMETHOD_REGISTER]
+
+## BOOST_OPENMETHOD_REGISTER
+
+### Synopsis
+
+Defined in <boost/openmethod/macros/register.hpp>.
+
+```c++
+BOOST_OPENMETHOD_REGISTER(TYPE);
+```
+
+### Description
+
+Creates a static instance of `TYPE`, using a unique generated name.

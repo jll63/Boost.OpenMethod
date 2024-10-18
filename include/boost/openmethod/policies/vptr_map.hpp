@@ -18,11 +18,11 @@ namespace policies {
 template<
     class Policy,
     class Map = std::unordered_map<type_id, const std::uintptr_t*>>
-struct vptr_map : virtual external_vptr {
+struct vptr_map : virtual extern_vptr {
     static Map vptrs;
 
     template<typename ForwardIterator>
-    static void publish_vptrs(ForwardIterator first, ForwardIterator last) {
+    static void register_vptrs(ForwardIterator first, ForwardIterator last) {
         for (auto iter = first; iter != last; ++iter) {
             for (auto type_iter = iter->type_id_begin();
                  type_iter != iter->type_id_end(); ++type_iter) {

@@ -3,122 +3,22 @@
 :toc:
 :toc-title:
 :idprefix: tutorial_
-
-foo bar
+:examplesdir: ../examples
 
 ## Hello World
 
-Here is a side-by-side implementation of the same program, using virtual
-functions (on the left side) and open-methods (on the right side):
-
-[cols="a,a", options="header"]
-|===
-| virtual function
-| open-method
-
-|
 [source,c++]
 ----
-#include <iostream>
-
-
-
-struct Animal {
-    virtual ~Animal() = default;
-    virtual void poke(std::ostream&) = 0;
-};
-
-struct Cat : Animal {
-    void poke(std::ostream& os) override;
-};
-
-struct Dog : Animal {
-    void poke(std::ostream& os) override;
-};
-
-
-
-
-void Cat::poke(std::ostream& os) override {
-    os << "hiss";
-}
-
-
-void Dog::poke(std::ostream& os) override {
-    os << "bark";
-}
-
-
-
-
-int main() {
-
-
-    Animal&& a = Cat();
-    Animal&& b = Dog();
-
-    a.poke(std::cout); // prints "hiss"
-    std::cout << "\n";
-
-    a.poke(std::cout); // prints "bark"
-    std::cout << "\n";
-
-    return 0;
-}
+include::{examplesdir}/virtual_func.cpp[]
 ----
-
-|
 
 [source,c++]
 ----
-#include <iostream>
-#include <boost/openmethod.hpp>               <1>
-#include <boost/openmethod/compiler.hpp>      <2>
-
-struct Animal {
-    virtual ~Animal() = default;              <3>
-};
-
-
-struct Cat : Animal {                         <3>
-};
-
-
-struct Dog : Animal {                         <3>
-};
-
-
-BOOST_OPENMETHOD(                             <4>
-    poke, (std::ostream&, virtual_<Animal&>), void);
-
-BOOST_OPENMETHOD_OVERRIDE(                    <5>
-    poke, (std::ostream& os, Cat& cat), void) {
-        os << "hiss";
-}
-
-BOOST_OPENMETHOD_OVERRIDE(                    <5>
-    poke, (std::ostream& os, Dog& dog), void) {
-        os << "bark";
-}
-
-BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog);   <6>
-
-int main() {
-    boost::openmethod::initialize();          <7>
-
-    std::unique_ptr<Animal> a(new Cat);
-    std::unique_ptr<Animal> b(new Dog);
-
-    poke(std::cout, a); // prints "hiss"      <8>
-    std::cout << "\n";
-
-    poke(std::cout, b); // prints "bark"      <8>
-    std::cout << "\n";
-
-    return 0;
-}
+include::{examplesdir}/hello_world.cpp[]
 ----
-|===
+
+
+
 
 <1> Include the main OpenMethod header.
 
@@ -155,16 +55,7 @@ not exist.
 
 [source,c++]
 ----
-struct Bulldog : Dog {
-};
-
-BOOST_OPENMETHOD_CLASSES(Dog, Bulldog);
-
-BOOST_OPENMETHOD_OVERRIDE(
-    poke, (std::ostream& os, const Bulldog& dog), void) {
-        next(os, dog); // prints "bark"
-        os << " and bite";
-}
+include::{examplesdir}/hello_world.cpp[tag=next]
 ----
 
 ## Multiple Dispatch
@@ -521,12 +412,12 @@ is a tweak of `policies::release`:
 
 [source,c++]
 ----
-struct debug : release::rebind<debug>::add<
+struct debug : release::fork<debug>::add<
                    runtime_checks, basic_error_output<debug>,
                    basic_trace_output<debug>> {};
 ----
 
-`rebind` creates a new policy from an existing one, substituting the new policy
+`fork` creates a new policy from an existing one, substituting the new policy
 to the original one in all the CRTP classes. `add` adds three facets, two of
 which have state.
 
@@ -602,7 +493,7 @@ facet implementaion.
 namespace bom = boost::openmethod;
 
 struct throwing_policy
-    : bom::policies::default_::rebind<throwing_policy>::replace<
+    : bom::policies::default_::fork<throwing_policy>::replace<
           bom::policies::error_handler, bom::policies::throw_error> {};
 
 BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog, throwing_policy);

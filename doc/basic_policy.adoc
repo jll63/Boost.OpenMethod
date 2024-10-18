@@ -1,0 +1,50 @@
+### basic_policy
+
+```c++
+namespace boost {
+namespace openmethod {
+namespace policies {
+
+template<class Policy, class... Facets>
+struct basic_policy : virtual Facets... /*, unspecified*/ {
+    template<class Facet>
+    static constexpr bool has_facet = /*unspecified*/;
+
+    template<class NewPolicy>
+    using fork = /*unspecified*/;
+
+    template<class... MoreFacets>
+    using add = /*unspecified*/;
+
+    template<class Base, class Facet>
+    using replace = /*unspecified*/;
+
+    template<class Base>
+    using remove = /*unspecified*/;
+};
+
+}}}
+```
+
+`basic_error_output` implements the `error_output` facet.
+
+*Template Parameters*
+
+[cols="1,1"]
+|===
+|_Policy_
+| The policy containing the facet.
+
+|_Stream_
+| Any type that satisfies the requirements of `RestrictedOutputStream`.
+|===
+
+#### error_stream
+
+```c++
+Stream  error_stream;
+```
+
+Initialized by the default constructor of `Stream`. It is the responsibility of
+the program to initializate it if needed, e.g., for a `std::ofstream`, to open
+it.

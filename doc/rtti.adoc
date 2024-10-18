@@ -1,15 +1,14 @@
 ### rtti
-```c++
-struct rtti;
-
-struct deferred_static_rtti : virtual rtti;
-```
 
 A `rtti` facet provides type information for classes and objects, implements
 downcast in presence of virtual inheritance, and writes descriptions of types to
 an `ostream`-like object.
 
-`rtti` implementations are required to provide the following functions:
+```c++
+struct rtti {};
+```
+
+Implementations of `rtti` provide the following functions:
 
 [cols="a,a,a", options="header"]
 
@@ -119,6 +118,10 @@ static Derived dynamic_cast_ref(Base&& obj);
 Cast `obj` using the `dynamic_cast` operator.
 
 ### deferred_static_rtti
+
+```c++
+struct deferred_static_rtti : virtual rtti {};
+```
 
 `deferred_static_rtti` makes OpenMethod defer collection of static type
 information until `initialize` is called. This makes it possible to interoperate

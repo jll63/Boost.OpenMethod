@@ -106,11 +106,11 @@ struct generic_compiler {
                        other) != covariant_classes.end();
         }
 
-        const std::uintptr_t* vptr() const {
+        auto vptr() const -> const std::uintptr_t* {
             return *static_vptr;
         }
 
-        const std::uintptr_t* const* indirect_vptr() const {
+        auto indirect_vptr() const {
             return static_vptr;
         }
 
@@ -1184,8 +1184,8 @@ void compiler<Policy>::write_global_data() {
     ++trace << rflush(4, Policy::dispatch_data.size()) << " " << gv_iter
             << " end\n";
 
-    if constexpr (Policy::template has_facet<external_vptr>) {
-        Policy::publish_vptrs(classes.begin(), classes.end());
+    if constexpr (Policy::template has_facet<extern_vptr>) {
+        Policy::register_vptrs(classes.begin(), classes.end());
     }
 }
 

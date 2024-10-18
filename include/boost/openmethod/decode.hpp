@@ -197,8 +197,8 @@ void decode_dispatch_data(Data& init) {
 
     using namespace policies;
 
-    if constexpr (Policy::template has_facet<policies::external_vptr>) {
-        Policy::publish_vptrs(Policy::classes.begin(), Policy::classes.end());
+    if constexpr (Policy::template has_facet<policies::extern_vptr>) {
+        Policy::register_vptrs(Policy::classes.begin(), Policy::classes.end());
     }
 }
 

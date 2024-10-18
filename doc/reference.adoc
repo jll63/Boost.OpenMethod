@@ -6,6 +6,8 @@
 
 ## Headers
 
+include::headers.adoc[]
+
 ## Namespaces
 
 ## Core

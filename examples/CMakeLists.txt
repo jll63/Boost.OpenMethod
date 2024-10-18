@@ -9,6 +9,10 @@ if (CMAKE_BUILD_TYPE MATCHES "Release")
   endif()
 endif()
 
+add_executable(virtual_func virtual_func.cpp)
+target_link_libraries(virtual_func Boost::openmethod)
+add_test(NAME virtual_func COMMAND virtual_func)
+
 add_executable(hello_world hello_world.cpp)
 target_link_libraries(hello_world Boost::openmethod)
 add_test(NAME hello_world COMMAND hello_world)

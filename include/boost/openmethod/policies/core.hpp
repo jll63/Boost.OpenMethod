@@ -81,7 +81,7 @@ struct error_handler {};
 struct indirect_vptr {};
 struct type_hash {};
 struct vptr {};
-struct external_vptr : virtual vptr {};
+struct extern_vptr : virtual vptr {};
 struct error_output {};
 struct trace_output {};
 struct runtime_checks {};
@@ -144,7 +144,7 @@ struct basic_policy : virtual abstract_policy,
         NewPolicy, typename rebind_facet<NewPolicy, Facets>::type...>;
 
     template<class... MoreFacets>
-    using add = basic_policy<basic_policy, Facets..., MoreFacets...>;
+    using add = basic_policy<Policy, Facets..., MoreFacets...>;
 
     template<class Base, class Facet>
     using replace = boost::mp11::mp_apply<

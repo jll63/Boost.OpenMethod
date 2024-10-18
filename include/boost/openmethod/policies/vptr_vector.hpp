@@ -14,11 +14,12 @@ namespace openmethod {
 namespace policies {
 
 template<class Policy>
-struct vptr_vector : virtual external_vptr {
+struct vptr_vector : virtual extern_vptr {
     static std::vector<const std::uintptr_t*> vptrs;
 
     template<typename ForwardIterator>
-    static void publish_vptrs(ForwardIterator first, ForwardIterator last) {
+    static auto register_vptrs(ForwardIterator first, ForwardIterator last)
+        -> void {
         using namespace policies;
 
         std::size_t size;

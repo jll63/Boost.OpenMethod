@@ -79,7 +79,7 @@ static_assert(
 static_assert(std::is_same_v<virtual_shared_ptr<Animal>::element_type, Animal>);
 static_assert(std::is_same_v<
               decltype(std::declval<virtual_shared_ptr<Animal>>().get()),
-              std::shared_ptr<Animal>>);
+              virtual_ptr<Animal>>);
 static_assert(std::is_same_v<
               decltype(*std::declval<virtual_shared_ptr<Animal>>()), Animal&>);
 

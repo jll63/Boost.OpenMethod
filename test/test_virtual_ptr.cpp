@@ -69,6 +69,11 @@ BOOST_AUTO_TEST_CASE(test_virtual_ptr_ctors) {
     }
 }
 
+
+static_assert(std::is_same_v<
+              decltype(std::declval<virtual_shared_ptr<Dog>>().get()),
+              virtual_ptr<Dog>>);
+
 static_assert(std::is_same_v<
               decltype(*std::declval<virtual_shared_ptr<Dog>>()),
               decltype(*std::declval<std::shared_ptr<Dog>>())>);
@@ -83,26 +88,28 @@ BOOST_AUTO_TEST_CASE(test_virtual_shared_ptr) {
 
         {
             virtual_shared_ptr<Dog> ptr(dog);
-            BOOST_TEST(ptr.get() == dog);
+            BOOST_TEST((ptr.get() == final_virtual_ptr(*dog)));
+            BOOST_TEST(ptr.get().get() == dog.get());
             BOOST_TEST(ptr._vptr() == policy::static_vptr<Dog>);
 
             virtual_shared_ptr<Dog> copy(ptr);
             virtual_shared_ptr<Animal> base(ptr);
-            //virtual_shared_ptr<Dog> downcast = base.cast<Dog>();
+            virtual_shared_ptr<Dog> downcast = base.cast<Dog>();
+            BOOST_TEST(base._vptr() == policy::static_vptr<Dog>);
 
             virtual_shared_ptr<const Dog> const_copy(ptr);
-            //virtual_shared_ptr<const Animal> base_const_copy(ptr);
+            virtual_shared_ptr<const Animal> base_const_copy(ptr);
 
             virtual_shared_ptr<Animal> move_ptr(std::move(ptr));
-            BOOST_TEST(ptr.get() == nullptr);
-            BOOST_TEST(move_ptr.get() == dog);
+            BOOST_TEST(ptr.get().get() == nullptr);
+            BOOST_TEST(move_ptr.get().get() == dog.get());
         }
 
         {
             virtual_shared_ptr<Dog> ptr(dog);
             virtual_shared_ptr<const Animal> move_const_ptr(std::move(ptr));
-            BOOST_TEST(ptr.get() == nullptr);
-            BOOST_TEST(move_const_ptr.get() == dog);
+            BOOST_TEST(ptr.get().get() == nullptr);
+            BOOST_TEST(move_const_ptr.get().get() == dog.get());
         }
     }
 
@@ -110,7 +117,7 @@ BOOST_AUTO_TEST_CASE(test_virtual_shared_ptr) {
         auto dog = std::make_shared<const Dog>();
 
         virtual_shared_ptr<const Dog> ptr(dog);
-        BOOST_TEST(ptr.get() == dog);
+        BOOST_TEST(ptr.get().get() == dog.get());
         BOOST_TEST(ptr._vptr() == policy::static_vptr<Dog>);
 
         virtual_shared_ptr<const Dog> copy(ptr);

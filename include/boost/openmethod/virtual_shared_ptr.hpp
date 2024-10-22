@@ -98,16 +98,19 @@ struct virtual_ptr_traits<std::shared_ptr<Class>, Policy> {
     static bool constexpr is_smart_ptr = true;
     using polymorphic_type = Class;
 
-    template<typename OtherPtrRef>
-    static auto cast(const std::shared_ptr<Class>& ptr) -> decltype(auto) {
-        using OtherPtr = typename std::remove_reference_t<OtherPtrRef>;
-        using OtherClass = typename OtherPtr::pointer_type::element_type;
+    template<typename Other>
+    static auto cast(const virtual_ptr<std::shared_ptr<Class>, Policy>& ptr)
+        -> decltype(auto) {
+        virtual_ptr<std::shared_ptr<Other>, Policy> result;
+        result.vptr = ptr.vptr;
 
-        if constexpr (detail::requires_dynamic_cast<Class&, OtherClass&>) {
-            return std::dynamic_pointer_cast<OtherClass>(ptr);
+        if constexpr (detail::requires_dynamic_cast<Class&, Other&>) {
+            result.obj = std::dynamic_pointer_cast<Other>(ptr);
         } else {
-            return std::static_pointer_cast<OtherClass>(ptr);
+            result.obj = std::static_pointer_cast<Other>(ptr.obj);
         }
+
+        return result;
     }
 };
 

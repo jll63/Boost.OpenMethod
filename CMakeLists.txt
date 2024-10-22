@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.5...3.16)
 
 project(boost_openmethod VERSION 1.87.0 LANGUAGES CXX)
 
-option(STANDALONE "Set to ON to work with vcpkg Boost" OFF)
+option(STANDALONE "Set to ON to work with vcpkg Boost" ON)
 
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 17)
@@ -21,16 +21,10 @@ target_compile_features(boost_openmethod INTERFACE cxx_alias_templates cxx_varia
 
 if(STANDALONE)
   find_package(Boost REQUIRED)
-  add_subdirectory(examples)
-
-  file(GLOB test_cpp_files "test/test_*.cpp")
-  foreach(test_cpp ${test_cpp_files})
-    cmake_path(REMOVE_EXTENSION test_cpp LAST_ONLY OUTPUT_VARIABLE test)
-    string(REGEX REPLACE ".*test/" "" test ${test})
-    add_executable(${test} ${test_cpp})
-    target_link_libraries(${test} Boost::openmethod)
-    add_test(NAME ${test} COMMAND ${test})
-  endforeach()
+  include(CTest)
+  enable_testing()
+add_subdirectory(examples)
+  add_subdirectory(test)
 else()
   if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
 

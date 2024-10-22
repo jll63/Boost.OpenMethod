@@ -299,7 +299,8 @@ struct virtual_traits<Policy, virtual_ptr<Class, Policy>> {
 
     template<typename Derived>
     static auto cast(const virtual_ptr<Class, Policy>& ptr) -> decltype(auto) {
-        return ptr.template cast<std::remove_reference_t<Derived>>();
+        return ptr.template cast<
+            typename std::remove_reference_t<Derived>::element_type>();
     }
 };
 
@@ -326,6 +327,9 @@ class virtual_ptr {
     template<class, typename>
     friend struct virtual_traits;
 
+    template<class, typename>
+    friend struct detail::virtual_ptr_traits;
+
   protected:
     static constexpr bool is_indirect =
         Policy::template has_facet<policies::indirect_vptr>;
@@ -339,14 +343,8 @@ class virtual_ptr {
     template<typename Other>
     void box(Other&& value) {
         if constexpr (IsSmartPtr) {
-            if constexpr (std::is_rvalue_reference_v<Other>) {
-                obj = std::move(value);
-            } else {
-                obj = value;
-            }
+            obj = value;
         } else {
-            //static_assert(std::is_lvalue_reference_v<Other>);
-            //static_assert(std::is_same_v<Other, void>);
             obj = &value;
         }
     }
@@ -384,11 +382,18 @@ class virtual_ptr {
         : obj(std::move(other.obj)), vptr(other.vptr) {
     }
 
-    auto get() const -> pointer_type {
-        return obj;
+    auto get() const {
+        if constexpr (IsSmartPtr) {
+            virtual_ptr<element_type> result;
+            result.obj = obj.get();
+            result.vptr = vptr;
+            return result;
+        } else {
+            return obj;
+        }
     }
 
-    auto operator->() const -> pointer_type {
+    auto operator->() const {
         return get();
     }
 
@@ -437,19 +442,16 @@ class virtual_ptr {
     template<typename Other>
     auto cast() const {
         using namespace detail;
-        std::remove_const_t<std::remove_reference_t<Other>> result;
-        result.vptr = vptr;
 
         if constexpr (IsSmartPtr) {
-            result.obj =
-                virtual_ptr_traits<Type, Policy>::template cast<Other>(obj);
+            return virtual_ptr_traits<Type, Policy>::template cast<Other>(obj);
         } else {
-            result.obj =
-                &detail::optimal_cast<Policy, typename Other::element_type&>(
-                    *obj);
-        }
+            virtual_ptr<Other, Policy> result;
+            result.vptr = vptr;
+            result.obj = &detail::optimal_cast<Policy, Other&>(*obj);
 
-        return result;
+            return result;
+        }
     }
 
     // consider as private, public for tests only
@@ -463,6 +465,14 @@ class virtual_ptr {
 
   protected:
     virtual_ptr() = default;
+
+    friend bool operator==(const virtual_ptr& a, const virtual_ptr& b) {
+        return a.obj == b.obj;
+    }
+
+    friend bool operator!=(const virtual_ptr& a, const virtual_ptr& b) {
+        return a.obj != b.obj;
+    }
 };
 
 template<class Type>

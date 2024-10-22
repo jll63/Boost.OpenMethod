@@ -28,7 +28,7 @@ using std::cout;
 using namespace boost::openmethod;
 using policy = policies::default_;
 
-struct Dog : Animal {
+struct Dog : virtual Animal {
     Dog() = default;
     Dog(const Dog&) = delete;
 };
@@ -62,13 +62,13 @@ BOOST_AUTO_TEST_CASE(test_virtual_ptr_ctors) {
 
         { auto p = virtual_ptr<const Animal>(dog); }
 
+// #define BOOST_OPENMETHOD_SHOULD_NOT_COMPILE
 // should not compile
 #ifdef BOOST_OPENMETHOD_SHOULD_NOT_COMPILE
         { auto vptr = virtual_ptr<Dog>(Dog()); }
 #endif
     }
 }
-
 
 static_assert(std::is_same_v<
               decltype(std::declval<virtual_shared_ptr<Dog>>().get()),
@@ -104,6 +104,8 @@ BOOST_AUTO_TEST_CASE(test_virtual_shared_ptr) {
             BOOST_TEST(ptr.get().get() == nullptr);
             BOOST_TEST(move_ptr.get().get() == dog.get());
         }
+
+        { virtual_shared_ptr<Dog> ptr(std::make_shared<Dog>()); }
 
         {
             virtual_shared_ptr<Dog> ptr(dog);

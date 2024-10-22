@@ -363,18 +363,31 @@ class virtual_ptr {
 
     template<class Other>
     virtual_ptr(Other&& other) {
+        static_assert(
+            IsSmartPtr || !std::is_rvalue_reference_v<Other&&>,
+            "cannot bind dumb virtual_ptr to rvalue");
         box(other);
         vptr = Policy::dynamic_vptr(*obj);
     }
 
     template<class Other>
-    virtual_ptr(virtual_ptr<Other, Policy>& other)
-        : obj(other.obj), vptr(other.vptr) {
+    virtual_ptr(virtual_ptr<Other, Policy>& other) {
+        if constexpr (!IsSmartPtr && virtual_ptr<Other, Policy>::IsSmartPtr) {
+            *this = other.get();
+        } else {
+            obj = other.obj;
+            vptr = other.vptr;
+        }
     }
 
     template<class Other>
-    virtual_ptr(const virtual_ptr<Other, Policy>& other)
-        : obj(other.obj), vptr(other.vptr) {
+    virtual_ptr(const virtual_ptr<Other, Policy>& other) {
+        if constexpr (!IsSmartPtr && virtual_ptr<Other, Policy>::IsSmartPtr) {
+            *this = other.get();
+        } else {
+            obj = other.obj;
+            vptr = other.vptr;
+        }
     }
 
     template<class Other>

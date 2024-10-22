@@ -105,7 +105,7 @@ struct virtual_ptr_traits<std::shared_ptr<Class>, Policy> {
         result.vptr = ptr.vptr;
 
         if constexpr (detail::requires_dynamic_cast<Class&, Other&>) {
-            result.obj = std::dynamic_pointer_cast<Other>(ptr);
+            result.obj = std::dynamic_pointer_cast<Other>(ptr.obj);
         } else {
             result.obj = std::static_pointer_cast<Other>(ptr.obj);
         }

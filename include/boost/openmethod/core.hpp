@@ -299,7 +299,7 @@ struct virtual_traits<Policy, virtual_ptr<Class, Policy>> {
 
     template<typename Derived>
     static auto cast(const virtual_ptr<Class, Policy>& ptr) -> decltype(auto) {
-        return ptr.template cast<Derived>();
+        return ptr.template cast<std::remove_reference_t<Derived>>();
     }
 };
 
@@ -345,7 +345,8 @@ class virtual_ptr {
                 obj = value;
             }
         } else {
-            static_assert(std::is_lvalue_reference_v<Other>);
+            //static_assert(std::is_lvalue_reference_v<Other>);
+            //static_assert(std::is_same_v<Other, void>);
             obj = &value;
         }
     }
@@ -436,7 +437,7 @@ class virtual_ptr {
     template<typename Other>
     auto cast() const {
         using namespace detail;
-        std::remove_cv_t<std::remove_reference_t<Other>> result;
+        std::remove_const_t<std::remove_reference_t<Other>> result;
         result.vptr = vptr;
 
         if constexpr (IsSmartPtr) {
@@ -935,6 +936,12 @@ method<Name(Parameters...), ReturnType, Policy>::not_implemented_handler(
 // -----------------------------------------------------------------------------
 // thunk
 
+namespace detail {
+template<typename T, typename U>
+constexpr bool is_virtual_ptr_compatible =
+    is_virtual_ptr<T> == is_virtual_ptr<U>;
+}
+
 template<
     typename Name, typename... Parameters, typename ReturnType, class Policy>
 template<
@@ -942,6 +949,11 @@ template<
 auto method<Name(Parameters...), ReturnType, Policy>::
     thunk<Overrider, OverriderReturn (*)(OverriderParameters...)>::fn(
         detail::remove_virtual<Parameters>... arg) -> ReturnType {
+    using namespace detail;
+    static_assert(
+        (true && ... &&
+         is_virtual_ptr_compatible<Parameters, OverriderParameters>),
+        "virtual_ptr mismatch");
     return Overrider(
         detail::parameter_traits<Policy, Parameters>::template cast<
             OverriderParameters>(detail::remove_virtual<Parameters>(arg))...);

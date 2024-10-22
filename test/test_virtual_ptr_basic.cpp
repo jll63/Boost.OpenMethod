@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(test_virtual_ptr_by_ref) {
         // Using  deduction guide.
         boost::test_tools::output_test_stream os;
         Animal&& animal = Dog();
-        auto vptr = virtual_ptr(animal); // GLOP
+        auto vptr = virtual_ptr(animal);
         poke::fn(vptr, os);
         BOOST_CHECK(os.is_equal("bark"));
     }
@@ -188,6 +188,10 @@ BOOST_AUTO_TEST_CASE(test_virtual_shared_by_value) {
 } // namespace BOOST_OPENMETHOD_GENSYM
 
 namespace BOOST_OPENMETHOD_GENSYM {
+
+static_assert(
+    detail::virtual_ptr_traits<
+        const std::shared_ptr<Animal>&, policies::default_>::is_smart_ptr);
 
 void poke_dog(const virtual_shared_ptr<Dog>&, std::ostream& os) {
     os << "bark";

@@ -8,11 +8,13 @@
 #include <string>
 
 #include <boost/openmethod.hpp>
+#include <boost/openmethod/virtual_shared_ptr.hpp>
 #include <boost/openmethod/compiler.hpp>
 
+using boost::openmethod::virtual_shared_ptr;
+using boost::openmethod::make_virtual_shared;
+
 using std::cout;
-using std::make_shared;
-using std::shared_ptr;
 using std::string;
 
 struct Node {
@@ -21,19 +23,23 @@ struct Node {
 };
 
 struct Plus : Node {
-    Plus(shared_ptr<const Node> left, shared_ptr<const Node> right)
+    Plus(
+        virtual_shared_ptr<const Node> left,
+        virtual_shared_ptr<const Node> right)
         : left(left), right(right) {
     }
 
-    shared_ptr<const Node> left, right;
+    virtual_shared_ptr<const Node> left, right;
 };
 
 struct Times : Node {
-    Times(shared_ptr<const Node> left, shared_ptr<const Node> right)
+    Times(
+        virtual_shared_ptr<const Node> left,
+        virtual_shared_ptr<const Node> right)
         : left(left), right(right) {
     }
 
-    shared_ptr<const Node> left, right;
+    virtual_shared_ptr<const Node> left, right;
 };
 
 struct Integer : Node {
@@ -50,52 +56,52 @@ BOOST_OPENMETHOD_CLASSES(Node, Plus, Times, Integer);
 // -----------------------------------------------------------------------------
 // evaluate
 
-BOOST_OPENMETHOD(value, (virtual_<const Node&>), int);
+BOOST_OPENMETHOD(value, (virtual_shared_ptr<const Node>), int);
 
-BOOST_OPENMETHOD_OVERRIDE(value, (const Plus& expr), int) {
-    return value(*expr.left) + value(*expr.right);
+BOOST_OPENMETHOD_OVERRIDE(value, (virtual_shared_ptr<const Plus> expr), int) {
+    return value(expr->left) + value(expr->right);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(value, (const Times& expr), int) {
-    return value(*expr.left) * value(*expr.right);
+BOOST_OPENMETHOD_OVERRIDE(value, (virtual_shared_ptr<const Times> expr), int) {
+    return value(expr->left) * value(expr->right);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(value, (const Integer& expr), int) {
-    return expr.value;
+BOOST_OPENMETHOD_OVERRIDE(value, (virtual_shared_ptr<const Integer> expr), int) {
+    return expr->value;
 }
 
 // -----------------------------------------------------------------------------
 // render as Forth
 
-BOOST_OPENMETHOD(as_forth, (virtual_<const Node&>), string);
+BOOST_OPENMETHOD(as_forth, (virtual_shared_ptr<const Node>), string);
 
-BOOST_OPENMETHOD_OVERRIDE(as_forth, (const Plus& expr), string) {
-    return as_forth(*expr.left) + " " + as_forth(*expr.right) + " +";
+BOOST_OPENMETHOD_OVERRIDE(as_forth, (virtual_shared_ptr<const Plus> expr), string) {
+    return as_forth(expr->left) + " " + as_forth(expr->right) + " +";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(as_forth, (const Times& expr), string) {
-    return as_forth(*expr.left) + " " + as_forth(*expr.right) + " *";
+BOOST_OPENMETHOD_OVERRIDE(as_forth, (virtual_shared_ptr<const Times> expr), string) {
+    return as_forth(expr->left) + " " + as_forth(expr->right) + " *";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(as_forth, (const Integer& expr), string) {
-    return std::to_string(expr.value);
+BOOST_OPENMETHOD_OVERRIDE(as_forth, (virtual_shared_ptr<const Integer> expr), string) {
+    return std::to_string(expr->value);
 }
 
 // -----------------------------------------------------------------------------
 // render as Lisp
 
-BOOST_OPENMETHOD(as_lisp, (virtual_<const Node&>), string);
+BOOST_OPENMETHOD(as_lisp, (virtual_shared_ptr<const Node>), string);
 
-BOOST_OPENMETHOD_OVERRIDE(as_lisp, (const Plus& expr), string) {
-    return "(plus " + as_lisp(*expr.left) + " " + as_lisp(*expr.right) + ")";
+BOOST_OPENMETHOD_OVERRIDE(as_lisp, (virtual_shared_ptr<const Plus> expr), string) {
+    return "(plus " + as_lisp(expr->left) + " " + as_lisp(expr->right) + ")";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(as_lisp, (const Times& expr), string) {
-    return "(times " + as_lisp(*expr.left) + " " + as_lisp(*expr.right) + ")";
+BOOST_OPENMETHOD_OVERRIDE(as_lisp, (virtual_shared_ptr<const Times> expr), string) {
+    return "(times " + as_lisp(expr->left) + " " + as_lisp(expr->right) + ")";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(as_lisp, (const Integer& expr), string) {
-    return std::to_string(expr.value);
+BOOST_OPENMETHOD_OVERRIDE(as_lisp, (virtual_shared_ptr<const Integer> expr), string) {
+    return std::to_string(expr->value);
 }
 
 // -----------------------------------------------------------------------------
@@ -103,11 +109,12 @@ BOOST_OPENMETHOD_OVERRIDE(as_lisp, (const Integer& expr), string) {
 int main() {
     boost::openmethod::initialize();
 
-    shared_ptr<Node> expr = make_shared<Times>(
-        make_shared<Integer>(2),
-        make_shared<Plus>(make_shared<Integer>(3), make_shared<Integer>(4)));
+    virtual_shared_ptr<Node> expr = make_virtual_shared<Times>(
+        make_virtual_shared<Integer>(2),
+        make_virtual_shared<Plus>(
+            make_virtual_shared<Integer>(3), make_virtual_shared<Integer>(4)));
 
-    cout << as_forth(*expr) << " = " << as_lisp(*expr) << " = " << value(*expr)
+    cout << as_forth(expr) << " = " << as_lisp(expr) << " = " << value(expr)
          << "\n";
     // error_output:
     // 2 3 4 + * = (times 2 (plus 3 4)) = 14

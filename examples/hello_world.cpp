@@ -9,85 +9,111 @@
 #include <boost/openmethod/compiler.hpp>
 
 struct Animal {
+    Animal(const char* name) : name(name) {
+    }
+    const char* name;
     virtual ~Animal() = default;
 };
 
-struct Cat : Animal {};
+struct Cat : Animal {
+    using Animal::Animal;
+};
 
-struct Dog : Animal {};
+struct Dog : Animal {
+    using Animal::Animal;
+};
 
-BOOST_OPENMETHOD(poke, (std::ostream&, virtual_<Animal&>), void);
+BOOST_OPENMETHOD(poke, (std::ostream&, virtual_ptr<Animal>), void);
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, Cat& cat), void) {
-    os << "hiss";
+BOOST_OPENMETHOD_OVERRIDE(
+    poke, (std::ostream & os, virtual_ptr<Cat> cat), void) {
+    os << cat->name << " hisses";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, Dog& dog), void) {
-    os << "bark";
+BOOST_OPENMETHOD_OVERRIDE(
+    poke, (std::ostream & os, virtual_ptr<Dog> dog), void) {
+    os << dog->name << " barks";
 }
 
 BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog);
 
-struct Bulldog : Dog {};
+// tag::next[]
+struct Bulldog : Dog {
+    using Dog::Dog;
+};
 
 BOOST_OPENMETHOD_CLASSES(Dog, Bulldog);
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, Bulldog& dog), void) {
+BOOST_OPENMETHOD_OVERRIDE(
+    poke, (std::ostream & os, virtual_ptr<Bulldog> dog), void) {
     next(os, dog); // prints "bark"
-    os << " and bite";
+    os << " and bites";
 }
+// end::next[]
 
 BOOST_OPENMETHOD(
-    encounter, (std::ostream&, virtual_<Animal&>, virtual_<Animal&>), void);
+    encounter, (std::ostream&, virtual_ptr<Animal>, virtual_ptr<Animal>), void);
 
 // 'encounter' catch-all implementation.
 BOOST_OPENMETHOD_OVERRIDE(
-    encounter, (std::ostream & os, Animal&, Animal&), void) {
-    os << "ignore";
+    encounter,
+    (std::ostream & os, virtual_ptr<Animal> a, virtual_ptr<Animal> b), void) {
+    os << a->name << " and " << b->name << " ignore each other";
 }
 
 // Add definitions for specific pairs of animals.
 BOOST_OPENMETHOD_OVERRIDE(
-    encounter, (std::ostream & os, Dog& dog1, Dog& dog2), void) {
+    encounter,
+    (std::ostream & os, virtual_ptr<Dog> dog1, virtual_ptr<Dog> dog2), void) {
     os << "wag tail";
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    encounter, (std::ostream & os, Dog& dog, Cat& cat), void) {
-    os << "chase";
+    encounter, (std::ostream & os, virtual_ptr<Dog> dog, virtual_ptr<Cat> cat),
+    void) {
+    os << dog->name << " chases " << cat->name;
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    encounter, (std::ostream & os, Cat& cat, Dog& dog), void) {
-    os << "run";
+    encounter, (std::ostream & os, virtual_ptr<Cat> cat, virtual_ptr<Dog> dog),
+    void) {
+    os << cat->name << " runs away from " << dog->name;
 }
 
 int main() {
     boost::openmethod::initialize();
 
-    std::unique_ptr<Animal> a(new Cat);
-    std::unique_ptr<Animal> b(new Dog);
+    Animal&& a = Cat("Felix");
+    Animal&& b = Dog("Snoopy");
 
-    poke(std::cout, *a); // prints "hiss"
+    poke(std::cout, a); // Felix hisses
     std::cout << "\n";
 
-    poke(std::cout, *b); // prints "bark"
+    poke(std::cout, b); // Snoopy barks
     std::cout << "\n";
 
-    std::unique_ptr<Animal> c(new Bulldog);
-    poke(std::cout, *c); // prints "bark and bite"
+    Animal&& c = Bulldog("Hector");
+    poke(std::cout, c); // Hector barks and bites
     std::cout << "\n";
 
-    encounter(std::cout, *a, *b); // prints "run"
+    encounter(std::cout, a, b); // Felix runs away from Snoopy
+    std::cout << "\n";
+
+    encounter(std::cout, b, a); // Snoopy chases Felix
     std::cout << "\n";
 
     return 0;
+}
+
+void call_poke(std::ostream& os, virtual_ptr<Animal> a) {
+    poke(os, a);
 }
 
 void call_poke(std::ostream& os, Animal& a) {
     poke(os, a);
 }
 
-void call_encounter(std::ostream& os, Animal& a, Animal& b) {
+void call_encounter(
+    std::ostream& os, virtual_ptr<Animal> a, virtual_ptr<Animal> b) {
     encounter(os, a, b);
 }

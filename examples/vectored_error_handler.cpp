@@ -17,9 +17,10 @@ struct Dog : Animal {};
 
 BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog);
 
-BOOST_OPENMETHOD(trick, (std::ostream&, virtual_<Animal&>), void);
+BOOST_OPENMETHOD(trick, (std::ostream&, virtual_ptr<Animal>), void);
 
-BOOST_OPENMETHOD_OVERRIDE(trick, (std::ostream & os, Dog& dog), void) {
+BOOST_OPENMETHOD_OVERRIDE(
+    trick, (std::ostream & os, virtual_ptr<Dog> dog), void) {
     os << "spin\n";
 }
 
@@ -27,9 +28,10 @@ int main() {
     namespace bom = boost::openmethod;
     bom::initialize();
 
-    bom::policies::default_::set_error_handler([](const auto& error) {
-        std::visit([](auto&& arg) { throw arg; }, error);
-    });
+    bom::policies::default_::set_error_handler(
+        [](const auto& openmethod_error) {
+            std::visit([](auto&& arg) { throw arg; }, openmethod_error);
+        });
 
     Cat felix;
     Dog hector, snoopy;

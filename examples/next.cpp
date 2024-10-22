@@ -34,20 +34,23 @@ struct StateInspector : Inspector {};
 BOOST_OPENMETHOD_CLASSES(Vehicle, Car, Truck, Inspector, StateInspector);
 
 BOOST_OPENMETHOD(
-    inspect, (virtual_<const Vehicle&>, virtual_<const Inspector&>), void);
+    inspect, (virtual_ptr<const Vehicle>, virtual_ptr<const Inspector>), void);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    inspect, (const Vehicle& v, const Inspector& i), void) {
+    inspect, (virtual_ptr<const Vehicle> v, virtual_ptr<const Inspector> i),
+    void) {
     cout << "Inspect vehicle.\n";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(inspect, (const Car& v, const Inspector& i), void) {
+BOOST_OPENMETHOD_OVERRIDE(
+    inspect, (virtual_ptr<const Car> v, virtual_ptr<const Inspector> i), void) {
     next(v, i);
     cout << "Inspect seat belts.\n";
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    inspect, (const Car& v, const StateInspector& i), void) {
+    inspect, (virtual_ptr<const Car> v, virtual_ptr<const StateInspector> i),
+    void) {
     next(v, i);
     cout << "Check road tax.\n";
 }

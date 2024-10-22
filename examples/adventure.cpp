@@ -38,31 +38,40 @@ BOOST_OPENMETHOD_CLASSES(
     Character, Warrior, Device, Hands, Axe, Banana, Creature, Dragon, Bear);
 
 BOOST_OPENMETHOD(
-    fight, (virtual_<Character&>, virtual_<Creature&>, virtual_<Device&>),
+    fight, (virtual_ptr<Character>, virtual_ptr<Creature>, virtual_ptr<Device>),
     std::string);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    fight, (Character & x, Creature& y, Banana& z), std::string) {
+    fight,
+    (virtual_ptr<Character> x, virtual_ptr<Creature> y, virtual_ptr<Banana> z),
+    std::string) {
     return "are you insane?";
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    fight, (Character & x, Creature& y, Axe& z), std::string) {
+    fight,
+    (virtual_ptr<Character> x, virtual_ptr<Creature> y, virtual_ptr<Axe> z),
+    std::string) {
     return "not agile enough to wield";
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    fight, (Warrior & x, Creature& y, Axe& z), std::string) {
+    fight,
+    (virtual_ptr<Warrior> x, virtual_ptr<Creature> y, virtual_ptr<Axe> z),
+    std::string) {
     return "and cuts it into pieces";
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    fight, (Warrior & x, Dragon& y, Axe& z), std::string) {
+    fight, (virtual_ptr<Warrior> x, virtual_ptr<Dragon> y, virtual_ptr<Axe> z),
+    std::string) {
     return "and dies a honorable death";
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    fight, (Character & x, Dragon& y, Hands& z), std::string) {
+    fight,
+    (virtual_ptr<Character> x, virtual_ptr<Dragon> y, virtual_ptr<Hands> z),
+    std::string) {
     return "Congratulations! You have just vainquished a dragon with your bare "
            "hands"
            " (unbelievable, isn't it?)";

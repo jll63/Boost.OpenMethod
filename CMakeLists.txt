@@ -6,6 +6,8 @@ cmake_minimum_required(VERSION 3.5...3.16)
 
 project(boost_openmethod VERSION 1.87.0 LANGUAGES CXX)
 
+option(STANDALONE "Set to ON to work with vcpkg Boost" OFF)
+
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 17)
 endif()
@@ -17,59 +19,70 @@ add_library(Boost::openmethod ALIAS boost_openmethod)
 target_include_directories(boost_openmethod INTERFACE include)
 target_compile_features(boost_openmethod INTERFACE cxx_alias_templates cxx_variadic_templates cxx_decltype)
 
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+if(STANDALONE)
+  find_package(Boost REQUIRED)
+  add_subdirectory(examples)
 
-  # Fetch support files
+  file(GLOB test_cpp_files "test/test_*.cpp")
+  foreach(test_cpp ${test_cpp_files})
+    cmake_path(REMOVE_EXTENSION test_cpp LAST_ONLY OUTPUT_VARIABLE test)
+    string(REGEX REPLACE ".*test/" "" test ${test})
+    add_executable(${test} ${test_cpp})
+    target_link_libraries(${test} Boost::openmethod)
+    add_test(NAME ${test} COMMAND ${test})
+  endforeach()
+else()
+  if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
 
-  message(STATUS "Fetching BoostFetch.cmake")
+    # Fetch support files
 
-  file(DOWNLOAD
-    "https://raw.githubusercontent.com/boostorg/cmake/develop/include/BoostFetch.cmake"
-    "${CMAKE_BINARY_DIR}/fetch_and_include/BoostFetch.cmake"
-  )
+    message(STATUS "Fetching BoostFetch.cmake")
 
-  include("${CMAKE_BINARY_DIR}/fetch_and_include/BoostFetch.cmake")
+    file(DOWNLOAD
+      "https://raw.githubusercontent.com/boostorg/cmake/develop/include/BoostFetch.cmake"
+      "${CMAKE_BINARY_DIR}/fetch_and_include/BoostFetch.cmake"
+    )
 
-  boost_fetch(boostorg/cmake TAG develop NO_ADD_SUBDIR)
+    include("${CMAKE_BINARY_DIR}/fetch_and_include/BoostFetch.cmake")
 
-  FetchContent_GetProperties(boostorg_cmake)
+    boost_fetch(boostorg/cmake TAG develop NO_ADD_SUBDIR)
 
-  list(APPEND CMAKE_MODULE_PATH ${boostorg_cmake_SOURCE_DIR}/include)
+    FetchContent_GetProperties(boostorg_cmake)
 
-  # Testing (off by default)
+    list(APPEND CMAKE_MODULE_PATH ${boostorg_cmake_SOURCE_DIR}/include)
 
-  option(BUILD_TESTING "Build the tests." OFF)
-  option(BUILD_EXAMPLES "Build the examples." OFF)
-  include(CTest)
+    # Testing (off by default)
 
-  if(BUILD_TESTING OR BUILD_EXAMPLES)
+    option(BUILD_TESTING "Build the tests." OFF)
+    option(BUILD_EXAMPLES "Build the examples." OFF)
+    include(CTest)
 
-    set(BUILD_TESTING OFF) # hide cache variable
+    if(BUILD_TESTING OR BUILD_EXAMPLES)
+      set(BUILD_TESTING OFF) # hide cache variable
 
-    boost_fetch(boostorg/assert TAG develop EXCLUDE_FROM_ALL)
-    boost_fetch(boostorg/config TAG develop EXCLUDE_FROM_ALL)
-    boost_fetch(boostorg/core TAG develop EXCLUDE_FROM_ALL)
-    boost_fetch(boostorg/static_assert TAG develop EXCLUDE_FROM_ALL)
-    boost_fetch(boostorg/throw_exception TAG develop EXCLUDE_FROM_ALL)
+      boost_fetch(boostorg/assert TAG develop EXCLUDE_FROM_ALL)
+      boost_fetch(boostorg/config TAG develop EXCLUDE_FROM_ALL)
+      boost_fetch(boostorg/core TAG develop EXCLUDE_FROM_ALL)
+      boost_fetch(boostorg/static_assert TAG develop EXCLUDE_FROM_ALL)
+      boost_fetch(boostorg/throw_exception TAG develop EXCLUDE_FROM_ALL)
 
-    unset(BUILD_TESTING)
+      unset(BUILD_TESTING)
+    endif()
 
+    # Do not use the default BoostInstall versioned layout on Windows when standalone
+    set(BOOST_INSTALL_LAYOUT "system" CACHE STRING "Installation layout (versioned, tagged, or system)")
+
+    include(BoostInstall)
+
+    boost_install(TARGETS boost_openmethod HEADER_DIRECTORY include/)
   endif()
 
-  # Do not use the default BoostInstall versioned layout on Windows when standalone
-  set(BOOST_INSTALL_LAYOUT "system" CACHE STRING "Installation layout (versioned, tagged, or system)")
+  if(BUILD_TESTING)
+    add_subdirectory(test)
+    set_property(TARGET tests PROPERTY EXCLUDE_FROM_ALL FALSE)
+  endif()
 
-  include(BoostInstall)
-
-  boost_install(TARGETS boost_openmethod HEADER_DIRECTORY include/)
-
-endif()
-
-if(BUILD_TESTING)
-  add_subdirectory(test)
-  set_property(TARGET tests PROPERTY EXCLUDE_FROM_ALL FALSE)
-endif()
-
-if(BUILD_EXAMPLES)
-  add_subdirectory(examples)
+  if(BUILD_EXAMPLES)
+    add_subdirectory(examples)
+  endif()
 endif()

@@ -120,13 +120,13 @@ struct custom_policy
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/compiler.hpp>
 
-BOOST_OPENMETHOD(poke, (std::ostream&, virtual_<Animal&>), void);
+BOOST_OPENMETHOD(poke, (std::ostream&, virtual_ptr<Animal>), void);
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, Cat& cat), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, virtual_ptr<Cat> cat), void) {
     os << "hiss";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, Dog& dog), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, virtual_ptr<Dog> dog), void) {
     os << "bark";
 }
 

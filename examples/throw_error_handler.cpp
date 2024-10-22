@@ -5,9 +5,8 @@
 
 #include <iostream>
 
-#include <boost/openmethod.hpp>
+#include <boost/openmethod/policy.hpp>
 #include <boost/openmethod/policies/throw_error.hpp>
-#include <boost/openmethod/compiler.hpp>
 
 struct Animal {
     virtual ~Animal() = default;
@@ -22,12 +21,18 @@ struct throwing_policy
     : bom::policies::default_::fork<throwing_policy>::replace<
           bom::policies::error_handler, bom::policies::throw_error> {};
 
+#define BOOST_OPENMETHOD_DEFAULT_POLICY throwing_policy
+
+#include <boost/openmethod.hpp>
+#include <boost/openmethod/compiler.hpp>
+
 BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog, throwing_policy);
 
 BOOST_OPENMETHOD(
-    trick, (std::ostream&, virtual_<Animal&>), void, throwing_policy);
+    trick, (std::ostream&, virtual_ptr<Animal>), void);
 
-BOOST_OPENMETHOD_OVERRIDE(trick, (std::ostream & os, Dog& dog), void) {
+BOOST_OPENMETHOD_OVERRIDE(
+    trick, (std::ostream & os, virtual_ptr<Dog> dog), void) {
     os << "spin\n";
 }
 

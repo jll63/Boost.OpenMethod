@@ -26,30 +26,30 @@ using method_catalog = detail::static_list<detail::method_info>;
 // -----------------------------------------------------------------------------
 // Error handling
 
-struct error {};
+struct openmethod_error {};
 
-struct not_implemented_error : error {
+struct not_implemented_error : openmethod_error {
     type_id method;
     std::size_t arity;
     static constexpr std::size_t max_types = 16;
     type_id types[max_types];
 };
 
-struct unknown_class_error : error {
+struct unknown_class_error : openmethod_error {
     enum { update = 1, call } context;
     type_id type;
 };
 
-struct hash_search_error : error {
+struct hash_search_error : openmethod_error {
     std::size_t attempts;
     std::size_t buckets;
 };
 
-struct method_table_error : error {
+struct method_table_error : openmethod_error {
     type_id type;
 };
 
-struct static_offset_error : error {
+struct static_offset_error : openmethod_error {
     type_id method;
     int actual, expected;
 };

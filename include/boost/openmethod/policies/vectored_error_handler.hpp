@@ -20,7 +20,7 @@ template<class Policy>
 class vectored_error_handler : public virtual error_handler {
   public:
     using error_variant = std::variant<
-        error, not_implemented_error, unknown_class_error, hash_search_error,
+        openmethod_error, not_implemented_error, unknown_class_error, hash_search_error,
         method_table_error, static_slot_error, static_stride_error>;
 
     using error_handler_type = std::function<void(const error_variant& error)>;

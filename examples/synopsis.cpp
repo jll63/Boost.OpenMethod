@@ -38,38 +38,38 @@ BOOST_OPENMETHOD_CLASSES(Dog, Bulldog);
 
 // Define a uni-method, i.e. a method with a single virtual argument. This is in
 // essence a virtual function implemented as a free function.
-BOOST_OPENMETHOD(poke, (virtual_<Animal&>, std::ostream&), void);
+BOOST_OPENMETHOD(poke, (virtual_ptr<Animal>, std::ostream&), void);
 
 // Implement 'poke' for dogs.
-BOOST_OPENMETHOD_OVERRIDE(poke, (Dog& dog, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (virtual_ptr<Dog> dog, std::ostream& os), void) {
     os << "bark";
 }
 
 // Implement 'poke' for bulldogs. They behave like Dogs, but, in addition, they
 // fight back.
-BOOST_OPENMETHOD_OVERRIDE(poke, (Bulldog& dog, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (virtual_ptr<Bulldog> dog, std::ostream& os), void) {
     next(dog, os); // calls "base" method, i.e. definition for Dog
     os << " and bite";
 }
 
 // A multi-method with two virtual arguments...
-BOOST_OPENMETHOD(meet, (virtual_<Animal&>, virtual_<Animal&>, std::ostream&), void);
+BOOST_OPENMETHOD(meet, (virtual_ptr<Animal>, virtual_ptr<Animal>, std::ostream&), void);
 
 // 'meet' catch-all implementation.
-BOOST_OPENMETHOD_OVERRIDE(meet, (Animal&, Animal&, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(meet, (virtual_ptr<Animal>, virtual_ptr<Animal>, std::ostream& os), void) {
     os << "ignore";
 }
 
 // Add definitions for specific pairs of animals.
-BOOST_OPENMETHOD_OVERRIDE(meet, (Dog& dog1, Dog& dog2, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(meet, (virtual_ptr<Dog> dog1, virtual_ptr<Dog> dog2, std::ostream& os), void) {
     os << "wag tail";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(meet, (Dog& dog, Cat& cat, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(meet, (virtual_ptr<Dog> dog, virtual_ptr<Cat> cat, std::ostream& os), void) {
     os << "chase";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(meet, (Cat& cat, Dog& dog, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(meet, (virtual_ptr<Cat> cat, virtual_ptr<Dog> dog, std::ostream& os), void) {
     os << "run";
 }
 

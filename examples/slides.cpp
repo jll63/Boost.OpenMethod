@@ -123,32 +123,32 @@ namespace openmethods {
 
 BOOST_OPENMETHOD_CLASSES(Node, Number, Plus, Times);
 
-BOOST_OPENMETHOD(to_rpn, (virtual_<const Node&>), string);
+BOOST_OPENMETHOD(to_rpn, (virtual_ptr<const Node>), string);
 
-BOOST_OPENMETHOD_OVERRIDE(to_rpn, (const Number& expr), string) {
-  return std::to_string(expr.val);
+BOOST_OPENMETHOD_OVERRIDE(to_rpn, (virtual_ptr<const Number> expr), string) {
+  return std::to_string(expr->val);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(to_rpn, (const Plus& expr), string) {
-  return to_rpn(expr.left) + " " + to_rpn(expr.right) + " +";
+BOOST_OPENMETHOD_OVERRIDE(to_rpn, (virtual_ptr<const Plus> expr), string) {
+  return to_rpn(expr->left) + " " + to_rpn(expr->right) + " +";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(to_rpn, (const Times& expr), string) {
-  return to_rpn(expr.left) + " " + to_rpn(expr.right) + " *";
+BOOST_OPENMETHOD_OVERRIDE(to_rpn, (virtual_ptr<const Times> expr), string) {
+  return to_rpn(expr->left) + " " + to_rpn(expr->right) + " *";
 }
 
-BOOST_OPENMETHOD(value, (virtual_<const Node&>), int);
+BOOST_OPENMETHOD(value, (virtual_ptr<const Node>), int);
 
-BOOST_OPENMETHOD_OVERRIDE(value, (const Number& expr), int) {
-  return expr.val;
+BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<const Number> expr), int) {
+  return expr->val;
 }
 
-BOOST_OPENMETHOD_OVERRIDE(value, (const Plus& expr), int) {
-  return value(expr.left) + value(expr.right);
+BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<const Plus> expr), int) {
+  return value(expr->left) + value(expr->right);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(value, (const Times& expr), int) {
-  return value(expr.left) * value(expr.right);
+BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<const Times> expr), int) {
+  return value(expr->left) * value(expr->right);
 }
 }
 
@@ -183,16 +183,16 @@ using namespace boost::openmethod;
 use_classes<Node, Number, Plus, Times> use_animal_classes;
 
 struct value_id;
-using value = method<value_id(virtual_<const Node&>), int>;
+using value = method<value_id(virtual_ptr<const Node>), int>;
 
-int number_value(const Number& node) {
-  return node.val;
+int number_value(virtual_ptr<const Number> node) {
+  return node->val;
 }
 value::override<number_value> add_number_value;
 
 template<class NodeClass, class Op>
-int binary_op(const NodeClass& expr) {
-    return Op()(value::fn(expr.left), value::fn(expr.right));
+int binary_op(virtual_ptr<const NodeClass> expr) {
+    return Op()(value::fn(expr->left), value::fn(expr->right));
 }
 
 BOOST_OPENMETHOD_REGISTER(value::override<binary_op<Plus, std::plus<int>>>);

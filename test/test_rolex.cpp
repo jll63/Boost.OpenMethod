@@ -7,11 +7,11 @@ struct Role {
 };
 
 struct Employee : Role {
-    virtual double pay() const;
+    virtual double pay();
 };
 
 struct Manager : Employee {
-    virtual double pay() const;
+    virtual double pay();
 };
 
 struct Founder : Role {};
@@ -30,35 +30,46 @@ struct Jet : Expense {};
 BOOST_OPENMETHOD_CLASSES(
     Role, Employee, Manager, Founder, Expense, Public, Bus, Metro, Taxi, Jet);
 
-BOOST_OPENMETHOD(pay, (virtual_<const Employee&>), double);
-BOOST_OPENMETHOD(
-    approve, (virtual_<const Role&>, virtual_<const Expense&>, double), bool);
 
-BOOST_OPENMETHOD_OVERRIDE(pay, (const Employee&), double) {
+//static_assert(!virtual_ptr<Role>::IsSmartPtr);
+BOOST_OPENMETHOD(pay, (virtual_ptr<Employee>), double);
+BOOST_OPENMETHOD(
+    approve, (virtual_ptr<const Role>, virtual_ptr<const Expense>, double),
+    bool);
+
+BOOST_OPENMETHOD_OVERRIDE(pay, (virtual_ptr<Employee>), double) {
     return 3000;
 }
 
-BOOST_OPENMETHOD_OVERRIDE(pay, (const Manager& exec), double) {
+BOOST_OPENMETHOD_OVERRIDE(pay, (virtual_ptr<Manager> exec), double) {
     return next(exec) + 2000;
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    approve, (const Role& r, const Expense& e, double amount), bool) {
+    approve,
+    (virtual_ptr<const Role> r, virtual_ptr<const Expense> e, double amount),
+    bool) {
     return false;
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    approve, (const Employee& r, const Public& e, double amount), bool) {
+    approve,
+    (virtual_ptr<const Employee> r, virtual_ptr<const Public> e, double amount),
+    bool) {
     return true;
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    approve, (const Manager& r, const Taxi& e, double amount), bool) {
+    approve,
+    (virtual_ptr<const Manager> r, virtual_ptr<const Taxi> e, double amount),
+    bool) {
     return true;
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    approve, (const Founder& r, const Expense& e, double amount), bool) {
+    approve,
+    (virtual_ptr<const Founder> r, virtual_ptr<const Expense> e, double amount),
+    bool) {
     return true;
 }
 
@@ -66,19 +77,19 @@ int main() {
     boost::openmethod::initialize();
 }
 
-double call_pay(const Employee& emp) {
+double call_pay(Employee& emp) {
     return pay(emp);
 }
 
-double Employee::pay() const {
+double Employee::pay() {
     return 3000;
 }
 
-double Manager::pay() const {
+double Manager::pay() {
     return Employee::pay() + 2000;
 }
 
-double call_pay_vfunc(const Employee& emp) {
+double call_pay_vfunc(Employee& emp) {
     return emp.pay();
 }
 

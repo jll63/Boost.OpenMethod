@@ -16,6 +16,9 @@ using std::make_shared;
 using std::shared_ptr;
 using std::string;
 
+using boost::openmethod::make_virtual_shared;
+using boost::openmethod::virtual_shared_ptr;
+
 struct matrix {
     virtual ~matrix() {
     }
@@ -37,13 +40,15 @@ struct diagonal_matrix : matrix {
 
 BOOST_OPENMETHOD_CLASSES(matrix, dense_matrix, diagonal_matrix);
 
-BOOST_OPENMETHOD(to_json, (virtual_<const matrix&>), string);
+BOOST_OPENMETHOD(to_json, (virtual_ptr<const matrix>), string);
 
-BOOST_OPENMETHOD_OVERRIDE(to_json, (const dense_matrix& m), string) {
+BOOST_OPENMETHOD_OVERRIDE(
+    to_json, (virtual_ptr<const dense_matrix> m), string) {
     return "json for dense matrix...";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(to_json, (const diagonal_matrix& m), string) {
+BOOST_OPENMETHOD_OVERRIDE(
+    to_json, (virtual_ptr<const diagonal_matrix> m), string) {
     return "json for diagonal matrix...";
 }
 
@@ -52,28 +57,28 @@ BOOST_OPENMETHOD_OVERRIDE(to_json, (const diagonal_matrix& m), string) {
 
 BOOST_OPENMETHOD(
     times,
-    (virtual_<const shared_ptr<const matrix>&>,
-     virtual_<const shared_ptr<const matrix>&>),
-    shared_ptr<const matrix>);
+    (virtual_shared_ptr<const matrix>,
+     virtual_shared_ptr<const matrix>),
+    virtual_shared_ptr<const matrix>);
 
 // catch-all matrix * matrix -> dense_matrix
 BOOST_OPENMETHOD_OVERRIDE(
     times,
-    (const shared_ptr<const matrix>& a, const shared_ptr<const matrix>& b),
-    shared_ptr<const dense_matrix>) {
+    (virtual_shared_ptr<const matrix> a, virtual_shared_ptr<const matrix> b),
+    virtual_shared_ptr<const dense_matrix>) {
     return make_shared<dense_matrix>();
 }
 
 // diagonal_matrix * diagonal_matrix -> diagonal_matrix
 BOOST_OPENMETHOD_OVERRIDE(
     times,
-    (const shared_ptr<const diagonal_matrix>& a,
-     const shared_ptr<const diagonal_matrix>& b),
-    shared_ptr<const diagonal_matrix>) {
-    return make_shared<diagonal_matrix>();
+    (virtual_shared_ptr<const diagonal_matrix> a,
+     virtual_shared_ptr<const diagonal_matrix> b),
+    virtual_shared_ptr<const diagonal_matrix>) {
+    return make_virtual_shared<diagonal_matrix>();
 }
 
-inline shared_ptr<const matrix>
+inline virtual_shared_ptr<const matrix>
 operator*(shared_ptr<const matrix> a, shared_ptr<const matrix> b) {
     return times(a, b);
 }
@@ -82,27 +87,27 @@ operator*(shared_ptr<const matrix> a, shared_ptr<const matrix> b) {
 // scalar * matrix
 
 BOOST_OPENMETHOD(
-    times, (double, virtual_<shared_ptr<const matrix>>),
-    shared_ptr<const matrix>);
+    times, (double, virtual_shared_ptr<const matrix>),
+    virtual_shared_ptr<const matrix>);
 
 // catch-all matrix * scalar -> dense_matrix
 BOOST_OPENMETHOD_OVERRIDE(
-    times, (double a, shared_ptr<const matrix> b),
-    shared_ptr<const dense_matrix>) {
-    return make_shared<dense_matrix>();
+    times, (double a, virtual_shared_ptr<const matrix> b),
+    virtual_shared_ptr<const dense_matrix>) {
+    return make_virtual_shared<dense_matrix>();
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    times, (double a, shared_ptr<const diagonal_matrix> b),
-    shared_ptr<const diagonal_matrix>) {
-    return make_shared<diagonal_matrix>();
+    times, (double a, virtual_shared_ptr<const diagonal_matrix> b),
+    virtual_shared_ptr<const diagonal_matrix>) {
+    return make_virtual_shared<diagonal_matrix>();
 }
 
 // -----------------------------------------------------------------------------
 // matrix * scalar
 
 // just swap
-inline shared_ptr<const matrix>
+inline virtual_shared_ptr<const matrix>
 times(const shared_ptr<const matrix>& a, double b) {
     return times(b, a);
 }

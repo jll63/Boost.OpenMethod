@@ -2,7 +2,6 @@
 #define BOOST_OPENMETHOD_VIRTUAL_SHARED_PTR_HPP
 
 #include <boost/openmethod/core.hpp>
-
 #include <memory>
 
 namespace boost {
@@ -112,20 +111,20 @@ struct virtual_ptr_traits<std::shared_ptr<Class>, Policy> {
     }
 };
 
-template<class... Ts>
-using virtual_ptr_class = std::conditional_t<
-    sizeof...(Ts) == 2, boost::mp11::mp_second<detail::types<Ts..., void>>,
-    boost::mp11::mp_first<detail::types<Ts...>>>;
+template<class Class, class Policy>
+struct virtual_ptr_traits<const std::shared_ptr<Class>&, Policy>
+    : virtual_ptr_traits<std::shared_ptr<Class>, Policy> {};
 
 } // namespace detail
 
 template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
 using virtual_shared_ptr = virtual_ptr<std::shared_ptr<Class>, Policy>;
 
-template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
-inline auto make_virtual_shared() {
+template<
+    class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY, typename... T>
+inline auto make_virtual_shared(T&&... args) {
     return virtual_shared_ptr<Class, Policy>::final(
-        std::make_shared<detail::virtual_ptr_class<Class>>());
+        std::make_shared<Class>(std::forward<T>(args)...));
 }
 
 } // namespace openmethod

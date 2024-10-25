@@ -117,6 +117,12 @@ static_assert(
         polymorphic_types<types<virtual_<a&>, b, virtual_<c&>>>,
         types<a&, c&>>);
 
+struct policy1 : policies::default_::fork<policy1> {};
+struct policy2 : policies::default_::fork<policy2> {};
+static_assert(detail::is_policy_compatible<policy1, virtual_ptr<a, policy1>>::value);
+static_assert(detail::is_policy_compatible<policy1, int>::value);
+static_assert(!detail::is_policy_compatible<policy1, virtual_ptr<a, policy2>>::value);
+
 BOOST_AUTO_TEST_CASE(test_type_id_list) {
     type_id expected[] = {type_id(&typeid(a)), type_id(&typeid(b))};
     auto iter = type_id_list<policies::default_, types<a&, b&>>::begin;
@@ -270,11 +276,6 @@ static_assert(std::is_same_v<
     policy3::facets,
     types<alt_rtti>
 >);
-
-// static_assert(std::is_same_v<
-//     basic_policy<basic_domain<key1>, std_rtti>::replace<std_rtti, alt_rtti>,
-//     basic_policy<basic_domain<key1>, alt_rtti>
-// >);
 
 }
 

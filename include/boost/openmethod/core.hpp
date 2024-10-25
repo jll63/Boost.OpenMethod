@@ -552,6 +552,17 @@ struct has_static_offsets<
     Method, std::void_t<decltype(static_offsets<Method>::slots)>>
     : std::true_type {};
 
+template<class MethodPolicy, class Parameter>
+struct is_policy_compatible : std::true_type {};
+
+template<class Policy, typename Type, class OtherPolicy>
+struct is_policy_compatible<Policy, virtual_ptr<Type, OtherPolicy>>
+    : std::is_same<Policy, OtherPolicy> {};
+
+template<class Policy, typename Type, class OtherPolicy>
+struct is_policy_compatible<Policy, const virtual_ptr<Type, OtherPolicy>&>
+    : std::is_same<Policy, OtherPolicy> {};
+
 } // namespace detail
 
 template<
@@ -575,7 +586,12 @@ class method<Name(Parameters...), ReturnType, Policy>
                                 -> ReturnType;
     static constexpr auto Arity = boost::mp11::mp_count_if<
         detail::types<Parameters...>, detail::is_virtual>::value;
+
+    // sanity checks
     static_assert(Arity > 0, "method must have at least one virtual argument");
+    static_assert(
+        (true && ... &&
+         detail::is_policy_compatible<Policy, Parameters>::value));
 
     static std::size_t slots_strides[2 * Arity - 1];
     // Slots followed by strides. No stride for first virtual argument.

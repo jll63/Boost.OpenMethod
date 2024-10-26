@@ -161,12 +161,12 @@ auto optimal_cast(B&& obj) -> decltype(auto) {
 
 template<typename T, class Policy>
 struct virtual_traits {
-    using polymorphic_type = void;
+    using virtual_type = void;
 };
 
 template<typename T, class Policy>
 struct virtual_traits<T&, Policy> {
-    using polymorphic_type = std::remove_cv_t<T>;
+    using virtual_type = std::remove_cv_t<T>;
 
     static auto rarg(const T& arg) -> const T& {
         return arg;
@@ -180,7 +180,7 @@ struct virtual_traits<T&, Policy> {
 
 template<typename T, class Policy>
 struct virtual_traits<T*, Policy> {
-    using polymorphic_type = std::remove_cv_t<T>;
+    using virtual_type = std::remove_cv_t<T>;
 
     static auto rarg(const T* arg) -> const T& {
         return *arg;
@@ -194,7 +194,7 @@ struct virtual_traits<T*, Policy> {
 
 template<typename T, class Policy>
 struct virtual_traits<T&&, Policy> {
-    using polymorphic_type = std::remove_cv_t<T>;
+    using virtual_type = std::remove_cv_t<T>;
 
     static auto rarg(const T& arg) -> const T& {
         return arg;
@@ -229,10 +229,10 @@ template<typename T>
 using remove_virtual = typename remove_virtual_aux<T>::type;
 
 template<typename T, class Policy>
-using polymorphic_type = typename virtual_traits<T, Policy>::polymorphic_type;
+using virtual_type = typename virtual_traits<T, Policy>::virtual_type;
 
 template<typename MethodArgList>
-using polymorphic_types = boost::mp11::mp_transform<
+using virtual_types = boost::mp11::mp_transform<
     remove_virtual, boost::mp11::mp_filter<detail::is_virtual, MethodArgList>>;
 
 template<typename T, class Policy>
@@ -284,13 +284,13 @@ struct is_virtual_ptr_aux<const virtual_ptr<Class, Policy>&> : std::true_type {
 template<class Class, class Policy>
 struct virtual_ptr_traits {
     static bool constexpr is_smart_ptr = false;
-    using polymorphic_type = Class;
+    using virtual_type = Class;
 };
 
 template<class Class, class Policy>
 struct virtual_traits<virtual_ptr<Class, Policy>, Policy> {
     using ptr_traits = virtual_ptr_traits<Class, Policy>;
-    using polymorphic_type = typename ptr_traits::polymorphic_type;
+    using virtual_type = typename ptr_traits::virtual_type;
 
     static auto rarg(const virtual_ptr<Class, Policy>& ptr)
         -> const virtual_ptr<Class, Policy>& {
@@ -420,22 +420,22 @@ class virtual_ptr {
         using namespace policies;
 
         using other_virtual_traits = virtual_traits<Other, Policy>;
-        using polymorphic_type =
-            typename other_virtual_traits::polymorphic_type;
+        using virtual_type =
+            typename other_virtual_traits::virtual_type;
 
         vptr_type vptr;
 
         if constexpr (Policy::template has_facet<indirect_vptr>) {
-            vptr = &Policy::template static_vptr<polymorphic_type>;
+            vptr = &Policy::template static_vptr<virtual_type>;
         } else {
-            vptr = Policy::template static_vptr<polymorphic_type>;
+            vptr = Policy::template static_vptr<virtual_type>;
         }
 
         if constexpr (Policy::template has_facet<runtime_checks>) {
             // check that dynamic type == static type
             auto dynamic_type =
                 Policy::dynamic_type(other_virtual_traits::rarg(obj));
-            auto static_type = Policy::template static_type<polymorphic_type>();
+            auto static_type = Policy::template static_type<virtual_type>();
 
             if (dynamic_type != static_type) {
                 method_table_error error;
@@ -507,37 +507,37 @@ inline auto final_virtual_ptr(Class& obj) {
 namespace detail {
 
 template<typename P, typename Q, class Policy>
-struct select_overrider_polymorphic_type_aux {
+struct select_overrider_virtual_type_aux {
     using type = void;
 };
 
 template<typename P, typename Q, class Policy>
-struct select_overrider_polymorphic_type_aux<virtual_<P>, Q, Policy> {
-    using type = polymorphic_type<Q, Policy>;
+struct select_overrider_virtual_type_aux<virtual_<P>, Q, Policy> {
+    using type = virtual_type<Q, Policy>;
 };
 
 template<typename P, typename Q, class Policy>
-struct select_overrider_polymorphic_type_aux<
+struct select_overrider_virtual_type_aux<
     virtual_ptr<P, Policy>, virtual_ptr<Q, Policy>, Policy> {
     using type = typename virtual_traits<
-        virtual_ptr<Q, Policy>, Policy>::polymorphic_type;
+        virtual_ptr<Q, Policy>, Policy>::virtual_type;
 };
 
 template<typename P, typename Q, class Policy>
-struct select_overrider_polymorphic_type_aux<
+struct select_overrider_virtual_type_aux<
     const virtual_ptr<P, Policy>&, const virtual_ptr<Q, Policy>&, Policy> {
     using type = typename virtual_traits<
-        const virtual_ptr<Q, Policy>&, Policy>::polymorphic_type;
+        const virtual_ptr<Q, Policy>&, Policy>::virtual_type;
 };
 
 template<typename P, typename Q, class Policy>
-using select_overrider_polymorphic_type =
-    typename select_overrider_polymorphic_type_aux<P, Q, Policy>::type;
+using select_overrider_virtual_type =
+    typename select_overrider_virtual_type_aux<P, Q, Policy>::type;
 
 template<typename MethodParameters, typename OverriderParameters, class Policy>
-using overrider_polymorphic_types = boost::mp11::mp_remove<
+using overrider_virtual_types = boost::mp11::mp_remove<
     boost::mp11::mp_transform_q<
-        boost::mp11::mp_bind_back<select_overrider_polymorphic_type, Policy>,
+        boost::mp11::mp_bind_back<select_overrider_virtual_type, Policy>,
         MethodParameters, OverriderParameters>,
     void>;
 
@@ -580,7 +580,7 @@ class method<Name(Parameters...), ReturnType, Policy>
     using CallParameters =
         boost::mp11::mp_transform<detail::remove_virtual, DeclaredParameters>;
     using VirtualParameters =
-        typename detail::polymorphic_types<DeclaredParameters>;
+        typename detail::virtual_types<DeclaredParameters>;
     using Signature = auto(Parameters...) -> ReturnType;
     using FunctionPointer = auto(*)(detail::remove_virtual<Parameters>...)
                                 -> ReturnType;
@@ -663,7 +663,7 @@ class method<Name(Parameters...), ReturnType, Policy>
     struct thunk<Overrider, OverriderReturn (*)(OverriderParameters...)> {
         static auto fn(detail::remove_virtual<Parameters>... arg) -> ReturnType;
         using OverriderParameterTypeIds = detail::type_id_list<
-            detail::overrider_polymorphic_types<
+            detail::overrider_virtual_types<
                 DeclaredParameters, detail::types<OverriderParameters...>,
                 Policy>,
             Policy>;
@@ -720,7 +720,7 @@ method<Name(Parameters...), ReturnType, Policy>::method() {
 
     using virtual_type_ids = detail::type_id_list<
         boost::mp11::mp_transform_q<
-            boost::mp11::mp_bind_back<detail::polymorphic_type, Policy>,
+            boost::mp11::mp_bind_back<detail::virtual_type, Policy>,
             VirtualParameters>,
         Policy>;
     method_info::vp_begin = virtual_type_ids::begin;
@@ -729,7 +729,7 @@ method<Name(Parameters...), ReturnType, Policy>::method() {
     method_info::method_type = Policy::template static_type<method>();
     method_info::return_type =
         Policy::template static_type<typename detail::virtual_traits<
-            ReturnType, Policy>::polymorphic_type>();
+            ReturnType, Policy>::virtual_type>();
     Policy::methods.push_back(*this);
 }
 
@@ -1023,7 +1023,7 @@ method<Name(Parameters...), ReturnType, Policy>::override_impl<
 
     info.method = &fn;
     info.return_type = Policy::template static_type<
-        typename virtual_traits<FnReturnType, Policy>::polymorphic_type>();
+        typename virtual_traits<FnReturnType, Policy>::virtual_type>();
     info.type = Policy::template static_type<decltype(Function)>();
     info.next = reinterpret_cast<void**>(p_next);
     using Thunk = thunk<Function, decltype(Function)>;

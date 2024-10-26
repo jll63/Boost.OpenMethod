@@ -33,27 +33,27 @@ struct f : base {};
 
 static_assert(
     std::is_same_v<
-        virtual_traits<base&, policies::default_>::polymorphic_type, base>);
+        virtual_traits<base&, policies::default_>::virtual_type, base>);
 
 static_assert(
     std::is_same_v<
-        virtual_traits<const base&, policies::default_>::polymorphic_type, base>);
+        virtual_traits<const base&, policies::default_>::virtual_type, base>);
 
 static_assert(
     std::is_same_v<
-        virtual_traits<base*, policies::default_>::polymorphic_type, base>);
+        virtual_traits<base*, policies::default_>::virtual_type, base>);
 
 static_assert(
     std::is_same_v<
-        virtual_traits<const base*, policies::default_>::polymorphic_type, base>);
+        virtual_traits<const base*, policies::default_>::virtual_type, base>);
 
 static_assert(
     std::is_same_v<
-        virtual_traits<base&&, policies::default_>::polymorphic_type, base>);
+        virtual_traits<base&&, policies::default_>::virtual_type, base>);
 
 static_assert(
     std::is_same_v<
-        virtual_traits<int, policies::default_>::polymorphic_type, void>);
+        virtual_traits<int, policies::default_>::virtual_type, void>);
 
 static_assert(
     std::is_same_v<
@@ -72,7 +72,7 @@ static_assert(
 
 static_assert(
     std::is_same_v<
-        polymorphic_type<a&, policies::default_>,
+        virtual_type<a&, policies::default_>,
         a
     >);
 
@@ -88,7 +88,7 @@ static_assert(
 static_assert(
     std::is_same_v<
         boost::mp11::mp_transform_q<
-            boost::mp11::mp_bind_back<polymorphic_type, policies::default_>,
+            boost::mp11::mp_bind_back<virtual_type, policies::default_>,
             boost::mp11::mp_transform<
                 remove_virtual,
                 types< virtual_<a&>, virtual_<c&> >
@@ -100,7 +100,7 @@ static_assert(
 static_assert(
     std::is_same_v<
         boost::mp11::mp_transform_q<
-            boost::mp11::mp_bind_back<polymorphic_type, policies::default_>,
+            boost::mp11::mp_bind_back<virtual_type, policies::default_>,
             boost::mp11::mp_transform<
                 remove_virtual,
                 boost::mp11::mp_filter<
@@ -114,7 +114,7 @@ static_assert(
 
 static_assert(
     std::is_same_v<
-        polymorphic_types<types<virtual_<a&>, b, virtual_<c&>>>,
+        virtual_types<types<virtual_<a&>, b, virtual_<c&>>>,
         types<a&, c&>>);
 
 struct policy1 : policies::default_::fork<policy1> {};
@@ -191,9 +191,9 @@ BOOST_AUTO_TEST_CASE(casts) {
         == &dog.c);
 
     using voidp = const void*;
-    using virtual_animal_t = polymorphic_type<const Animal&, policies::default_>;
+    using virtual_animal_t = virtual_type<const Animal&, policies::default_>;
     static_assert(std::is_same_v<virtual_animal_t, Animal>, "animal");
-    using virtual_mammal_t = polymorphic_type<const Mammal&, policies::default_>;
+    using virtual_mammal_t = virtual_type<const Mammal&, policies::default_>;
     static_assert(std::is_same_v<virtual_mammal_t, Mammal>, "mammal");
 }
 

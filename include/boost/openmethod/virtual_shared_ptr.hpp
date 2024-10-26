@@ -18,19 +18,19 @@ template<typename T>
 struct shared_ptr_traits<std::shared_ptr<T>> {
     static const bool is_shared_ptr = true;
     static const bool is_const_ref = false;
-    using polymorphic_type = T;
+    using virtual_type = T;
 };
 
 template<typename T>
 struct shared_ptr_traits<const std::shared_ptr<T>&> {
     static const bool is_shared_ptr = true;
     static const bool is_const_ref = true;
-    using polymorphic_type = T;
+    using virtual_type = T;
 };
 
 template<typename T, class Policy>
 struct virtual_traits<const std::shared_ptr<T>&, Policy> {
-    using polymorphic_type = std::remove_cv_t<T>;
+    using virtual_type = std::remove_cv_t<T>;
 
     static auto rarg(const std::shared_ptr<T>& arg) -> const T& {
         return *arg;
@@ -44,7 +44,7 @@ struct virtual_traits<const std::shared_ptr<T>&, Policy> {
             "cannot cast from 'const shared_ptr<base>&' to "
             "'shared_ptr<derived>'");
         static_assert(std::is_class_v<
-                      typename shared_ptr_traits<DERIVED>::polymorphic_type>);
+                      typename shared_ptr_traits<DERIVED>::virtual_type>);
     }
 
     template<class DERIVED>
@@ -53,17 +53,17 @@ struct virtual_traits<const std::shared_ptr<T>&, Policy> {
 
         if constexpr (detail::requires_dynamic_cast<T*, DERIVED>) {
             return std::dynamic_pointer_cast<
-                typename shared_ptr_traits<DERIVED>::polymorphic_type>(obj);
+                typename shared_ptr_traits<DERIVED>::virtual_type>(obj);
         } else {
             return std::static_pointer_cast<
-                typename shared_ptr_traits<DERIVED>::polymorphic_type>(obj);
+                typename shared_ptr_traits<DERIVED>::virtual_type>(obj);
         }
     }
 };
 
 template<typename T, class Policy>
 struct virtual_traits<std::shared_ptr<T>, Policy> {
-    using polymorphic_type = std::remove_cv_t<T>;
+    using virtual_type = std::remove_cv_t<T>;
 
     static auto rarg(const std::shared_ptr<T>& arg) -> const T& {
         return *arg;
@@ -77,7 +77,7 @@ struct virtual_traits<std::shared_ptr<T>, Policy> {
             "cannot cast from 'const shared_ptr<base>&' to "
             "'shared_ptr<derived>'");
         static_assert(std::is_class_v<
-                      typename shared_ptr_traits<DERIVED>::polymorphic_type>);
+                      typename shared_ptr_traits<DERIVED>::virtual_type>);
     }
     template<class DERIVED>
     static auto cast(const std::shared_ptr<T>& obj) {
@@ -85,10 +85,10 @@ struct virtual_traits<std::shared_ptr<T>, Policy> {
 
         if constexpr (detail::requires_dynamic_cast<T*, DERIVED>) {
             return std::dynamic_pointer_cast<
-                typename shared_ptr_traits<DERIVED>::polymorphic_type>(obj);
+                typename shared_ptr_traits<DERIVED>::virtual_type>(obj);
         } else {
             return std::static_pointer_cast<
-                typename shared_ptr_traits<DERIVED>::polymorphic_type>(obj);
+                typename shared_ptr_traits<DERIVED>::virtual_type>(obj);
         }
     }
 };
@@ -96,7 +96,7 @@ struct virtual_traits<std::shared_ptr<T>, Policy> {
 template<class Class, class Policy>
 struct virtual_ptr_traits<std::shared_ptr<Class>, Policy> {
     static bool constexpr is_smart_ptr = true;
-    using polymorphic_type = Class;
+    using virtual_type = Class;
 
     template<typename Other>
     static auto cast(const virtual_ptr<std::shared_ptr<Class>, Policy>& ptr)

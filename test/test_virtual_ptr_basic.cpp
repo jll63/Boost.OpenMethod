@@ -35,37 +35,37 @@ struct f : base {};
 
 static_assert(
     std::is_same_v<
-        polymorphic_types<types<
+        virtual_types<types<
             virtual_<std::shared_ptr<a>>, b, virtual_<std::shared_ptr<c>>>>,
         types<std::shared_ptr<a>, std::shared_ptr<c>>>);
 
 static_assert(std::is_same_v<
-              overrider_polymorphic_types<
+              overrider_virtual_types<
                   types<virtual_<a&>, b, virtual_<c&>>, types<d&, e, f&>,
                   policies::default_>,
               types<d, f>>);
 
 static_assert(std::is_same_v<
-              polymorphic_type<std::shared_ptr<a>, policies::default_>, a>);
+              virtual_type<std::shared_ptr<a>, policies::default_>, a>);
 
 static_assert(
     std::is_same_v<
-        virtual_traits<virtual_ptr<a>, policies::default_>::polymorphic_type,
+        virtual_traits<virtual_ptr<a>, policies::default_>::virtual_type,
         a>);
 
 static_assert(std::is_same_v<
-              select_overrider_polymorphic_type_aux<
+              select_overrider_virtual_type_aux<
                   virtual_ptr<base>, virtual_ptr<a>, policies::default_>::type,
               a>);
 
 static_assert(std::is_same_v<
-              overrider_polymorphic_types<
+              overrider_virtual_types<
                   types<virtual_ptr<a>, b, virtual_ptr<c>>,
                   types<virtual_ptr<d>, e, virtual_ptr<f>>, policies::default_>,
               types<d, f>>);
 
 static_assert(std::is_same_v<
-              overrider_polymorphic_types<
+              overrider_virtual_types<
                   types<const virtual_ptr<base>&, b, const virtual_ptr<base>&>,
                   types<const virtual_ptr<d>&, e, const virtual_ptr<f>&>,
                   policies::default_>,
@@ -73,7 +73,7 @@ static_assert(std::is_same_v<
 
 static_assert(
     std::is_same_v<
-        overrider_polymorphic_types<
+        overrider_virtual_types<
             types<
                 virtual_<std::shared_ptr<a>>, b, virtual_<std::shared_ptr<c>>>,
             types<std::shared_ptr<d>, e, std::shared_ptr<f>>,

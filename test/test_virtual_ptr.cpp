@@ -35,11 +35,6 @@ struct Dog : virtual Animal {
 
 BOOST_OPENMETHOD_CLASSES(Animal, Dog);
 
-template<class T>
-T& ref(T& value) {
-    return value;
-}
-
 BOOST_AUTO_TEST_CASE(test_virtual_ptr_ctors) {
     boost::openmethod::initialize();
 

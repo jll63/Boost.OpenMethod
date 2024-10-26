@@ -28,8 +28,8 @@ struct shared_ptr_traits<const std::shared_ptr<T>&> {
     using polymorphic_type = T;
 };
 
-template<class Policy, typename T>
-struct virtual_traits<Policy, const std::shared_ptr<T>&> {
+template<typename T, class Policy>
+struct virtual_traits<const std::shared_ptr<T>&, Policy> {
     using polymorphic_type = std::remove_cv_t<T>;
 
     static auto rarg(const std::shared_ptr<T>& arg) -> const T& {
@@ -61,8 +61,8 @@ struct virtual_traits<Policy, const std::shared_ptr<T>&> {
     }
 };
 
-template<class Policy, typename T>
-struct virtual_traits<Policy, std::shared_ptr<T>> {
+template<typename T, class Policy>
+struct virtual_traits<std::shared_ptr<T>, Policy> {
     using polymorphic_type = std::remove_cv_t<T>;
 
     static auto rarg(const std::shared_ptr<T>& arg) -> const T& {

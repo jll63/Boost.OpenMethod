@@ -31,11 +31,11 @@ auto collect_static_type_id() -> type_id {
     }
 }
 
-template<class Policy, class TypeList>
+template<class TypeList, class Policy>
 struct type_id_list;
 
-template<class Policy, typename... T>
-struct type_id_list<Policy, types<T...>> {
+template<typename... T, class Policy>
+struct type_id_list<types<T...>, Policy> {
     // If using deferred 'static_type', add an extra element in 'value',
     // default-initialized to zero, indicating the ids need to be resolved. Set
     // to 1 after this is done.
@@ -46,18 +46,18 @@ struct type_id_list<Policy, types<T...>> {
     static type_id* end;
 };
 
-template<class Policy, typename... T>
-type_id type_id_list<Policy, types<T...>>::value[values] = {
+template<typename... T, class Policy>
+type_id type_id_list<types<T...>, Policy>::value[values] = {
     collect_static_type_id<Policy, T>()...};
 
-template<class Policy, typename... T>
-type_id* type_id_list<Policy, types<T...>>::begin = value;
+template<typename... T, class Policy>
+type_id* type_id_list<types<T...>, Policy>::begin = value;
 
-template<class Policy, typename... T>
-type_id* type_id_list<Policy, types<T...>>::end = value + sizeof...(T);
+template<typename... T, class Policy>
+type_id* type_id_list<types<T...>, Policy>::end = value + sizeof...(T);
 
 template<class Policy>
-struct type_id_list<Policy, types<>> {
+struct type_id_list<types<>, Policy> {
     static constexpr type_id* const begin = nullptr;
     static constexpr auto end = begin;
 };
@@ -69,8 +69,8 @@ template<class Policy, class Class, typename... Bases>
 struct class_declaration_aux<Policy, types<Class, Bases...>> : class_info {
     class_declaration_aux() {
         this->type = collect_static_type_id<Policy, Class>();
-        this->first_base = type_id_list<Policy, types<Bases...>>::begin;
-        this->last_base = type_id_list<Policy, types<Bases...>>::end;
+        this->first_base = type_id_list<types<Bases...>, Policy>::begin;
+        this->last_base = type_id_list<types<Bases...>, Policy>::end;
         Policy::classes.push_back(*this);
         this->is_abstract = std::is_abstract_v<Class>;
         this->static_vptr = &Policy::template static_vptr<Class>;
@@ -159,13 +159,13 @@ auto optimal_cast(B&& obj) -> decltype(auto) {
 // =============================================================================
 // virtual_traits
 
-template<class Policy, typename T>
+template<typename T, class Policy>
 struct virtual_traits {
     using polymorphic_type = void;
 };
 
-template<class Policy, typename T>
-struct virtual_traits<Policy, T&> {
+template<typename T, class Policy>
+struct virtual_traits<T&, Policy> {
     using polymorphic_type = std::remove_cv_t<T>;
 
     static auto rarg(const T& arg) -> const T& {
@@ -178,8 +178,8 @@ struct virtual_traits<Policy, T&> {
     }
 };
 
-template<class Policy, typename T>
-struct virtual_traits<Policy, T*> {
+template<typename T, class Policy>
+struct virtual_traits<T*, Policy> {
     using polymorphic_type = std::remove_cv_t<T>;
 
     static auto rarg(const T* arg) -> const T& {
@@ -192,8 +192,8 @@ struct virtual_traits<Policy, T*> {
     }
 };
 
-template<class Policy, typename T>
-struct virtual_traits<Policy, T&&> {
+template<typename T, class Policy>
+struct virtual_traits<T&&, Policy> {
     using polymorphic_type = std::remove_cv_t<T>;
 
     static auto rarg(const T& arg) -> const T& {
@@ -228,14 +228,14 @@ struct remove_virtual_aux<virtual_<T>> {
 template<typename T>
 using remove_virtual = typename remove_virtual_aux<T>::type;
 
-template<class Policy, typename T>
-using polymorphic_type = typename virtual_traits<Policy, T>::polymorphic_type;
+template<typename T, class Policy>
+using polymorphic_type = typename virtual_traits<T, Policy>::polymorphic_type;
 
 template<typename MethodArgList>
 using polymorphic_types = boost::mp11::mp_transform<
     remove_virtual, boost::mp11::mp_filter<detail::is_virtual, MethodArgList>>;
 
-template<class Policy, typename T>
+template<typename T, class Policy>
 struct parameter_traits {
     static auto rarg(const T& arg) -> const T& {
         return arg;
@@ -247,16 +247,16 @@ struct parameter_traits {
     }
 };
 
-template<class Policy, typename T>
-struct parameter_traits<Policy, virtual_<T>> : virtual_traits<Policy, T> {};
+template<typename T, class Policy>
+struct parameter_traits<virtual_<T>, Policy> : virtual_traits<T, Policy> {};
 
-template<class Policy, class Class>
-struct parameter_traits<Policy, virtual_ptr<Class, Policy>>
-    : virtual_traits<Policy, virtual_ptr<Class, Policy>> {};
+template<class Class, class Policy>
+struct parameter_traits<virtual_ptr<Class, Policy>, Policy>
+    : virtual_traits<virtual_ptr<Class, Policy>, Policy> {};
 
-template<class Policy, class Class>
-struct parameter_traits<Policy, const virtual_ptr<Class, Policy>&>
-    : virtual_traits<Policy, const virtual_ptr<Class, Policy>&> {};
+template<class Class, class Policy>
+struct parameter_traits<const virtual_ptr<Class, Policy>&, Policy>
+    : virtual_traits<const virtual_ptr<Class, Policy>&, Policy> {};
 
 } // namespace detail
 
@@ -287,8 +287,8 @@ struct virtual_ptr_traits {
     using polymorphic_type = Class;
 };
 
-template<class Policy, class Class>
-struct virtual_traits<Policy, virtual_ptr<Class, Policy>> {
+template<class Class, class Policy>
+struct virtual_traits<virtual_ptr<Class, Policy>, Policy> {
     using ptr_traits = virtual_ptr_traits<Class, Policy>;
     using polymorphic_type = typename ptr_traits::polymorphic_type;
 
@@ -304,9 +304,9 @@ struct virtual_traits<Policy, virtual_ptr<Class, Policy>> {
     }
 };
 
-template<class Policy, class Class>
-struct virtual_traits<Policy, const virtual_ptr<Class, Policy>&>
-    : virtual_traits<Policy, virtual_ptr<Class, Policy>> {};
+template<class Class, class Policy>
+struct virtual_traits<const virtual_ptr<Class, Policy>&, Policy>
+    : virtual_traits<virtual_ptr<Class, Policy>, Policy> {};
 
 template<typename T>
 constexpr bool is_virtual_ptr = detail::is_virtual_ptr_aux<T>::value;
@@ -419,7 +419,7 @@ class virtual_ptr {
         using namespace detail;
         using namespace policies;
 
-        using other_virtual_traits = virtual_traits<Policy, Other>;
+        using other_virtual_traits = virtual_traits<Other, Policy>;
         using polymorphic_type =
             typename other_virtual_traits::polymorphic_type;
 
@@ -506,38 +506,38 @@ inline auto final_virtual_ptr(Class& obj) {
 
 namespace detail {
 
-template<class Policy, typename P, typename Q>
-struct select_spec_polymorphic_type_aux {
+template<typename P, typename Q, class Policy>
+struct select_overrider_polymorphic_type_aux {
     using type = void;
 };
 
-template<class Policy, typename P, typename Q>
-struct select_spec_polymorphic_type_aux<Policy, virtual_<P>, Q> {
-    using type = polymorphic_type<Policy, Q>;
+template<typename P, typename Q, class Policy>
+struct select_overrider_polymorphic_type_aux<virtual_<P>, Q, Policy> {
+    using type = polymorphic_type<Q, Policy>;
 };
 
-template<class Policy, typename P, typename Q>
-struct select_spec_polymorphic_type_aux<
-    Policy, virtual_ptr<P, Policy>, virtual_ptr<Q, Policy>> {
+template<typename P, typename Q, class Policy>
+struct select_overrider_polymorphic_type_aux<
+    virtual_ptr<P, Policy>, virtual_ptr<Q, Policy>, Policy> {
     using type = typename virtual_traits<
-        Policy, virtual_ptr<Q, Policy>>::polymorphic_type;
+        virtual_ptr<Q, Policy>, Policy>::polymorphic_type;
 };
 
-template<class Policy, typename P, typename Q>
-struct select_spec_polymorphic_type_aux<
-    Policy, const virtual_ptr<P, Policy>&, const virtual_ptr<Q, Policy>&> {
+template<typename P, typename Q, class Policy>
+struct select_overrider_polymorphic_type_aux<
+    const virtual_ptr<P, Policy>&, const virtual_ptr<Q, Policy>&, Policy> {
     using type = typename virtual_traits<
-        Policy, const virtual_ptr<Q, Policy>&>::polymorphic_type;
+        const virtual_ptr<Q, Policy>&, Policy>::polymorphic_type;
 };
 
-template<class Policy, typename P, typename Q>
-using select_spec_polymorphic_type =
-    typename select_spec_polymorphic_type_aux<Policy, P, Q>::type;
+template<typename P, typename Q, class Policy>
+using select_overrider_polymorphic_type =
+    typename select_overrider_polymorphic_type_aux<P, Q, Policy>::type;
 
-template<class Policy, typename MethodParameters, typename OverriderParameters>
-using spec_polymorphic_types = boost::mp11::mp_remove<
+template<typename MethodParameters, typename OverriderParameters, class Policy>
+using overrider_polymorphic_types = boost::mp11::mp_remove<
     boost::mp11::mp_transform_q<
-        boost::mp11::mp_bind_front<select_spec_polymorphic_type, Policy>,
+        boost::mp11::mp_bind_back<select_overrider_polymorphic_type, Policy>,
         MethodParameters, OverriderParameters>,
     void>;
 
@@ -663,10 +663,10 @@ class method<Name(Parameters...), ReturnType, Policy>
     struct thunk<Overrider, OverriderReturn (*)(OverriderParameters...)> {
         static auto fn(detail::remove_virtual<Parameters>... arg) -> ReturnType;
         using OverriderParameterTypeIds = detail::type_id_list<
-            Policy,
-            detail::spec_polymorphic_types<
-                Policy, DeclaredParameters,
-                detail::types<OverriderParameters...>>>;
+            detail::overrider_polymorphic_types<
+                DeclaredParameters, detail::types<OverriderParameters...>,
+                Policy>,
+            Policy>;
     };
 
     template<auto Function, typename FnReturnType>
@@ -719,17 +719,17 @@ method<Name(Parameters...), ReturnType, Policy>::method() {
     method_info::slots_strides_ptr = slots_strides;
 
     using virtual_type_ids = detail::type_id_list<
-        Policy,
         boost::mp11::mp_transform_q<
-            boost::mp11::mp_bind_front<detail::polymorphic_type, Policy>,
-            VirtualParameters>>;
+            boost::mp11::mp_bind_back<detail::polymorphic_type, Policy>,
+            VirtualParameters>,
+        Policy>;
     method_info::vp_begin = virtual_type_ids::begin;
     method_info::vp_end = virtual_type_ids::end;
     method_info::not_implemented = (void*)not_implemented_handler;
     method_info::method_type = Policy::template static_type<method>();
     method_info::return_type =
         Policy::template static_type<typename detail::virtual_traits<
-            Policy, ReturnType>::polymorphic_type>();
+            ReturnType, Policy>::polymorphic_type>();
     Policy::methods.push_back(*this);
 }
 
@@ -773,7 +773,7 @@ BOOST_FORCEINLINE auto
 method<Name(Parameters...), ReturnType, Policy>::operator()(
     detail::remove_virtual<Parameters>... args) const -> ReturnType {
     using namespace detail;
-    auto pf = resolve(parameter_traits<Policy, Parameters>::rarg(args)...);
+    auto pf = resolve(parameter_traits<Parameters, Policy>::rarg(args)...);
 
     return pf(std::forward<remove_virtual<Parameters>>(args)...);
 }
@@ -961,7 +961,7 @@ method<Name(Parameters...), ReturnType, Policy>::not_implemented_handler(
         auto ti_iter = types;
         (...,
          (*ti_iter++ = Policy::dynamic_type(
-              detail::parameter_traits<Policy, Parameters>::rarg(args))));
+              detail::parameter_traits<Parameters, Policy>::rarg(args))));
         std::copy_n(
             types,
             (std::min)(sizeof...(args), not_implemented_error::max_types),
@@ -994,7 +994,7 @@ auto method<Name(Parameters...), ReturnType, Policy>::
          is_virtual_ptr_compatible<Parameters, OverriderParameters>),
         "virtual_ptr mismatch");
     return Overrider(
-        detail::parameter_traits<Policy, Parameters>::template cast<
+        detail::parameter_traits<Parameters, Policy>::template cast<
             OverriderParameters>(detail::remove_virtual<Parameters>(arg))...);
 }
 
@@ -1023,7 +1023,7 @@ method<Name(Parameters...), ReturnType, Policy>::override_impl<
 
     info.method = &fn;
     info.return_type = Policy::template static_type<
-        typename virtual_traits<Policy, FnReturnType>::polymorphic_type>();
+        typename virtual_traits<FnReturnType, Policy>::polymorphic_type>();
     info.type = Policy::template static_type<decltype(Function)>();
     info.next = reinterpret_cast<void**>(p_next);
     using Thunk = thunk<Function, decltype(Function)>;

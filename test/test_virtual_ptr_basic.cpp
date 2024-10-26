@@ -40,21 +40,44 @@ static_assert(
         types<std::shared_ptr<a>, std::shared_ptr<c>>>);
 
 static_assert(std::is_same_v<
-              spec_polymorphic_types<
-                  policies::default_, types<virtual_<a&>, b, virtual_<c&>>,
-                  types<d&, e, f&>>,
+              overrider_polymorphic_types<
+                  types<virtual_<a&>, b, virtual_<c&>>, types<d&, e, f&>,
+                  policies::default_>,
               types<d, f>>);
 
 static_assert(std::is_same_v<
-              polymorphic_type<policies::default_, std::shared_ptr<a>>, a>);
+              polymorphic_type<std::shared_ptr<a>, policies::default_>, a>);
 
 static_assert(
     std::is_same_v<
-        spec_polymorphic_types<
-            policies::default_,
+        virtual_traits<virtual_ptr<a>, policies::default_>::polymorphic_type,
+        a>);
+
+static_assert(std::is_same_v<
+              select_overrider_polymorphic_type_aux<
+                  virtual_ptr<base>, virtual_ptr<a>, policies::default_>::type,
+              a>);
+
+static_assert(std::is_same_v<
+              overrider_polymorphic_types<
+                  types<virtual_ptr<a>, b, virtual_ptr<c>>,
+                  types<virtual_ptr<d>, e, virtual_ptr<f>>, policies::default_>,
+              types<d, f>>);
+
+static_assert(std::is_same_v<
+              overrider_polymorphic_types<
+                  types<const virtual_ptr<base>&, b, const virtual_ptr<base>&>,
+                  types<const virtual_ptr<d>&, e, const virtual_ptr<f>&>,
+                  policies::default_>,
+              types<d, f>>);
+
+static_assert(
+    std::is_same_v<
+        overrider_polymorphic_types<
             types<
                 virtual_<std::shared_ptr<a>>, b, virtual_<std::shared_ptr<c>>>,
-            types<std::shared_ptr<d>, e, std::shared_ptr<f>>>,
+            types<std::shared_ptr<d>, e, std::shared_ptr<f>>,
+            policies::default_>,
         types<d, f>>);
 
 namespace BOOST_OPENMETHOD_GENSYM {

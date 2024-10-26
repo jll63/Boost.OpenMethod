@@ -33,27 +33,27 @@ struct f : base {};
 
 static_assert(
     std::is_same_v<
-        virtual_traits<policies::default_, base&>::polymorphic_type, base>);
+        virtual_traits<base&, policies::default_>::polymorphic_type, base>);
 
 static_assert(
     std::is_same_v<
-        virtual_traits<policies::default_, const base&>::polymorphic_type, base>);
+        virtual_traits<const base&, policies::default_>::polymorphic_type, base>);
 
 static_assert(
     std::is_same_v<
-        virtual_traits<policies::default_, base*>::polymorphic_type, base>);
+        virtual_traits<base*, policies::default_>::polymorphic_type, base>);
 
 static_assert(
     std::is_same_v<
-        virtual_traits<policies::default_, const base*>::polymorphic_type, base>);
+        virtual_traits<const base*, policies::default_>::polymorphic_type, base>);
 
 static_assert(
     std::is_same_v<
-        virtual_traits<policies::default_, base&&>::polymorphic_type, base>);
+        virtual_traits<base&&, policies::default_>::polymorphic_type, base>);
 
 static_assert(
     std::is_same_v<
-        virtual_traits<policies::default_, int>::polymorphic_type, void>);
+        virtual_traits<int, policies::default_>::polymorphic_type, void>);
 
 static_assert(
     std::is_same_v<
@@ -72,7 +72,7 @@ static_assert(
 
 static_assert(
     std::is_same_v<
-        polymorphic_type<policies::default_, a&>,
+        polymorphic_type<a&, policies::default_>,
         a
     >);
 
@@ -88,7 +88,7 @@ static_assert(
 static_assert(
     std::is_same_v<
         boost::mp11::mp_transform_q<
-            boost::mp11::mp_bind_front<polymorphic_type, policies::default_>,
+            boost::mp11::mp_bind_back<polymorphic_type, policies::default_>,
             boost::mp11::mp_transform<
                 remove_virtual,
                 types< virtual_<a&>, virtual_<c&> >
@@ -100,7 +100,7 @@ static_assert(
 static_assert(
     std::is_same_v<
         boost::mp11::mp_transform_q<
-            boost::mp11::mp_bind_front<polymorphic_type, policies::default_>,
+            boost::mp11::mp_bind_back<polymorphic_type, policies::default_>,
             boost::mp11::mp_transform<
                 remove_virtual,
                 boost::mp11::mp_filter<
@@ -125,8 +125,8 @@ static_assert(!detail::is_policy_compatible<policy1, virtual_ptr<a, policy2>>::v
 
 BOOST_AUTO_TEST_CASE(test_type_id_list) {
     type_id expected[] = {type_id(&typeid(a)), type_id(&typeid(b))};
-    auto iter = type_id_list<policies::default_, types<a&, b&>>::begin;
-    auto last = type_id_list<policies::default_, types<a&, b&>>::end;
+    auto iter = type_id_list<types<a&, b&>, policies::default_>::begin;
+    auto last = type_id_list<types<a&, b&>, policies::default_>::end;
     BOOST_TEST_REQUIRE(last - iter == 2);
     BOOST_TEST_REQUIRE(*iter++ == type_id(&typeid(a)));
     BOOST_TEST_REQUIRE(*iter++ == type_id(&typeid(b)));
@@ -172,28 +172,28 @@ BOOST_AUTO_TEST_CASE(casts) {
     const Carnivore& carnivore = dog;
 
     BOOST_TEST(
-        (&virtual_traits<policies::default_, const Animal&>::cast<const Mammal&>(animal).m)
+        (&virtual_traits<const Animal&, policies::default_>::cast<const Mammal&>(animal).m)
         == &dog.m);
     BOOST_TEST(
-        (&virtual_traits<policies::default_, const Animal&>::cast<const Carnivore&>(animal).c)
+        (&virtual_traits<const Animal&, policies::default_>::cast<const Carnivore&>(animal).c)
         == &dog.c);
     BOOST_TEST(
-        (&virtual_traits<policies::default_, const Animal&>::cast<const Mammal&>(animal).m)
+        (&virtual_traits<const Animal&, policies::default_>::cast<const Mammal&>(animal).m)
         == &dog.m);
     BOOST_TEST(
-        (&virtual_traits<policies::default_, const Animal&>::cast<const Dog&>(animal).d)
+        (&virtual_traits<const Animal&, policies::default_>::cast<const Dog&>(animal).d)
         == &dog.d);
     BOOST_TEST(
-        (&virtual_traits<policies::default_, const Mammal&>::cast<const Dog&>(mammal).d)
+        (&virtual_traits<const Mammal&, policies::default_>::cast<const Dog&>(mammal).d)
         == &dog.d);
     BOOST_TEST(
-        (&virtual_traits<policies::default_, const Carnivore&>::cast<const Dog&>(carnivore).c)
+        (&virtual_traits<const Carnivore&, policies::default_>::cast<const Dog&>(carnivore).c)
         == &dog.c);
 
     using voidp = const void*;
-    using virtual_animal_t = polymorphic_type<policies::default_, const Animal&>;
+    using virtual_animal_t = polymorphic_type<const Animal&, policies::default_>;
     static_assert(std::is_same_v<virtual_animal_t, Animal>, "animal");
-    using virtual_mammal_t = polymorphic_type<policies::default_, const Mammal&>;
+    using virtual_mammal_t = polymorphic_type<const Mammal&, policies::default_>;
     static_assert(std::is_same_v<virtual_mammal_t, Mammal>, "mammal");
 }
 

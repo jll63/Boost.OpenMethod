@@ -9,6 +9,8 @@
 
 using namespace std;
 
+namespace nodes {
+
 class Number;
 class Plus;
 class Times;
@@ -51,7 +53,11 @@ struct Times : Node {
   const Node& left; const Node& right;
 };
 
+}
+
 namespace typeswitch {
+
+using namespace nodes;
 
 string to_rpn(const Node& node) {
   if (auto expr = dynamic_cast<const Number*>(&node)) {
@@ -66,6 +72,8 @@ string to_rpn(const Node& node) {
 }
 
 namespace visitor {
+
+using namespace nodes;
 
 struct RPNVisitor : Node::Visitor {
   void accept(const Number& expr) {
@@ -96,6 +104,8 @@ string to_rpn(const Node& node) {
 
 namespace funtable {
 
+using namespace nodes;
+
 unordered_map<type_index, string (*)(const Node&)> RPNformatters;
 
 string to_rpn(const Node& node) {
@@ -117,9 +127,12 @@ struct Init {
 }
 
 #include <boost/openmethod.hpp>
+#include <boost/openmethod/virtual_unique_ptr.hpp>
 #include <boost/openmethod/compiler.hpp>
 
 namespace openmethods {
+
+using namespace nodes;
 
 BOOST_OPENMETHOD_CLASSES(Node, Number, Plus, Times);
 
@@ -150,11 +163,13 @@ BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<const Plus> expr), int) {
 BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<const Times> expr), int) {
   return value(expr->left) * value(expr->right);
 }
+
 }
 
 namespace virtual_ptr_demo {
 
 using namespace boost::openmethod;
+using namespace nodes;
 
 BOOST_OPENMETHOD(value, (virtual_ptr<const Node>), int);
 
@@ -176,11 +191,73 @@ auto make_final_node_ptr(const Plus& node) {
 
 }
 
-namespace core_api {
+namespace virtual_unique_ptr_demo {
 
 using namespace boost::openmethod;
 
-use_classes<Node, Number, Plus, Times> use_animal_classes;
+class Number;
+class Plus;
+class Times;
+
+struct Node {
+  virtual ~Node() {}
+};
+
+struct Number : Node {
+  explicit Number(int value) : val(value) { }
+  int val;
+};
+
+struct Plus : Node {
+  Plus(virtual_unique_ptr<Node>&& left, virtual_unique_ptr<Node>&& right)
+    : left(std::move(left)), right(std::move(right)) { }
+  virtual_unique_ptr<Node> left, right;
+};
+
+struct Times : Node {
+  Times(virtual_unique_ptr<Node>&& left, virtual_unique_ptr<Node>&& right)
+    : left(std::move(left)), right(std::move(right)) { }
+  virtual_unique_ptr<Node> left, right;
+};
+
+BOOST_OPENMETHOD_CLASSES(Node, Number, Plus, Times);
+
+BOOST_OPENMETHOD(value, (virtual_ptr<Node>), int);
+
+BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<Plus> expr), int) {
+  return value(expr->left) + value(expr->right);
+}
+
+BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<Number> expr), int) {
+  return expr->val;
+}
+
+BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<const Times> expr), int) {
+  return value(expr->left) * value(expr->right);
+}
+
+BOOST_OPENMETHOD(to_rpn, (virtual_ptr<Node>), string);
+
+BOOST_OPENMETHOD_OVERRIDE(to_rpn, (virtual_ptr<Number> expr), string) {
+  return std::to_string(expr->val);
+}
+
+BOOST_OPENMETHOD_OVERRIDE(to_rpn, (virtual_ptr<Plus> expr), string) {
+  return to_rpn(expr->left) + " " + to_rpn(expr->right) + " +";
+}
+
+BOOST_OPENMETHOD_OVERRIDE(to_rpn, (virtual_ptr<Times> expr), string) {
+  return to_rpn(expr->left) + " " + to_rpn(expr->right) + " *";
+}
+
+}
+
+namespace core_api {
+
+using namespace boost::openmethod;
+using namespace nodes;
+
+use_classes<Node, Number, Plus, Times> use_node_classes;
 
 struct value_id;
 using value = method<value_id(virtual_ptr<const Node>), int>;
@@ -201,22 +278,40 @@ BOOST_OPENMETHOD_REGISTER(value::override<binary_op<Times, std::multiplies<int>>
 }
 
 int main() {
-  Number n2(2), n3(3), n4(4);
-  Plus sum(n3, n4);
-  Times product(n2, sum);
-
-  const Node& expr = product;
-  cout << expr.value() << "\n";
-
-  cout << expr.value() << "\n";
-  cout << typeswitch::to_rpn(expr) << " = " << expr.value() << "\n";
-  cout << visitor::to_rpn(expr) << " = " << expr.value() << "\n";
-  cout << funtable::to_rpn(expr) << " = " << expr.value() << "\n";
-
   boost::openmethod::initialize();
-  cout << openmethods::to_rpn(expr) << " = " << expr.value() << "\n";
 
-  cout << core_api::value::fn(expr) << "\n";
+  {
+    using namespace nodes;
+
+    Number n2(2), n3(3), n4(4);
+    Plus sum(n3, n4);
+    Times product(n2, sum);
+
+    const Node& expr = product;
+    cout << expr.value() << "\n";
+
+    cout << expr.value() << "\n";
+    cout << typeswitch::to_rpn(expr) << " = " << expr.value() << "\n";
+    cout << visitor::to_rpn(expr) << " = " << expr.value() << "\n";
+    cout << funtable::to_rpn(expr) << " = " << expr.value() << "\n";
+
+    cout << openmethods::to_rpn(expr) << " = " << expr.value() << "\n";
+
+    cout << core_api::value::fn(expr) << "\n";
+  }
+
+  {
+    using boost::openmethod::make_virtual_unique;
+    using namespace virtual_unique_ptr_demo;
+
+    auto expr = make_virtual_unique<Times>(
+      make_virtual_unique<Number>(2),
+      make_virtual_unique<Plus>(
+        make_virtual_unique<Number>(3), make_virtual_unique<Number>(4)
+      ));
+
+    cout << to_rpn(expr) << " = " << value(expr) << "\n";
+  }
 
   return 0;
 }

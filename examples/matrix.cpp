@@ -66,7 +66,7 @@ BOOST_OPENMETHOD_OVERRIDE(
     times,
     (virtual_shared_ptr<const matrix> a, virtual_shared_ptr<const matrix> b),
     virtual_shared_ptr<const dense_matrix>) {
-    return make_shared<dense_matrix>();
+    return make_shared<const dense_matrix>();
 }
 
 // diagonal_matrix * diagonal_matrix -> diagonal_matrix

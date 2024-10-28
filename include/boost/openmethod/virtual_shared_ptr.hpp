@@ -43,8 +43,8 @@ struct virtual_traits<const std::shared_ptr<T>&, Policy> {
             shared_ptr_traits<DERIVED>::is_const_ref,
             "cannot cast from 'const shared_ptr<base>&' to "
             "'shared_ptr<derived>'");
-        static_assert(std::is_class_v<
-                      typename shared_ptr_traits<DERIVED>::virtual_type>);
+        static_assert(
+            std::is_class_v<typename shared_ptr_traits<DERIVED>::virtual_type>);
     }
 
     template<class DERIVED>
@@ -76,8 +76,8 @@ struct virtual_traits<std::shared_ptr<T>, Policy> {
             !shared_ptr_traits<DERIVED>::is_const_ref,
             "cannot cast from 'const shared_ptr<base>&' to "
             "'shared_ptr<derived>'");
-        static_assert(std::is_class_v<
-                      typename shared_ptr_traits<DERIVED>::virtual_type>);
+        static_assert(
+            std::is_class_v<typename shared_ptr_traits<DERIVED>::virtual_type>);
     }
     template<class DERIVED>
     static auto cast(const std::shared_ptr<T>& obj) {
@@ -96,21 +96,23 @@ struct virtual_traits<std::shared_ptr<T>, Policy> {
 template<class Class, class Policy>
 struct virtual_ptr_traits<std::shared_ptr<Class>, Policy> {
     static bool constexpr is_smart_ptr = true;
-    using virtual_type = Class;
+    using element_type = Class;
+
+    static auto dynamic_type(const std::shared_ptr<Class>& obj) {
+        return Policy::dynamic_type(*obj);
+    }
 
     template<typename Other>
     static auto cast(const virtual_ptr<std::shared_ptr<Class>, Policy>& ptr)
         -> decltype(auto) {
-        virtual_ptr<std::shared_ptr<Other>, Policy> result;
-        result.vptr = ptr.vptr;
 
         if constexpr (detail::requires_dynamic_cast<Class&, Other&>) {
-            result.obj = std::dynamic_pointer_cast<Other>(ptr.obj);
+            return virtual_ptr<std::shared_ptr<Other>, Policy>(
+                std::dynamic_pointer_cast<Other>(ptr.obj), ptr.vptr());
         } else {
-            result.obj = std::static_pointer_cast<Other>(ptr.obj);
+            return virtual_ptr<std::shared_ptr<Other>, Policy>(
+                std::static_pointer_cast<Other>(ptr.obj), ptr.vptr());
         }
-
-        return result;
     }
 };
 

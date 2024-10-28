@@ -89,7 +89,6 @@ struct Animal {
 
 struct Dog : Animal {};
 
-static_assert(std::is_same_v<virtual_ptr<Animal>::pointer_type, Animal*>);
 static_assert(std::is_same_v<virtual_ptr<Animal>::element_type, Animal>);
 static_assert(std::is_same_v<
               decltype(std::declval<virtual_ptr<Animal>>().get()), Animal*>);

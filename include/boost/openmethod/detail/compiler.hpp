@@ -90,7 +90,7 @@ struct generic_compiler {
         std::vector<class_*> transitive_bases;
         std::vector<class_*> direct_bases;
         std::vector<class_*> direct_derived;
-        std::unordered_set<class_*> covariant_classes;
+        std::unordered_set<class_*> transitive_derived;
         std::vector<parameter> used_by_vp;
         boost::dynamic_bitset<> used_slots;
         boost::dynamic_bitset<> reserved_slots;
@@ -102,8 +102,8 @@ struct generic_compiler {
 
         bool is_base_of(class_* other) const {
             return std::find(
-                       covariant_classes.begin(), covariant_classes.end(),
-                       other) != covariant_classes.end();
+                       transitive_derived.begin(), transitive_derived.end(),
+                       other) != transitive_derived.end();
         }
 
         auto vptr() const -> const std::uintptr_t* {
@@ -244,7 +244,7 @@ struct compiler : detail::generic_compiler {
 
     void resolve_static_type_ids();
     void augment_classes();
-    void calculate_covariant_classes(class_& cls);
+    void calculate_transitive_derived(class_& cls);
     void augment_methods();
     void assign_slots();
     void assign_tree_slots(class_& cls, std::size_t base_slot);
@@ -277,7 +277,7 @@ struct compiler : detail::generic_compiler {
     using indent = typename detail::trace_type<Policy>::indent;
 };
 
-compiler() -> compiler<policies::default_>;
+compiler()->compiler<policies::default_>;
 
 template<class Policy>
 void compiler<Policy>::install_global_tables() {
@@ -484,7 +484,7 @@ void compiler<Policy>::augment_classes() {
     }
 
     for (auto& rtc : classes) {
-        calculate_covariant_classes(rtc);
+        calculate_transitive_derived(rtc);
     }
 
     if constexpr (trace_enabled) {
@@ -498,29 +498,30 @@ void compiler<Policy>::augment_classes() {
                 indent _(trace);
                 ++trace << "bases:      " << rtc.direct_bases << "\n";
                 ++trace << "derived:    " << rtc.direct_derived << "\n";
-                ++trace << "covariant: " << rtc.covariant_classes << "\n";
+                ++trace << "covariant: " << rtc.transitive_derived << "\n";
             }
         }
     }
 }
 
 template<class Policy>
-void compiler<Policy>::calculate_covariant_classes(class_& cls) {
-    if (!cls.covariant_classes.empty()) {
+void compiler<Policy>::calculate_transitive_derived(class_& cls) {
+    if (!cls.transitive_derived.empty()) {
         return;
     }
 
-    cls.covariant_classes.insert(&cls);
+    cls.transitive_derived.insert(&cls);
 
     for (auto derived : cls.direct_derived) {
-        if (derived->covariant_classes.empty()) {
-            calculate_covariant_classes(*derived);
+        if (derived->transitive_derived.empty()) {
+            calculate_transitive_derived(*derived);
         }
 
         std::copy(
-            derived->covariant_classes.begin(),
-            derived->covariant_classes.end(),
-            std::inserter(cls.covariant_classes, cls.covariant_classes.end()));
+            derived->transitive_derived.begin(),
+            derived->transitive_derived.end(),
+            std::inserter(
+                cls.transitive_derived, cls.transitive_derived.end()));
     }
 }
 
@@ -666,10 +667,10 @@ void compiler<Policy>::assign_slots() {
         for (auto& cls : classes) {
             if (cls.direct_bases.size() == 0) {
                 if (std::find_if(
-                        cls.covariant_classes.begin(),
-                        cls.covariant_classes.end(), [](auto cls) {
+                        cls.transitive_derived.begin(),
+                        cls.transitive_derived.end(), [](auto cls) {
                             return cls->direct_bases.size() > 1;
-                        }) == cls.covariant_classes.end()) {
+                        }) == cls.transitive_derived.end()) {
                     indent _(trace);
                     assign_tree_slots(cls, 0);
                 } else {
@@ -775,7 +776,7 @@ void compiler<Policy>::assign_lattice_slots(class_& cls) {
                 ++trace << "assign slots " << cls.used_slots << " in:\n";
                 indent _(trace);
 
-                for (auto covariant : cls.covariant_classes) {
+                for (auto covariant : cls.transitive_derived) {
                     if (&cls != covariant) {
                         ++trace << *covariant << "\n";
                         detail::merge_into(
@@ -820,7 +821,7 @@ void compiler<Policy>::build_dispatch_tables() {
                         << "\n";
                 indent _(trace);
 
-                for (auto covariant_class : vp->covariant_classes) {
+                for (auto covariant_class : vp->transitive_derived) {
                     ++trace << "specs applicable to " << *covariant_class
                             << "\n";
                     bitvec mask;
@@ -830,9 +831,9 @@ void compiler<Policy>::build_dispatch_tables() {
                     indent _(trace);
 
                     for (auto& spec : m.specs) {
-                        if (spec.vp[dim]->covariant_classes.find(
+                        if (spec.vp[dim]->transitive_derived.find(
                                 covariant_class) !=
-                            spec.vp[dim]->covariant_classes.end()) {
+                            spec.vp[dim]->transitive_derived.end()) {
                             ++trace << type_name(spec.info->type) << "\n";
                             mask[group_index] = 1;
                         }
@@ -1256,12 +1257,12 @@ bool compiler<Policy>::is_more_specific(
 
     for (; a_iter != a_last; ++a_iter, ++b_iter) {
         if (*a_iter != *b_iter) {
-            if ((*b_iter)->covariant_classes.find(*a_iter) !=
-                (*b_iter)->covariant_classes.end()) {
+            if ((*b_iter)->transitive_derived.find(*a_iter) !=
+                (*b_iter)->transitive_derived.end()) {
                 result = true;
             } else if (
-                (*a_iter)->covariant_classes.find(*b_iter) !=
-                (*a_iter)->covariant_classes.end()) {
+                (*a_iter)->transitive_derived.find(*b_iter) !=
+                (*a_iter)->transitive_derived.end()) {
                 return false;
             }
         }
@@ -1278,8 +1279,8 @@ bool compiler<Policy>::is_base(const overrider* a, const overrider* b) {
 
     for (; a_iter != a_last; ++a_iter, ++b_iter) {
         if (*a_iter != *b_iter) {
-            if ((*a_iter)->covariant_classes.find(*b_iter) ==
-                (*a_iter)->covariant_classes.end()) {
+            if ((*a_iter)->transitive_derived.find(*b_iter) ==
+                (*a_iter)->transitive_derived.end()) {
                 return false;
             } else {
                 result = true;

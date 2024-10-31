@@ -7,17 +7,121 @@
 
 ## Hello World
 
-[source,c++]
-----
-include::{examplesdir}/virtual_func.cpp[]
-----
+Consider the following program, intended to demonstrate the basics of virtual
+functions:
 
 [source,c++]
 ----
-include::{examplesdir}/hello_world.cpp[]
+include::{examplesdir}/virtual_func.cpp[tag=code]
+----
+
+We are going to rewrite it with open-methods.
+
+First we remove the virtual functions from the domain classes:
+
+[source,c++]
+----
+include::{examplesdir}/hello_world.cpp[tag=domain_classes]
+----
+
+Note that the Animal classes do not depend on iostreams anymore. This is a major
+advantage of open-methods over virtual functions: they make it possible to
+better organize dependencies.
+
+Let's define `poke`. First we need to include the library's main header (and
+`<iostream>`). It defines a few macros, and injects a name - `virtual_ptr` - in
+the global namespace.
+
+[source,c++]
+----
+include::{examplesdir}/hello_world.cpp[tag=method]
+----
+
+This defines a free function called `poke`, which takes two arguments. The first
+is the `ostream`. The second argument corresponds to the implicit `this` pointer
+in the virtual function. It is now an explicit argument. Just like for virtual
+functions, the exact function to execute is selected on the basis of the
+argument's _dynamic_ type.
+
+NOTE: open-method signatures consist of types only. They may *not* contain
+parameter names.
+
+Unlike virtual functions, there is no such thing as a pure open-method that
+would make a class abstract. It is not possible to determine if an overrider is
+available from looking at just the current translation unit.
+
+Let's add overriders for `Cat` and `Dog`:
+
+[source,c++]
+----
+include::{examplesdir}/hello_world.cpp[tag=overriders]
+----
+
+`Bulldog::poke` calls the `poke` it overrides in its `Dog` base. The equivalent
+for open-methods is to call `next`, a funcxtion that is available only inside
+the body of an overrider.
+
+[source,c++]
+----
+include::{examplesdir}/hello_world.cpp[tag=next]
+----
+
+`next` automatically selects the next most specialized overrider - i.e. the
+overrider that would have been called if this overrider did not exist.
+
+All classes involved in open-method calls need to be registered using the
+`BOOST_OPENMETHOD_CLASSES` macro:
+
+[source,c++]
+----
+include::{examplesdir}/hello_world.cpp[tag=classes]
+----
+
+Classes can be registered incrementally, as long as all the direct bases of a
+class appear in the same call to `BOOST_OPENMETHOD_CLASSES`. For example,
+`Bulldog` can be added in a second call, as long as `Dog` is listed as well:
+
+[source,c++]
+----
+// in animals.cpp
+BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog);
+
+// in bulldog.cpp
+BOOST_OPENMETHOD_CLASSES(Dog, Bulldog);
+----
+
+`boost::openmethod::initialize();` must be called before any open-method call.
+It builds the dispatch tables. Typically this is done in `main`:
+
+[source,c++]
+----
+include::{examplesdir}/hello_world.cpp[tag=main1]
+----
+
+Finally, `poke` is called like an ordinary function (which it is), passing it
+the animals by reference. `virtual_ptr`
+
+[source,c++]
+----
+include::{examplesdir}/hello_world.cpp[tag=main2]
+...
+}
+----
+
+[source,c++]
+----
+include::{examplesdir}/hello_world.cpp[tag=call]
 ----
 
 
+[source,c++]
+----
+include::{examplesdir}/hello_world.cpp[tag=multi_method]
+----
+[source,c++]
+----
+include::{examplesdir}/hello_world.cpp[tag=initialize]
+----
 
 
 <1> Include the main OpenMethod header.

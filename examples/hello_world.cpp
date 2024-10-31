@@ -3,15 +3,13 @@
 // See accompanying file LICENSE_1_0.txt
 // or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#include <iostream>
+// clang-format off
 
-#include <boost/openmethod.hpp>
-#include <boost/openmethod/compiler.hpp>
-
+// tag::domain_classes[]
 struct Animal {
-    Animal(const char* name) : name(name) {
+    Animal(std::string name) : name(name) {
     }
-    const char* name;
+    std::string name;
     virtual ~Animal() = default;
 };
 
@@ -23,36 +21,49 @@ struct Dog : Animal {
     using Animal::Animal;
 };
 
-BOOST_OPENMETHOD(poke, (std::ostream&, virtual_ptr<Animal>), void);
+struct Bulldog : Dog {
+    using Dog::Dog;
+};
+// end::domain_classes[]
 
+// tag::method[]
+#include <iostream>
+#include <boost/openmethod.hpp>
+
+BOOST_OPENMETHOD(
+    poke,                                       // method name
+    (std::ostream&, virtual_ptr<Animal>),       // method signature
+    void);                                      // return type
+// end::method[]
+
+// tag::overriders[]
 BOOST_OPENMETHOD_OVERRIDE(
-    poke, (std::ostream & os, virtual_ptr<Cat> cat), void) {
-    os << cat->name << " hisses";
+    poke,                                       // method name
+    (std::ostream & os, virtual_ptr<Cat> cat),  // overrider signature
+    void) {                                     // return type
+    os << cat->name << " hisses";               // overrider body
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
     poke, (std::ostream & os, virtual_ptr<Dog> dog), void) {
     os << dog->name << " barks";
 }
-
-BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog);
+// end::overriders[]
 
 // tag::next[]
-struct Bulldog : Dog {
-    using Dog::Dog;
-};
-
-BOOST_OPENMETHOD_CLASSES(Dog, Bulldog);
-
 BOOST_OPENMETHOD_OVERRIDE(
     poke, (std::ostream & os, virtual_ptr<Bulldog> dog), void) {
-    next(os, dog); // prints "bark"
-    os << " and bites";
+    next(os, dog);                              // call super-method
+    os << " and bites back";
 }
 // end::next[]
 
-BOOST_OPENMETHOD(
-    encounter, (std::ostream&, virtual_ptr<Animal>, virtual_ptr<Animal>), void);
+// tag::classes[]
+BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog, Bulldog);
+// end::classes[]
+
+// tag::multi_method[]
+BOOST_OPENMETHOD(encounter, (std::ostream&, virtual_ptr<Animal>, virtual_ptr<Animal>), void);
 
 // 'encounter' catch-all implementation.
 BOOST_OPENMETHOD_OVERRIDE(
@@ -79,30 +90,47 @@ BOOST_OPENMETHOD_OVERRIDE(
     void) {
     os << cat->name << " runs away from " << dog->name;
 }
+// end::multi_method[]
+
+// tag::main1[]
+// only needed in the file that calls boost::openmethod::initialize()
+#include <boost/openmethod/compiler.hpp>
 
 int main() {
     boost::openmethod::initialize();
+// end::main1[]
 
-    Animal&& a = Cat("Felix");
-    Animal&& b = Dog("Snoopy");
+// tag::main2[]
+    std::unique_ptr<Animal> a(new Cat("Felix"));
+    std::unique_ptr<Animal> b(new Dog("Snoopy"));
+    std::unique_ptr<Animal> c(new Bulldog("Hector"));
 
-    poke(std::cout, a); // Felix hisses
-    std::cout << "\n";
+    poke(std::cout, *a); // Felix hisses
+    std::cout << ".\n";
 
-    poke(std::cout, b); // Snoopy barks
-    std::cout << "\n";
+    poke(std::cout, *b); // Snoopy barks
+    std::cout << ".\n";
+// end::main2[]
 
-    Animal&& c = Bulldog("Hector");
-    poke(std::cout, c); // Hector barks and bites
-    std::cout << "\n";
+    poke(std::cout, *c); // Hector barks and bites
+    std::cout << ".\n";
+    // end::call[]
 
-    encounter(std::cout, a, b); // Felix runs away from Snoopy
-    std::cout << "\n";
+    encounter(std::cout, *a, *b); // Felix runs away from Snoopy
+    std::cout << ".\n";
 
-    encounter(std::cout, b, a); // Snoopy chases Felix
-    std::cout << "\n";
+    encounter(std::cout, *b, *a); // Snoopy chases Felix
+    std::cout << ".\n";
 
     return 0;
+}
+
+auto make_virtual_ptr(std::ostream& os, Animal& a) {
+    return virtual_ptr<Animal>(a);
+}
+
+auto make_vinal_virtual_ptr(std::ostream& os, Cat& cat) {
+    return boost::openmethod::final_virtual_ptr(cat);
 }
 
 void call_poke(std::ostream& os, virtual_ptr<Animal> a) {

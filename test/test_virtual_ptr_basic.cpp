@@ -45,13 +45,12 @@ static_assert(std::is_same_v<
                   policies::default_>,
               types<d, f>>);
 
-static_assert(std::is_same_v<
-              virtual_type<std::shared_ptr<a>, policies::default_>, a>);
+static_assert(
+    std::is_same_v<virtual_type<std::shared_ptr<a>, policies::default_>, a>);
 
 static_assert(
     std::is_same_v<
-        virtual_traits<virtual_ptr<a>, policies::default_>::virtual_type,
-        a>);
+        virtual_traits<virtual_ptr<a>, policies::default_>::virtual_type, a>);
 
 static_assert(std::is_same_v<
               select_overrider_virtual_type_aux<
@@ -99,9 +98,9 @@ static_assert(
     std::is_same_v<
         virtual_shared_ptr<Animal>::pointer_type, std::shared_ptr<Animal>>);
 static_assert(std::is_same_v<virtual_shared_ptr<Animal>::element_type, Animal>);
-static_assert(std::is_same_v<
-              decltype(std::declval<virtual_shared_ptr<Animal>>().get()),
-              virtual_ptr<Animal>>);
+static_assert(
+    std::is_same_v<
+        decltype(std::declval<virtual_shared_ptr<Animal>>().get()), Animal*>);
 static_assert(std::is_same_v<
               decltype(*std::declval<virtual_shared_ptr<Animal>>()), Animal&>);
 
@@ -241,7 +240,7 @@ BOOST_AUTO_TEST_CASE(test_final_virtual_shared) {
     boost::openmethod::initialize();
 
     auto ptr = make_virtual_shared<Dog>();
-    BOOST_TEST(ptr._vptr() == policies::default_::static_vptr<Dog>);
+    BOOST_TEST(ptr.vptr() == policies::default_::static_vptr<Dog>);
 }
 
 } // namespace BOOST_OPENMETHOD_GENSYM

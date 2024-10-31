@@ -688,144 +688,269 @@ standard.</p>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="tutorial_hello_world">Hello World</h3>
+<div class="paragraph">
+<p>Consider the following program, intended to demonstrate the basics of virtual
+functions:</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;memory&gt;</span><span class="cp">
 </span>
 <span class="k">struct</span> <span class="nc">Animal</span> <span class="p">{</span>
+    <span class="n">Animal</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name</span><span class="p">)</span> <span class="o">:</span> <span class="n">name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="p">{}</span>
     <span class="k">virtual</span> <span class="o">~</span><span class="n">Animal</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
     <span class="k">virtual</span> <span class="kt">void</span> <span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="k">struct</span> <span class="nc">Cat</span> <span class="o">:</span> <span class="n">Animal</span> <span class="p">{</span>
-    <span class="kt">void</span> <span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">)</span> <span class="k">override</span><span class="p">;</span>
+    <span class="k">using</span> <span class="n">Animal</span><span class="o">::</span><span class="n">Animal</span><span class="p">;</span>
+
+    <span class="kt">void</span> <span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">)</span> <span class="k">override</span> <span class="p">{</span>
+        <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="n">name</span> <span class="o">&lt;&lt;</span> <span class="s">" hisses"</span><span class="p">;</span>
+    <span class="p">}</span>
 <span class="p">};</span>
 
 <span class="k">struct</span> <span class="nc">Dog</span> <span class="o">:</span> <span class="n">Animal</span> <span class="p">{</span>
-    <span class="kt">void</span> <span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">)</span> <span class="k">override</span><span class="p">;</span>
+    <span class="k">using</span> <span class="n">Animal</span><span class="o">::</span><span class="n">Animal</span><span class="p">;</span>
+
+    <span class="kt">void</span> <span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">)</span> <span class="k">override</span> <span class="p">{</span>
+        <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="n">name</span> <span class="o">&lt;&lt;</span> <span class="s">" barks"</span><span class="p">;</span>
+    <span class="p">}</span>
 <span class="p">};</span>
 
-<span class="kt">void</span> <span class="n">Cat</span><span class="o">::</span><span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">)</span> <span class="k">override</span> <span class="p">{</span>
-    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"hiss"</span><span class="p">;</span>
-<span class="p">}</span>
+<span class="k">struct</span> <span class="nc">Bulldog</span> <span class="o">:</span> <span class="n">Dog</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="n">Dog</span><span class="o">::</span><span class="n">Dog</span><span class="p">;</span>
 
-<span class="kt">void</span> <span class="n">Dog</span><span class="o">::</span><span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">)</span> <span class="k">override</span> <span class="p">{</span>
-    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"bark"</span><span class="p">;</span>
-<span class="p">}</span>
+    <span class="kt">void</span> <span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">)</span> <span class="k">override</span> <span class="p">{</span>
+        <span class="n">Dog</span><span class="o">::</span><span class="n">poke</span><span class="p">(</span><span class="n">os</span><span class="p">);</span>
+        <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">" and bites back"</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
 
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="n">a</span><span class="p">(</span><span class="k">new</span> <span class="n">Cat</span><span class="p">(</span><span class="s">"Felix"</span><span class="p">));</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="n">b</span><span class="p">(</span><span class="k">new</span> <span class="n">Dog</span><span class="p">(</span><span class="s">"Snoopy"</span><span class="p">));</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="n">c</span><span class="p">(</span><span class="k">new</span> <span class="n">Bulldog</span><span class="p">(</span><span class="s">"Hector"</span><span class="p">));</span>
 
+    <span class="n">a</span><span class="o">-&gt;</span><span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">);</span> <span class="c1">// prints "Felix hisses"</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">".</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
 
-    <span class="n">Animal</span><span class="o">&amp;&amp;</span> <span class="n">a</span> <span class="o">=</span> <span class="n">Cat</span><span class="p">();</span>
-    <span class="n">Animal</span><span class="o">&amp;&amp;</span> <span class="n">b</span> <span class="o">=</span> <span class="n">Dog</span><span class="p">();</span>
+    <span class="n">b</span><span class="o">-&gt;</span><span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">);</span> <span class="c1">// prints "Snoopy barks"</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">".</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
 
-    <span class="n">a</span><span class="p">.</span><span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">);</span> <span class="c1">// prints "hiss"</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
-
-    <span class="n">a</span><span class="p">.</span><span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">);</span> <span class="c1">// prints "bark"</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+    <span class="n">c</span><span class="o">-&gt;</span><span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">);</span> <span class="c1">// prints "Hector barks and bites back"</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">".</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
 
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>We are going to rewrite it with open-methods.</p>
+</div>
+<div class="paragraph">
+<p>First we remove the virtual functions from the domain classes:</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="c1">// Copyright (c) 2018-2024 Jean-Louis Leroy</span>
-<span class="c1">// Distributed under the Boost Software License, Version 1.0.</span>
-<span class="c1">// See accompanying file LICENSE_1_0.txt</span>
-<span class="c1">// or copy at http://www.boost.org/LICENSE_1_0.txt)</span>
-
-<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
-</span>
-<span class="cp">#include</span> <span class="cpf">&lt;boost/openmethod.hpp&gt;</span><span class="cp">
-#include</span> <span class="cpf">&lt;boost/openmethod/compiler.hpp&gt;</span><span class="cp">
-</span>
-<span class="k">struct</span> <span class="nc">Animal</span> <span class="p">{</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">Animal</span> <span class="p">{</span>
+    <span class="n">Animal</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name</span><span class="p">)</span> <span class="o">:</span> <span class="n">name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">}</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name</span><span class="p">;</span>
     <span class="k">virtual</span> <span class="o">~</span><span class="n">Animal</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="k">struct</span> <span class="nc">Cat</span> <span class="o">:</span> <span class="n">Animal</span> <span class="p">{};</span>
+<span class="k">struct</span> <span class="nc">Cat</span> <span class="o">:</span> <span class="n">Animal</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="n">Animal</span><span class="o">::</span><span class="n">Animal</span><span class="p">;</span>
+<span class="p">};</span>
 
-<span class="k">struct</span> <span class="nc">Dog</span> <span class="o">:</span> <span class="n">Animal</span> <span class="p">{};</span>
+<span class="k">struct</span> <span class="nc">Dog</span> <span class="o">:</span> <span class="n">Animal</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="n">Animal</span><span class="o">::</span><span class="n">Animal</span><span class="p">;</span>
+<span class="p">};</span>
 
-<span class="n">BOOST_OPENMETHOD</span><span class="p">(</span><span class="n">poke</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&amp;&gt;</span><span class="p">),</span> <span class="kt">void</span><span class="p">);</span>
-
-<span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span><span class="n">poke</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Cat</span><span class="o">&amp;</span> <span class="n">cat</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"hiss"</span><span class="p">;</span>
+<span class="k">struct</span> <span class="nc">Bulldog</span> <span class="o">:</span> <span class="n">Dog</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="n">Dog</span><span class="o">::</span><span class="n">Dog</span><span class="p">;</span>
+<span class="p">};</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note that the Animal classes do not depend on iostreams anymore. This is a major
+advantage of open-methods over virtual functions: they make it possible to
+better organize dependencies.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s define <code>poke</code>. First we need to include the library&#8217;s main header (and
+<code>&lt;iostream&gt;</code>). It defines a few macros, and injects a name - <code>virtual_ptr</code> - in
+the global namespace.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;boost/openmethod.hpp&gt;</span><span class="cp">
+</span>
+<span class="n">BOOST_OPENMETHOD</span><span class="p">(</span>
+    <span class="n">poke</span><span class="p">,</span>                                       <span class="c1">// method name</span>
+    <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span><span class="p">),</span>       <span class="c1">// method signature</span>
+    <span class="kt">void</span><span class="p">);</span>                                      <span class="c1">// return type</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This defines a free function called <code>poke</code>, which takes two arguments. The first
+is the <code>ostream</code>. The second argument corresponds to the implicit <code>this</code> pointer
+in the virtual function. It is now an explicit argument. Just like for virtual
+functions, the exact function to execute is selected on the basis of the
+argument&#8217;s <em>dynamic</em> type.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+open-method signatures consist of types only. They may <strong>not</strong> contain
+parameter names.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Unlike virtual functions, there is no such thing as a pure open-method that
+would make a class abstract. It is not possible to determine if an overrider is
+available from looking at just the current translation unit.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s add overriders for <code>Cat</code> and <code>Dog</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span>
+    <span class="n">poke</span><span class="p">,</span>                                       <span class="c1">// method name</span>
+    <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">cat</span><span class="p">),</span>  <span class="c1">// overrider signature</span>
+    <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>                                     <span class="c1">// return type</span>
+    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="n">cat</span><span class="o">-&gt;</span><span class="n">name</span> <span class="o">&lt;&lt;</span> <span class="s">" hisses"</span><span class="p">;</span>               <span class="c1">// overrider body</span>
 <span class="p">}</span>
 
-<span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span><span class="n">poke</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Dog</span><span class="o">&amp;</span> <span class="n">dog</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"bark"</span><span class="p">;</span>
-<span class="p">}</span>
-
+<span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span>
+    <span class="n">poke</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Dog</span><span class="o">&gt;</span> <span class="n">dog</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="n">dog</span><span class="o">-&gt;</span><span class="n">name</span> <span class="o">&lt;&lt;</span> <span class="s">" barks"</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>Bulldog::poke</code> calls the <code>poke</code> it overrides in its <code>Dog</code> base. The equivalent
+for open-methods is to call <code>next</code>, a funcxtion that is available only inside
+the body of an overrider.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span>
+    <span class="n">poke</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Bulldog</span><span class="o">&gt;</span> <span class="n">dog</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">next</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="n">dog</span><span class="p">);</span>                              <span class="c1">// call super-method</span>
+    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">" and bites back"</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>next</code> automatically selects the next most specialized overrider - i.e. the
+overrider that would have been called if this overrider did not exist.</p>
+</div>
+<div class="paragraph">
+<p>All classes involved in open-method calls need to be registered using the
+<code>BOOST_OPENMETHOD_CLASSES</code> macro:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_CLASSES</span><span class="p">(</span><span class="n">Animal</span><span class="p">,</span> <span class="n">Cat</span><span class="p">,</span> <span class="n">Dog</span><span class="p">,</span> <span class="n">Bulldog</span><span class="p">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Classes can be registered incrementally, as long as all the direct bases of a
+class appear in the same call to <code>BOOST_OPENMETHOD_CLASSES</code>. For example,
+<code>Bulldog</code> can be added in a second call, as long as <code>Dog</code> is listed as well:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="c1">// in animals.cpp</span>
 <span class="n">BOOST_OPENMETHOD_CLASSES</span><span class="p">(</span><span class="n">Animal</span><span class="p">,</span> <span class="n">Cat</span><span class="p">,</span> <span class="n">Dog</span><span class="p">);</span>
 
-<span class="c1">// tag::next[]</span>
-<span class="k">struct</span> <span class="nc">Bulldog</span> <span class="o">:</span> <span class="n">Dog</span> <span class="p">{};</span>
+<span class="c1">// in bulldog.cpp</span>
+<span class="n">BOOST_OPENMETHOD_CLASSES</span><span class="p">(</span><span class="n">Dog</span><span class="p">,</span> <span class="n">Bulldog</span><span class="p">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>boost::openmethod::initialize();</code> must be called before any open-method call.
+It builds the dispatch tables. Typically this is done in <code>main</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="c1">// only needed in the file that calls boost::openmethod::initialize()</span>
+<span class="cp">#include</span> <span class="cpf">&lt;boost/openmethod/compiler.hpp&gt;</span><span class="cp">
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">initialize</span><span class="p">();</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Finally, <code>poke</code> is called like an ordinary function (which it is), passing it
+the animals by reference. <code>virtual_ptr</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++">    <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="n">a</span><span class="p">(</span><span class="k">new</span> <span class="nf">Cat</span><span class="p">(</span><span class="s">"Felix"</span><span class="p">));</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="n">b</span><span class="p">(</span><span class="k">new</span> <span class="nf">Dog</span><span class="p">(</span><span class="s">"Snoopy"</span><span class="p">));</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="n">c</span><span class="p">(</span><span class="k">new</span> <span class="nf">Bulldog</span><span class="p">(</span><span class="s">"Hector"</span><span class="p">));</span>
 
-<span class="n">BOOST_OPENMETHOD_CLASSES</span><span class="p">(</span><span class="n">Dog</span><span class="p">,</span> <span class="n">Bulldog</span><span class="p">);</span>
+    <span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">);</span> <span class="c1">// Felix hisses</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">".</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
 
-<span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span><span class="n">poke</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Bulldog</span><span class="o">&amp;</span> <span class="n">dog</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">next</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="n">dog</span><span class="p">);</span> <span class="c1">// prints "bark"</span>
-    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">" and bite"</span><span class="p">;</span>
-<span class="p">}</span>
-<span class="c1">// end::next[]</span>
-
-<span class="n">BOOST_OPENMETHOD</span><span class="p">(</span>
-    <span class="n">encounter</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&amp;&gt;</span><span class="p">,</span> <span class="n">virtual_</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&amp;&gt;</span><span class="p">),</span> <span class="kt">void</span><span class="p">);</span>
+    <span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">b</span><span class="p">);</span> <span class="c1">// Snoopy barks</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">".</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="p">...</span>
+<span class="p">}</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD</span><span class="p">(</span><span class="n">encounter</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span><span class="p">),</span> <span class="kt">void</span><span class="p">);</span>
 
 <span class="c1">// 'encounter' catch-all implementation.</span>
 <span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span>
-    <span class="n">encounter</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Animal</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">Animal</span><span class="o">&amp;</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"ignore"</span><span class="p">;</span>
+    <span class="n">encounter</span><span class="p">,</span>
+    <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="n">a</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="n">b</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="n">a</span><span class="o">-&gt;</span><span class="n">name</span> <span class="o">&lt;&lt;</span> <span class="s">" and "</span> <span class="o">&lt;&lt;</span> <span class="n">b</span><span class="o">-&gt;</span><span class="n">name</span> <span class="o">&lt;&lt;</span> <span class="s">" ignore each other"</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="c1">// Add definitions for specific pairs of animals.</span>
 <span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span>
-    <span class="n">encounter</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Dog</span><span class="o">&amp;</span> <span class="n">dog1</span><span class="p">,</span> <span class="n">Dog</span><span class="o">&amp;</span> <span class="n">dog2</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">encounter</span><span class="p">,</span>
+    <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Dog</span><span class="o">&gt;</span> <span class="n">dog1</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Dog</span><span class="o">&gt;</span> <span class="n">dog2</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"wag tail"</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span>
-    <span class="n">encounter</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Dog</span><span class="o">&amp;</span> <span class="n">dog</span><span class="p">,</span> <span class="n">Cat</span><span class="o">&amp;</span> <span class="n">cat</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"chase"</span><span class="p">;</span>
+    <span class="n">encounter</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Dog</span><span class="o">&gt;</span> <span class="n">dog</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">cat</span><span class="p">),</span>
+    <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="n">dog</span><span class="o">-&gt;</span><span class="n">name</span> <span class="o">&lt;&lt;</span> <span class="s">" chases "</span> <span class="o">&lt;&lt;</span> <span class="n">cat</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span>
-    <span class="n">encounter</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Cat</span><span class="o">&amp;</span> <span class="n">cat</span><span class="p">,</span> <span class="n">Dog</span><span class="o">&amp;</span> <span class="n">dog</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"run"</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">initialize</span><span class="p">();</span>
-
-    <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="n">a</span><span class="p">(</span><span class="k">new</span> <span class="n">Cat</span><span class="p">);</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="n">b</span><span class="p">(</span><span class="k">new</span> <span class="n">Dog</span><span class="p">);</span>
-
-    <span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">);</span> <span class="c1">// prints "hiss"</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
-
-    <span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">b</span><span class="p">);</span> <span class="c1">// prints "bark"</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
-
-    <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="n">c</span><span class="p">(</span><span class="k">new</span> <span class="n">Bulldog</span><span class="p">);</span>
-    <span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">c</span><span class="p">);</span> <span class="c1">// prints "bark and bite"</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
-
-    <span class="n">encounter</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">*</span><span class="n">b</span><span class="p">);</span> <span class="c1">// prints "run"</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
-
-    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="kt">void</span> <span class="nf">call_poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Animal</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">poke</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="n">a</span><span class="p">);</span>
-<span class="p">}</span>
-
-<span class="kt">void</span> <span class="nf">call_encounter</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Animal</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">,</span> <span class="n">Animal</span><span class="o">&amp;</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">encounter</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+    <span class="n">encounter</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">cat</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Dog</span><span class="o">&gt;</span> <span class="n">dog</span><span class="p">),</span>
+    <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="n">cat</span><span class="o">-&gt;</span><span class="n">name</span> <span class="o">&lt;&lt;</span> <span class="s">" runs away from "</span> <span class="o">&lt;&lt;</span> <span class="n">dog</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">;</span>
 <span class="p">}</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -877,13 +1002,10 @@ not exist.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">Bulldog</span> <span class="o">:</span> <span class="n">Dog</span> <span class="p">{};</span>
-
-<span class="n">BOOST_OPENMETHOD_CLASSES</span><span class="p">(</span><span class="n">Dog</span><span class="p">,</span> <span class="n">Bulldog</span><span class="p">);</span>
-
-<span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span><span class="n">poke</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Bulldog</span><span class="o">&amp;</span> <span class="n">dog</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">next</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="n">dog</span><span class="p">);</span> <span class="c1">// prints "bark"</span>
-    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">" and bite"</span><span class="p">;</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span>
+    <span class="n">poke</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Bulldog</span><span class="o">&gt;</span> <span class="n">dog</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">next</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="n">dog</span><span class="p">);</span>                              <span class="c1">// call super-method</span>
+    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">" and bites back"</span><span class="p">;</span>
 <span class="p">}</span></code></pre>
 </div>
 </div>

@@ -107,37 +107,37 @@ BOOST_AUTO_TEST_CASE(test_use_classes) {
     // A
     BOOST_REQUIRE_EQUAL(sstr(a->direct_bases), empty);
     BOOST_REQUIRE_EQUAL(sstr(a->direct_derived), sstr(ab));
-    BOOST_REQUIRE_EQUAL(sstr(a->covariant_classes), sstr(a, ab, c));
+    BOOST_REQUIRE_EQUAL(sstr(a->transitive_derived), sstr(a, ab, c));
 
     // -----------------------------------------------------------------------
     // B
     BOOST_REQUIRE_EQUAL(sstr(b->direct_bases), empty);
     BOOST_REQUIRE_EQUAL(sstr(b->direct_derived), sstr(ab, d));
-    BOOST_REQUIRE_EQUAL(sstr(b->covariant_classes), sstr(b, ab, c, d, e));
+    BOOST_REQUIRE_EQUAL(sstr(b->transitive_derived), sstr(b, ab, c, d, e));
 
     // -----------------------------------------------------------------------
     // AB
     BOOST_REQUIRE_EQUAL(sstr(ab->direct_bases), sstr(a, b));
     BOOST_REQUIRE_EQUAL(sstr(ab->direct_derived), sstr(c));
-    BOOST_REQUIRE_EQUAL(sstr(ab->covariant_classes), sstr(ab, c));
+    BOOST_REQUIRE_EQUAL(sstr(ab->transitive_derived), sstr(ab, c));
 
     // -----------------------------------------------------------------------
     // C
     BOOST_REQUIRE_EQUAL(sstr(c->direct_bases), sstr(ab));
     BOOST_REQUIRE_EQUAL(sstr(c->direct_derived), empty);
-    BOOST_REQUIRE_EQUAL(sstr(c->covariant_classes), sstr(c));
+    BOOST_REQUIRE_EQUAL(sstr(c->transitive_derived), sstr(c));
 
     // -----------------------------------------------------------------------
     // D
     BOOST_REQUIRE_EQUAL(sstr(d->direct_bases), sstr(b));
     BOOST_REQUIRE_EQUAL(sstr(d->direct_derived), sstr(e));
-    BOOST_REQUIRE_EQUAL(sstr(d->covariant_classes), sstr(d, e));
+    BOOST_REQUIRE_EQUAL(sstr(d->transitive_derived), sstr(d, e));
 
     // -----------------------------------------------------------------------
     // E
     BOOST_REQUIRE_EQUAL(sstr(e->direct_bases), sstr(d));
     BOOST_REQUIRE_EQUAL(sstr(e->direct_derived), empty);
-    BOOST_REQUIRE_EQUAL(sstr(e->covariant_classes), sstr(e));
+    BOOST_REQUIRE_EQUAL(sstr(e->transitive_derived), sstr(e));
 }
 
 /// ============================================================================

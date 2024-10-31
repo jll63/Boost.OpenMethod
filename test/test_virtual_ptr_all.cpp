@@ -17,13 +17,6 @@
 using namespace boost::openmethod;
 using boost::mp11::mp_list;
 
-namespace boost {
-namespace openmethod {
-struct direct {};
-struct indirect {};
-} // namespace openmethod
-} // namespace boost
-
 struct Player {
     virtual ~Player() {
     }
@@ -86,15 +79,15 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
     auto virtual_player = vptr_player::final(player);
     BOOST_TEST(&*virtual_player == &player);
     BOOST_TEST(
-        (virtual_player._vptr() == Policy::template static_vptr<Player>));
+        (virtual_player.vptr() == Policy::template static_vptr<Player>));
 
     Bear bear;
     BOOST_TEST((&*vptr_cat::final(bear)) == &bear);
     BOOST_TEST(
-        (vptr_cat::final(bear)._vptr() == Policy::template static_vptr<Bear>));
+        (vptr_cat::final(bear).vptr() == Policy::template static_vptr<Bear>));
 
     BOOST_TEST(
-        (vptr_player(bear)._vptr() == Policy::template static_vptr<Bear>));
+        (vptr_player(bear).vptr() == Policy::template static_vptr<Bear>));
 
     vptr_cat virtual_cat_ptr(bear);
     vptr_player virtual_player_ptr = virtual_cat_ptr;
@@ -115,7 +108,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
     initialize<Policy>();
 
     BOOST_TEST(
-        (virtual_cat_ptr._vptr() == Policy::template static_vptr<Bear>) ==
+        (virtual_cat_ptr.vptr() == Policy::template static_vptr<Bear>) ==
         Policy::template has_facet<policies::indirect_vptr>);
 }
 } // namespace BOOST_OPENMETHOD_GENSYM

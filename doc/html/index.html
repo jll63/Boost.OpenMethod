@@ -573,11 +573,6 @@ pre.rouge .gs {
 <li><a href="#tutorial_multiple_inheritance">Multiple Inheritance</a></li>
 <li><a href="#tutorial_friendship">Friendship</a></li>
 <li><a href="#tutorial_performance">Performance</a></li>
-<li><a href="#tutorial_virtual_ptr">virtual_ptr</a></li>
-</ul>
-</li>
-<li><a href="#tutorial_advanced_features">Advanced Features</a>
-<ul class="sectlevel2">
 <li><a href="#tutorial_core_api">Core API</a></li>
 <li><a href="#tutorial_policies_and_facets">Policies and Facets</a></li>
 <li><a href="#tutorial_error_handling">Error Handling</a></li>
@@ -895,7 +890,7 @@ It builds the dispatch tables. Typically this is done in <code>main</code>:</p>
 </div>
 <div class="paragraph">
 <p><code>poke</code> is called like an ordinary function (which it is). <code>virtual_ptr</code> has a
-conversion constructor that takes a reference to an object. , passing it the
+conversion constructor that takes a reference to an object, passing it the
 animals by reference. <code>virtual_ptr</code></p>
 </div>
 <div class="listingblock">
@@ -1001,11 +996,9 @@ the method&#8217;s arguments to the types required by the overrider.</p>
 <div class="sect2">
 <h3 id="tutorial_friendship">Friendship</h3>
 <div class="paragraph">
-<p>OpenMethod places overriders in specializations of a template named after the
-method.</p>
-</div>
-<div class="paragraph">
-<p>We can grant friendship to</p>
+<p>Overriders are placed in specializations of a template named after the method,
+and declared in the current namespace. Macro <code>BOOST_OPENMETHOD_OVERRIDERS</code>
+returns that name. We can thus grant friendship to all the overriders of <code>poke</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1013,22 +1006,40 @@ method.</p>
 <span class="k">class</span> <span class="nc">Dog</span><span class="p">;</span>
 
 <span class="k">class</span> <span class="nc">Animal</span> <span class="p">{</span>
-  <span class="nl">public:</span>
-    <span class="n">Animal</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name</span><span class="p">)</span> <span class="o">:</span> <span class="n">name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="p">{</span>
-    <span class="p">}</span>
-    <span class="k">virtual</span> <span class="o">~</span><span class="n">Animal</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
-<span class="c1">// ...</span>
-  <span class="k">private</span><span class="o">:</span>
+    <span class="c1">// ...</span>
+  <span class="nl">private:</span>
     <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name</span><span class="p">;</span>
 
-    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="o">...</span><span class="p">&gt;</span> <span class="k">friend</span> <span class="k">class</span> <span class="nf">BOOST_OPENMETHOD_OVERRIDERS</span><span class="p">(</span><span class="n">poke</span><span class="p">);</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="o">...</span><span class="p">&gt;</span> <span class="k">friend</span> <span class="k">class</span> <span class="nc">BOOST_OPENMETHOD_OVERRIDERS</span><span class="p">(</span><span class="n">poke</span><span class="p">);</span>
 <span class="p">};</span></code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Be aware, though, that the overriders of <em>any</em> method called <code>poke</code> - even with
+a different signature - are granted friendship.</p>
+</div>
+<div class="paragraph">
+<p>We can also grant friendship to individual overriders. First we declare the
+template:</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_FORWARD</span><span class="p">(</span><span class="n">poke</span><span class="p">);</span></code></pre>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="o">...</span><span class="p">&gt;</span> <span class="k">struct</span> <span class="nf">BOOST_OPENMETHOD_OVERRIDERS</span><span class="p">(</span><span class="n">poke</span><span class="p">);</span></code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>The overriders of <code>poke</code> are specialized on the type of a function corresponding
+to the overrider&#8217;s return type and parameter list. For example, the overrider
+for <code>Cat</code> is a static member function of:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">BOOST_OPENMETHOD_OVERRIDERS</span><span class="p">(</span><span class="n">poke</span><span class="p">)</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">cat</span><span class="p">)</span><span class="o">&gt;</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We can thus make <code>Animal</code> grant friendship to the <code>Cat</code> and <code>Dog</code>
+specializations:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1036,17 +1047,12 @@ method.</p>
 <span class="k">class</span> <span class="nc">Dog</span><span class="p">;</span>
 
 <span class="k">class</span> <span class="nc">Animal</span> <span class="p">{</span>
-  <span class="nl">public:</span>
-    <span class="n">Animal</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name</span><span class="p">)</span> <span class="o">:</span> <span class="n">name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="p">{</span>
-    <span class="p">}</span>
-    <span class="k">virtual</span> <span class="o">~</span><span class="n">Animal</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
-<span class="c1">// ...</span>
-  <span class="k">private</span><span class="o">:</span>
+    <span class="c1">// ...</span>
+  <span class="nl">private:</span>
     <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name</span><span class="p">;</span>
 
-    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="o">...</span><span class="p">&gt;</span> <span class="k">friend</span> <span class="k">class</span> <span class="nf">BOOST_OPENMETHOD_OVERRIDERS</span><span class="p">(</span><span class="n">poke</span><span class="p">);</span>
-    <span class="c1">// friend class BOOST_OPENMETHOD_OVERRIDERS(poke)&lt;void(std::ostream&amp;, virtual_ptr&lt;Cat&gt;)&gt;;</span>
-    <span class="c1">// friend class BOOST_OPENMETHOD_OVERRIDERS(poke)&lt;void(std::ostream&amp;, virtual_ptr&lt;Dog&gt;)&gt;;</span>
+    <span class="k">friend</span> <span class="k">class</span> <span class="nc">BOOST_OPENMETHOD_OVERRIDERS</span><span class="p">(</span><span class="n">poke</span><span class="p">)</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">;</span>
+    <span class="k">friend</span> <span class="k">class</span> <span class="nc">BOOST_OPENMETHOD_OVERRIDERS</span><span class="p">(</span><span class="n">poke</span><span class="p">)</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Dog</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">;</span>
 <span class="p">};</span></code></pre>
 </div>
 </div>
@@ -1055,158 +1061,102 @@ method.</p>
 <h3 id="tutorial_performance">Performance</h3>
 <div class="paragraph">
 <p>Open methods are almost as fast as ordinary virtual member functions when
-compiled with optimization. For both clang and gcc, dispatching a call to a
-method with one virtual argument takes 15-30% more time than calling the
-equivalent virtual member function (unless the call goes through a virtual base,
-which requires a dynamic cast). If the body of the method does any amount of
-work, the difference is unnoticeable.</p>
+compiled with optimization.</p>
 </div>
 <div class="paragraph">
-<p>Here is the assembly code generated by clang for the <code>poke</code> method compiled for
-the x64 architecture (variable names have been shortened for readability):</p>
+<p>clang compiles the following code:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="asm">	mov	    rax, qword ptr [rsi]
-	mov	    rdx, qword ptr [rip + hash_mult]
-	imul	rdx, qword ptr [rax - 8]
-	movzx	ecx, byte ptr [rip + hash_shift]
-	shr	    rdx, cl
-	mov	    rax, qword ptr [rip + vptrs]
-	mov	    rax, qword ptr [rax + 8*rdx]
-	mov	    rcx, qword ptr [rip + poke::slots_strides]
-	mov	    rax, qword ptr [rax + 8*rcx]
-	jmp	    rax</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The library uses a collision-free hash table to find the dispatch table
-(v-table) from the object&#8217;s native type id (). The hash function is very simple
-and very fast: <code>H(obj) = (&amp;typeid(obj) * M) &gt;&gt; S</code>. The result is the index of
-the open-method v-table in a global array of v-tables.</p>
-</div>
-<div class="paragraph">
-<p>This code performs the following logical steps. When a step contains multiple
-instructions, they can be executed in parallel on modern processors. The exact
-order in which the steps are executed depends on the processor.</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Load the two hash function factors (M and S), a pointer to a hash table,
-the v-table pointer from the object, and the offset of the method in the
-v-table.</p>
-</li>
-<li>
-<p>Multiply the address of the <code>type_info</code> by M.</p>
-</li>
-<li>
-<p>Shift the result right by S.</p>
-</li>
-<li>
-<p>Load the v-table pointer from the global array of v-tables.</p>
-</li>
-<li>
-<p>Load the function pointer from the v-table.</p>
-</li>
-<li>
-<p>Call (or jump to) the function.</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>Analyzing the code with tools like uiCA or llvm-mca shows a throughput of 4
-cycles per dispatch. Comparatively, calling a native virtual functions takes one
-cycle. However, the difference is amortized by the time spent passing the
-arguments and returning from the function; plus, of course, executing the body
-of the function.</p>
-</div>
-<div class="paragraph">
-<p>Micro benchmarks suggest that the overhead of dispatching an open-methods with a
-single virtual argument is between 30% and 50% slower than calling the
-equivalent virtual function, if the body is empty.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="tutorial_virtual_ptr">virtual_ptr</h3>
-<div class="paragraph">
-<p>The seven first instructions in the assembly code above look up the v-table for
-the object. The result will always be the same for the same object. Therefore,
-that pointer can be re-used for subsequent calls.</p>
-</div>
-<div class="paragraph">
-<p><code>virtual_ptr</code> is a fat pointer that contains two pointers: one to the object,
-and the other to the v-table. Incidentally, this is how Rust and Golang
-implement polymorphism.</p>
-</div>
-<div class="paragraph">
-<p><code>virtual_ptr</code>s are used in place of <code>virtual_&lt;&amp;&gt;</code>. They can be passed
-through to overriders, which can re-use them to make further method calls, or
-stored in objects. For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD</span><span class="p">(</span><span class="n">yell</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span><span class="p">),</span> <span class="kt">void</span><span class="p">);</span>
-
-<span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span>
-    <span class="n">yell</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">cat</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"hiss"</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span>
-    <span class="n">yell</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Dog</span><span class="o">&gt;</span> <span class="n">dog</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"bark"</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="n">BOOST_OPENMETHOD</span><span class="p">(</span>
-    <span class="n">encounter</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span><span class="p">),</span> <span class="kt">void</span><span class="p">);</span>
-
-<span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span>
-    <span class="n">encounter</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Dog</span><span class="o">&gt;</span> <span class="n">dog</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">cat</span><span class="p">),</span>
-    <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">yell</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="n">dog</span><span class="p">);</span>
-    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">" and chase"</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span>
-    <span class="n">encounter</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">cat</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Dog</span><span class="o">&gt;</span> <span class="n">dog</span><span class="p">),</span>
-    <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">yell</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="n">cat</span><span class="p">);</span>
-    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">" and run"</span><span class="p">;</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="kt">void</span> <span class="nf">call_poke_via_ref</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Animal</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">poke</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="n">a</span><span class="p">);</span>
 <span class="p">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Calls to <code>yell</code> compile to three instructions:</p>
+<p>&#8230;&#8203;to this on the x64 architecture (variable names have been shortened for
+readability):</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="asm">	mov	rax, qword ptr [rip + yell::slots_strides]
-	mov	rax, qword ptr [rdx + 8*rax]
-	jmp	rax</code></pre>
+<pre class="rouge highlight"><code data-lang="asm">mov	    rax, qword ptr [rsi]
+mov	    rdx, qword ptr [rip + hash_mult]
+imul	rdx, qword ptr [rax - 8]
+movzx	ecx, byte ptr [rip + hash_shift]
+shr	    rdx, cl
+mov	    rax, qword ptr [rip + vptrs]
+mov	    rax, qword ptr [rax + 8*rdx]
+mov	    rcx, qword ptr [rip + poke::slots_strides]
+mov	    rax, qword ptr [rax + 8*rcx]
+jmp	    rax</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>This executes in one cycle, like native virtual function calls.</p>
+<p>llvm-mca estimates a throughput of 4 cycles per dispatch. Comparatively, calling
+a native virtual functions takes one cycle. However, the difference is amortized
+by the time spent passing the arguments and returning from the function; plus,
+of course, executing the body of the function.</p>
 </div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Warning</div>
-</td>
-<td class="content">
-calling <code>initialize</code> invalidates all existing <code>virtual_ptr</code>s.
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>Micro benchmarks suggest that dispatching an open-methods with a single virtual
+argument is between 30% and 50% slower than calling the equivalent virtual
+function, with an empty body and no other arguments.</p>
+</div>
+<div class="paragraph">
+<p>However, <code>call_poke</code> does two things: it constructs a <code>virtual_ptr&lt;Animal&gt;</code> from
+a <code>Animal&amp;</code>; and it calls the method. A call via a <code>virtual_ptr</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>&#8230;&#8203;compiles to only three instructions:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="asm">mov	rax, qword ptr [slots_strides]
+mov	rax, qword ptr [rdx + 8*rax]
+jmp	rax</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These are essentially the last three instructions of the previous assembler
+listing. According to llvm-mca, they take one cycle - the same as a native
+virtual function call.</p>
+</div>
+<div class="paragraph">
+<p><code>virtual_ptr</code>s are passed through method calls, making it possible for
+the overrider&#8217;s body to make further method calls without the need to
+reconstruct a <code>virtual_ptr</code>. They can be stored as object members in place of
+straight pointers. And they can be combined with smart pointers like
+<code>std::shared_ptr</code> and <code>std::unique_ptr</code>.</p>
+</div>
+<div class="paragraph">
+<p>Finally, if we know the exact type of an object - for example, because we just
+instantiated it - we can use the "final" constructs to reduce the cost of
+building a <code>virtual_ptr</code> to just one instruction. For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="kt">void</span> <span class="nf">call_poke_via_final_virtual_ptr</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Cat</span><span class="o">&amp;</span> <span class="n">cat</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">poke</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">final_virtual_ptr</span><span class="p">(</span><span class="n">cat</span><span class="p">));</span>
+<span class="p">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>&#8230;&#8203;compiles to:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="asm">mov	rdx, qword ptr [rip + static_vptr&lt;Cat&gt;]
+mov	rax, qword ptr [rip + slots_strides]
+mov	rax, qword ptr [rdx + 8*rax]
+jmp	rax</code></pre>
 </div>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="tutorial_advanced_features">Advanced Features</h2>
-<div class="sectionbody">
 <div class="sect2">
 <h3 id="tutorial_core_api">Core API</h3>
 <div class="paragraph">

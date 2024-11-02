@@ -44,11 +44,6 @@
                     ARGS));                                                    \
     }
 
-#define BOOST_OPENMETHOD_FORWARD(NAME)                                         \
-    struct BOOST_OPENMETHOD_NAME(NAME);                                        \
-    template<typename...>                                                      \
-    struct BOOST_OPENMETHOD_OVERRIDERS(NAME);
-
 #define BOOST_OPENMETHOD_DETAIL_LOCATE_METHOD(NAME, ARGS)                      \
     template<typename T>                                                       \
     struct boost_openmethod_detail_locate_method_aux;                          \

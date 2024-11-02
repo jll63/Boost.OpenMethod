@@ -9,8 +9,6 @@
 #include <string>
 #include <boost/openmethod.hpp>
 
-#define FRIEND_ALL
-
 #ifdef FRIEND_ALL
 
 // tag::friend_all[]
@@ -20,12 +18,12 @@ class Dog;
 class Animal {
 // end::friend_all[]
 
-// tag::friend_all[]
   public:
     Animal(std::string name) : name(name) {
     }
     virtual ~Animal() = default;
-// ...
+// tag::friend_all[]
+    // ...
   private:
     std::string name;
 
@@ -36,7 +34,7 @@ class Animal {
 #else
 
 // tag::forward[]
-BOOST_OPENMETHOD_FORWARD(poke);
+template<typename...> struct BOOST_OPENMETHOD_OVERRIDERS(poke);
 // end::forward[]
 
 // tag::friend[]
@@ -44,20 +42,19 @@ class Cat;
 class Dog;
 
 class Animal {
+    // ...
+// end::friend[]
   public:
     Animal(std::string name) : name(name) {
     }
     virtual ~Animal() = default;
-// end::friend[]
 
 // tag::friend[]
-// ...
   private:
     std::string name;
 
-    template<typename...> friend class BOOST_OPENMETHOD_OVERRIDERS(poke);
-    // friend class BOOST_OPENMETHOD_OVERRIDERS(poke)<void(std::ostream&, virtual_ptr<Cat>)>;
-    // friend class BOOST_OPENMETHOD_OVERRIDERS(poke)<void(std::ostream&, virtual_ptr<Dog>)>;
+    friend class BOOST_OPENMETHOD_OVERRIDERS(poke)<void(std::ostream&, virtual_ptr<Cat>)>;
+    friend class BOOST_OPENMETHOD_OVERRIDERS(poke)<void(std::ostream&, virtual_ptr<Dog>)>;
 };
 // end::friend[]
 
@@ -76,14 +73,12 @@ class Animal;
 BOOST_OPENMETHOD(poke, (std::ostream&, virtual_ptr<Animal>), void);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    poke,
-    (std::ostream & os, virtual_ptr<Cat> cat),
-    void) {
+    poke, (std::ostream& os, virtual_ptr<Cat> cat), void) {
     os << cat->name << " hisses";
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    poke, (std::ostream & os, virtual_ptr<Dog> dog), void) {
+    poke, (std::ostream& os, virtual_ptr<Dog> dog), void) {
     os << dog->name << " barks";
 }
 

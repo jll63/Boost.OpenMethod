@@ -14,7 +14,7 @@
 // tag::friend_all[]
 
 namespace pets {
-BOOST_OPENMETHOD_FORWARD(poke);
+template<typename...> struct BOOST_OPENMETHOD_OVERRIDERS(poke);
 }
 
 namespace core {
@@ -41,8 +41,8 @@ BOOST_OPENMETHOD(poke, (std::ostream&, virtual_ptr<Animal>), void);
 namespace pets {
 class Cat;
 class Dog;
-BOOST_OPENMETHOD_FORWARD(poke);
-}
+template<typename...> struct BOOST_OPENMETHOD_OVERRIDERS(poke);
+} // namespace pets
 
 namespace core {
 class Animal {
@@ -57,15 +57,19 @@ class Animal {
   private:
     std::string name;
 
-    friend class BOOST_OPENMETHOD_OVERRIDERS(pets::poke)<void(std::ostream&, virtual_ptr<pets::Cat>)>;
-    friend class BOOST_OPENMETHOD_OVERRIDERS(pets::poke)<void(std::ostream&, virtual_ptr<pets::Dog>)>;
+    friend class BOOST_OPENMETHOD_OVERRIDERS(pets::poke)<
+        void(std::ostream&, virtual_ptr<pets::Cat>)>;
+    friend class BOOST_OPENMETHOD_OVERRIDERS(pets::poke)<
+        void(std::ostream&, virtual_ptr<pets::Dog>)>;
 };
-// end::friend[]
 
 BOOST_OPENMETHOD(poke, (std::ostream&, virtual_ptr<Animal>), void);
 }
+
+// end::friend[]
 #endif
 
+// tag::friend[]
 namespace pets {
 
 struct Cat : core::Animal {
@@ -89,7 +93,8 @@ BOOST_OPENMETHOD_OVERRIDE(
 }
 
 BOOST_OPENMETHOD_CLASSES(core::Animal, Cat, Dog);
-}
+} // namespace pets
+// end::friend[]
 
 #include <boost/openmethod/compiler.hpp>
 

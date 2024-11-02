@@ -14,8 +14,6 @@
 #include <boost/preprocessor/tuple/elem.hpp>
 #include <boost/preprocessor/tuple/size.hpp>
 
-#define BOOST_OPENMETHOD_NAME(NAME) boost_openmethod_##NAME
-
 #define BOOST_OPENMETHOD_OVERRIDERS(NAME)                                      \
     BOOST_PP_CAT(BOOST_OPENMETHOD_NAME(NAME), _overriders)
 
@@ -45,6 +43,11 @@
                     BOOST_PP_TUPLE_SIZE(ARGS), BOOST_OPENMETHOD_DETAIL_ALIST,  \
                     ARGS));                                                    \
     }
+
+#define BOOST_OPENMETHOD_FORWARD(NAME)                                         \
+    struct BOOST_OPENMETHOD_NAME(NAME);                                        \
+    template<typename...>                                                      \
+    struct BOOST_OPENMETHOD_OVERRIDERS(NAME);
 
 #define BOOST_OPENMETHOD_DETAIL_LOCATE_METHOD(NAME, ARGS)                      \
     template<typename T>                                                       \
@@ -94,7 +97,6 @@
         ARGS, __VA_ARGS__)
 
 #define BOOST_OPENMETHOD_CLASSES(...)                                          \
-    static ::boost::openmethod::use_classes<__VA_ARGS__>                       \
-        BOOST_OPENMETHOD_GENSYM
+    static ::boost::openmethod::use_classes<__VA_ARGS__> BOOST_OPENMETHOD_GENSYM
 
 #endif

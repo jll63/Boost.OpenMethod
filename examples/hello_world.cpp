@@ -65,7 +65,9 @@ BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog, Bulldog);
 // end::classes[]
 
 // tag::multi[]
-BOOST_OPENMETHOD(encounter, (std::ostream&, virtual_ptr<Animal>, virtual_ptr<Animal>), void);
+BOOST_OPENMETHOD(
+    encounter,
+    (std::ostream&, virtual_ptr<Animal>, virtual_ptr<Animal>), void);
 
 // 'encounter' catch-all implementation.
 BOOST_OPENMETHOD_OVERRIDE(
@@ -118,7 +120,7 @@ int main() {
     std::cout << ".\n";
     // end::call[]
 
-// tag::multi[]
+    // tag::multi_call[]
     encounter(std::cout, *a, *b); // Felix runs away from Snoopy
     std::cout << ".\n";
 
@@ -127,12 +129,12 @@ int main() {
 
     encounter(std::cout, *b, *c); // both wag tails
     std::cout << ".\n";
-// end::multi[]
+    // end::multi_call[]
 
     return 0;
-// tag::main[]
+    // tag::main[]
 }
-    // end::main[]
+// end::main[]
 
 auto make_virtual_ptr(std::ostream& os, Animal& a) {
     return virtual_ptr<Animal>(a);

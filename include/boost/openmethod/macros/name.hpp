@@ -4,5 +4,5 @@
 // or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef BOOST_OPENMETHOD_NAME
-#define BOOST_OPENMETHOD_NAME(NAME) boost_openmethod_##NAME
+#define BOOST_OPENMETHOD_NAME(NAME) NAME##_boost_openmethod
 #endif

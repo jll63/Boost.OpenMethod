@@ -97,7 +97,7 @@ include::{examplesdir}/hello_world.cpp[tag=main,indent=0]
 ----
 
 `poke` is called like an ordinary function (which it is). `virtual_ptr` has a
-conversion constructor that takes a reference to an object. , passing it the
+conversion constructor that takes a reference to an object, passing it the
 animals by reference. `virtual_ptr`
 
 [source,c++]
@@ -110,44 +110,18 @@ and it cannot be re-assigned. The only reason why it is not called `virtual_ref`
 is to save the name in case it becomes possible to overload the dot operator in
 future versions of C++.
 
-A method can have more than one `virtual_ptr` parameter. This is called multiple
-dispatch. For example:
+## Multiple Dispatch
+
+A method can have more than one `virtual_ptr` parameter. For example:
 
 [source,c++]
 ----
 include::{examplesdir}/hello_world.cpp[tag=multi]
 ----
-[source,c++]
-----
-include::{examplesdir}/hello_world.cpp[tag=main]
-----
-
-## Multiple Dispatch
-
-Open-methods can have more than one virtual parameter.
 
 [source,c++]
 ----
-BOOST_OPENMETHOD(
-    encounter, (std::ostream&, virtual_<Animal&>, virtual_<Animal&>), void);
-
-// 'encounter' catch-all implementation.
-BOOST_OPENMETHOD_OVERRIDE(encounter, (std::ostream& os, Animal&, Animal&), void) {
-    os << "ignore";
-}
-
-// Add definitions for specific pairs of animals.
-BOOST_OPENMETHOD_OVERRIDE(encounter, (std::ostream& os, Dog& dog1, Dog& dog2), void) {
-    os << "wag tail";
-}
-
-BOOST_OPENMETHOD_OVERRIDE(encounter, (std::ostream& os, Dog& dog, Cat& cat), void) {
-    os << "chase";
-}
-
-BOOST_OPENMETHOD_OVERRIDE(encounter, (std::ostream& os, Cat& cat, Dog& dog), void) {
-    os << "run";
-}
+include::{examplesdir}/hello_world.cpp[tag=multi_call,indent=0]
 ----
 
 The appropriate overrider is selected using the same process similar to overload
@@ -164,6 +138,28 @@ Virtual inheritance is supported, but it incurs calls to `dynamic_cast` to cast
 the method's arguments to the types required by the overrider.
 
 ## Friendship
+
+OpenMethod places overriders in specializations of a template named after the
+method. Macro `BOOST_OPENMETHOD_OVERRIDERS` returns that name. We can thus grant
+friendship to all the overriders of all the methods that have the same name:
+
+[source,c++]
+----
+include::{examplesdir}/friendship.cpp[tag=friend_all]
+----
+
+Be aware, though, that any method called `poke` -
+
+[source,c++]
+----
+include::{examplesdir}/friendship.cpp[tag=forward]
+----
+
+[source,c++]
+----
+include::{examplesdir}/friendship.cpp[tag=friend]
+----
+
 
 ## Performance
 

@@ -17,6 +17,24 @@ add_executable(hello_world hello_world.cpp)
 target_link_libraries(hello_world Boost::openmethod)
 add_test(NAME hello_world COMMAND hello_world)
 
+add_executable(friendship_all friendship.cpp)
+target_compile_definitions(friendship_all PRIVATE FRIEND_ALL)
+target_link_libraries(friendship_all Boost::openmethod)
+add_test(NAME friendship_add COMMAND friendship_all)
+
+add_executable(friendship friendship.cpp)
+target_link_libraries(friendship Boost::openmethod)
+add_test(NAME friendship COMMAND friendship)
+
+add_executable(friendship_across_namespaces_all friendship_across_namespaces.cpp)
+target_compile_definitions(friendship_across_namespaces_all PRIVATE FRIEND_ALL)
+target_link_libraries(friendship_across_namespaces_all Boost::openmethod)
+add_test(NAME friendship_across_namespaces_all COMMAND friendship_across_namespaces_all)
+
+add_executable(friendship_across_namespaces friendship_across_namespaces.cpp)
+target_link_libraries(friendship_across_namespaces Boost::openmethod)
+add_test(NAME friendship_across_namespaces COMMAND friendship_across_namespaces)
+
 add_executable(virtual_ptr virtual_ptr.cpp)
 target_link_libraries(virtual_ptr Boost::openmethod)
 add_test(NAME virtual_ptr COMMAND virtual_ptr)

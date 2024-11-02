@@ -64,7 +64,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog, Bulldog);
 // end::classes[]
 
-// tag::multi_method[]
+// tag::multi[]
 BOOST_OPENMETHOD(encounter, (std::ostream&, virtual_ptr<Animal>, virtual_ptr<Animal>), void);
 
 // 'encounter' catch-all implementation.
@@ -78,7 +78,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 BOOST_OPENMETHOD_OVERRIDE(
     encounter,
     (std::ostream & os, virtual_ptr<Dog> dog1, virtual_ptr<Dog> dog2), void) {
-    os << "wag tail";
+    os << "both wag tails";
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
@@ -92,17 +92,18 @@ BOOST_OPENMETHOD_OVERRIDE(
     void) {
     os << cat->name << " runs away from " << dog->name;
 }
-// end::multi_method[]
+// end::multi[]
 
-// tag::main1[]
+// tag::main[]
 // only needed in the file that calls boost::openmethod::initialize()
 #include <boost/openmethod/compiler.hpp>
 
 int main() {
     boost::openmethod::initialize();
-// end::main1[]
+    // ...
+    // end::main[]
 
-// tag::main2[]
+    // tag::call[]
     std::unique_ptr<Animal> a(new Cat("Felix"));
     std::unique_ptr<Animal> b(new Dog("Snoopy"));
     std::unique_ptr<Animal> c(new Bulldog("Hector"));
@@ -112,20 +113,26 @@ int main() {
 
     poke(std::cout, *b); // Snoopy barks
     std::cout << ".\n";
-// end::main2[]
 
     poke(std::cout, *c); // Hector barks and bites
     std::cout << ".\n";
     // end::call[]
 
+// tag::multi[]
     encounter(std::cout, *a, *b); // Felix runs away from Snoopy
     std::cout << ".\n";
 
     encounter(std::cout, *b, *a); // Snoopy chases Felix
     std::cout << ".\n";
 
+    encounter(std::cout, *b, *c); // both wag tails
+    std::cout << ".\n";
+// end::multi[]
+
     return 0;
+// tag::main[]
 }
+    // end::main[]
 
 auto make_virtual_ptr(std::ostream& os, Animal& a) {
     return virtual_ptr<Animal>(a);

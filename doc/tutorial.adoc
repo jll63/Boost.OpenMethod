@@ -58,16 +58,14 @@ include::{examplesdir}/hello_world.cpp[tag=overriders]
 ----
 
 `Bulldog::poke` calls the `poke` it overrides in its `Dog` base. The equivalent
-for open-methods is to call `next`, a funcxtion that is available only inside
-the body of an overrider.
+for open-methods is `next`, a function that is available only inside the body of
+an overrider.  It calls the next most specific overrider, i.e. what would have
+been called if the current override did not exist.
 
 [source,c++]
 ----
 include::{examplesdir}/hello_world.cpp[tag=next]
 ----
-
-`next` automatically selects the next most specialized overrider - i.e. the
-overrider that would have been called if this overrider did not exist.
 
 All classes involved in open-method calls need to be registered using the
 `BOOST_OPENMETHOD_CLASSES` macro:
@@ -95,71 +93,33 @@ It builds the dispatch tables. Typically this is done in `main`:
 
 [source,c++]
 ----
-include::{examplesdir}/hello_world.cpp[tag=main1]
+include::{examplesdir}/hello_world.cpp[tag=main,indent=0]
 ----
 
-Finally, `poke` is called like an ordinary function (which it is), passing it
-the animals by reference. `virtual_ptr`
-
-[source,c++]
-----
-include::{examplesdir}/hello_world.cpp[tag=main2]
-...
-}
-----
+`poke` is called like an ordinary function (which it is). `virtual_ptr` has a
+conversion constructor that takes a reference to an object. , passing it the
+animals by reference. `virtual_ptr`
 
 [source,c++]
 ----
 include::{examplesdir}/hello_world.cpp[tag=call]
 ----
 
+NOTE: `virtual_ptr` is more like a reference than a pointer: it cannot be null,
+and it cannot be re-assigned. The only reason why it is not called `virtual_ref`
+is to save the name in case it becomes possible to overload the dot operator in
+future versions of C++.
+
+A method can have more than one `virtual_ptr` parameter. This is called multiple
+dispatch. For example:
 
 [source,c++]
 ----
-include::{examplesdir}/hello_world.cpp[tag=multi_method]
+include::{examplesdir}/hello_world.cpp[tag=multi]
 ----
 [source,c++]
 ----
-include::{examplesdir}/hello_world.cpp[tag=initialize]
-----
-
-
-<1> Include the main OpenMethod header.
-
-<2> Include the compiler header, which provides
-`boost::openmethod::initialize()`. This is typically needed only in the `main`
-translation unit.
-
-<3> `poke` does not appear anywhere in the class definitions.
-
-<4> `poke` is declared outside of the classes. It is a free function. The
-`Animal` argument, implicitly passed as `this` to the virtual function, has
-become an explicit parameter. Its type is decorated with `virtual_`. It is not
-required to be the first parameter. The virtual function's cv-qualifier is now
-applied to the virtual parameter. Note that parameter names are not allowed in
-`BOOST_OPENMETHOD` - only types.
-
-<5> provides overrides for `Cat` and `Dog`.
-
-<6> Classes need to be registered for the library to recognize the inheritance
-relationships.  This can be done incrementally.
-
-<7> builds the dispatch tables.
-
-<8> `poke` is called as a free function. The appropriate override is called,
-depending on the dynamic type if the virtual argument.
-
-## Next
-
-If a virtual function overrides a non-pure virtual function, it typically calls
-the calls the latter as part of its implementation. The equivalent for
-open-methods is a call to special function called `next`. It calls the next most
-specific override, i.e. what would have been called if the current override did
-not exist.
-
-[source,c++]
-----
-include::{examplesdir}/hello_world.cpp[tag=next]
+include::{examplesdir}/hello_world.cpp[tag=main]
 ----
 
 ## Multiple Dispatch

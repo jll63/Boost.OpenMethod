@@ -569,7 +569,6 @@ pre.rouge .gs {
 <li><a href="#tutorial">Tutorial</a>
 <ul class="sectlevel2">
 <li><a href="#tutorial_hello_world">Hello World</a></li>
-<li><a href="#tutorial_next">Next</a></li>
 <li><a href="#tutorial_multiple_dispatch">Multiple Dispatch</a></li>
 <li><a href="#tutorial_multiple_inheritance">Multiple Inheritance</a></li>
 <li><a href="#tutorial_friendship">Friendship</a></li>
@@ -755,7 +754,9 @@ functions:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">Animal</span> <span class="p">{</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp">
+</span>
+<span class="k">struct</span> <span class="nc">Animal</span> <span class="p">{</span>
     <span class="n">Animal</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name</span><span class="p">)</span> <span class="o">:</span> <span class="n">name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="p">{</span>
     <span class="p">}</span>
     <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name</span><span class="p">;</span>
@@ -841,8 +842,9 @@ available from looking at just the current translation unit.</p>
 </div>
 <div class="paragraph">
 <p><code>Bulldog::poke</code> calls the <code>poke</code> it overrides in its <code>Dog</code> base. The equivalent
-for open-methods is to call <code>next</code>, a funcxtion that is available only inside
-the body of an overrider.</p>
+for open-methods is <code>next</code>, a function that is available only inside the body of
+an overrider.  It calls the next most specific overrider, i.e. what would have
+been called if the current override did not exist.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -852,10 +854,6 @@ the body of an overrider.</p>
     <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">" and bites back"</span><span class="p">;</span>
 <span class="p">}</span></code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p><code>next</code> automatically selects the next most specialized overrider - i.e. the
-overrider that would have been called if this overrider did not exist.</p>
 </div>
 <div class="paragraph">
 <p>All classes involved in open-method calls need to be registered using the
@@ -890,12 +888,15 @@ It builds the dispatch tables. Typically this is done in <code>main</code>:</p>
 <span class="cp">#include</span> <span class="cpf">&lt;boost/openmethod/compiler.hpp&gt;</span><span class="cp">
 </span>
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">initialize</span><span class="p">();</span></code></pre>
+    <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">initialize</span><span class="p">();</span>
+    <span class="c1">// ...</span>
+<span class="p">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Finally, <code>poke</code> is called like an ordinary function (which it is), passing it
-the animals by reference. <code>virtual_ptr</code></p>
+<p><code>poke</code> is called like an ordinary function (which it is). <code>virtual_ptr</code> has a
+conversion constructor that takes a reference to an object. , passing it the
+animals by reference. <code>virtual_ptr</code></p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -908,14 +909,29 @@ the animals by reference. <code>virtual_ptr</code></p>
 
     <span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">b</span><span class="p">);</span> <span class="c1">// Snoopy barks</span>
     <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">".</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
-<span class="p">...</span>
-<span class="p">}</span></code></pre>
+
+    <span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">c</span><span class="p">);</span> <span class="c1">// Hector barks and bites</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">".</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span></code></pre>
 </div>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"></code></pre>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<code>virtual_ptr</code> is more like a reference than a pointer: it cannot be null,
+and it cannot be re-assigned. The only reason why it is not called <code>virtual_ref</code>
+is to save the name in case it becomes possible to overload the dot operator in
+future versions of C++.
+</td>
+</tr>
+</table>
 </div>
+<div class="paragraph">
+<p>A method can have more than one <code>virtual_ptr</code> parameter. This is called multiple
+dispatch. For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -932,7 +948,7 @@ the animals by reference. <code>virtual_ptr</code></p>
 <span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span>
     <span class="n">encounter</span><span class="p">,</span>
     <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Dog</span><span class="o">&gt;</span> <span class="n">dog1</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Dog</span><span class="o">&gt;</span> <span class="n">dog2</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"wag tail"</span><span class="p">;</span>
+    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"both wag tails"</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span>
@@ -945,67 +961,22 @@ the animals by reference. <code>virtual_ptr</code></p>
     <span class="n">encounter</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">cat</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Dog</span><span class="o">&gt;</span> <span class="n">dog</span><span class="p">),</span>
     <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="n">cat</span><span class="o">-&gt;</span><span class="n">name</span> <span class="o">&lt;&lt;</span> <span class="s">" runs away from "</span> <span class="o">&lt;&lt;</span> <span class="n">dog</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">;</span>
-<span class="p">}</span></code></pre>
+<span class="p">}</span>
+    <span class="n">encounter</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">*</span><span class="n">b</span><span class="p">);</span> <span class="c1">// Felix runs away from Snoopy</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">".</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+
+    <span class="n">encounter</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">);</span> <span class="c1">// Snoopy chases Felix</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">".</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span></code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"></code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<ol>
-<li>
-<p>Include the main OpenMethod header.</p>
-</li>
-<li>
-<p>Include the compiler header, which provides
-<code>boost::openmethod::initialize()</code>. This is typically needed only in the <code>main</code>
-translation unit.</p>
-</li>
-<li>
-<p><code>poke</code> does not appear anywhere in the class definitions.</p>
-</li>
-<li>
-<p><code>poke</code> is declared outside of the classes. It is a free function. The
-<code>Animal</code> argument, implicitly passed as <code>this</code> to the virtual function, has
-become an explicit parameter. Its type is decorated with <code>virtual_</code>. It is not
-required to be the first parameter. The virtual function&#8217;s cv-qualifier is now
-applied to the virtual parameter. Note that parameter names are not allowed in
-<code>BOOST_OPENMETHOD</code> - only types.</p>
-</li>
-<li>
-<p>provides overrides for <code>Cat</code> and <code>Dog</code>.</p>
-</li>
-<li>
-<p>Classes need to be registered for the library to recognize the inheritance
-relationships.  This can be done incrementally.</p>
-</li>
-<li>
-<p>builds the dispatch tables.</p>
-</li>
-<li>
-<p><code>poke</code> is called as a free function. The appropriate override is called,
-depending on the dynamic type if the virtual argument.</p>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect2">
-<h3 id="tutorial_next">Next</h3>
-<div class="paragraph">
-<p>If a virtual function overrides a non-pure virtual function, it typically calls
-the calls the latter as part of its implementation. The equivalent for
-open-methods is a call to special function called <code>next</code>. It calls the next most
-specific override, i.e. what would have been called if the current override did
-not exist.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span>
-    <span class="n">poke</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Bulldog</span><span class="o">&gt;</span> <span class="n">dog</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">next</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="n">dog</span><span class="p">);</span>                              <span class="c1">// call super-method</span>
-    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">" and bites back"</span><span class="p">;</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="c1">// only needed in the file that calls boost::openmethod::initialize()</span>
+<span class="cp">#include</span> <span class="cpf">&lt;boost/openmethod/compiler.hpp&gt;</span><span class="cp">
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">initialize</span><span class="p">();</span>
+    <span class="c1">// ...</span>
 <span class="p">}</span></code></pre>
 </div>
 </div>

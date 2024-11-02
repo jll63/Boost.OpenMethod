@@ -413,11 +413,11 @@ class virtual_ptr_impl<Type, Policy, false> {
     }
 };
 
-template<class Type, class Policy>
-class virtual_ptr_impl<Type, Policy, true> {
+template<class Class, class Policy>
+class virtual_ptr_impl<Class, Policy, true> {
   public:
-    using traits = detail::virtual_ptr_traits<Type, Policy>;
-    using pointer_type = Type;
+    using traits = detail::virtual_ptr_traits<Class, Policy>;
+    using pointer_type = Class;
     static constexpr bool is_smart = true;
 
     template<class, class>
@@ -436,18 +436,18 @@ class virtual_ptr_impl<Type, Policy, true> {
     using vptr_type = std::conditional_t<
         is_indirect, std::uintptr_t const* const*, std::uintptr_t const*>;
 
-    Type obj;
+    Class obj;
     vptr_type vp;
 
   public:
     using element_type = typename traits::element_type;
 
-    virtual_ptr_impl(const Type& other) {
+    virtual_ptr_impl(const Class& other) {
         obj = other;
         vp = Policy::dynamic_vptr(*other);
     }
 
-    virtual_ptr_impl(Type&& other) {
+    virtual_ptr_impl(Class&& other) {
         obj = std::move(other);
         vp = Policy::dynamic_vptr(*obj);
     }
@@ -466,7 +466,7 @@ class virtual_ptr_impl<Type, Policy, true> {
         return obj.get();
     }
 
-    auto operator->() const -> const Type& {
+    auto operator->() const -> const Class& {
         return *obj;
     }
 
@@ -474,13 +474,13 @@ class virtual_ptr_impl<Type, Policy, true> {
         return *obj;
     }
 
-    auto inferior() const -> const Type& {
+    auto inferior() const -> const Class& {
         return obj;
     }
 
     template<typename Other>
     auto cast() const {
-        return virtual_ptr_traits<Type, Policy>::template cast<Other>(obj);
+        return virtual_ptr_traits<Class, Policy>::template cast<Other>(obj);
     }
 
     auto vptr() const {
@@ -492,20 +492,20 @@ class virtual_ptr_impl<Type, Policy, true> {
     }
 
   protected:
-    template<typename Box>
-    virtual_ptr_impl(Box&& box, vptr_type vp)
-        : obj(std::forward<Box>(box)), vp(vp) {
+    template<typename Arg>
+    virtual_ptr_impl(Arg&& obj, vptr_type vp)
+        : obj(std::forward<Arg>(obj)), vp(vp) {
     }
 };
 
 } // namespace detail
 
-template<class Type, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
-class virtual_ptr : public detail::virtual_ptr_impl<Type, Policy> {
-    using impl = detail::virtual_ptr_impl<Type, Policy>;
+template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
+class virtual_ptr : public detail::virtual_ptr_impl<Class, Policy> {
+    using impl = detail::virtual_ptr_impl<Class, Policy>;
 
   public:
-    using detail::virtual_ptr_impl<Type, Policy>::virtual_ptr_impl;
+    using detail::virtual_ptr_impl<Class, Policy>::virtual_ptr_impl;
 
     template<class, class, bool>
     friend class detail::virtual_ptr_impl;
@@ -647,8 +647,8 @@ class method<Name(Parameters...), ReturnType, Policy>
     using VirtualParameters =
         typename detail::virtual_types<DeclaredParameters>;
     using Signature = auto(Parameters...) -> ReturnType;
-    using FunctionPointer = auto(*)(detail::remove_virtual<Parameters>...)
-                                -> ReturnType;
+    using FunctionPointer = auto (*)(detail::remove_virtual<Parameters>...)
+        -> ReturnType;
     static constexpr auto Arity = boost::mp11::mp_count_if<
         detail::types<Parameters...>, detail::is_virtual>::value;
 

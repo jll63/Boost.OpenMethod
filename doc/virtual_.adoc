@@ -10,7 +10,7 @@ Indicate that a formal parameter of an open-method is virtual.
 namespace boost {
 namespace openmethod {
 
-template<typename T>
+template<typename Class>
 struct virtual_;
 
 }}
@@ -23,7 +23,7 @@ struct virtual_;
 [cols="1,1"]
 |===
 
-| _T_
+| _Class_
 | The type of the virtual parameter.
 
 |===
@@ -35,15 +35,11 @@ used to determine the appropriate overrider to call.
 The signature of `method::fn` is the same as the signature passed to the
 `method` template, without the `virtual_` decorators.
 
-`T` is a reference, in the general sense, to a class registered with the method's policy. The following examples are all valid:
+`T` is a reference, in the general sense, to a class registered with the method's policy. The following examples are valid (`Class` may be `const`):
 
 * `virtual_<Class&>`
-* `virtual_<Class&&>`
-* `virtual_<const Class&>`
 * `virtual_<std::shared_ptr<Class>>`
-* `virtual_<std::shared_ptr<const Class>>`
 * `virtual_<const std::shared_ptr<Class>&>`
-* `virtual_<const std::shared_ptr<const Class>&>`
 
 Passing a `const std::shared_ptr<Class>&` as a virtual argument via a may
 necessitate the creation of a temporary copy of the smart pointer.

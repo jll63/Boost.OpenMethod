@@ -136,9 +136,11 @@ int main() {
 }
 // end::main[]
 
+// tag::call_poke_via_virtual_ptr[]
 void call_poke_via_virtual_ptr(std::ostream& os, virtual_ptr<Animal> a) {
     poke(os, a);
 }
+// end::call_poke_via_virtual_ptr[]
 
 // tag::call_poke_via_final_virtual_ptr[]
 void call_poke_via_final_virtual_ptr(std::ostream& os, Cat& cat) {

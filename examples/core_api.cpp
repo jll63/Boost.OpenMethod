@@ -7,8 +7,6 @@
 
 #include <boost/openmethod/compiler.hpp>
 #include <boost/openmethod/core.hpp>
-#include <boost/openmethod/macros/name.hpp>
-#include <boost/openmethod/macros/register.hpp>
 
 struct Animal {
     virtual ~Animal() = default;
@@ -22,28 +20,41 @@ struct Bulldog : Dog {};
 
 using namespace boost::openmethod;
 
-class poke_openmethod;
+// tag::method[]
 
-using poke = method<poke_openmethod(std::ostream&, virtual_<Animal&>), void>;
+#include <boost/openmethod/macros/name.hpp>
 
+class BOOST_OPENMETHOD_NAME(pet);
+
+using poke = method<BOOST_OPENMETHOD_NAME(pet)(std::ostream&, virtual_<Animal&>), void>;
+// end::method[]
+
+// tag::poke_cat[]
 auto poke_cat(std::ostream& os, Cat& cat) {
     os << "hiss";
 }
 
 static poke::override<poke_cat> override_poke_cat;
+// end::poke_cat[]
+
+// tag::poke_dog[]
+#include <boost/openmethod/macros/register.hpp>
 
 auto poke_dog(std::ostream& os, Dog& dog) {
     os << "bark";
 }
 
 BOOST_OPENMETHOD_REGISTER(poke::override<poke_dog>);
+// end::poke_dog[]
 
+// tag::poke_bulldog[]
 auto poke_bulldog(std::ostream& os, Bulldog& dog) -> void {
     poke::next<poke_bulldog>(os, dog);
     os << " and bite";
 }
 
 BOOST_OPENMETHOD_REGISTER(poke::override<poke_bulldog>);
+// end::poke_bulldog[]
 
 class BOOST_OPENMETHOD_NAME(pet);
 
@@ -60,13 +71,17 @@ using pet =
 
 BOOST_OPENMETHOD_REGISTER(pet::override<pet_cat, pet_dog>);
 
+// tag::use_classes[]
 BOOST_OPENMETHOD_REGISTER(use_classes<Animal, Cat, Dog, Bulldog>);
+// end::use_classes[]
 
+// tag::main[]
 int main() {
     boost::openmethod::initialize();
 
     std::unique_ptr<Animal> a(new Cat);
     std::unique_ptr<Animal> b(new Dog);
+    std::unique_ptr<Animal> c(new Bulldog);
 
     poke::fn(std::cout, *a); // prints "hiss"
     std::cout << "\n";
@@ -74,12 +89,14 @@ int main() {
     poke::fn(std::cout, *b); // prints "bark"
     std::cout << "\n";
 
-    std::unique_ptr<Animal> c(new Bulldog);
     poke::fn(std::cout, *c); // prints "bark and bite"
     std::cout << "\n";
+// end::main[]
 
     pet::fn(std::cout, *a); // prints "purr"
     std::cout << "\n";
+// tag::main[]
 
     return 0;
+// end::main[]
 }

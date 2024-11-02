@@ -296,14 +296,10 @@ from other methods with the same signature. The exact name does not really
 matter, and the class needs not be defined, only declared. Inventing a class
 name can get tedious, so OpenMethod provides a macro for that:
 
+
 [source,c++]
 ----
-#include <boost/openmethod/macros/name.hpp>
-
-class BOOST_OPENMETHOD_NAME(pet);
-
-using pet = method<
-    BOOST_OPENMETHOD_NAME(pet)(std::ostream&, virtual_<Animal&>), void>;
+include::{examplesdir}/core_api.cpp[tag=method]
 ----
 
 NOTE: BOOST_OPENMETHOD and associated macros use `BOOST_OPENMETHOD_NAME` in
@@ -322,11 +318,7 @@ Overriders are ordinary functions, added to a method using the nested template
 
 [source,c++]
 ----
-auto poke_cat(std::ostream& os, Cat& cat, void) {
-    os << "hiss";
-}
-
-static poke::override<poke_cat> override_poke_cat;
+include::{examplesdir}/core_api.cpp[tag=poke_cat]
 ----
 
 NOTE: `override` can register more than one overrider.
@@ -336,26 +328,14 @@ OpenMethod provides a small convenience macro:
 
 [source,c++]
 ----
-#include <boost/openmethod/macros/register.hpp>
-
-auto poke_dog(std::ostream& os, Dog& dog, void) {
-    os << "bark";
-}
-
-BOOST_OPENMETHOD_REGISTER(poke::override<poke_dog>);
+include::{examplesdir}/core_api.cpp[tag=poke_dog]
 ----
 
 `next` is available from the method's nested `next` template:
 
 [source,c++]
 ----
-
-auto poke_bulldog(std::ostream& os, Bulldog& dog, void) -> void {
-    poke::next<poke_bulldog>(os, dog);
-    os << " and bite";
-}
-
-BOOST_OPENMETHOD_REGISTER(poke::override<poke_bulldog>);
+include::{examplesdir}/core_api.cpp[tag=poke_bulldog]
 ----
 
 NOTE: Since the function uses itself as a template argument in its body, its
@@ -368,26 +348,16 @@ keep in mind that, in a real program, a translation unit is not necessarily
 aware of the overriders added elsewhere - especially in presence of dynamic
 loading.
 
-[source,c++]
-----
-BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog, Bulldog);
-----
+`use_classes`
 
 [source,c++]
 ----
+include::{examplesdir}/core_api.cpp[tag=use_classes]
+----
 
-
-int main() {
-    boost::openmethod::initialize();
-
-    Animal&& a = Cat();
-    Animal&& b = Dog();
-
-    poke(std::cout, a); // prints "hiss"
-    poke(std::cout, b); // prints "bark"
-
-    return 0;
-}
+[source,c++]
+----
+include::{examplesdir}/core_api.cpp[tag=main]
 ----
 
 ## Policies and Facets

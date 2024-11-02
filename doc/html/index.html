@@ -1108,7 +1108,9 @@ a <code>Animal&amp;</code>; and it calls the method. A call via a <code>virtual_
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"></code></pre>
+<pre class="rouge highlight"><code data-lang="c++"><span class="kt">void</span> <span class="nf">call_poke_via_virtual_ptr</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">poke</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="n">a</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1194,8 +1196,7 @@ name can get tedious, so OpenMethod provides a macro for that:</p>
 </span>
 <span class="k">class</span> <span class="nf">BOOST_OPENMETHOD_NAME</span><span class="p">(</span><span class="n">pet</span><span class="p">);</span>
 
-<span class="k">using</span> <span class="n">pet</span> <span class="o">=</span> <span class="n">method</span><span class="o">&lt;</span>
-    <span class="n">BOOST_OPENMETHOD_NAME</span><span class="p">(</span><span class="n">pet</span><span class="p">)(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&amp;&gt;</span><span class="p">),</span> <span class="kt">void</span><span class="o">&gt;</span><span class="p">;</span></code></pre>
+<span class="k">using</span> <span class="n">poke</span> <span class="o">=</span> <span class="n">method</span><span class="o">&lt;</span><span class="n">BOOST_OPENMETHOD_NAME</span><span class="p">(</span><span class="n">pet</span><span class="p">)(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&amp;&gt;</span><span class="p">),</span> <span class="kt">void</span><span class="o">&gt;</span><span class="p">;</span></code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -1226,7 +1227,7 @@ styles.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">auto</span> <span class="nf">poke_cat</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Cat</span><span class="o">&amp;</span> <span class="n">cat</span><span class="p">,</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">auto</span> <span class="nf">poke_cat</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Cat</span><span class="o">&amp;</span> <span class="n">cat</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"hiss"</span><span class="p">;</span>
 <span class="p">}</span>
 
@@ -1253,7 +1254,7 @@ OpenMethod provides a small convenience macro:</p>
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="cp">#include</span> <span class="cpf">&lt;boost/openmethod/macros/register.hpp&gt;</span><span class="cp">
 </span>
-<span class="k">auto</span> <span class="nf">poke_dog</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Dog</span><span class="o">&amp;</span> <span class="n">dog</span><span class="p">,</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">auto</span> <span class="nf">poke_dog</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Dog</span><span class="o">&amp;</span> <span class="n">dog</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"bark"</span><span class="p">;</span>
 <span class="p">}</span>
 
@@ -1265,7 +1266,7 @@ OpenMethod provides a small convenience macro:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">auto</span> <span class="nf">poke_bulldog</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Bulldog</span><span class="o">&amp;</span> <span class="n">dog</span><span class="p">,</span> <span class="kt">void</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span> <span class="p">{</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">auto</span> <span class="nf">poke_bulldog</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Bulldog</span><span class="o">&amp;</span> <span class="n">dog</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span> <span class="p">{</span>
     <span class="n">poke</span><span class="o">::</span><span class="n">next</span><span class="o">&lt;</span><span class="n">poke_bulldog</span><span class="o">&gt;</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="n">dog</span><span class="p">);</span>
     <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">" and bite"</span><span class="p">;</span>
 <span class="p">}</span>
@@ -1293,9 +1294,12 @@ keep in mind that, in a real program, a translation unit is not necessarily
 aware of the overriders added elsewhere - especially in presence of dynamic
 loading.</p>
 </div>
+<div class="paragraph">
+<p><code>use_classes</code></p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_CLASSES</span><span class="p">(</span><span class="n">Animal</span><span class="p">,</span> <span class="n">Cat</span><span class="p">,</span> <span class="n">Dog</span><span class="p">,</span> <span class="n">Bulldog</span><span class="p">);</span></code></pre>
+<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_REGISTER</span><span class="p">(</span><span class="n">use_classes</span><span class="o">&lt;</span><span class="n">Animal</span><span class="p">,</span> <span class="n">Cat</span><span class="p">,</span> <span class="n">Dog</span><span class="p">,</span> <span class="n">Bulldog</span><span class="o">&gt;</span><span class="p">);</span></code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -1303,14 +1307,20 @@ loading.</p>
 <pre class="rouge highlight"><code data-lang="c++"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">initialize</span><span class="p">();</span>
 
-    <span class="n">Animal</span><span class="o">&amp;&amp;</span> <span class="n">a</span> <span class="o">=</span> <span class="n">Cat</span><span class="p">();</span>
-    <span class="n">Animal</span><span class="o">&amp;&amp;</span> <span class="n">b</span> <span class="o">=</span> <span class="n">Dog</span><span class="p">();</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="n">a</span><span class="p">(</span><span class="k">new</span> <span class="n">Cat</span><span class="p">);</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="n">b</span><span class="p">(</span><span class="k">new</span> <span class="n">Dog</span><span class="p">);</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="n">c</span><span class="p">(</span><span class="k">new</span> <span class="n">Bulldog</span><span class="p">);</span>
 
-    <span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="n">a</span><span class="p">);</span> <span class="c1">// prints "hiss"</span>
-    <span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span> <span class="c1">// prints "bark"</span>
+    <span class="n">poke</span><span class="o">::</span><span class="n">fn</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">);</span> <span class="c1">// prints "hiss"</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
 
-    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span></code></pre>
+    <span class="n">poke</span><span class="o">::</span><span class="n">fn</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">b</span><span class="p">);</span> <span class="c1">// prints "bark"</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+
+    <span class="n">poke</span><span class="o">::</span><span class="n">fn</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">c</span><span class="p">);</span> <span class="c1">// prints "bark and bite"</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span></code></pre>
 </div>
 </div>
 </div>
@@ -2127,7 +2137,7 @@ if it is a polymorphic type, covariant with the method&#8217;s return type.</p>
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
 <span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
 
-<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Class</span><span class="p">&gt;</span>
 <span class="k">struct</span> <span class="nc">virtual_</span><span class="p">;</span>
 
 <span class="p">}}</span></code></pre>
@@ -2146,7 +2156,7 @@ if it is a polymorphic type, covariant with the method&#8217;s return type.</p>
 </colgroup>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>T</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Class</em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The type of the virtual parameter.</p></td>
 </tr>
 </tbody>
@@ -2161,7 +2171,7 @@ used to determine the appropriate overrider to call.</p>
 <code>method</code> template, without the <code>virtual_</code> decorators.</p>
 </div>
 <div class="paragraph">
-<p><code>T</code> is a reference, in the general sense, to a class registered with the method&#8217;s policy. The following examples are all valid:</p>
+<p><code>T</code> is a reference, in the general sense, to a class registered with the method&#8217;s policy. The following examples are valid (<code>Class</code> may be <code>const</code>):</p>
 </div>
 <div class="ulist">
 <ul>
@@ -2169,22 +2179,10 @@ used to determine the appropriate overrider to call.</p>
 <p><code>virtual_&lt;Class&amp;&gt;</code></p>
 </li>
 <li>
-<p><code>virtual_&lt;Class&amp;&amp;&gt;</code></p>
-</li>
-<li>
-<p><code>virtual_&lt;const Class&amp;&gt;</code></p>
-</li>
-<li>
 <p><code>virtual_&lt;std::shared_ptr&lt;Class&gt;&gt;</code></p>
 </li>
 <li>
-<p><code>virtual_&lt;std::shared_ptr&lt;const Class&gt;&gt;</code></p>
-</li>
-<li>
 <p><code>virtual_&lt;const std::shared_ptr&lt;Class&gt;&amp;&gt;</code></p>
-</li>
-<li>
-<p><code>virtual_&lt;const std::shared_ptr&lt;const Class&gt;&amp;&gt;</code></p>
 </li>
 </ul>
 </div>

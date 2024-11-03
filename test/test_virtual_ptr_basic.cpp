@@ -5,7 +5,6 @@
 
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/compiler.hpp>
-#include <boost/openmethod/virtual_shared_ptr.hpp>
 
 #include <iostream>
 #include <memory>

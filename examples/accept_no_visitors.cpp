@@ -8,7 +8,6 @@
 #include <string>
 
 #include <boost/openmethod.hpp>
-#include <boost/openmethod/virtual_shared_ptr.hpp>
 #include <boost/openmethod/compiler.hpp>
 
 using boost::openmethod::virtual_shared_ptr;

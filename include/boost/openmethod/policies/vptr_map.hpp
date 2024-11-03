@@ -17,7 +17,7 @@ namespace policies {
 
 template<
     class Policy,
-    class Map = std::unordered_map<type_id, const std::uintptr_t*>>
+    class Map = std::unordered_map<type_id, vptr_type>>
 struct vptr_map : virtual extern_vptr {
     static Map vptrs;
 

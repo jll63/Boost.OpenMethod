@@ -15,7 +15,7 @@ namespace policies {
 
 template<class Policy>
 struct vptr_vector : virtual extern_vptr {
-    static std::vector<const std::uintptr_t*> vptrs;
+    static std::vector<vptr_type> vptrs;
 
     template<typename ForwardIterator>
     static auto register_vptrs(ForwardIterator first, ForwardIterator last)
@@ -65,7 +65,7 @@ struct vptr_vector : virtual extern_vptr {
     }
 
     template<class Class>
-    static auto dynamic_vptr(const Class& arg) -> const std::uintptr_t* {
+    static auto dynamic_vptr(const Class& arg) -> vptr_type {
         auto index = Policy::dynamic_type(arg);
 
         if constexpr (Policy::template has_facet<type_hash>) {
@@ -77,7 +77,7 @@ struct vptr_vector : virtual extern_vptr {
 };
 
 template<class Policy>
-std::vector<const std::uintptr_t*> vptr_vector<Policy>::vptrs;
+std::vector<vptr_type> vptr_vector<Policy>::vptrs;
 
 } // namespace policies
 } // namespace openmethod

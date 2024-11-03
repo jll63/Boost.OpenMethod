@@ -19,6 +19,9 @@ struct virtual_;
 template<class Class, class Policy>
 struct virtual_ptr;
 
+using vptr_type = const std::uintptr_t*;
+using indirect_vptr_type = const vptr_type*;
+
 namespace detail {
 
 template<typename... Types>

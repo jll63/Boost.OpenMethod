@@ -403,7 +403,7 @@ class virtual_ptr_impl<Class, Policy, true> {
         Policy::template has_facet<policies::indirect_vptr>;
 
     using vptr_type = std::conditional_t<
-        is_indirect, std::uintptr_t const* const*, std::uintptr_t const*>;
+        is_indirect, indirect_vptr_type, openmethod::vptr_type>;
 
     Class obj;
     vptr_type vp;
@@ -637,7 +637,7 @@ class method<Name(Parameters...), ReturnType, Policy>
     // the stride in the second dimension, etc.
 
     template<typename ArgType>
-    auto vptr(const ArgType& arg) const -> const std::uintptr_t*;
+    auto vptr(const ArgType& arg) const -> vptr_type;
 
     template<class Error>
     auto check_static_offset(std::size_t actual, std::size_t expected) const
@@ -656,7 +656,7 @@ class method<Name(Parameters...), ReturnType, Policy>
         std::size_t VirtualArg, typename MethodArgList, typename ArgType,
         typename... MoreArgTypes>
     auto resolve_multi_next(
-        const std::uintptr_t* dispatch, const ArgType& arg,
+        vptr_type dispatch, const ArgType& arg,
         const MoreArgTypes&... more_args) const -> std::uintptr_t;
 
     template<typename... ArgType>
@@ -836,7 +836,7 @@ template<
 template<typename ArgType>
 BOOST_FORCEINLINE auto
 method<Name(Parameters...), ReturnType, Policy>::vptr(const ArgType& arg) const
-    -> const std::uintptr_t* {
+    -> vptr_type {
     if constexpr (detail::is_virtual_ptr<ArgType>) {
         return arg.vptr();
         // No need to check the method pointer: this was done when the
@@ -858,7 +858,7 @@ method<Name(Parameters...), ReturnType, Policy>::resolve_uni(
     using namespace boost::mp11;
 
     if constexpr (is_virtual<mp_first<MethodArgList>>::value) {
-        const std::uintptr_t* vtbl;
+        vptr_type vtbl;
 
         if constexpr (is_virtual_ptr<ArgType>) {
             vtbl = arg.vptr();
@@ -893,7 +893,7 @@ method<Name(Parameters...), ReturnType, Policy>::resolve_multi_first(
     using namespace boost::mp11;
 
     if constexpr (is_virtual<mp_first<MethodArgList>>::value) {
-        const std::uintptr_t* vtbl;
+        vptr_type vtbl;
 
         if constexpr (is_virtual_ptr<ArgType>) {
             vtbl = arg.vptr();
@@ -918,7 +918,7 @@ method<Name(Parameters...), ReturnType, Policy>::resolve_multi_first(
         // 1, there is no need to store it. Also, the method table
         // contains a pointer into the multi-dimensional dispatch table,
         // already resolved to the appropriate group.
-        auto dispatch = reinterpret_cast<const std::uintptr_t*>(vtbl[slot]);
+        auto dispatch = reinterpret_cast<vptr_type>(vtbl[slot]);
         return resolve_multi_next<1, mp_rest<MethodArgList>, MoreArgTypes...>(
             dispatch, more_args...);
     } else {
@@ -934,14 +934,14 @@ template<
     typename... MoreArgTypes>
 BOOST_FORCEINLINE auto
 method<Name(Parameters...), ReturnType, Policy>::resolve_multi_next(
-    const std::uintptr_t* dispatch, const ArgType& arg,
+    vptr_type dispatch, const ArgType& arg,
     const MoreArgTypes&... more_args) const -> std::uintptr_t {
 
     using namespace detail;
     using namespace boost::mp11;
 
     if constexpr (is_virtual<mp_first<MethodArgList>>::value) {
-        const std::uintptr_t* vtbl;
+        vptr_type vtbl;
 
         if constexpr (is_virtual_ptr<ArgType>) {
             vtbl = arg.vptr();

@@ -106,7 +106,7 @@ struct generic_compiler {
                        other) != transitive_derived.end();
         }
 
-        auto vptr() const -> const std::uintptr_t* {
+        auto vptr() const -> vptr_type {
             return *static_vptr;
         }
 
@@ -162,7 +162,7 @@ struct generic_compiler {
         // following two are dummies, when converting to a function pointer, we will
         // get the corresponding pointer from method_info
         overrider not_implemented;
-        const std::uintptr_t* gv_dispatch_table = nullptr;
+        vptr_type gv_dispatch_table = nullptr;
         auto arity() const {
             return vp.size();
         }

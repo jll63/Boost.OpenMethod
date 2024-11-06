@@ -94,9 +94,6 @@ static_assert(std::is_same_v<
 static_assert(
     std::is_same_v<decltype(*std::declval<virtual_ptr<Animal>>()), Animal&>);
 
-static_assert(
-    std::is_same_v<
-        virtual_shared_ptr<Animal>::pointer_type, std::shared_ptr<Animal>>);
 static_assert(std::is_same_v<virtual_shared_ptr<Animal>::element_type, Animal>);
 static_assert(
     std::is_same_v<

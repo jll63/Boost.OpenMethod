@@ -123,6 +123,8 @@ BOOST_AUTO_TEST_CASE(test_virtual_shared_ptr) {
             BOOST_TEST(ptr.inferior().get() == nullptr);
             BOOST_TEST(move_const_ptr.inferior().get() == dog.get());
         }
+
+        { virtual_shared_ptr<Animal> ptr(dog); }
     }
 
     {

@@ -96,7 +96,7 @@ struct release;
 // -----------------------------------------------------------------------------
 // basic_domain
 
-template<class Name>
+template<class Policy>
 struct basic_domain {
     static detail::class_catalog classes;
     static detail::method_catalog methods;
@@ -105,18 +105,18 @@ struct basic_domain {
     static std::vector<std::uintptr_t> dispatch_data;
 };
 
-template<class Name>
-detail::class_catalog basic_domain<Name>::classes;
+template<class Policy>
+detail::class_catalog basic_domain<Policy>::classes;
 
-template<class Name>
-detail::method_catalog basic_domain<Name>::methods;
+template<class Policy>
+detail::method_catalog basic_domain<Policy>::methods;
 
-template<class Name>
+template<class Policy>
 template<class Class>
-std::uintptr_t* basic_domain<Name>::static_vptr;
+std::uintptr_t* basic_domain<Policy>::static_vptr;
 
-template<class Name>
-std::vector<std::uintptr_t> basic_domain<Name>::dispatch_data;
+template<class Policy>
+std::vector<std::uintptr_t> basic_domain<Policy>::dispatch_data;
 
 template<typename Policy, class Facet>
 struct rebind_facet {

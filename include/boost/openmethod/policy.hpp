@@ -28,7 +28,7 @@ struct release : basic_policy<
                      release, std_rtti, fast_perfect_hash<release>,
                      vptr_vector<release>, vectored_error_handler<release>> {};
 
-struct debug : release::fork<debug>::add<
+struct debug : release::add<
                    runtime_checks, basic_error_output<debug>,
                    basic_trace_output<debug>> {};
 

@@ -597,6 +597,13 @@ template<class Policy, typename Type, class OtherPolicy>
 struct is_policy_compatible<Policy, const virtual_ptr<Type, OtherPolicy>&>
     : std::is_same<Policy, OtherPolicy> {};
 
+template<class Class, typename = void>
+struct has_vptr : std::false_type {};
+
+template<class Class>
+struct has_vptr<Class, std::void_t<decltype(Class::boost_openmethod_vptr)>>
+    : std::true_type {};
+
 } // namespace detail
 
 template<
@@ -841,6 +848,12 @@ method<Name(Parameters...), ReturnType, Policy>::vptr(const ArgType& arg) const
         return arg.vptr();
         // No need to check the method pointer: this was done when the
         // virtual_ptr was created.
+    } else if constexpr (detail::has_vptr<ArgType>::value) {
+        if constexpr (Policy::template has_facet<policies::indirect_vptr>) {
+            return *arg.boost_openmethod_vptr;
+        } else {
+            return arg.boost_openmethod_vptr;
+        }
     } else {
         return Policy::dynamic_vptr(arg);
     }

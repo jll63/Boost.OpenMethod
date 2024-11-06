@@ -430,14 +430,11 @@ is a tweak of `policies::release`:
 
 [source,c++]
 ----
-struct debug : release::fork<debug>::add<
-                   runtime_checks, basic_error_output<debug>,
-                   basic_trace_output<debug>> {};
+struct debug : release::add<
+    runtime_checks, basic_error_output<debug>,
+    basic_trace_output<debug>> {};
 ----
 
-`fork` creates a new policy from an existing one, substituting the new policy
-to the original one in all the CRTP classes. `add` adds three facets, two of
-which have state.
 
 `boost::openmethod::policies::default_` is an alias to the `release` or the
 `debug` policy, depending on the value of preprocessor symbols `NDEBUG`. The

@@ -4,25 +4,15 @@
 :toc-title:
 :idprefix: ref_
 
-## Headers
-
-include::headers.adoc[]
-
-## Namespaces
-
-## Core
+// include::headers.adoc[]
 
 include::method.adoc[]
 include::virtual_.adoc[]
 include::virtual_ptr.adoc[]
 
-## Policies & Facets
-
 include::basic_policy.adoc[]
 include::error_output.adoc[]
 include::rtti.adoc[]
-
-## Macros
 
 include::BOOST_OPENMETHOD.adoc[]
 include::BOOST_OPENMETHOD_OVERRIDE.adoc[]

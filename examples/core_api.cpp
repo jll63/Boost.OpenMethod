@@ -24,13 +24,13 @@ using namespace boost::openmethod;
 
 #include <boost/openmethod/macros/name.hpp>
 
-class BOOST_OPENMETHOD_NAME(pet);
+class BOOST_OPENMETHOD_NAME(poke);
 
-using poke = method<BOOST_OPENMETHOD_NAME(pet)(std::ostream&, virtual_<Animal&>), void>;
+using poke = method<BOOST_OPENMETHOD_NAME(poke)(std::ostream&, virtual_ptr<Animal>), void>;
 // end::method[]
 
 // tag::poke_cat[]
-auto poke_cat(std::ostream& os, Cat& cat) {
+auto poke_cat(std::ostream& os, virtual_ptr<Cat> cat) {
     os << "hiss";
 }
 
@@ -40,7 +40,7 @@ static poke::override<poke_cat> override_poke_cat;
 // tag::poke_dog[]
 #include <boost/openmethod/macros/register.hpp>
 
-auto poke_dog(std::ostream& os, Dog& dog) {
+auto poke_dog(std::ostream& os, virtual_ptr<Dog> dog) {
     os << "bark";
 }
 
@@ -48,7 +48,7 @@ BOOST_OPENMETHOD_REGISTER(poke::override<poke_dog>);
 // end::poke_dog[]
 
 // tag::poke_bulldog[]
-auto poke_bulldog(std::ostream& os, Bulldog& dog) -> void {
+auto poke_bulldog(std::ostream& os, virtual_ptr<Bulldog> dog) -> void {
     poke::next<poke_bulldog>(os, dog);
     os << " and bite";
 }
@@ -58,16 +58,16 @@ BOOST_OPENMETHOD_REGISTER(poke::override<poke_bulldog>);
 
 class BOOST_OPENMETHOD_NAME(pet);
 
-auto pet_cat(std::ostream& os, Cat& cat) {
+auto pet_cat(std::ostream& os, virtual_ptr<Cat> cat) {
     os << "purr";
 }
 
-auto pet_dog(std::ostream& os, Dog& dog) {
+auto pet_dog(std::ostream& os, virtual_ptr<Dog> dog) {
     os << "wag tail";
 }
 
 using pet =
-    method<BOOST_OPENMETHOD_NAME(pet)(std::ostream&, virtual_<Animal&>), void>;
+    method<BOOST_OPENMETHOD_NAME(pet)(std::ostream&, virtual_ptr<Animal>), void>;
 
 BOOST_OPENMETHOD_REGISTER(pet::override<pet_cat, pet_dog>);
 

@@ -1,10 +1,10 @@
 
 [#virtual_]
-### virtual_
+## virtual_
 
 Indicate that a formal parameter of an open-method is virtual.
 
-#### Synopsis
+### Synopsis
 
 ```c++
 namespace boost {
@@ -16,7 +16,7 @@ struct virtual_;
 }}
 ```
 
-#### Description
+### Description
 
 *Template Parameters*
 

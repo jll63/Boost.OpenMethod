@@ -125,6 +125,11 @@ BOOST_AUTO_TEST_CASE(test_virtual_shared_ptr) {
         }
 
         { virtual_shared_ptr<Animal> ptr(dog); }
+
+        {
+            // does not compile:
+            // virtual_unique_ptr<Dog> unique_dog(dog);
+        }
     }
 
     {

@@ -582,48 +582,53 @@ pre.rouge .gs {
 </li>
 <li><a href="#tutorial_reference">Reference</a>
 <ul class="sectlevel2">
-<li><a href="#ref_headers">Headers</a>
+<li><a href="#method">method</a>
 <ul class="sectlevel3">
-<li><a href="#ref_boostopenmethodcore_hpp">&lt;boost/openmethod/core.hpp&gt;</a></li>
-<li><a href="#ref_boostopenmethodcore_hpp_2">&lt;boost/openmethod/core.hpp&gt;</a></li>
-<li><a href="#ref_boostopenmethod_hpp">&lt;boost/openmethod.hpp&gt;</a></li>
-<li><a href="#ref_boostopenmethodcore_hpp_3">&lt;boost/openmethod/core.hpp&gt;</a></li>
-<li><a href="#ref_boostopenmethodvirtual_shared_ptr_hpp">&lt;boost/openmethod/virtual_shared_ptr.hpp&gt;</a></li>
-<li><a href="#ref_boostopenmethodcompiler_hpp">&lt;boost/openmethod/compiler.hpp&gt;</a></li>
-<li><a href="#ref_boostopenmethodpolicy_hpp">&lt;boost/openmethod/policy.hpp&gt;</a></li>
-<li><a href="#ref_boostopenmethodmacros_hpp">&lt;boost/openmethod/macros.hpp&gt;</a></li>
-<li><a href="#ref_boostopenmethodmacrosregister_hpp">&lt;boost/openmethod/macros/register.hpp&gt;</a></li>
-<li><a href="#ref_boostopenmethodmacrosname_hpp">&lt;boost/openmethod/macros/name.hpp&gt;</a></li>
-<li><a href="#ref_boostopenmethodpoliciescore_hpp">&lt;boost/openmethod/policies/core.hpp&gt;</a></li>
-<li><a href="#ref_boostopenmethodpoliciesvectored_error_handler_hpp">&lt;boost/openmethod/policies/vectored_error_handler.hpp&gt;</a></li>
-<li><a href="#ref_boostopenmethodpoliciesstd_rtti_hpp">&lt;boost/openmethod/policies/std_rtti.hpp&gt;</a></li>
-<li><a href="#ref_boostopenmethodpoliciesbasic_trace_output_hpp">&lt;boost/openmethod/policies/basic_trace_output.hpp&gt;</a></li>
-<li><a href="#ref_boostopenmethodpoliciesbasic_error_output_hpp">&lt;boost/openmethod/policies/basic_error_output.hpp&gt;</a></li>
-<li><a href="#ref_boostopenmethodpoliciesbasic_indirect_vptr_hpp">&lt;boost/openmethod/policies/basic_indirect_vptr.hpp&gt;</a></li>
-<li><a href="#ref_boostopenmethodpoliciesvptr_map_hpp">&lt;boost/openmethod/policies/vptr_map.hpp&gt;</a></li>
-<li><a href="#ref_boostopenmethodpoliciesfast_perfect_hash_hpp">&lt;boost/openmethod/policies/fast_perfect_hash.hpp&gt;</a></li>
-<li><a href="#ref_boostopenmethodpoliciesvptr_vector_hpp">&lt;boost/openmethod/policies/vptr_vector.hpp&gt;</a></li>
-<li><a href="#ref_boostopenmethodpoliciesthrow_error_hpp">&lt;boost/openmethod/policies/throw_error.hpp&gt;</a></li>
+<li><a href="#ref_constructor">constructor</a></li>
+<li><a href="#ref_destructor">destructor</a></li>
+<li><a href="#ref_override">override</a></li>
+<li><a href="#ref_operator">operator()</a></li>
+<li><a href="#ref_fn">fn</a></li>
 </ul>
 </li>
-<li><a href="#ref_namespaces">Namespaces</a></li>
-<li><a href="#ref_core">Core</a>
+<li><a href="#virtual_">virtual_</a>
 <ul class="sectlevel3">
-<li><a href="#method">method</a></li>
-<li><a href="#virtual_">virtual_</a></li>
-<li><a href="#virtual_ptr">virtual_ptr</a></li>
+<li><a href="#ref_synopsis">Synopsis</a></li>
+<li><a href="#ref_description">Description</a></li>
 </ul>
 </li>
-<li><a href="#ref_policies_facets">Policies &amp; Facets</a>
+<li><a href="#virtual_ptr">virtual_ptr</a>
 <ul class="sectlevel3">
-<li><a href="#ref_basic_policy">basic_policy</a></li>
-<li><a href="#ref_basic_error_output">basic_error_output</a></li>
-<li><a href="#ref_std_rtti">std_rtti</a></li>
+<li><a href="#ref_description_2">Description</a></li>
+<li><a href="#ref_synopsis_2">Synopsis</a></li>
+<li><a href="#ref_type_aliases">Type aliases</a></li>
+<li><a href="#ref_constructors">Constructors</a></li>
+<li><a href="#ref_observers">Observers</a></li>
+<li><a href="#ref_deduction_guide">Deduction guide</a></li>
+<li><a href="#ref_non_member_type_alias">Non-member type alias</a></li>
+<li><a href="#ref_non_member_constructors">Non-member constructors</a></li>
+</ul>
+</li>
+<li><a href="#ref_basic_policy">basic_policy</a>
+<ul class="sectlevel3">
+<li><a href="#ref_error_stream">error_stream</a></li>
+</ul>
+</li>
+<li><a href="#ref_basic_error_output">basic_error_output</a>
+<ul class="sectlevel3">
+<li><a href="#ref_error_stream_2">error_stream</a></li>
+</ul>
+</li>
+<li><a href="#ref_std_rtti">std_rtti</a>
+<ul class="sectlevel3">
+<li><a href="#ref_static_type">static_type</a></li>
+<li><a href="#ref_dynamic_type">dynamic_type</a></li>
+<li><a href="#ref_type_name">type_name</a></li>
+<li><a href="#ref_type_index">type_index</a></li>
+<li><a href="#ref_dynamic_cast_ref">dynamic_cast_ref</a></li>
+</ul>
+</li>
 <li><a href="#ref_deferred_static_rtti">deferred_static_rtti</a></li>
-</ul>
-</li>
-<li><a href="#ref_macros">Macros</a>
-<ul class="sectlevel3">
 <li><a href="#BOOST_OPENMETHOD">BOOST_OPENMETHOD</a></li>
 <li><a href="#BOOST_OPENMETHOD_OVERRIDE">BOOST_OPENMETHOD_OVERRIDE</a></li>
 <li><a href="#BOOST_OPENMETHOD_INLINE_OVERRIDE">BOOST_OPENMETHOD_INLINE_OVERRIDE</a></li>
@@ -632,8 +637,6 @@ pre.rouge .gs {
 <li><a href="#BOOST_OPENMETHOD_DEFAULT_POLICY">BOOST_OPENMETHOD_DEFAULT_POLICY</a></li>
 <li><a href="#BOOST_OPENMETHOD_NAME">BOOST_OPENMETHOD_NAME</a></li>
 <li><a href="#BOOST_OPENMETHOD_OVERRIDERS">BOOST_OPENMETHOD_OVERRIDERS</a></li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -1194,9 +1197,9 @@ name can get tedious, so OpenMethod provides a macro for that:</p>
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="cp">#include</span> <span class="cpf">&lt;boost/openmethod/macros/name.hpp&gt;</span><span class="cp">
 </span>
-<span class="k">class</span> <span class="nf">BOOST_OPENMETHOD_NAME</span><span class="p">(</span><span class="n">pet</span><span class="p">);</span>
+<span class="k">class</span> <span class="nf">BOOST_OPENMETHOD_NAME</span><span class="p">(</span><span class="n">poke</span><span class="p">);</span>
 
-<span class="k">using</span> <span class="n">poke</span> <span class="o">=</span> <span class="n">method</span><span class="o">&lt;</span><span class="n">BOOST_OPENMETHOD_NAME</span><span class="p">(</span><span class="n">pet</span><span class="p">)(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&amp;&gt;</span><span class="p">),</span> <span class="kt">void</span><span class="o">&gt;</span><span class="p">;</span></code></pre>
+<span class="k">using</span> <span class="n">poke</span> <span class="o">=</span> <span class="n">method</span><span class="o">&lt;</span><span class="n">BOOST_OPENMETHOD_NAME</span><span class="p">(</span><span class="n">poke</span><span class="p">)(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span><span class="p">),</span> <span class="kt">void</span><span class="o">&gt;</span><span class="p">;</span></code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -1227,7 +1230,7 @@ styles.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">auto</span> <span class="nf">poke_cat</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Cat</span><span class="o">&amp;</span> <span class="n">cat</span><span class="p">)</span> <span class="p">{</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">auto</span> <span class="nf">poke_cat</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">cat</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"hiss"</span><span class="p">;</span>
 <span class="p">}</span>
 
@@ -1254,7 +1257,7 @@ OpenMethod provides a small convenience macro:</p>
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="cp">#include</span> <span class="cpf">&lt;boost/openmethod/macros/register.hpp&gt;</span><span class="cp">
 </span>
-<span class="k">auto</span> <span class="nf">poke_dog</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Dog</span><span class="o">&amp;</span> <span class="n">dog</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">auto</span> <span class="nf">poke_dog</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Dog</span><span class="o">&gt;</span> <span class="n">dog</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"bark"</span><span class="p">;</span>
 <span class="p">}</span>
 
@@ -1266,7 +1269,7 @@ OpenMethod provides a small convenience macro:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">auto</span> <span class="nf">poke_bulldog</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Bulldog</span><span class="o">&amp;</span> <span class="n">dog</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span> <span class="p">{</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">auto</span> <span class="nf">poke_bulldog</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Bulldog</span><span class="o">&gt;</span> <span class="n">dog</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span> <span class="p">{</span>
     <span class="n">poke</span><span class="o">::</span><span class="n">next</span><span class="o">&lt;</span><span class="n">poke_bulldog</span><span class="o">&gt;</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="n">dog</span><span class="p">);</span>
     <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">" and bite"</span><span class="p">;</span>
 <span class="p">}</span>
@@ -1428,15 +1431,10 @@ is a tweak of <code>policies::release</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">debug</span> <span class="o">:</span> <span class="n">release</span><span class="o">::</span><span class="n">fork</span><span class="o">&lt;</span><span class="n">debug</span><span class="o">&gt;::</span><span class="n">add</span><span class="o">&lt;</span>
-                   <span class="n">runtime_checks</span><span class="p">,</span> <span class="n">basic_error_output</span><span class="o">&lt;</span><span class="n">debug</span><span class="o">&gt;</span><span class="p">,</span>
-                   <span class="n">basic_trace_output</span><span class="o">&lt;</span><span class="n">debug</span><span class="o">&gt;&gt;</span> <span class="p">{};</span></code></pre>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">debug</span> <span class="o">:</span> <span class="n">release</span><span class="o">::</span><span class="n">add</span><span class="o">&lt;</span>
+    <span class="n">runtime_checks</span><span class="p">,</span> <span class="n">basic_error_output</span><span class="o">&lt;</span><span class="n">debug</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="n">basic_trace_output</span><span class="o">&lt;</span><span class="n">debug</span><span class="o">&gt;&gt;</span> <span class="p">{};</span></code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p><code>fork</code> creates a new policy from an existing one, substituting the new policy
-to the original one in all the CRTP classes. <code>add</code> adds three facets, two of
-which have state.</p>
 </div>
 <div class="paragraph">
 <p><code>boost::openmethod::policies::default_</code> is an alias to the <code>release</code> or the
@@ -1851,164 +1849,37 @@ reading the type information until <code>initialize</code> is called.</p>
 <h2 id="tutorial_reference">Reference</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="ref_headers">Headers</h3>
-<div class="sect3">
-<h4 id="ref_boostopenmethodcore_hpp">&lt;boost/openmethod/core.hpp&gt;</h4>
-
-</div>
-<div class="sect3">
-<h4 id="ref_boostopenmethodcore_hpp_2">&lt;boost/openmethod/core.hpp&gt;</h4>
-
-</div>
-<div class="sect3">
-<h4 id="ref_boostopenmethod_hpp">&lt;boost/openmethod.hpp&gt;</h4>
-
-</div>
-<div class="sect3">
-<h4 id="ref_boostopenmethodcore_hpp_3">&lt;boost/openmethod/core.hpp&gt;</h4>
-
-</div>
-<div class="sect3">
-<h4 id="ref_boostopenmethodvirtual_shared_ptr_hpp">&lt;boost/openmethod/virtual_shared_ptr.hpp&gt;</h4>
-
-</div>
-<div class="sect3">
-<h4 id="ref_boostopenmethodcompiler_hpp">&lt;boost/openmethod/compiler.hpp&gt;</h4>
-
-</div>
-<div class="sect3">
-<h4 id="ref_boostopenmethodpolicy_hpp">&lt;boost/openmethod/policy.hpp&gt;</h4>
-
-</div>
-<div class="sect3">
-<h4 id="ref_boostopenmethodmacros_hpp">&lt;boost/openmethod/macros.hpp&gt;</h4>
-
-</div>
-<div class="sect3">
-<h4 id="ref_boostopenmethodmacrosregister_hpp">&lt;boost/openmethod/macros/register.hpp&gt;</h4>
-
-</div>
-<div class="sect3">
-<h4 id="ref_boostopenmethodmacrosname_hpp">&lt;boost/openmethod/macros/name.hpp&gt;</h4>
-
-</div>
-<div class="sect3">
-<h4 id="ref_boostopenmethodpoliciescore_hpp">&lt;boost/openmethod/policies/core.hpp&gt;</h4>
-
-</div>
-<div class="sect3">
-<h4 id="ref_boostopenmethodpoliciesvectored_error_handler_hpp">&lt;boost/openmethod/policies/vectored_error_handler.hpp&gt;</h4>
-
-</div>
-<div class="sect3">
-<h4 id="ref_boostopenmethodpoliciesstd_rtti_hpp">&lt;boost/openmethod/policies/std_rtti.hpp&gt;</h4>
-
-</div>
-<div class="sect3">
-<h4 id="ref_boostopenmethodpoliciesbasic_trace_output_hpp">&lt;boost/openmethod/policies/basic_trace_output.hpp&gt;</h4>
-
-</div>
-<div class="sect3">
-<h4 id="ref_boostopenmethodpoliciesbasic_error_output_hpp">&lt;boost/openmethod/policies/basic_error_output.hpp&gt;</h4>
-
-</div>
-<div class="sect3">
-<h4 id="ref_boostopenmethodpoliciesbasic_indirect_vptr_hpp">&lt;boost/openmethod/policies/basic_indirect_vptr.hpp&gt;</h4>
-
-</div>
-<div class="sect3">
-<h4 id="ref_boostopenmethodpoliciesvptr_map_hpp">&lt;boost/openmethod/policies/vptr_map.hpp&gt;</h4>
-
-</div>
-<div class="sect3">
-<h4 id="ref_boostopenmethodpoliciesfast_perfect_hash_hpp">&lt;boost/openmethod/policies/fast_perfect_hash.hpp&gt;</h4>
-
-</div>
-<div class="sect3">
-<h4 id="ref_boostopenmethodpoliciesvptr_vector_hpp">&lt;boost/openmethod/policies/vptr_vector.hpp&gt;</h4>
-
-</div>
-<div class="sect3">
-<h4 id="ref_boostopenmethodpoliciesthrow_error_hpp">&lt;boost/openmethod/policies/throw_error.hpp&gt;</h4>
-
-</div>
-</div>
-<div class="sect2">
-<h3 id="ref_namespaces">Namespaces</h3>
-
-</div>
-<div class="sect2">
-<h3 id="ref_core">Core</h3>
-<div class="sect3">
-<h4 id="method">method</h4>
-<div class="paragraph">
-<p><code>method</code> is a class template that represents an open method. It contains a singleton named <code>fn</code>, a function object that
-selects an overrider to call based on the dynamic type of the arguments corresponding to virtual formal parameters.</p>
-</div>
-<div class="paragraph">
-<p>The overrider is selected in a process similar to overloaded function resolution, with extra rules to handle ambiguitues. It proceeds as follows:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Form the set of all applicable overriders. An overrider is applicable if it
-can be called with the arguments passed to the method.</p>
-</li>
-<li>
-<p>If the set is empty, call the error handler (if present in the policy), then
-terminate the program with <code>abort</code></p>
-</li>
-<li>
-<p>Remove the overriders that are dominated by other overriders in the set.
-Overrider A dominates overrider B if any of its virtual formal parameters is more specialized than B&#8217;s, and if none of B&#8217;s virtual parameters is more
-specialized than A&#8217;s.</p>
-</li>
-<li>
-<p>If the resulting set contains only one overrider, call it.</p>
-</li>
-<li>
-<p>If the return type is a registered polymorphic type, remove all the overriders that
-return a less specific type than the others.</p>
-</li>
-<li>
-<p>If the resulting set contains only one overrider, call it.</p>
-</li>
-<li>
-<p>Otherwise, call one of the remaining overriders. Which overrider is selected is
-not specified, but it is the same across calls with the same arguments types.</p>
-</li>
-</ol>
-</div>
-<div class="sect4">
-<h5 id="ref_synopsis">Synopsis</h5>
+<h3 id="method">method</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
 <span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
 
 <span class="k">template</span><span class="o">&lt;</span>
-    <span class="k">typename</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">ReturnType</span><span class="p">,</span>
+    <span class="k">typename</span> <span class="nc">Method</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">ReturnType</span><span class="p">,</span>
     <span class="k">class</span> <span class="nc">Policy</span> <span class="o">=</span> <span class="n">BOOST_OPENMETHOD_DEFAULT_POLICY</span><span class="p">&gt;</span>
 <span class="k">class</span> <span class="nc">method</span><span class="p">;</span>
 
 <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Name</span><span class="p">,</span> <span class="k">typename</span><span class="o">...</span> <span class="nc">Parameters</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">ReturnType</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Policy</span><span class="p">&gt;</span>
 <span class="k">class</span> <span class="nc">method</span><span class="o">&lt;</span><span class="n">Name</span><span class="p">(</span><span class="n">Parameters</span><span class="p">...),</span> <span class="n">ReturnType</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;</span> <span class="p">{</span>
   <span class="nl">public:</span>
-    <span class="n">method</span><span class="p">();</span>
-    <span class="n">method</span><span class="p">(</span><span class="k">const</span> <span class="n">method</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
-    <span class="n">method</span><span class="p">(</span><span class="n">method</span><span class="o">&amp;&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
+    <span class="k">using</span> <span class="n">function_type</span> <span class="o">=</span> <span class="n">ReturnType</span> <span class="p">(</span><span class="o">*</span><span class="p">)(</span><span class="n">CallParameters</span><span class="p">...);</span>
 
-    <span class="o">~</span><span class="n">method</span><span class="p">();</span>
-
-    <span class="k">auto</span> <span class="k">operator</span><span class="p">()(</span><span class="n">remove_virtual</span><span class="o">&lt;</span><span class="n">Parameters</span><span class="o">&gt;</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span> <span class="k">const</span> <span class="o">-&gt;</span> <span class="n">ReturnType</span><span class="p">;</span>
+    <span class="k">auto</span> <span class="k">operator</span><span class="p">()(</span><span class="n">CallParameters</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span> <span class="k">const</span> <span class="o">-&gt;</span> <span class="n">ReturnType</span><span class="p">;</span>
 
     <span class="k">static</span> <span class="n">method</span> <span class="n">fn</span><span class="p">;</span>
 
     <span class="k">template</span><span class="o">&lt;</span><span class="k">auto</span><span class="p">...</span> <span class="n">Functions</span><span class="p">&gt;</span>
     <span class="k">struct</span> <span class="nc">override</span><span class="p">;</span>
 
-    <span class="k">template</span><span class="o">&lt;</span><span class="k">auto</span><span class="p">&gt;</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">auto</span> <span class="n">Overrider</span><span class="p">&gt;</span>
     <span class="k">static</span> <span class="n">function_type</span> <span class="n">next</span><span class="p">;</span>
+
+  <span class="nl">private:</span>
+    <span class="n">method</span><span class="p">();</span>
+    <span class="n">method</span><span class="p">(</span><span class="k">const</span> <span class="n">method</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
+    <span class="n">method</span><span class="p">(</span><span class="n">method</span><span class="o">&amp;&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
+    <span class="o">~</span><span class="n">method</span><span class="p">();</span>
 <span class="p">};</span>
 
 <span class="p">}}</span></code></pre>
@@ -2041,9 +1912,8 @@ not specified, but it is the same across calls with the same arguments types.</p
 </tr>
 </tbody>
 </table>
-</div>
-<div class="sect4">
-<h5 id="ref_constructor">constructor</h5>
+<div class="sect3">
+<h4 id="ref_constructor">constructor</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="n">method</span><span class="p">();</span></code></pre>
@@ -2052,9 +1922,13 @@ not specified, but it is the same across calls with the same arguments types.</p
 <div class="paragraph">
 <p>Add the method to the list of methods registered in <code>Policy</code>.</p>
 </div>
+<div class="paragraph">
+<p>The constructor is private. The only instance is the static member variable
+<code>fn</code>.</p>
 </div>
-<div class="sect4">
-<h5 id="ref_destructor">destructor</h5>
+</div>
+<div class="sect3">
+<h4 id="ref_destructor">destructor</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="o">~</span><span class="n">method</span><span class="p">();</span></code></pre>
@@ -2064,8 +1938,8 @@ not specified, but it is the same across calls with the same arguments types.</p
 <p>Remove the method from the list of methods registered in <code>Policy</code>.</p>
 </div>
 </div>
-<div class="sect4">
-<h5 id="ref_override">override</h5>
+<div class="sect3">
+<h4 id="ref_override">override</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">auto</span><span class="p">...</span> <span class="n">Functions</span><span class="p">&gt;</span>
@@ -2076,7 +1950,10 @@ not specified, but it is the same across calls with the same arguments types.</p
 <p>Add <code>Functions</code> to the list of overriders for the method.</p>
 </div>
 <div class="paragraph">
-<p>Each function that must fulfill the following requirements:</p>
+<p><code>override</code> must be instantiated as a <strong>static</strong> object.</p>
+</div>
+<div class="paragraph">
+<p>Functions that must fulfill the following requirements:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -2092,46 +1969,84 @@ type that is covariant with the type of the method&#8217;s parameter.</p>
 corresponding parameters.</p>
 </li>
 <li>
-<p>The return type of the overrider must be the same as the method&#8217;s return type or,
-if it is a polymorphic type, covariant with the method&#8217;s return type.</p>
+<p>The return type of the overrider must be the same as the method&#8217;s return type
+or, if it is a polymorphic type, covariant with the method&#8217;s return type.</p>
 </li>
 </ul>
 </div>
 </div>
-<div class="sect4">
-<h5 id="ref_operator">operator()</h5>
+<div class="sect3">
+<h4 id="ref_operator">operator()</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">auto</span> <span class="k">operator</span><span class="p">()(</span><span class="n">remove_virtual</span><span class="o">&lt;</span><span class="n">Parameters</span><span class="o">&gt;</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span> <span class="k">const</span> <span class="o">-&gt;</span> <span class="n">ReturnType</span><span class="p">;</span></code></pre>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">auto</span> <span class="k">operator</span><span class="p">()(</span><span class="n">CallParameters</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span> <span class="k">const</span> <span class="o">-&gt;</span> <span class="n">ReturnType</span><span class="p">;</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Call the method with the arguments <code>args</code>.</p>
 </div>
 <div class="paragraph">
-<p><code>remove_virtual</code> is a metafunction that removes the <code>virtual_</code> decorator from a type <code>T</code>. If <code>T</code> is in the form
-<code>virtual_&lt;U&gt;</code>, it evaluates to <code>U</code>. Otherwise, izt evaluates to <code>T</code>.</p>
+<p><code>CallParameters</code> are the <code>Parameters</code> where the <code>virtual_</code> decorators have been
+removed.</p>
+</div>
+<div class="paragraph">
+<p>The overrider is selected in a process similar to overloaded function
+resolution, with extra rules to handle ambiguities. It proceeds as follows:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Form the set of all applicable overriders. An overrider is applicable if it
+can be called with the arguments passed to the method.</p>
+</li>
+<li>
+<p>If the set is empty, call the error handler (if present in the policy), then
+terminate the program with <code>abort</code></p>
+</li>
+<li>
+<p>Remove the overriders that are dominated by other overriders in the set.
+Overrider A dominates overrider B if any of its virtual formal parameters is
+more specialized than B&#8217;s, and if none of B&#8217;s virtual parameters is more
+specialized than A&#8217;s.</p>
+</li>
+<li>
+<p>If the resulting set contains only one overrider, call it.</p>
+</li>
+<li>
+<p>If the return type is a registered polymorphic type, remove all the
+overriders that return a less specific type than the others.</p>
+</li>
+<li>
+<p>If the resulting set contains only one overrider, call it.</p>
+</li>
+<li>
+<p>Otherwise, call one of the remaining overriders. Which overrider is selected
+is not specified, but it is the same across calls with the same arguments
+types.</p>
+</li>
+</ol>
 </div>
 </div>
-<div class="sect4">
-<h5 id="ref_fn">fn</h5>
+<div class="sect3">
+<h4 id="ref_fn">fn</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="n">method</span> <span class="n">fn</span><span class="p">;</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The entry point for calling the method.</p>
+<p>The <code>method</code>'s unique instance. The method is called via the call
+operator on <code>fn</code>: <code>method::fn(args&#8230;&#8203;)</code>.</p>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="virtual_">virtual_</h4>
+<div class="sect2">
+<h3 id="virtual_">virtual_</h3>
 <div class="paragraph">
 <p>Indicate that a formal parameter of an open-method is virtual.</p>
 </div>
-<div class="sect4">
-<h5 id="ref_synopsis_2">Synopsis</h5>
+<div class="sect3">
+<h4 id="ref_synopsis">Synopsis</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
@@ -2144,8 +2059,8 @@ if it is a polymorphic type, covariant with the method&#8217;s return type.</p>
 </div>
 </div>
 </div>
-<div class="sect4">
-<h5 id="ref_description">Description</h5>
+<div class="sect3">
+<h4 id="ref_description">Description</h4>
 <div class="paragraph">
 <p><strong>Template Parameters</strong></p>
 </div>
@@ -2192,33 +2107,22 @@ necessitate the creation of a temporary copy of the smart pointer.</p>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="virtual_ptr">virtual_ptr</h3>
 <div class="sect3">
-<h4 id="virtual_ptr">virtual_ptr</h4>
+<h4 id="ref_description_2">Description</h4>
 <div class="paragraph">
-<p><code>virtual_ptr</code> is a fat pointer that consists of a pointer to an object, and a
-pointer to its associated v-table. It is used in
-<code>BOOST_OPENMETHOD</code>/<code>BOOST_OPENMETHOD_OVERRIDE</code> and <code>method</code>/<code>method::override</code>
-to specify virtual parameters.</p>
+<p><code>virtual_ptr</code> is a fat pointer that combines a pointer to an object, and a
+pointer to the v-table.</p>
 </div>
 <div class="paragraph">
-<p>While <code>virtual_</code> is just a decorator, which is stripped when forming the
-method&#8217;s formal parameter list, <code>virtual_ptr</code> is a concrete type that is passed
-from the method to the overrider. It should be used both in the method&#8217;s
-signature, and in the overrider&#8217;s. For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD</span><span class="p">(</span><span class="n">yell</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span><span class="p">),</span> <span class="kt">void</span><span class="p">);</span>
-
-<span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span>
-    <span class="n">yell</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">cat</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"hiss"</span><span class="p">;</span>
-<span class="p">}</span></code></pre>
-</div>
+<p>Specializations are available to use a <code>std::shared_ptr</code> or a <code>std::unique_ptr</code>
+to keep the pointer to the object.</p>
 </div>
 <div class="paragraph">
-<p><code>virtual_ptr</code> can be passed either by value, or by const reference. Passing by
-value should be preferred, unless <code>Type</code> is a smart pointer.</p>
+<p>The <code>virtual_ptr</code> parameters, along with the <code>virtual_</code> parameters, are
+considered when selecting the overrider that best matches the arguments of the
+method call.</p>
 </div>
 <div class="admonitionblock warning">
 <table>
@@ -2227,56 +2131,61 @@ value should be preferred, unless <code>Type</code> is a smart pointer.</p>
 <div class="title">Warning</div>
 </td>
 <td class="content">
-calling <code>initialize</code> invalidates existing `virtual_ptr`s.
+calling <code>initialize</code> invalidates existing <code>virtual_ptr</code>s.
 </td>
 </tr>
 </table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="ref_synopsis_2">Synopsis</h4>
+<div class="paragraph">
+<p><code>virtual_ptr`is defined in `&lt;boost/openmethod/core.hpp</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
 <span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
 
-<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Type</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Policy</span> <span class="o">=</span> <span class="n">BOOST_OPENMETHOD_DEFAULT_POLICY</span><span class="p">&gt;</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Policy</span> <span class="o">=</span> <span class="n">BOOST_OPENMETHOD_DEFAULT_POLICY</span><span class="p">&gt;</span>
 <span class="k">class</span> <span class="nc">virtual_ptr</span> <span class="p">{</span>
   <span class="nl">public:</span>
-    <span class="k">using</span> <span class="n">pointer_type</span> <span class="o">=</span> <span class="cm">/* Type* or SmartPtr&lt;Type&gt; */</span><span class="p">;</span>
-    <span class="k">using</span> <span class="n">element_type</span> <span class="o">=</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">remove_reference_t</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="o">*</span><span class="n">std</span><span class="o">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">pointer_type</span><span class="o">&gt;</span><span class="p">())</span><span class="o">&gt;</span><span class="p">;</span>
+    <span class="k">using</span> <span class="n">element_type</span> <span class="o">=</span> <span class="n">Class</span><span class="p">;</span>
 
-    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span>
-    <span class="n">virtual_ptr</span><span class="p">(</span><span class="n">Other</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">);</span>
+    <span class="c1">// if not specialized</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span> <span class="n">virtual_ptr</span><span class="p">(</span><span class="n">Other</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">);</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span> <span class="n">virtual_ptr</span><span class="p">(</span><span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Other</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;&amp;</span> <span class="n">other</span><span class="p">);</span>
 
-    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span>
-    <span class="n">virtual_ptr</span><span class="p">(</span><span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Other</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;&amp;</span> <span class="n">other</span><span class="p">);</span>
+    <span class="c1">// if specialized</span>
+    <span class="n">virtual_ptr</span><span class="p">(</span><span class="k">const</span> <span class="n">Class</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">);</span>
+    <span class="n">virtual_ptr</span><span class="p">(</span><span class="n">Class</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">);</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span> <span class="n">virtual_ptr</span><span class="p">(</span><span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Other</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;&amp;&amp;</span> <span class="n">other</span><span class="p">);</span>
 
-    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span>
-    <span class="n">virtual_ptr</span><span class="p">(</span><span class="k">const</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Other</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;&amp;</span> <span class="n">other</span><span class="p">);</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span> <span class="n">virtual_ptr</span><span class="p">(</span><span class="k">const</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Other</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;&amp;</span> <span class="n">other</span><span class="p">);</span>
 
-    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span>
-    <span class="n">virtual_ptr</span><span class="p">(</span><span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Other</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;&amp;&amp;</span> <span class="n">other</span><span class="p">);</span>
+    <span class="k">auto</span> <span class="n">get</span><span class="p">()</span> <span class="k">const</span> <span class="o">-&gt;</span> <span class="n">element_type</span><span class="o">*</span><span class="p">;</span>
+    <span class="k">auto</span> <span class="k">operator</span><span class="o">-&gt;</span><span class="p">()</span> <span class="k">const</span> <span class="o">-&gt;</span> <span class="n">element_type</span><span class="o">*</span><span class="p">;</span>
+    <span class="k">auto</span> <span class="k">operator</span><span class="o">*</span><span class="p">()</span> <span class="k">const</span> <span class="o">-&gt;</span> <span class="n">element_type</span><span class="o">&amp;</span><span class="p">;</span>
 
-    <span class="k">auto</span> <span class="n">get</span><span class="p">()</span> <span class="k">const</span> <span class="o">-&gt;</span> <span class="n">pointer_type</span><span class="p">;</span>
-
-    <span class="k">auto</span> <span class="k">operator</span><span class="o">-&gt;</span><span class="p">()</span> <span class="k">const</span> <span class="o">-&gt;</span> <span class="n">pointer_type</span><span class="p">;</span>
-
-    <span class="k">auto</span> <span class="k">operator</span><span class="o">*</span><span class="p">()</span> <span class="k">const</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="o">&amp;</span><span class="p">;</span>
-
-    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span>
-    <span class="k">static</span> <span class="k">auto</span> <span class="k">final</span><span class="p">(</span><span class="n">Other</span><span class="o">&amp;&amp;</span> <span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Other</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;</span><span class="p">;</span>
+    <span class="c1">// if specialized</span>
+    <span class="k">auto</span> <span class="n">inferior</span><span class="p">()</span> <span class="k">const</span> <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">Class</span><span class="o">&amp;</span><span class="p">;</span>
 
     <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Other</span><span class="p">&gt;</span>
     <span class="k">auto</span> <span class="n">cast</span><span class="p">()</span> <span class="k">const</span> <span class="o">-&gt;</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Other</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Type</span><span class="p">&gt;</span>
-<span class="n">virtual_ptr</span><span class="p">(</span><span class="n">Type</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Type</span><span class="p">,</span> <span class="n">BOOST_OPENMETHOD_DEFAULT_POLICY</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
+<span class="n">virtual_ptr</span><span class="p">(</span><span class="n">Class</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Class</span><span class="p">,</span> <span class="n">BOOST_OPENMETHOD_DEFAULT_POLICY</span><span class="o">&gt;</span><span class="p">;</span>
 
 <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Policy</span> <span class="o">=</span> <span class="n">BOOST_OPENMETHOD_DEFAULT_POLICY</span><span class="p">&gt;</span>
 <span class="k">using</span> <span class="n">virtual_shared_ptr</span> <span class="o">=</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Class</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;</span><span class="p">;</span>
 
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
+<span class="kr">inline</span> <span class="k">auto</span> <span class="n">final_virtual_ptr</span><span class="p">(</span><span class="n">Class</span><span class="o">&amp;</span> <span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span>
+    <span class="n">Class</span><span class="p">,</span> <span class="n">BOOST_OPENMETHOD_DEFAULT_POLICY</span><span class="o">&gt;</span><span class="p">;</span>
+
 <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Policy</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
-<span class="kr">inline</span> <span class="k">auto</span> <span class="nf">final_virtual_ptr</span><span class="p">(</span><span class="n">Class</span><span class="o">&amp;</span> <span class="n">obj</span><span class="p">);</span>
+<span class="kr">inline</span> <span class="k">auto</span> <span class="n">final_virtual_ptr</span><span class="p">(</span><span class="n">Class</span><span class="o">&amp;</span> <span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Class</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;</span><span class="p">;</span>
 
 <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Policy</span> <span class="o">=</span> <span class="n">BOOST_OPENMETHOD_DEFAULT_POLICY</span><span class="p">&gt;</span>
 <span class="kr">inline</span> <span class="k">auto</span> <span class="n">make_virtual_shared</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">virtual_shared_ptr</span><span class="o">&lt;</span><span class="n">Class</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;</span><span class="p">;</span>
@@ -2294,119 +2203,121 @@ calling <code>initialize</code> invalidates existing `virtual_ptr`s.
 </colgroup>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Type</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Either a class or a smart pointer to a class.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Class</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Either a registered class or a smart pointer to a registered class.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Policy</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The policy.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The policy. Defaults to the value of the
+BOOST_OPENMETHOD_DEFAULT_POLICY preprocessor symbol.</p></td>
 </tr>
 </tbody>
 </table>
-<div class="sect4">
-<h5 id="ref_type_aliases">Type aliases</h5>
+<div class="paragraph">
+<p><strong>Specializations</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>template&lt;class Class&gt; virtual_ptr&lt;std::shared_ptr&lt;Class&gt;&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Store the pointer to the object in a <code>std::shared_ptr</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>template&lt;class Class&gt; virtual_ptr&lt;std::unique_ptr&lt;Class&gt;&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Store the pointer to the object in a <code>std::unique_ptr</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Policy</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The policy. Defaults to the value of the
+BOOST_OPENMETHOD_DEFAULT_POLICY preprocessor symbol.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="ref_type_aliases">Type aliases</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">using</span> <span class="n">element_type</span> <span class="o">=</span> <span class="n">Class</span><span class="p">;</span></code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>The type of the object, regardless of the type of the underlying pointer.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="ref_constructors">Constructors</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">using</span> <span class="n">pointer_type</span> <span class="o">=</span> <span class="p">...;</span></code></pre>
-</div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="ref_constructors">Constructors</h5>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span>
-<span class="n">virtual_ptr</span><span class="p">(</span><span class="n">Other</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">);</span></code></pre>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span> <span class="n">virtual_ptr</span><span class="p">(</span><span class="n">Other</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">);</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Construct a <code>virtual_ptr</code> from a reference to an object. Look up and store a
+<p>Constructs a <code>virtual_ptr</code> from an lvalue reference to an object. <code>Other</code> must
+be a class registered in <code>Policy</code>. The pointer to the v-table is deduced from
+the object&#8217;s dynamic type.</p>
+</div>
+<div class="paragraph">
+<p>This constructor does not exist for smart pointer specializations.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span> <span class="n">virtual_ptr</span><span class="p">(</span><span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Other</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;&amp;</span> <span class="n">other</span><span class="p">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Construct a <code>virtual_ptr</code> from another <code>virtual_ptr</code>. The pointer to the v-table
+is copied from <code>other</code>.</p>
+</div>
+<div class="paragraph">
+<p>This constructor does not exist for smart pointer specializations.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="n">virtual_ptr</span><span class="p">(</span><span class="k">const</span> <span class="n">Class</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Constructs a <code>virtual_ptr</code> from a smart pointer. <code>Other::element_type</code> must be a
+class registered in <code>Policy</code>. The smart pointer is copied to the <code>virtual_ptr</code>.
+The pointer to the v-table is deduced from the managed object&#8217;s dynamic type.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="n">virtual_ptr</span><span class="p">(</span><span class="n">Class</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Constructs a <code>virtual_ptr</code> from a smart pointer. <code>Other::element_type</code> must be a
+class registered in <code>Policy</code>. The smart pointer is moved to the <code>virtual_ptr</code>.
+The pointer to the v-table is deduced from the managed object&#8217;s dynamic type.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span> <span class="n">virtual_ptr</span><span class="p">(</span><span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Other</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;&amp;&amp;</span> <span class="n">other</span><span class="p">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Constructs a <code>virtual_ptr</code> from another <code>virtual_ptr</code>. <code>Other::element_type</code>
+must be a class registered in <code>Policy</code>. The smart pointer inside <code>other</code> is
+moved to the <code>virtual_ptr</code>. The pointer to the v-table is copied from <code>other</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span> <span class="n">virtual_ptr</span><span class="p">(</span><span class="k">const</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Other</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;&amp;</span> <span class="n">other</span><span class="p">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Constructs a <code>virtual_ptr</code> from a reference to an object. Look up and store a
 pointer to the v-table for the object&#8217;s dynamic type.</p>
 </div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Requires</dt>
-<dd>
-<p><code>Other</code> must be an improper subclass of <code>Class</code>. <code>Policy</code> must
-provide <code>dynamic_type</code> for <code>Other</code>.</p>
-</dd>
-</dl>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span>
-<span class="n">virtual_ptr</span><span class="p">(</span><span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Other</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;&amp;</span> <span class="n">other</span><span class="p">);</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Construct a copy of <code>other</code>.</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Requires</dt>
-<dd>
-<p><code>Other</code> must be an improper subclass of <code>Class</code>.</p>
-</dd>
-</dl>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span>
-<span class="n">virtual_ptr</span><span class="p">(</span><span class="k">const</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Other</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;&amp;</span> <span class="n">other</span><span class="p">);</span></code></pre>
-</div>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Requires</dt>
-<dd>
-<p><code>Other</code> must be an improper subclass of <code>Class</code>.</p>
-</dd>
-</dl>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span>
-<span class="n">virtual_ptr</span><span class="p">(</span><span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Other</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;&amp;&amp;</span> <span class="n">other</span><span class="p">);</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Construct a copy of <code>other</code>.</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Requires</dt>
-<dd>
-<p><code>Other</code> must be an improper subclass of <code>Class</code>.</p>
-</dd>
-</dl>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span>
-<span class="k">static</span> <span class="k">auto</span> <span class="k">final</span><span class="p">(</span><span class="n">Other</span><span class="o">&amp;&amp;</span> <span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Other</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;</span><span class="p">;</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Construct a <code>virtual_ptr</code> from a reference to an object. Assume that <code>Other</code> is
-the object&#8217;s dynamic type. Load the pointer to the v-table from
-<code>Policy::static_vptr&lt;Other&gt;</code>.</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Requires</dt>
-<dd>
-<p><code>Other</code> must be an improper subclass of <code>Class</code>.</p>
-</dd>
-</dl>
-</div>
-</div>
-<div class="sect4">
-<h5 id="ref_observers">Observers</h5>
+<div class="sect3">
+<h4 id="ref_observers">Observers</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">auto</span> <span class="n">get</span><span class="p">()</span> <span class="k">const</span> <span class="o">-&gt;</span> <span class="n">pointer_type</span><span class="p">;</span></code></pre>
@@ -2466,17 +2377,17 @@ the object&#8217;s dynamic type. Load the pointer to the v-table from
 </dl>
 </div>
 </div>
-<div class="sect4">
-<h5 id="ref_deduction_guide">Deduction guide</h5>
+<div class="sect3">
+<h4 id="ref_deduction_guide">Deduction guide</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Type</span><span class="p">&gt;</span>
-<span class="n">virtual_ptr</span><span class="p">(</span><span class="n">Type</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Type</span><span class="p">,</span> <span class="n">BOOST_OPENMETHOD_DEFAULT_POLICY</span><span class="o">&gt;</span><span class="p">;</span></code></pre>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
+<span class="n">virtual_ptr</span><span class="p">(</span><span class="n">Class</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Class</span><span class="p">,</span> <span class="n">BOOST_OPENMETHOD_DEFAULT_POLICY</span><span class="o">&gt;</span><span class="p">;</span></code></pre>
 </div>
 </div>
 </div>
-<div class="sect4">
-<h5 id="ref_non_member_type_alias">Non-member type alias</h5>
+<div class="sect3">
+<h4 id="ref_non_member_type_alias">Non-member type alias</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Policy</span> <span class="o">=</span> <span class="n">BOOST_OPENMETHOD_DEFAULT_POLICY</span><span class="p">&gt;</span>
@@ -2484,8 +2395,8 @@ the object&#8217;s dynamic type. Load the pointer to the v-table from
 </div>
 </div>
 </div>
-<div class="sect4">
-<h5 id="ref_non_member_constructors">Non-member constructors</h5>
+<div class="sect3">
+<h4 id="ref_non_member_constructors">Non-member constructors</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Policy</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
@@ -2510,11 +2421,8 @@ the object&#8217;s dynamic type. Load the pointer to the v-table from
 </div>
 </div>
 </div>
-</div>
 <div class="sect2">
-<h3 id="ref_policies_facets">Policies &amp; Facets</h3>
-<div class="sect3">
-<h4 id="ref_basic_policy">basic_policy</h4>
+<h3 id="ref_basic_policy">basic_policy</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
@@ -2556,16 +2464,16 @@ the object&#8217;s dynamic type. Load the pointer to the v-table from
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Policy</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The policy containing the facet.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The policy.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Stream</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Any type that satisfies the requirements of <code>RestrictedOutputStream</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Facets</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A collection of facets.</p></td>
 </tr>
 </tbody>
 </table>
-<div class="sect4">
-<h5 id="ref_error_stream">error_stream</h5>
+<div class="sect3">
+<h4 id="ref_error_stream">error_stream</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="n">Stream</span>  <span class="n">error_stream</span><span class="p">;</span></code></pre>
@@ -2575,12 +2483,12 @@ the object&#8217;s dynamic type. Load the pointer to the v-table from
 <p>Initialized by the default constructor of <code>Stream</code>. It is the responsibility of
 the program to initializate it if needed, e.g., for a <code>std::ofstream</code>, to open
 it.
-<mark>#</mark> error_output</p>
+## error_output</p>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="ref_basic_error_output">basic_error_output</h4>
+<div class="sect2">
+<h3 id="ref_basic_error_output">basic_error_output</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
@@ -2617,8 +2525,8 @@ it.
 </tr>
 </tbody>
 </table>
-<div class="sect4">
-<h5 id="ref_error_stream_2">error_stream</h5>
+<div class="sect3">
+<h4 id="ref_error_stream_2">error_stream</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="n">Stream</span>  <span class="n">error_stream</span><span class="p">;</span></code></pre>
@@ -2628,7 +2536,7 @@ it.
 <p>Initialized by the default constructor of <code>Stream</code>. It is the responsibility of
 the program to initializate it if needed, e.g., for a <code>std::ofstream</code>, to open
 it.
-<mark>#</mark> rtti</p>
+## rtti</p>
 </div>
 <div class="paragraph">
 <p>A <code>rtti</code> facet provides type information for classes and objects, implements
@@ -2726,8 +2634,8 @@ void*</code>, <code>std::size_t</code> and <code>type_id</code>.</p>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="ref_std_rtti">std_rtti</h4>
+<div class="sect2">
+<h3 id="ref_std_rtti">std_rtti</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
@@ -2753,8 +2661,8 @@ void*</code>, <code>std::size_t</code> and <code>type_id</code>.</p>
 <span class="p">}}}</span></code></pre>
 </div>
 </div>
-<div class="sect4">
-<h5 id="ref_static_type">static_type</h5>
+<div class="sect3">
+<h4 id="ref_static_type">static_type</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
@@ -2765,8 +2673,8 @@ void*</code>, <code>std::size_t</code> and <code>type_id</code>.</p>
 <p>Return the address of <code>Class&#8217;s `type_info</code>, cast to a <code>type_id</code>.</p>
 </div>
 </div>
-<div class="sect4">
-<h5 id="ref_dynamic_type">dynamic_type</h5>
+<div class="sect3">
+<h4 id="ref_dynamic_type">dynamic_type</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
@@ -2777,8 +2685,8 @@ void*</code>, <code>std::size_t</code> and <code>type_id</code>.</p>
 <p>Return the address of <code>obj</code>'s <code>type_info</code>, cast to a <code>type_id</code>.</p>
 </div>
 </div>
-<div class="sect4">
-<h5 id="ref_type_name">type_name</h5>
+<div class="sect3">
+<h4 id="ref_type_name">type_name</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Stream</span><span class="p">&gt;</span>
@@ -2790,8 +2698,8 @@ void*</code>, <code>std::size_t</code> and <code>type_id</code>.</p>
 Execute <code>stream &lt;&lt; reinterpret_cast&lt;const std::type_info*&gt;(type)&#8594;name()</code>.</p>
 </div>
 </div>
-<div class="sect4">
-<h5 id="ref_type_index">type_index</h5>
+<div class="sect3">
+<h4 id="ref_type_index">type_index</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">static</span> <span class="cm">/*unspecified*/</span> <span class="n">type_index</span><span class="p">(</span><span class="n">type_id</span> <span class="n">type</span><span class="p">);</span></code></pre>
@@ -2805,8 +2713,8 @@ Execute <code>stream &lt;&lt; reinterpret_cast&lt;const std::type_info*&gt;(type
 instance of <code>std::type_info</code> for each specific type.</p>
 </div>
 </div>
-<div class="sect4">
-<h5 id="ref_dynamic_cast_ref">dynamic_cast_ref</h5>
+<div class="sect3">
+<h4 id="ref_dynamic_cast_ref">dynamic_cast_ref</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Derived</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">Base</span><span class="p">&gt;</span>
@@ -2818,8 +2726,8 @@ instance of <code>std::type_info</code> for each specific type.</p>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="ref_deferred_static_rtti">deferred_static_rtti</h4>
+<div class="sect2">
+<h3 id="ref_deferred_static_rtti">deferred_static_rtti</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">deferred_static_rtti</span> <span class="o">:</span> <span class="k">virtual</span> <span class="n">rtti</span> <span class="p">{};</span></code></pre>
@@ -2835,11 +2743,8 @@ information.</p>
 <p>This facet is its own implementation.</p>
 </div>
 </div>
-</div>
 <div class="sect2">
-<h3 id="ref_macros">Macros</h3>
-<div class="sect3">
-<h4 id="BOOST_OPENMETHOD">BOOST_OPENMETHOD</h4>
+<h3 id="BOOST_OPENMETHOD">BOOST_OPENMETHOD</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD</span><span class="p">(</span><span class="n">NAME</span><span class="p">,</span> <span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...),</span> <span class="n">RETURN_TYPE</span> <span class="p">[,</span> <span class="n">POLICY</span><span class="p">])</span></code></pre>
@@ -2913,8 +2818,8 @@ types listed in <code>PARAMETERS</code>, stripped from any <code>virtual_</code>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="BOOST_OPENMETHOD_OVERRIDE">BOOST_OPENMETHOD_OVERRIDE</h4>
+<div class="sect2">
+<h3 id="BOOST_OPENMETHOD_OVERRIDE">BOOST_OPENMETHOD_OVERRIDE</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span><span class="n">NAME</span><span class="p">,</span> <span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...),</span> <span class="n">RETURN_TYPE</span><span class="p">)</span> <span class="p">{</span>
@@ -3000,8 +2905,8 @@ called <code>NAME</code>:</p>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="BOOST_OPENMETHOD_INLINE_OVERRIDE">BOOST_OPENMETHOD_INLINE_OVERRIDE</h4>
+<div class="sect2">
+<h3 id="BOOST_OPENMETHOD_INLINE_OVERRIDE">BOOST_OPENMETHOD_INLINE_OVERRIDE</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_INLINE_OVERRIDE</span><span class="p">(</span><span class="n">NAME</span><span class="p">,</span> <span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...),</span> <span class="n">RETURN_TYPE</span><span class="p">)</span> <span class="p">{</span>
@@ -3014,8 +2919,8 @@ called <code>NAME</code>:</p>
 <code>BOOST_OPENMETHOD_OVERRIDE</code>, but the overrider is defined inline.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="BOOST_OPENMETHOD_REGISTER">BOOST_OPENMETHOD_REGISTER</h4>
+<div class="sect2">
+<h3 id="BOOST_OPENMETHOD_REGISTER">BOOST_OPENMETHOD_REGISTER</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_REGISTER</span><span class="p">(</span><span class="n">TYPE</span><span class="p">)</span></code></pre>
@@ -3040,8 +2945,8 @@ called <code>NAME</code>:</p>
 <p>Create a static instance of <code>TYPE</code>, using a unique generated name.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="BOOST_OPENMETHOD_CLASSES">BOOST_OPENMETHOD_CLASSES</h4>
+<div class="sect2">
+<h3 id="BOOST_OPENMETHOD_CLASSES">BOOST_OPENMETHOD_CLASSES</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_CLASSES</span><span class="p">(</span><span class="n">CLASSES</span><span class="p">...[,</span> <span class="n">POLICY</span><span class="p">])</span></code></pre>
@@ -3070,8 +2975,8 @@ called <code>NAME</code>:</p>
 <p>Register <code>CLASSES</code> with a policy.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="BOOST_OPENMETHOD_DEFAULT_POLICY">BOOST_OPENMETHOD_DEFAULT_POLICY</h4>
+<div class="sect2">
+<h3 id="BOOST_OPENMETHOD_DEFAULT_POLICY">BOOST_OPENMETHOD_DEFAULT_POLICY</h3>
 <div class="paragraph">
 <p>The name of the default policy.</p>
 </div>
@@ -3100,11 +3005,11 @@ redefining the symbol has no effect. The proper sequence is as follows:</p>
 </ol>
 </div>
 </div>
-<div class="sect3">
-<h4 id="BOOST_OPENMETHOD_NAME">BOOST_OPENMETHOD_NAME</h4>
+<div class="sect2">
+<h3 id="BOOST_OPENMETHOD_NAME">BOOST_OPENMETHOD_NAME</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="cp">#define BOOST_OPENMETHOD_NAME(NAME) boost_openmethod_##NAME</span></code></pre>
+<pre class="rouge highlight"><code data-lang="c++"><span class="cp">#define BOOST_OPENMETHOD_NAME(NAME) boost_openmethod_#NAME</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3127,8 +3032,8 @@ redefining the symbol has no effect. The proper sequence is as follows:</p>
 parameter of a <code>method</code>.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="BOOST_OPENMETHOD_OVERRIDERS">BOOST_OPENMETHOD_OVERRIDERS</h4>
+<div class="sect2">
+<h3 id="BOOST_OPENMETHOD_OVERRIDERS">BOOST_OPENMETHOD_OVERRIDERS</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="cp">#define BOOST_OPENMETHOD_OVERRIDERS(NAME)                                      \
@@ -3138,7 +3043,6 @@ parameter of a <code>method</code>.</p>
 <div class="paragraph">
 <p><code>BOOST_OPENMETHOD_OVERRIDERS</code> is used by the macro API to generate the name of
 the class template that contains the overriders for the method named <code>NAME</code>.</p>
-</div>
 </div>
 </div>
 </div>

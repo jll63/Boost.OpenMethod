@@ -1,6 +1,6 @@
-### error_output
+## error_output
 
-### basic_error_output
+## basic_error_output
 
 ```c++
 namespace boost {
@@ -28,7 +28,7 @@ struct basic_error_output : virtual error_output {
 | Any type that satisfies the requirements of `RestrictedOutputStream`.
 |===
 
-#### error_stream
+### error_stream
 
 ```c++
 Stream  error_stream;

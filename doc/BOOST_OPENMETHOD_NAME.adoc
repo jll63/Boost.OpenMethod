@@ -1,9 +1,9 @@
 
 [#BOOST_OPENMETHOD_NAME]
-### BOOST_OPENMETHOD_NAME
+## BOOST_OPENMETHOD_NAME
 
 ```c++
-#define BOOST_OPENMETHOD_NAME(NAME) boost_openmethod_##NAME
+#define BOOST_OPENMETHOD_NAME(NAME) boost_openmethod_#NAME
 ```
 
 *Macro Parameters*

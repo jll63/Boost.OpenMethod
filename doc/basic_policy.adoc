@@ -1,4 +1,4 @@
-### basic_policy
+## basic_policy
 
 ```c++
 namespace boost {
@@ -33,13 +33,13 @@ struct basic_policy : virtual Facets... /*, unspecified*/ {
 [cols="1,1"]
 |===
 |_Policy_
-| The policy containing the facet.
+| The policy.
 
-|_Stream_
-| Any type that satisfies the requirements of `RestrictedOutputStream`.
+|_Facets_
+| A collection of facets.
 |===
 
-#### error_stream
+### error_stream
 
 ```c++
 Stream  error_stream;

@@ -16,7 +16,6 @@
 #include <boost/openmethod/compiler.hpp>
 
 using namespace boost::openmethod;
-using policy = policies::default_;
 
 struct Animal {
     virtual ~Animal() {
@@ -33,21 +32,29 @@ struct Dog : virtual Animal {
     Dog(const Dog&) = delete;
 };
 
-BOOST_OPENMETHOD_CLASSES(Animal, Dog);
-BOOST_OPENMETHOD(direct_method, (virtual_ptr<Animal>), void);
+struct direct_policy : policies::default_::fork<direct_policy> {};
+
+BOOST_OPENMETHOD_CLASSES(Animal, Dog, direct_policy);
+BOOST_OPENMETHOD(
+    direct_method, (virtual_ptr<Animal, direct_policy>), void, direct_policy);
 
 struct indirect_policy
-    : policies::default_::replace<
+    : policies::default_::fork<indirect_policy>::replace<
           policies::vptr,
           policies::vptr_vector<indirect_policy, indirect_vptr_type>> {};
 
 BOOST_OPENMETHOD_CLASSES(Animal, Dog, indirect_policy);
 BOOST_OPENMETHOD(
-    indirect_method,
-    (BOOST_IDENTITY_TYPE((virtual_ptr<Animal, indirect_policy>))), void,
+    indirect_method, (virtual_ptr<Animal, indirect_policy>), void,
     indirect_policy);
 
-using test_policies = boost::mp11::mp_list<policies::default_, indirect_policy>;
+void instantiate_methods() {
+    Dog dog;
+    direct_method(dog);
+    indirect_method(dog);
+}
+
+using test_policies = boost::mp11::mp_list<direct_policy, indirect_policy>;
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_ptr_ctors, Policy, test_policies) {
     static_assert(std::is_same_v<
@@ -67,7 +74,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_ptr_ctors, Policy, test_policies) {
         {
             virtual_ptr<Dog, Policy> p(dog);
             BOOST_TEST(p.vptr() != nullptr);
-            BOOST_TEST(p.vptr() == policy::static_vptr<Dog>);
+            BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
             virtual_ptr<Dog, Policy> copy(p);
             virtual_ptr<Animal, Policy> base(p);
             virtual_ptr<const Dog, Policy> const_copy(p);
@@ -80,21 +87,25 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_ptr_ctors, Policy, test_policies) {
             virtual_ptr<Animal, Policy> const_base_copy(p);
         }
 
-        { auto p = virtual_ptr<const Animal, Policy>(dog); }
+        {
+            auto p = virtual_ptr<const Animal, Policy>(dog);
+        }
 
 // #define BOOST_OPENMETHOD_SHOULD_NOT_COMPILE
 // should not compile
 #ifdef BOOST_OPENMETHOD_SHOULD_NOT_COMPILE
-        { auto vptr = virtual_ptr<Dog, Policy>(Dog()); }
+        {
+            auto vptr = virtual_ptr<Dog, Policy>(Dog());
+        }
 #endif
     }
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_shared_ptr_ctors, Policy, test_policies) {
     {
-        static_assert(
-            std::is_same_v<
-                typename virtual_shared_ptr<Animal, Policy>::element_type, Animal>);
+        static_assert(std::is_same_v<
+                      typename virtual_shared_ptr<Animal, Policy>::element_type,
+                      Animal>);
         static_assert(
             std::is_same_v<
                 decltype(std::declval<virtual_shared_ptr<Animal, Policy>>()
@@ -122,12 +133,12 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_shared_ptr_ctors, Policy, test_policies) {
             virtual_shared_ptr<Dog, Policy> ptr(dog);
             BOOST_TEST((ptr.get() == dog.get()));
             BOOST_TEST(ptr.inferior() == dog);
-            BOOST_TEST(ptr.vptr() == policy::static_vptr<Dog>);
+            BOOST_TEST(ptr.vptr() == Policy::template static_vptr<Dog>);
 
             virtual_shared_ptr<Dog, Policy> copy(ptr);
             BOOST_TEST((copy.get() == dog.get()));
             BOOST_TEST(copy.inferior() == dog);
-            BOOST_TEST(copy.vptr() == policy::static_vptr<Dog>);
+            BOOST_TEST(copy.vptr() == Policy::template static_vptr<Dog>);
 
             virtual_shared_ptr<Animal, Policy> base(ptr);
             BOOST_TEST((base.get() == dog.get()));
@@ -135,7 +146,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_shared_ptr_ctors, Policy, test_policies) {
             virtual_shared_ptr<Dog, Policy> downcast =
                 base.template cast<Dog>();
             BOOST_TEST((downcast.get() == dog.get()));
-            BOOST_TEST(base.vptr() == policy::static_vptr<Dog>);
+            BOOST_TEST(base.vptr() == Policy::template static_vptr<Dog>);
 
             virtual_shared_ptr<const Dog, Policy> const_copy(ptr);
             virtual_shared_ptr<const Animal, Policy> base_const_copy(ptr);
@@ -158,7 +169,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_shared_ptr_ctors, Policy, test_policies) {
             BOOST_TEST(move_const_ptr.inferior().get() == dog.get());
         }
 
-        { virtual_shared_ptr<Animal, Policy> ptr(dog); }
+        {
+            virtual_shared_ptr<Animal, Policy> ptr(dog);
+        }
 
         {
             // does not compile:
@@ -171,7 +184,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_shared_ptr_ctors, Policy, test_policies) {
 
         virtual_shared_ptr<const Dog, Policy> ptr(dog);
         BOOST_TEST(ptr.inferior().get() == dog.get());
-        BOOST_TEST(ptr.vptr() == policy::static_vptr<Dog>);
+        BOOST_TEST(ptr.vptr() == Policy::template static_vptr<Dog>);
 
         virtual_shared_ptr<const Dog, Policy> copy(ptr);
         virtual_shared_ptr<const Animal, Policy> base(ptr);
@@ -217,16 +230,17 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(indirect_virtual_ptr, Policy, test_policies) {
 
     Dog dog;
     virtual_ptr<Dog, Policy> p(dog);
-    BOOST_TEST(p.vptr() == policy::static_vptr<Dog>);
+    BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
 
     struct Cat : Animal {};
-    BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog);
+    BOOST_OPENMETHOD_CLASSES(Animal, Cat, Policy);
+
     boost::openmethod::initialize<Policy>();
 
     if constexpr (std::is_same_v<Policy, indirect_policy>) {
-        BOOST_TEST(p.vptr() == policy::static_vptr<Dog>);
+        BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
     } else {
-        BOOST_TEST(p.vptr() != policy::static_vptr<Dog>);
+        BOOST_TEST(p.vptr() != Policy::template static_vptr<Dog>);
     }
 }
 

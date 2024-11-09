@@ -17,31 +17,44 @@
 #define BOOST_OPENMETHOD_OVERRIDERS(NAME)                                      \
     BOOST_PP_CAT(BOOST_OPENMETHOD_NAME(NAME), _overriders)
 
-#define BOOST_OPENMETHOD_DETAIL_PLIST(N, I, A)                                 \
-    BOOST_PP_COMMA_IF(I)                                                       \
-    ::boost::openmethod::detail::remove_virtual<BOOST_PP_TUPLE_ELEM(I, A)>     \
-    BOOST_PP_CAT(a, I)
+namespace boost::openmethod::detail {
 
-#define BOOST_OPENMETHOD_DETAIL_ALIST(N, I, A)                                 \
-    BOOST_PP_COMMA_IF(I)                                                       \
-    std::forward<::boost::openmethod::detail::remove_virtual<                  \
-        BOOST_PP_TUPLE_ELEM(I, A)>>(BOOST_PP_CAT(a, I))
+template<typename, class Method, typename ReturnType, typename... Parameters>
+struct enable_forwarder;
 
-#define BOOST_OPENMETHOD_DETAIL_RLIST(N, I, A)                                 \
-    BOOST_PP_COMMA_IF(I) BOOST_PP_CAT(a, I)
+template<class Method, typename ReturnType, typename... Parameters>
+struct enable_forwarder<
+    std::void_t<decltype(Method::fn(std::declval<Parameters>()...))>, Method,
+    ReturnType, Parameters...> {
+    using type = ReturnType;
+};
+
+} // namespace boost::openmethod::detail
 
 #define BOOST_OPENMETHOD(NAME, ARGS, ...)                                      \
     struct BOOST_OPENMETHOD_NAME(NAME);                                        \
-    ::boost::openmethod::method<BOOST_OPENMETHOD_NAME(NAME) ARGS, __VA_ARGS__> \
-        BOOST_PP_CAT(BOOST_OPENMETHOD_NAME(NAME), _guide)(BOOST_PP_REPEAT(     \
-            BOOST_PP_TUPLE_SIZE(ARGS), BOOST_OPENMETHOD_DETAIL_PLIST, ARGS));  \
-    inline decltype(auto) NAME(BOOST_PP_REPEAT(                                \
-        BOOST_PP_TUPLE_SIZE(ARGS), BOOST_OPENMETHOD_DETAIL_PLIST, ARGS)) {     \
+    template<typename... ForwarderParameters>                                  \
+    typename ::boost::openmethod::detail::enable_forwarder<                    \
+        void,                                                                  \
+        ::boost::openmethod::method<                                           \
+            BOOST_OPENMETHOD_NAME(NAME) ARGS, __VA_ARGS__>,                    \
+        typename ::boost::openmethod::method<                                  \
+            BOOST_OPENMETHOD_NAME(NAME) ARGS, __VA_ARGS__>,                    \
+        ForwarderParameters...>::type                                          \
+        BOOST_PP_CAT(BOOST_OPENMETHOD_NAME(NAME), _guide)(                     \
+            ForwarderParameters && ... args);                                  \
+    template<typename... ForwarderParameters>                                  \
+    inline typename ::boost::openmethod::detail::enable_forwarder<             \
+        void,                                                                  \
+        ::boost::openmethod::method<                                           \
+            BOOST_OPENMETHOD_NAME(NAME) ARGS, __VA_ARGS__>,                    \
+        typename ::boost::openmethod::method<                                  \
+            BOOST_OPENMETHOD_NAME(NAME) ARGS, __VA_ARGS__>::return_type,       \
+        ForwarderParameters...>::type                                          \
+    NAME(ForwarderParameters&&... args) {                                      \
         return ::boost::openmethod::                                           \
             method<BOOST_OPENMETHOD_NAME(NAME) ARGS, __VA_ARGS__>::fn(         \
-                BOOST_PP_REPEAT(                                               \
-                    BOOST_PP_TUPLE_SIZE(ARGS), BOOST_OPENMETHOD_DETAIL_ALIST,  \
-                    ARGS));                                                    \
+                std::forward<ForwarderParameters>(args)...);                   \
     }
 
 #define BOOST_OPENMETHOD_DETAIL_LOCATE_METHOD(NAME, ARGS)                      \
@@ -54,16 +67,13 @@
     using method_type =                                                        \
         boost_openmethod_detail_locate_method_aux<void ARGS>::type
 
-#define BOOST_OPENMETHOD_DETAIL_RETURN_TYPE(...)                               \
-    boost::mp11::mp_back<boost::mp11::mp_list<__VA_ARGS__>>
-
 #define BOOST_OPENMETHOD_DETAIL_OVERRIDE(INLINE, OVERRIDERS, NAME, ARGS, ...)  \
     template<typename...>                                                      \
     struct OVERRIDERS;                                                         \
     template<>                                                                 \
-    struct OVERRIDERS<BOOST_OPENMETHOD_DETAIL_RETURN_TYPE(__VA_ARGS__) ARGS> { \
+    struct OVERRIDERS<__VA_ARGS__ ARGS> {                                      \
         BOOST_OPENMETHOD_DETAIL_LOCATE_METHOD(NAME, ARGS);                     \
-        static auto fn ARGS->BOOST_OPENMETHOD_DETAIL_RETURN_TYPE(__VA_ARGS__); \
+        static auto fn ARGS->__VA_ARGS__;                                      \
         static auto has_next() {                                               \
             return method_type::next<fn> != method_type::fn.not_implemented;   \
         }                                                                      \
@@ -74,12 +84,10 @@
         }                                                                      \
     };                                                                         \
     INLINE BOOST_OPENMETHOD_REGISTER(                                          \
-        OVERRIDERS<BOOST_OPENMETHOD_DETAIL_RETURN_TYPE(__VA_ARGS__) ARGS>::    \
-            method_type::override<OVERRIDERS<                                  \
-                BOOST_OPENMETHOD_DETAIL_RETURN_TYPE(__VA_ARGS__) ARGS>::fn>);  \
-    INLINE auto                                                                \
-        OVERRIDERS<BOOST_OPENMETHOD_DETAIL_RETURN_TYPE(__VA_ARGS__) ARGS>::fn  \
-            ARGS->boost::mp11::mp_back<boost::mp11::mp_list<__VA_ARGS__>>
+        OVERRIDERS<__VA_ARGS__ ARGS>::method_type::override<                   \
+            OVERRIDERS<__VA_ARGS__ ARGS>::fn>);                                \
+    INLINE auto OVERRIDERS<__VA_ARGS__ ARGS>::fn ARGS                          \
+        ->boost::mp11::mp_back<boost::mp11::mp_list<__VA_ARGS__>>
 
 #define BOOST_OPENMETHOD_INLINE_OVERRIDE(NAME, ARGS, ...)                      \
     BOOST_OPENMETHOD_DETAIL_OVERRIDE(                                          \
@@ -92,6 +100,6 @@
         ARGS, __VA_ARGS__)
 
 #define BOOST_OPENMETHOD_CLASSES(...)                                          \
-    static ::boost::openmethod::use_classes<__VA_ARGS__> BOOST_OPENMETHOD_GENSYM
+    BOOST_OPENMETHOD_REGISTER(::boost::openmethod::use_classes<__VA_ARGS__>);
 
 #endif

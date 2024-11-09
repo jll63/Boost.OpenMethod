@@ -124,34 +124,6 @@ BOOST_OPENMETHOD_OVERRIDE(times, (const matrix& m, double a), Subtype) {
     return MATRIX_SCALAR;
 }
 
-BOOST_OPENMETHOD(times, (virtual_<matrix&&>, virtual_<matrix&&>), int, policy);
-BOOST_OPENMETHOD(times, (double, virtual_<matrix&&>), int, policy);
-BOOST_OPENMETHOD(times, (virtual_<matrix&&>, double), int, policy);
-
-BOOST_OPENMETHOD_OVERRIDE(times, (matrix&&, matrix&&), int) {
-    return -MATRIX_MATRIX;
-}
-
-BOOST_OPENMETHOD_OVERRIDE(times, (diagonal_matrix&&, diagonal_matrix&&), int) {
-    return -DIAGONAL_DIAGONAL;
-}
-
-BOOST_OPENMETHOD_OVERRIDE(times, (double a, matrix&& m), int) {
-    return -SCALAR_MATRIX;
-}
-
-BOOST_OPENMETHOD_OVERRIDE(times, (double a, diagonal_matrix&& m), int) {
-    return -SCALAR_DIAGONAL;
-}
-
-BOOST_OPENMETHOD_OVERRIDE(times, (diagonal_matrix && m, double a), int) {
-    return -DIAGONAL_SCALAR;
-}
-
-BOOST_OPENMETHOD_OVERRIDE(times, (matrix && m, double a), int) {
-    return -MATRIX_SCALAR;
-}
-
 BOOST_OPENMETHOD(zero, (virtual_<matrix&>), Subtype, policy);
 
 BOOST_OPENMETHOD_OVERRIDE(zero, (dense_matrix & m), Subtype) {
@@ -175,17 +147,6 @@ BOOST_AUTO_TEST_CASE(simple) {
         BOOST_TEST(times(2, dense) == SCALAR_MATRIX);
         BOOST_TEST(times(dense, 2) == MATRIX_SCALAR);
         BOOST_TEST(times(diag, 2) == DIAGONAL_SCALAR);
-    }
-
-    {
-        // pass by xref
-        BOOST_TEST(times(dense_matrix(), dense_matrix()) == -MATRIX_MATRIX);
-        BOOST_TEST(
-            times(diagonal_matrix(), diagonal_matrix()) == -DIAGONAL_DIAGONAL);
-        BOOST_TEST(times(diagonal_matrix(), dense_matrix()) == -MATRIX_MATRIX);
-        BOOST_TEST(times(2, dense_matrix()) == -SCALAR_MATRIX);
-        BOOST_TEST(times(dense_matrix(), 2) == -MATRIX_SCALAR);
-        BOOST_TEST(times(diagonal_matrix(), 2) == -DIAGONAL_SCALAR);
     }
 
     {
@@ -395,6 +356,10 @@ struct base {
 };
 
 BOOST_OPENMETHOD(foo, (virtual_<base&>), void, policy);
+
+// instantiate the method
+BOOST_OPENMETHOD_OVERRIDE(foo, (base&), void) {
+}
 
 BOOST_AUTO_TEST_CASE(test_initialize_error_handling) {
     auto prev_handler = policy::set_error_handler(errors::test_handler);

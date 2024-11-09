@@ -166,6 +166,18 @@ BOOST_AUTO_TEST_CASE(test_type_id_list) {
 
 } // namespace test_virtual
 
+namespace test_macros {
+
+// Check that macros can handle commas in parameter and return types.
+
+struct Animal {
+    virtual ~Animal() = default;
+};
+
+BOOST_OPENMETHOD(poke, (virtual_<Animal&>), std::tuple<int, int>);
+
+} // namespace test_macros
+
 namespace intrusive_vptr {
 
 struct policy : policies::default_::fork<policy> {};
@@ -186,6 +198,9 @@ struct Indirect : set_vptr<Indirect, indirect_policy> {
 };
 
 BOOST_OPENMETHOD(whatever, (virtual_<Indirect&>), void, indirect_policy);
+// instantiate the method
+BOOST_OPENMETHOD_OVERRIDE(whatever, (Indirect&), void) {
+}
 
 static_assert(!detail::has_vptr<Nothing>::value);
 static_assert(detail::has_vptr<Animal>::value);

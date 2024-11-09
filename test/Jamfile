@@ -33,7 +33,7 @@ run test_rolex.cpp ;
 run test_static_list.cpp ;
 run test_virtual_ptr_all.cpp ;
 run test_virtual_ptr_basic.cpp ;
-run test_virtual_ptr.cpp ;
+run test_virtual_ptr_state.cpp ;
 
 # quick (for CI)
 alias quick : blackbox ;

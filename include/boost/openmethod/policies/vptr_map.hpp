@@ -32,7 +32,7 @@ struct vptr_map : virtual extern_vptr {
     }
 
     template<class Class>
-    static auto dynamic_vptr(const Class& arg) {
+    static auto dynamic_vptr(const Class& arg) -> vptr_type {
         auto type = Policy::dynamic_type(arg);
         auto iter = vptrs.find(type);
 

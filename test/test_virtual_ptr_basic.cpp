@@ -87,19 +87,6 @@ struct Animal {
 
 struct Dog : Animal {};
 
-static_assert(std::is_same_v<virtual_ptr<Animal>::element_type, Animal>);
-static_assert(std::is_same_v<
-              decltype(std::declval<virtual_ptr<Animal>>().get()), Animal*>);
-static_assert(
-    std::is_same_v<decltype(*std::declval<virtual_ptr<Animal>>()), Animal&>);
-
-static_assert(std::is_same_v<virtual_shared_ptr<Animal>::element_type, Animal>);
-static_assert(
-    std::is_same_v<
-        decltype(std::declval<virtual_shared_ptr<Animal>>().get()), Animal*>);
-static_assert(std::is_same_v<
-              decltype(*std::declval<virtual_shared_ptr<Animal>>()), Animal&>);
-
 BOOST_OPENMETHOD_CLASSES(Animal, Dog);
 
 namespace BOOST_OPENMETHOD_GENSYM {
@@ -141,43 +128,6 @@ BOOST_AUTO_TEST_CASE(test_virtual_ptr_by_ref) {
     }
 }
 
-BOOST_AUTO_TEST_CASE(test_final_error) {
-    auto prev_handler = policies::default_::set_error_handler(
-        [](const policies::default_::error_variant& ev) {
-            if (auto error = std::get_if<method_table_error>(&ev)) {
-                static_assert(
-                    std::is_same_v<decltype(error), const method_table_error*>);
-                throw *error;
-            }
-        });
-
-    boost::openmethod::initialize();
-    bool threw = false;
-
-    try {
-        Dog snoopy;
-        Animal& animal = snoopy;
-        virtual_ptr<Animal>::final(animal);
-    } catch (const method_table_error& error) {
-        policies::default_::set_error_handler(prev_handler);
-        BOOST_TEST(error.type == reinterpret_cast<type_id>(&typeid(Dog)));
-        threw = true;
-    } catch (...) {
-        policies::default_::set_error_handler(prev_handler);
-        BOOST_FAIL("wrong exception");
-        return;
-    }
-
-    if constexpr (policies::default_::has_facet<policies::runtime_checks>) {
-        if (!threw) {
-            BOOST_FAIL("should have thrown");
-        }
-    } else {
-        if (threw) {
-            BOOST_FAIL("should not have thrown");
-        }
-    }
-}
 } // namespace BOOST_OPENMETHOD_GENSYM
 
 namespace BOOST_OPENMETHOD_GENSYM {

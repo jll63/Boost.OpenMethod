@@ -324,16 +324,15 @@ template<class Class, class Policy>
 class virtual_ptr_impl<Class, Policy, false> {
     using traits = detail::virtual_ptr_traits<Class, Policy>;
 
-    template<class, typename>
+    template<class, class>
     friend struct virtual_traits;
 
-    template<class, typename>
+    template<class, class>
     friend struct virtual_ptr_traits;
 
   protected:
     static constexpr bool is_smart = false;
-    static constexpr bool is_indirect =
-        Policy::template has_facet<policies::indirect_vptr>;
+    static constexpr bool is_indirect = Policy::is_indirect;
 
     using vptr_type = std::conditional_t<
         is_indirect, std::uintptr_t const* const*, std::uintptr_t const*>;
@@ -398,12 +397,12 @@ class virtual_ptr_impl<Class, Policy, true> {
     friend struct virtual_ptr_traits;
 
   protected:
-    static constexpr bool is_smart = true;
-    static constexpr bool is_indirect =
-        Policy::template has_facet<policies::indirect_vptr>;
+    using vptr_type =
+        decltype(Policy::dynamic_vptr(std::declval<virtual_ptr_impl>()));
 
-    using vptr_type = std::conditional_t<
-        is_indirect, indirect_vptr_type, openmethod::vptr_type>;
+    static constexpr bool is_indirect =
+        std::is_same_v<vptr_type, indirect_vptr_type>;
+    static constexpr bool is_smart = true;
 
     Class obj;
     vptr_type vp;
@@ -412,13 +411,13 @@ class virtual_ptr_impl<Class, Policy, true> {
     using element_type = typename traits::element_type;
 
     virtual_ptr_impl(const Class& other) {
-        obj = other;
         vp = Policy::dynamic_vptr(*other);
+        obj = other;
     }
 
     virtual_ptr_impl(Class&& other) {
+        vp = Policy::dynamic_vptr(*other);
         obj = std::move(other);
-        vp = Policy::dynamic_vptr(*obj);
     }
 
     template<class Other>
@@ -482,8 +481,7 @@ class virtual_ptr : public detail::virtual_ptr_impl<Class, Policy> {
 
         if constexpr (Policy::template has_facet<runtime_checks>) {
             // check that dynamic type == static type
-            auto static_type =
-                Policy::template static_type<other_type>();
+            auto static_type = Policy::template static_type<other_type>();
             auto dynamic_type = other_traits::dynamic_type(obj);
 
             if (dynamic_type != static_type) {
@@ -496,7 +494,7 @@ class virtual_ptr : public detail::virtual_ptr_impl<Class, Policy> {
 
         typename impl::vptr_type static_vptr;
 
-        if constexpr (Policy::template has_facet<indirect_vptr>) {
+        if constexpr (impl::is_indirect) {
             static_vptr = &Policy::template static_vptr<other_type>;
         } else {
             static_vptr = Policy::template static_vptr<other_type>;

@@ -79,7 +79,7 @@ struct vptr_vector : virtual extern_vptr {
     static auto register_vptrs(ForwardIterator first, ForwardIterator last) -> void;
 
     template<class Class>
-    static auto dynamic_vptr(const Class& arg) -> const std::uintptr_t*;
+    static auto dynamic_vptr(const Class& arg) -> const vptr_type&;
 };
 
 }}}
@@ -121,7 +121,7 @@ template<class Class>
 auto dynamic_vptr(const Class& object) -> const std::uintptr_t*;
 ```
 
-Return a pointer to the v-table for `object`.
+Return a _reference_ to a pointer to the v-table for `object`.
 
 Call `Policy::dynamic_type` for `object`. If `Policy` contains a `type_hash`
 facet, use it to convert the resulting `type_id` to an index; otherwise, use the

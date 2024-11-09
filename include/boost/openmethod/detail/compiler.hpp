@@ -106,10 +106,6 @@ struct generic_compiler {
                        other) != transitive_derived.end();
         }
 
-        auto vptr() const -> vptr_type {
-            return *static_vptr;
-        }
-
         auto indirect_vptr() const {
             return static_vptr;
         }

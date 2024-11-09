@@ -13,9 +13,11 @@ namespace boost {
 namespace openmethod {
 namespace policies {
 
-template<class Policy>
+template<class Policy, typename VptrType = direct_vptr_type>
 struct vptr_vector : virtual extern_vptr {
-    static std::vector<vptr_type> vptrs;
+    static constexpr bool is_indirect =
+        std::is_same_v<VptrType, indirect_vptr_type>;
+    static std::vector<VptrType> vptrs;
 
     template<typename ForwardIterator>
     static auto register_vptrs(ForwardIterator first, ForwardIterator last)
@@ -42,10 +44,6 @@ struct vptr_vector : virtual extern_vptr {
 
         vptrs.resize(size);
 
-        if constexpr (Policy::template has_facet<indirect_vptr>) {
-            Policy::indirect_vptrs.resize(size);
-        }
-
         for (auto iter = first; iter != last; ++iter) {
             for (auto type_iter = iter->type_id_begin();
                  type_iter != iter->type_id_end(); ++type_iter) {
@@ -55,17 +53,17 @@ struct vptr_vector : virtual extern_vptr {
                     index = Policy::hash_type_id(index);
                 }
 
-                vptrs[index] = iter->vptr();
-
-                if constexpr (Policy::template has_facet<indirect_vptr>) {
-                    Policy::indirect_vptrs[index] = iter->indirect_vptr();
+                if constexpr (is_indirect) {
+                    vptrs[index] = iter->indirect_vptr();
+                } else {
+                    vptrs[index] = *iter->indirect_vptr();
                 }
             }
         }
     }
 
     template<class Class>
-    static auto dynamic_vptr(const Class& arg) -> vptr_type {
+    static auto dynamic_vptr(const Class& arg) -> VptrType {
         auto index = Policy::dynamic_type(arg);
 
         if constexpr (Policy::template has_facet<type_hash>) {
@@ -76,8 +74,8 @@ struct vptr_vector : virtual extern_vptr {
     }
 };
 
-template<class Policy>
-std::vector<vptr_type> vptr_vector<Policy>::vptrs;
+template<class Policy, typename VptrType>
+std::vector<VptrType> vptr_vector<Policy, VptrType>::vptrs;
 
 } // namespace policies
 } // namespace openmethod

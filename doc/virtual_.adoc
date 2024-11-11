@@ -2,7 +2,7 @@
 [#virtual_]
 ## virtual_
 
-Indicate that a formal parameter of an open-method is virtual.
+Make a formal parameter of a method virtual.
 
 ### Synopsis
 

@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_shared_ptr_ctors, Policy, test_policies) {
         }
 
         {
-            // does not compile:
+            // should not compile:
             // virtual_unique_ptr<Dog, Policy> unique_dog(dog);
         }
     }
@@ -217,11 +217,14 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_unique_ptr_ctors, Policy, test_policies) {
 
     {
         // virtual_unique_ptr can be moved
-        auto ptr1 = make_virtual_unique<Dog, Policy>();
-        auto dumb_ptr = ptr1.get();
-        auto ptr2 = std::move(ptr1);
-        BOOST_TEST(ptr1.get() == nullptr);
-        BOOST_TEST(ptr2.get() == dumb_ptr);
+        auto unique = make_virtual_unique<Dog, Policy>();
+        Dog* dumb_ptr = unique.get();
+        virtual_unique_ptr<Dog, Policy> unique_moved = std::move(unique);
+        BOOST_TEST(unique.get() == nullptr);
+        BOOST_TEST(unique_moved.get() == dumb_ptr);
+        virtual_shared_ptr<Dog, Policy> shared_moved = std::move(unique_moved);
+        BOOST_TEST(unique_moved.get() == nullptr);
+        BOOST_TEST(shared_moved.get() == dumb_ptr);
     }
 }
 

@@ -7,8 +7,10 @@
 // include::headers.adoc[]
 
 include::method.adoc[]
+include::method_override.adoc[]
 include::virtual_.adoc[]
 include::virtual_ptr.adoc[]
+include::virtual_smart_ptr.adoc[]
 
 include::basic_policy.adoc[]
 include::error_output.adoc[]

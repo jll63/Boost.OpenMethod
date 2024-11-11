@@ -1,0 +1,44 @@
+
+[#method_override]
+## method::override
+
+```c++
+namespace boost {
+namespace openmethod {
+
+template<typename Signature, typename ReturnType, class Policy>
+template<auto... Functions>
+struct method<Signature, ReturnType, Policy>::override {
+    override();
+    ~override();
+};
+
+}
+}
+```
+
+*Template Parameters*
+
+[cols="1,1"]
+|===
+
+|_Functions_
+| Functions to add as overriders to method.
+
+|===
+
+### constructor
+
+```c++
+method<Signature, ReturnType, Policy>::override<Functions>::override();
+```
+
+Add the functions to the list of overriders registered in `method`.
+
+### destructor
+
+```c++
+method<Signature, ReturnType, Policy>::override<Functions>::~method();
+```
+
+Remove the functions from the list of overriders registered in `method`.

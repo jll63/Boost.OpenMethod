@@ -162,7 +162,6 @@ void fast_perfect_hash<Policy>::check(std::size_t index, type_id type) {
     if (index >= hash_length || control[index] != type) {
         if constexpr (Policy::template has_facet<error_handler>) {
             unknown_class_error error;
-            error.context = unknown_class_error::update;
             error.type = type;
             Policy::error(error);
         }

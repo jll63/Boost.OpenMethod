@@ -36,7 +36,6 @@ struct not_implemented_error : openmethod_error {
 };
 
 struct unknown_class_error : openmethod_error {
-    enum { update = 1, call } context;
     type_id type;
 };
 

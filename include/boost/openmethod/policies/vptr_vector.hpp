@@ -15,8 +15,13 @@ namespace policies {
 
 template<class Policy, typename VptrType = direct_vptr_type>
 struct vptr_vector : virtual extern_vptr {
+    static_assert(
+        std::is_same_v<VptrType, direct_vptr_type> ||
+        std::is_same_v<VptrType, indirect_vptr_type>);
+
     static constexpr bool is_indirect =
         std::is_same_v<VptrType, indirect_vptr_type>;
+
     static std::vector<VptrType> vptrs;
 
     template<typename ForwardIterator>

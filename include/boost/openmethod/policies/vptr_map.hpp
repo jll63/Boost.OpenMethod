@@ -15,10 +15,15 @@ namespace boost {
 namespace openmethod {
 namespace policies {
 
-template<
-    class Policy,
-    class Map = std::unordered_map<type_id, vptr_type>>
+template<class Policy, class Map = std::unordered_map<type_id, vptr_type>>
 struct vptr_map : virtual extern_vptr {
+    static_assert(
+        std::is_same_v<typename Map::mapped_type, direct_vptr_type> ||
+        std::is_same_v<typename Map::mapped_type, indirect_vptr_type>);
+
+    static constexpr bool is_indirect =
+        std::is_same_v<typename Map::mapped_type, indirect_vptr_type>;
+
     static Map vptrs;
 
     template<typename ForwardIterator>
@@ -38,10 +43,13 @@ struct vptr_map : virtual extern_vptr {
 
         if constexpr (Policy::template has_facet<runtime_checks>) {
             if (iter == vptrs.end()) {
-                unknown_class_error error;
-                error.context = unknown_class_error::update;
-                error.type = type;
-                Policy::error(error);
+                if constexpr (Policy::template has_facet<error_handler>) {
+                    unknown_class_error error;
+                    error.type = type;
+                    Policy::error(error);
+                }
+
+                abort();
             }
         }
 

@@ -3,6 +3,8 @@
 
 `throw_error_handler` - An implementation of the `error_handler` facet that throws the error as an exception.
 
+### Synopsis
+
 ```c++
 namespace boost {
 namespace openmethod {

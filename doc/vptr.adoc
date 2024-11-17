@@ -1,11 +1,17 @@
-### vptr
 
-The `vptr` facet is responsible for retrieving a pointer to the v-table for an
-object.
+## Facet Class vptr
+
+`vptr` - A facet that provides a pointer to the v-table for an object.
+
+### Synopsis
 
 ```c++
 struct vptr {};
 ```
+
+---
+
+### Description
 
 OpenMethod implements method dispatch in a way similar to native virtual
 function dispatch: for each virtual argument, fetch a pointer to the dispatch
@@ -25,7 +31,7 @@ statically from the policy's `static_vptr<Class>` member. It is conceivable
 to organize an entire program around the "final" constructs; thus, the `vptr`
 facet is optional.
 
-### Requirements for implementations of `vptr`
+### Requirements
 
 An implementation of `vptr` must provide the following static function template:
 
@@ -37,11 +43,11 @@ An implementation of `vptr` must provide the following static function template:
 
 | dynamic_vptr
 | return the address of the v-table for an object
+|===
 
+## Facet Class extern_vptr
 
-### extern_vptr
-
-`extern_vptr` is a sub-category of `vptr` which stores vptrs outside of the
+`extern_vptr` is a specialization of `vptr` that stores vptrs outside of the
 objects. If present, it provides a `register_vptrs` function, called by
 `initalize` to register the vptrs.
 
@@ -49,8 +55,7 @@ objects. If present, it provides a `register_vptrs` function, called by
 struct extern_vptr : virtual vptr {};
 ```
 
-### Requirements for implementations of `extern_vptr`
-
+### Requirements
 
 [cols="a,a", options="header"]
 
@@ -60,30 +65,7 @@ struct extern_vptr : virtual vptr {};
 
 | register_vptrs
 | register the vptrs
-
-### vptr_vector
-
-`vptr_vector` is an implementation of `external_vptr that stores the
-pointers to the v-tables in a `std::vector`.
-
-```c++
-namespace boost {
-namespace openmethod {
-namespace policies {
-
-template<class Policy>
-struct vptr_vector : virtual extern_vptr {
-    static std::vector<const std::uintptr_t*> vptrs;
-
-    template<typename ForwardIterator>
-    static auto register_vptrs(ForwardIterator first, ForwardIterator last) -> void;
-
-    template<class Class>
-    static auto dynamic_vptr(const Class& arg) -> const vptr_type&;
-};
-
-}}}
-```
+|===
 
 #### register_vptrs
 
@@ -92,37 +74,16 @@ template<typename ForwardIterator>
 auto register_vptrs(ForwardIterator first, ForwardIterator last) -> void;
 ```
 
-Store the pointers to the v-tables in a vector, indexed by the (possibly hashed)
-`type_id`s.
-
-If `Policy` contains a `type_hash` facet, call its `hash_initialize`
-function.
-
 `ForwardIterator` is a forward iterator over a range of objects that have the
 following member functions:
 
 ```c++
-auto type_id_begin() -> type_id_forward_iterator
-auto type_id_end() -> type_id_forward_iterator
+auto indirect_vptr() const -> const vptr_type*;
+auto type_id_begin() -> type_id_forward_iterator;
+auto type_id_end() -> type_id_forward_iterator;
 ```
 
-Return a range of `type_id`s.
+`indirect_vptr` returns a pointer to a pointer to the v-table for a registered
+class.
 
-```c++
-auto vptr() const -> const std::uintptr_t*
-```
-
-Return the vptr for the class having any of the above `type_id`s.
-
-### dynamic_vptr
-
-```c++
-template<class Class>
-auto dynamic_vptr(const Class& object) -> const std::uintptr_t*;
-```
-
-Return a _reference_ to a pointer to the v-table for `object`.
-
-Call `Policy::dynamic_type` for `object`. If `Policy` contains a `type_hash`
-facet, use it to convert the resulting `type_id` to an index; otherwise, use the
-`type_id` as the index.
+`type_id_begin` and `type_id_end` return a range of `type_id`s for the class.

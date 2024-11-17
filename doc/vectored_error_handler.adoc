@@ -4,7 +4,7 @@
 `throw_error_handler` - An implementation of the `error_handler` facet that
 calls a function, which can be customized, to handle the error.
 
-## Synopsis
+### Synopsis
 
 ```c++
 namespace boost {
@@ -38,8 +38,6 @@ class vectored_error_handler : public virtual error_handler {
 | _Policy_
 | The policy containing the facet.
 |===
-
----
 
 ---
 

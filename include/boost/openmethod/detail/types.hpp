@@ -49,7 +49,7 @@ struct range {
 
 struct class_info : static_list<class_info>::static_link {
     type_id type;
-    std::uintptr_t** static_vptr;
+    vptr_type* static_vptr;
     type_id *first_base, *last_base;
     bool is_abstract{false};
 

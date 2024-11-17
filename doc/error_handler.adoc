@@ -1,0 +1,63 @@
+
+## Facet error_handler
+
+`error_handler` - A facet that handles errors.
+
+### Synopsis
+
+```c++
+namespace boost {
+namespace openmethod {
+namespace policies {
+
+struct error_handler {};
+
+}}}
+```
+
+---
+
+### Description
+
+When an error is encountered, either during `initialize` or method dispatch, the
+program is terminated via a call to `abort`. If this facet is present in the
+policy, its `error` function is called with an error object. It can prevent termination by throwing an exception.
+
+---
+
+### Requirements
+
+Implementations of `error_handler` must provide the following functions:
+
+[cols="a,a", options="header"]
+
+|===
+
+| Name
+| Description
+
+| template<class T> static auto error(const T&) -> void
+| A function template that takes an error object.
+
+|===
+
+---
+
+### Implementations
+
+
+[cols="a,a", options="header"]
+
+|===
+
+| Name
+| Description
+
+| throw_error_handler
+| Throws the error object as an exception.
+
+| vectored_error_handler | Calls an error handler via a `std::function`, which
+defaults to printing a description of the error to `stderr`. Included in the
+`debug` policy.
+
+|===

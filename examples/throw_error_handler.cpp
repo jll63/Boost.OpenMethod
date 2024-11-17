@@ -6,7 +6,7 @@
 #include <iostream>
 
 #include <boost/openmethod/policy.hpp>
-#include <boost/openmethod/policies/throw_error.hpp>
+#include <boost/openmethod/policies/throw_error_handler.hpp>
 
 struct Animal {
     virtual ~Animal() = default;

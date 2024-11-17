@@ -1,0 +1,46 @@
+
+## Class Template basic_error_output
+
+`basic_error_output` - An implementation of the `error_output` facet that writes error messages to `stderr`.
+
+```c++
+namespace boost {
+namespace openmethod {
+namespace policies {
+
+template<class Policy, typename Stream = /*unspecified*/>
+struct basic_error_output : virtual error_output {
+    static Stream error_stream;
+};
+
+}}}
+```
+
+---
+
+### Description
+
+*Template Parameters*
+
+[cols="1,1"]
+|===
+|_Policy_
+| The policy containing the facet.
+
+|_Stream_
+| A type that satisfies the requirements of `RestrictedOutputStream`.
+|===
+
+---
+
+### Static Member Variables
+
+#### error_stream
+
+```c++
+Stream  error_stream;
+```
+
+Initialized by the default constructor of `Stream`. It is the responsibility of
+the program to initializate it if needed, e.g., for a `std::ofstream`, to open
+it.

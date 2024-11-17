@@ -1,4 +1,12 @@
-## basic_policy
+
+## Class Template basic_policy
+
+`basic_policy` - A CRT template that implements a policy, which consists of a a
+collection of methods, classes, dispatch data, and facets, specifying how to
+obtain a pointer to a v-table from an object, how to report errors, whether to
+perform runtime sanity checks, etc.
+
+### Synopsis
 
 ```c++
 namespace boost {
@@ -6,7 +14,9 @@ namespace openmethod {
 namespace policies {
 
 template<class Policy, class... Facets>
-struct basic_policy : virtual Facets... /*, unspecified*/ {
+struct basic_policy : virtual abstract_policy,
+                      virtual basic_domain<Policy>,
+                      virtual Facets... {
     template<class Facet>
     static constexpr bool has_facet = /*unspecified*/;
 
@@ -26,7 +36,9 @@ struct basic_policy : virtual Facets... /*, unspecified*/ {
 }}}
 ```
 
-`basic_error_output` implements the `error_output` facet.
+---
+
+### Description
 
 *Template Parameters*
 
@@ -39,12 +51,64 @@ struct basic_policy : virtual Facets... /*, unspecified*/ {
 | A collection of facets.
 |===
 
-### error_stream
+---
+
+### Member Meta-Functions
+
+#### has_facet
 
 ```c++
-Stream  error_stream;
+template<class Facet>
+static constexpr bool has_facet;
 ```
 
-Initialized by the default constructor of `Stream`. It is the responsibility of
-the program to initializate it if needed, e.g., for a `std::ofstream`, to open
-it.
+Evaluates to `true` if _Policy_ contains _Facet_.
+
+#### fork
+
+```c++
+template<class NewPolicy>
+using fork;
+```
+
+Creates a new policy by copying an existing one. _NewPolicy_, and the facets it
+contains, do not share any state with the original _Policy_. The new policy does
+not retain any knowledge of the classes and methods registered in the original.
+
+#### add
+
+```c++
+template<class... MoreFacets>
+using add;
+```
+
+Creates a new policy by adding _MoreFacets_ to the original policy's collection
+of facets. The original policy and the new one share the same static state.
+
+#### replace
+
+```c++
+template<class Base, class NewFacet>
+using replace;
+```
+
+Creates a new policy by replacing the facet in _Policy_ that derives from _Base_
+with _NewFacet_. It is not an error if _policy_ does not contain such a facet;
+in that case, the new policy contains the same facet as the original one.
+
+The original policy and the new one share the same static
+state.
+
+#### remove
+
+```c++
+template<class Base>
+using remove;
+```
+
+Creates a new policy by removing the facet in _Policy_ that derives from _Base_.
+It is not an error if _policy_ does not contain such a facet; in that case, the
+new policy contains the same facet as the original one.
+
+The original policy and the new one share the same static
+state.

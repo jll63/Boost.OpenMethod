@@ -1,39 +1,34 @@
-## error_output
 
-## basic_error_output
+## Facet error_output
+
+`error_output` - A facet that provides a stream for writing error messages.
+
+### Synopsis
 
 ```c++
 namespace boost {
 namespace openmethod {
 namespace policies {
 
-template<class Policy, typename Stream = _unspecified_>
-struct basic_error_output : virtual error_output {
-    static Stream error_stream;
-};
+struct error_output {};
 
 }}}
 ```
 
-`basic_error_output` implements the `error_output` facet.
+---
 
-*Template Parameters*
+### Requirements
 
-[cols="1,1"]
-|===
-|_Policy_
-| The policy containing the facet.
+Implementations of `error_output` provide the following functions:
 
-|_Stream_
-| Any type that satisfies the requirements of `RestrictedOutputStream`.
+[cols="a,a", options="header"]
+
 |===
 
-### error_stream
+| Name
+| Description
 
-```c++
-Stream  error_stream;
-```
+| error_stream
+| A static variable that satisfies the requirements of `RestrictedOutputStream`.
 
-Initialized by the default constructor of `Stream`. It is the responsibility of
-the program to initializate it if needed, e.g., for a `std::ofstream`, to open
-it.
+|===

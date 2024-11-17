@@ -1,0 +1,185 @@
+
+[#virtual_ptr_smart]
+
+## Class template virtual_ptr<smart_ptr, ...>
+
+### Description
+
+`virtual_ptr` has specializations that use a `std::shared_ptr` or a
+`std::unique_ptr` to the object instead of a plain pointer.
+
+### Headers
+
+`<boost/openmethod/virtual_shared_ptr.hpp>`,
+`<boost/openmethod/virtual_unique_ptr.hpp>`, `<boost/openmethod.hpp>`
+
+### Synopsis
+
+```c++
+namespace boost::openmethod {
+
+template<class SmartPtr, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
+class virtual_ptr {
+  public:
+    using element_type = typename SmartPtr::element_type;
+
+    virtual_ptr(const SmartPtr& other);
+    virtual_ptr(SmartPtr&& other);
+    template<class Other> virtual_ptr(const virtual_ptr<Other, Policy>& other);
+    template<class Other> virtual_ptr(virtual_ptr<Other, Policy>&& other);
+
+    auto get() const -> element_type*;
+    auto operator->() const -> element_type*;
+    auto operator*() const -> element_type&;
+
+    auto inferior() const -> const SmartPtr&;
+
+    template<typename Other>
+    auto cast() const -> virtual_ptr<Other, Policy>;
+};
+
+template<class SmartPtr>
+virtual_ptr(SmartPtr&) -> virtual_ptr<SmartPtr, BOOST_OPENMETHOD_DEFAULT_POLICY>;
+
+template<class SmartPtr>
+inline auto final_virtual_ptr(SmartPtr& obj) -> virtual_ptr<
+    SmartPtr, BOOST_OPENMETHOD_DEFAULT_POLICY>;
+
+template<class Policy, class SmartPtr>
+inline auto final_virtual_ptr(SmartPtr& obj) -> virtual_ptr<SmartPtr, Policy>;
+}
+```
+
+*Template Parameters*
+
+[cols="1,1"]
+|===
+
+| _SmartPtr_
+| A `std::shared_ptr` or a `std::unique_ptr` to a class registered in _Policy_.
+
+
+| _Policy_ | A policy. Defaults to the BOOST_OPENMETHOD_DEFAULT_POLICY
+preprocessor symbol.
+
+|===
+
+### Type aliases
+
+```c++
+using element_type = typename SmartPtr::element_type;
+```
+
+The type of the managed object.
+
+### Constructors
+
+[source,c++]
+----
+virtual_ptr(const SmartPtr& other);
+----
+
+Constructs a `virtual_ptr` from a `SmartPtr`. `other` is copied to the
+`virtual_ptr`. The pointer to the v-table is deduced from the managed object's
+dynamic type.
+
+This constructor is available only of `SmartPtr` is copy-constructible.
+
+`Other::element_type` must be a class registered in `Policy`.
+
+[source,c++]
+----
+virtual_ptr(SmartPtr&& other);
+----
+
+Constructs a `virtual_ptr` from a `SmartPtr`. `other` is moved to the
+`virtual_ptr`. The pointer to the v-table is deduced from the managed object's
+dynamic type.
+
+`Other::element_type` must be a class registered in `Policy`.
+
+[source,c++]
+----
+template<class Other> virtual_ptr(const virtual_ptr<Other, Policy>& other);
+----
+
+Constructs a `virtual_ptr` from another `virtual_ptr`. The pointer to the
+v-table is copied from `other`.
+
+This constructor is available only if `SmartPtr` is copy-constructible from the
+object pointer contained in `other`.
+
+[source,c++]
+----
+template<class Other> virtual_ptr(virtual_ptr<Other, Policy>&& other);
+----
+
+Constructs a `virtual_ptr` from another `virtual_ptr`. The smart pointer inside
+`other` is moved to the `virtual_ptr`. The pointer to the v-table is copied from
+`other`.
+
+`Other::element_type` must be a class registered in `Policy`.
+
+### Observers
+
+```c++
+auto get() const -> element_type*;
+```
+
+Returns;; a pointer (dumb or smart) to the object.
+
+```c++
+auto operator->() const -> element_type*;
+```
+
+Returns;; a pointer to the object.
+
+```c++
+auto operator*() const -> element_type&;
+```
+
+Returns;; a reference to the object.
+
+```c++
+template<typename Other>
+auto cast() const -> virtual_ptr<Other, Policy>;
+```
+
+Returns;; a `virtual_ptr` to the same object, cast to...
+
+Errors;; handled by facet `rtti` if `Other` is not an accessible subclass of
+`SmartPtr`; `std_rtti` throws a `std::bad_cast` .
+
+### Deduction guide
+
+```c++
+template<class SmartPtr>
+virtual_ptr(SmartPtr&) -> virtual_ptr<SmartPtr, BOOST_OPENMETHOD_DEFAULT_POLICY>;
+```
+
+### Non-member type alias
+
+```c++
+template<class SmartPtr, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
+using virtual_shared_ptr = virtual_ptr<std::shared_ptr<SmartPtr>, Policy>;
+```
+
+### Non-member constructors
+
+```c++
+template<class Policy, class SmartPtr>
+inline auto final_virtual_ptr(SmartPtr& obj);
+```
+
+Construct a `virtual_ptr` from a reference to an object. Assume that `SmartPtr` is
+the object's dynamic type. Load the pointer to the v-table from
+`Policy::static_vptr<SmartPtr>`.
+
+```c++
+template<class SmartPtr, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
+inline auto make_virtual_shared() -> virtual_shared_ptr<SmartPtr, Policy>;
+```
+
+Construct an instance of `SmartPtr` using `std::make_shared`, and return a
+`virtual_shared_ptr` to it. Load the pointer to the v-table from
+`Policy::static_vptr<SmartPtr>`.

@@ -1,0 +1,17 @@
+## Class abstract_policy
+
+abstract_policy - The base class of all policies.
+
+---
+
+### Synopsis
+
+```c++
+namespace boost {
+namespace openmethod {
+namespace policies {
+
+struct abstract_policy {};
+
+}}}
+```

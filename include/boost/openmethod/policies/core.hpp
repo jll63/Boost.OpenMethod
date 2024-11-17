@@ -101,7 +101,7 @@ struct basic_domain {
     static detail::class_catalog classes;
     static detail::method_catalog methods;
     template<class Class>
-    static std::uintptr_t* static_vptr;
+    static vptr_type static_vptr;
     static std::vector<std::uintptr_t> dispatch_data;
 };
 
@@ -113,7 +113,7 @@ detail::method_catalog basic_domain<Policy>::methods;
 
 template<class Policy>
 template<class Class>
-std::uintptr_t* basic_domain<Policy>::static_vptr;
+vptr_type basic_domain<Policy>::static_vptr;
 
 template<class Policy>
 std::vector<std::uintptr_t> basic_domain<Policy>::dispatch_data;

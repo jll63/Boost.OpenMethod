@@ -16,8 +16,8 @@ namespace policies {
 
 template<class Policy, typename Stream = detail::ostderr>
 struct basic_trace_output : virtual trace_output {
-    static Stream trace_stream;
     static bool trace_enabled;
+    static Stream trace_stream;
 };
 
 template<class Policy, typename Stream>

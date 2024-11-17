@@ -1,6 +1,6 @@
 
 [#virtual_]
-## virtual_
+## Class template virtual_
 
 Make a formal parameter of a method virtual.
 

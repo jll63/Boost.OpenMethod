@@ -26,7 +26,7 @@ class vectored_error_handler : public virtual error_handler {
     using error_handler_type = std::function<void(const error_variant& error)>;
 
     template<class Error>
-    static auto error(const Error& error) {
+    static auto error(const Error& error) -> void{
         fn(error_variant(error));
     }
 

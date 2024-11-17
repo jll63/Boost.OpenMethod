@@ -1,19 +1,10 @@
 
 [#virtual_ptr]
 
-## virtual_ptr
+## Class template virtual_ptr
 
-### Description
-
-`virtual_ptr` is a fat pointer that combines a pointer to an object and a
+`virtual_ptr` - A fat pointer that combines a pointer to an object and a
 pointer to its v-table.
-
-Specializations are available to use a `std::shared_ptr` or a `std::unique_ptr`
-to keep the pointer to the object.
-
-The `virtual_ptr` parameters, along with the `virtual_` parameters, are
-considered when selecting the overrider that best matches the arguments of the
-method call.
 
 ### Headers
 
@@ -54,6 +45,10 @@ inline auto final_virtual_ptr(Class& obj) -> virtual_ptr<Class, Policy>;
 }
 ```
 
+---
+
+### Description
+
 *Template Parameters*
 
 [cols="1,1"]
@@ -85,13 +80,17 @@ BOOST_OPENMETHOD_DEFAULT_POLICY preprocessor symbol.
 
 |===
 
+---
+
 ### Type aliases
 
 ```c++
 using element_type = Class;
 ```
 
-The type of the object, regardless of the type of the underlying pointer.
+The type of the object.
+
+---
 
 ### Constructors
 
@@ -121,6 +120,8 @@ template<class Other> virtual_ptr(const virtual_ptr<Other, Policy>& other);
 Construct a `virtual_ptr` from another `virtual_ptr`. The pointer to the v-table
 is copied from `other`.
 
+---
+
 ### Observers
 
 ```c++
@@ -148,12 +149,16 @@ auto cast() const -> virtual_ptr<Other, Policy>;
 
 Returns a `virtual_ptr` to the same object, cast to `Other`.
 
-### Deduction guide
+---
+
+### Deduction guides
 
 ```c++
 template<class Class>
 virtual_ptr(Class&) -> virtual_ptr<Class, BOOST_OPENMETHOD_DEFAULT_POLICY>;
 ```
+
+---
 
 ### Non-member functions
 

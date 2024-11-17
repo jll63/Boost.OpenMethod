@@ -1,6 +1,9 @@
 
 [#method_override]
-## method::override
+## Class Template method::override
+
+`boost::openmethod::method::override` - A class that adds an overrider to an
+open-method.
 
 ```c++
 namespace boost {
@@ -17,28 +20,55 @@ struct method<Signature, ReturnType, Policy>::override {
 }
 ```
 
+---
+
+### Description
+
 *Template Parameters*
 
 [cols="1,1"]
 |===
 
 |_Functions_
-| Functions to add as overriders to method.
+| Functions to add as overriders of method.
 
 |===
 
-### constructor
+`override` must be instantiated as a *static* object.
+
+_Functions_ must fulfill the following requirements:
+
+* Have the same number of formal parameters as the method.
+
+* Each parameter in the same position as a `virtual_ptr<T>` in the method's
+parameter list must be a `virtual_ptr<U>`, where _U_ is covariant with _T_. The
+_Policy_ of the `virtual_ptr`{empty}s must be the same as the method's _Policy_.
+
+* Each formal parameter in the same position as a `virtual_` parameter must have
+a type that is covariant with the type of the method's parameter.
+
+* All other formal parameters must have the same type as the method's
+  corresponding parameters.
+
+* The return type of the overrider must be the same as the method's return type
+  or, if it is a polymorphic type, covariant with the method's return type.
+
+---
+
+### Constructor
 
 ```c++
 method<Signature, ReturnType, Policy>::override<Functions>::override();
 ```
 
-Add the functions to the list of overriders registered in `method`.
+Add _Functions_ to the overriders of `method`.
 
-### destructor
+---
+
+### Destructor
 
 ```c++
 method<Signature, ReturnType, Policy>::override<Functions>::~method();
 ```
 
-Remove the functions from the list of overriders registered in `method`.
+Remove _Functions_ from the overriders of `method`.

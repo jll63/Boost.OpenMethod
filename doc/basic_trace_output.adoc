@@ -1,0 +1,56 @@
+
+## Class Template basic_trace_output
+
+`basic_trace_output` - An implementation of the `trace_output` facet that writes
+trace messages to `stderr`.
+
+```c++
+namespace boost {
+namespace openmethod {
+namespace policies {
+
+template<class Policy, typename Stream = /*unspecified*/>
+struct basic_trace_output : virtual trace_output {
+    static bool trace_enabled;
+    static Stream trace_stream;
+};
+
+}}}
+```
+
+---
+
+### Description
+
+*Template Parameters*
+
+[cols="1,1"]
+|===
+|_Policy_
+| The policy containing the facet.
+
+|_Stream_
+| A type that satisfies the requirements of `RestrictedOutputStream`.
+|===
+
+---
+
+### Static Member Variables
+
+#### trace_enabled
+
+```c++
+Stream  trace_enabled;
+```
+
+Set to `true` if environment variable `BOOST_OPENMETHOD_TRACE` is set to `1`.
+
+#### trace_stream
+
+```c++
+Stream  trace_stream;
+```
+
+Initialized by the default constructor of `Stream`. It is the responsibility of
+the program to prepare it for output if needed, e.g., for a `std::ofstream`, to
+open it.

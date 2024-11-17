@@ -1,0 +1,55 @@
+
+## Facet trace_output
+
+`trace_output` - A facet that provides a stream for writing trace messages.
+
+### Synopsis
+
+```c++
+namespace boost {
+namespace openmethod {
+namespace policies {
+
+struct trace_output {};
+
+}}}
+```
+
+---
+
+### Description
+
+`initialize` can be directed to describe the classes and methods in a policy,
+and how the dispatch tables are built, by including this facet in the policy,
+and setting `trace_enabled` to `true`. The content and the format of the
+description is not documented, beyond the guarantee that it provides an
+exhaustive account of table construction, and may change between major, minor
+and patch versions.
+
+---
+
+### Requirements
+
+Implementations of `trace_output` provide the following functions:
+
+[cols="a,a", options="header"]
+
+|===
+
+| trace_enabled
+| A static variable that satisfies the requirements of `RestrictedOutputStream`.
+
+| Name
+| Description
+
+| trace_enabled
+| A static `bool` variable that is `true` if tracing is on.
+
+| trace_stream
+| A static variable that satisfies the requirements of `RestrictedOutputStream`.
+
+|===
+
+NOTE: `Stream` is not guaranteed to be a `std::ostream`. The only guaranteed
+operations are the insertion of `const char*`, `std::string_view`, `const
+void*`, `std::size_t` and `type_id`.

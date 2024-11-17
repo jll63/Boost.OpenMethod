@@ -98,7 +98,7 @@ struct generic_compiler {
         std::size_t mark = 0;   // temporary mark to detect cycles
         std::size_t weight = 0; // number of proper direct or indirect bases
         std::vector<vtbl_entry> vtbl;
-        std::uintptr_t** static_vptr;
+        vptr_type* static_vptr;
 
         bool is_base_of(class_* other) const {
             return std::find(

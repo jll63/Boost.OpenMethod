@@ -1,6 +1,10 @@
 
 [#method]
-## method
+## Class Template method
+
+`boost::openmethod::method` - A class that implements an open-method.
+
+### Synopsis
 
 ```c++
 namespace boost {
@@ -36,6 +40,10 @@ class method<Name(Parameters...), ReturnType, Policy> {
 }}
 ```
 
+---
+
+### Description
+
 *Template Parameters*
 
 [cols="1,1"]
@@ -56,7 +64,9 @@ class method<Name(Parameters...), ReturnType, Policy> {
 
 |===
 
-### constructor
+---
+
+### Constructor
 
 ```c++
 method();
@@ -67,7 +77,9 @@ Add the method to the list of methods registered in `Policy`.
 The constructor is private. The only instance is the static member variable
 `fn`.
 
-### destructor
+---
+
+### Destructor
 
 ```c++
 ~method();
@@ -75,31 +87,11 @@ The constructor is private. The only instance is the static member variable
 
 Remove the method from the list of methods registered in `Policy`.
 
-### override
+---
 
-```c++
-template<auto... Functions>
-struct override;
-```
+### Member Functions
 
-Add `Functions` to the list of overriders for the method.
-
-`override` must be instantiated as a *static* object.
-
-Functions that must fulfill the following requirements:
-
-* Have the same number of formal parameters as the method.
-
-* Each formal parameter in the same position as a virtual parameter must have a
-  type that is covariant with the type of the method's parameter.
-
-* All other formal parameters must have the same type as the method's
-  corresponding parameters.
-
-* The return type of the overrider must be the same as the method's return type
-  or, if it is a polymorphic type, covariant with the method's return type.
-
-### operator()
+#### operator()
 
 ```c++
 auto operator()(CallParameters... args) const -> ReturnType;
@@ -135,7 +127,12 @@ resolution, with extra rules to handle ambiguities. It proceeds as follows:
    is not specified, but it is the same across calls with the same arguments
    types.
 
-### fn
+
+---
+
+### Static Member Variables
+
+#### fn
 
 ```c++
 method fn;
@@ -143,3 +140,27 @@ method fn;
 
 The `method`{empty}'s unique instance. The method is called via the call
 operator on `fn`: `method::fn(args...)`.
+
+---
+
+### Member Templates
+
+#### override
+
+```c++
+template<auto... Functions>
+struct override;
+```
+
+Add _Functions_ to the overriders of `method`.
+
+#### next
+
+```c++
+template<auto Overrider>
+static function_type next;
+```
+
+Pointer to the next most specialized overrider after _Overrider_, i.e. the
+overrider that would be called for the same tuple of virtual arguments if
+_Overrider_ was not present. Set to `nullptr` if no such overrider exists.

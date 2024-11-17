@@ -23,14 +23,14 @@ class vectored_error_handler : public virtual error_handler {
         openmethod_error, not_implemented_error, unknown_class_error, hash_search_error,
         method_table_error, static_slot_error, static_stride_error>;
 
-    using error_handler_type = std::function<void(const error_variant& error)>;
+    using function_type = std::function<void(const error_variant& error)>;
 
     template<class Error>
-    static auto error(const Error& error) -> void{
+    static auto error(const Error& error) -> void {
         fn(error_variant(error));
     }
 
-    static auto set_error_handler(error_handler_type handler) {
+    static auto set_error_handler(function_type handler) -> function_type {
         auto prev = fn;
         fn = handler;
 
@@ -38,7 +38,7 @@ class vectored_error_handler : public virtual error_handler {
     }
 
   private:
-    static error_handler_type fn;
+    static function_type fn;
 
     static auto default_handler(const error_variant& error_v) {
         using namespace detail;
@@ -78,7 +78,7 @@ class vectored_error_handler : public virtual error_handler {
 };
 
 template<class Policy>
-typename vectored_error_handler<Policy>::error_handler_type
+typename vectored_error_handler<Policy>::function_type
     vectored_error_handler<Policy>::fn =
         vectored_error_handler<Policy>::default_handler;
 

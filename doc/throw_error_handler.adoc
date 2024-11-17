@@ -1,16 +1,16 @@
 
-## Class Template basic_error_output
+## Class throw_error_handler
 
-`basic_error_output` - An implementation of the `error_output` facet that writes error messages to `stderr`.
+`throw_error_handler` - An implementation of the `error_handler` facet that throws the error as an exception.
 
 ```c++
 namespace boost {
 namespace openmethod {
 namespace policies {
 
-template<class Policy, typename Stream = /*unspecified*/>
-struct basic_error_output : virtual error_output {
-    static Stream error_stream;
+struct throw_error_handler : virtual error_handler {
+    template<class Error>
+    [[noreturn]] static auto error(const Error& error) -> void;
 };
 
 }}}
@@ -18,29 +18,13 @@ struct basic_error_output : virtual error_output {
 
 ---
 
-### Description
+### Static Member Functions
 
-*Template Parameters*
-
-[cols="1,1"]
-|===
-|_Policy_
-| The policy containing the facet.
-
-|_Stream_
-| A type that satisfies the requirements of `RestrictedOutputStream`.
-|===
-
----
-
-### Static Member Variables
-
-#### error_stream
+#### error
 
 ```c++
-Stream  error_stream;
+template<class Error>
+[[noreturn]] static auto error(const Error& error) -> void;
 ```
 
-Initialized by the default constructor of `Stream`. It is the responsibility of
-the program to initializate it if needed, e.g., for a `std::ofstream`, to open
-it.
+Throws `error`.

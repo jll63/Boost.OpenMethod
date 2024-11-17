@@ -19,7 +19,7 @@ namespace bom = boost::openmethod;
 
 struct throwing_policy
     : bom::policies::default_::fork<throwing_policy>::replace<
-          bom::policies::error_handler, bom::policies::throw_error> {};
+          bom::policies::error_handler, bom::policies::throw_error_handler> {};
 
 #define BOOST_OPENMETHOD_DEFAULT_POLICY throwing_policy
 

@@ -13,9 +13,9 @@ namespace boost {
 namespace openmethod {
 namespace policies {
 
-struct throw_error : virtual error_handler {
+struct throw_error_handler : virtual error_handler {
     template<class Error>
-    static auto error(const Error& error) {
+    [[noreturn]] static auto error(const Error& error) -> void {
         throw error;
     }
 };

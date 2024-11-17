@@ -89,7 +89,6 @@ struct runtime_checks {};
 // -----------------------------------------------------------------------------
 // Facet implementations
 
-struct deferred_static_rtti;
 struct debug;
 struct release;
 

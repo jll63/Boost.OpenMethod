@@ -24,10 +24,10 @@ struct basic_error_output : virtual error_output {
 
 [cols="1,1"]
 |===
-|_Policy_
+| _Policy_
 | The policy containing the facet.
 
-|_Stream_
+| _Stream_
 | A type that satisfies the requirements of `RestrictedOutputStream`.
 |===
 

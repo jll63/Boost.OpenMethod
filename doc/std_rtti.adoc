@@ -1,4 +1,9 @@
+
 ## Class std_rtti
+
+`std_rtti` - An implementation of the `rtti` facet that uses standard RTTI.
+
+### Synopsis
 
 ```c++
 namespace boost {
@@ -24,7 +29,11 @@ struct std_rtti : virtual rtti {
 }}}
 ```
 
-### static_type
+---
+
+### Member Functions
+
+#### static_type
 
 ```c++
 template<class Class>
@@ -33,7 +42,7 @@ static type_id static_type();
 
 Return the address of `Class`'s `type_info`, cast to a `type_id`.
 
-### dynamic_type
+#### dynamic_type
 
 ```c++
 template<class Class>
@@ -42,7 +51,7 @@ static type_id dynamic_type(const Class& obj);
 
 Return the address of `obj`{empty}'s `type_info`, cast to a `type_id`.
 
-### type_name
+#### type_name
 
 ```c++
 template<typename Stream>
@@ -52,7 +61,7 @@ static void type_name(type_id type, Stream& stream);
 Write the demangled name of the class identified by `type` to `stream`.
 Execute `stream << reinterpret_cast<const std::type_info*>(type)->name()`.
 
-### type_index
+#### type_index
 
 ```c++
 static /*unspecified*/ type_index(type_id type);
@@ -63,7 +72,7 @@ Return `std::type_index(*reinterpret_cast<const std::type_info*>(type))`.
 The function is required because C++ does *not* guarantee that there is a single
 instance of `std::type_info` for each specific type.
 
-### dynamic_cast_ref
+#### dynamic_cast_ref
 
 ```c++
 template<typename Derived, typename Base>
@@ -71,16 +80,3 @@ static Derived dynamic_cast_ref(Base&& obj);
 ```
 
 Cast `obj` using the `dynamic_cast` operator.
-
-## deferred_static_rtti
-
-```c++
-struct deferred_static_rtti : virtual rtti {};
-```
-
-`deferred_static_rtti` makes OpenMethod defer collection of static type
-information until `initialize` is called. This makes it possible to interoperate
-with custom RTTI systems that use static constructors to assign type
-information.
-
-This facet is its own implementation.

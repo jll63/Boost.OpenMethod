@@ -1,0 +1,37 @@
+
+## Facet Class minimal_rtti
+
+`minimal_rtti` - An implementation of the `rtti` facet that only uses static
+type information.
+
+### Synopsis
+
+```c++
+struct minimal_rtti : virtual rtti {
+    template<typename Class>
+    static auto static_type() -> type_id;
+};
+```
+
+---
+
+### Description
+
+`minimal_rtti` provides the only function strictly required for the `rtti`
+facet.
+
+This facet can be used in programs that call methods solely via
+`virtual_ptr`{empty}s created with the "final" constructs. Virtual inheritance
+is not supported. Classes are not required to be polymorphic.
+
+### Static member functions
+
+
+#### static_type
+
+```c++
+template<class Class>
+static auto static_type() -> type_id;
+```
+
+Returns the address of a local static `char` variable, cast to `type_id`.

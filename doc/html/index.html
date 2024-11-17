@@ -636,56 +636,88 @@ pre.rouge .gs {
 <li><a href="#ref_synopsis_5">Synopsis</a></li>
 </ul>
 </li>
-<li><a href="#ref_class_template_basic_policy">Class Template basic_policy</a>
+<li><a href="#ref_class_template_basic_domain">Class template basic_domain</a>
 <ul class="sectlevel3">
 <li><a href="#ref_synopsis_6">Synopsis</a></li>
 <li><a href="#ref_description_6">Description</a></li>
-<li><a href="#ref_member_meta_functions">Member Meta-Functions</a></li>
-</ul>
-</li>
-<li><a href="#ref_class_template_basic_domain">Class template basic_domain</a>
-<ul class="sectlevel3">
-<li><a href="#ref_synopsis_7">Synopsis</a></li>
-<li><a href="#ref_description_7">Description</a></li>
 <li><a href="#ref_static_member_variables_2">Static Member Variables</a></li>
 </ul>
 </li>
-<li><a href="#ref_facet_error_output">Facet error_output</a>
+<li><a href="#ref_class_template_basic_policy">Class Template basic_policy</a>
 <ul class="sectlevel3">
-<li><a href="#ref_synopsis_8">Synopsis</a></li>
-<li><a href="#ref_requirements">Requirements</a></li>
+<li><a href="#ref_synopsis_7">Synopsis</a></li>
+<li><a href="#ref_description_7">Description</a></li>
+<li><a href="#ref_member_meta_functions">Member Meta-Functions</a></li>
 </ul>
 </li>
-<li><a href="#ref_facet_trace_output">Facet trace_output</a>
+<li><a href="#ref_facet_error_handler">Facet error_handler</a>
 <ul class="sectlevel3">
-<li><a href="#ref_synopsis_9">Synopsis</a></li>
+<li><a href="#ref_synopsis_8">Synopsis</a></li>
 <li><a href="#ref_description_8">Description</a></li>
-<li><a href="#ref_requirements_2">Requirements</a></li>
+<li><a href="#ref_requirements">Requirements</a></li>
+<li><a href="#ref_implementations">Implementations</a></li>
+</ul>
+</li>
+<li><a href="#ref_class_template_vectored_error_handler">Class template vectored_error_handler</a></li>
+<li><a href="#ref_synopsis_9">Synopsis</a>
+<ul class="sectlevel3">
+<li><a href="#ref_description_9">Description</a></li>
+<li><a href="#ref_static_member_functions">Static Member Functions</a></li>
+</ul>
+</li>
+<li><a href="#ref_class_throw_error_handler">Class throw_error_handler</a>
+<ul class="sectlevel3">
+<li><a href="#ref_static_member_functions_2">Static Member Functions</a></li>
 </ul>
 </li>
 <li><a href="#ref_facet_rtti">Facet rtti</a>
 <ul class="sectlevel3">
 <li><a href="#ref_synopsis_10">Synopsis</a></li>
-<li><a href="#ref_requirements_3">Requirements</a></li>
+<li><a href="#ref_requirements_2">Requirements</a></li>
 </ul>
 </li>
-<li><a href="#ref_facet_error_handler">Facet error_handler</a>
+<li><a href="#ref_class_std_rtti">Class std_rtti</a>
 <ul class="sectlevel3">
 <li><a href="#ref_synopsis_11">Synopsis</a></li>
-<li><a href="#ref_description_9">Description</a></li>
-<li><a href="#ref_requirements_4">Requirements</a></li>
-<li><a href="#ref_implementations">Implementations</a></li>
+<li><a href="#ref_member_functions_2">Member Functions</a></li>
+</ul>
+</li>
+<li><a href="#ref_facet_deferred_static_rtti">Facet deferred_static_rtti</a>
+<ul class="sectlevel3">
+<li><a href="#ref_synopsis_12">Synopsis</a></li>
+<li><a href="#ref_description_10">Description</a></li>
+<li><a href="#ref_implementations_2">Implementations</a></li>
+</ul>
+</li>
+<li><a href="#ref_facet_class_minimal_rtti">Facet Class minimal_rtti</a>
+<ul class="sectlevel3">
+<li><a href="#ref_synopsis_13">Synopsis</a></li>
+<li><a href="#ref_description_11">Description</a></li>
+<li><a href="#ref_static_member_functions_3">Static member functions</a></li>
+</ul>
+</li>
+<li><a href="#ref_facet_error_output">Facet error_output</a>
+<ul class="sectlevel3">
+<li><a href="#ref_synopsis_14">Synopsis</a></li>
+<li><a href="#ref_requirements_3">Requirements</a></li>
 </ul>
 </li>
 <li><a href="#ref_class_template_basic_error_output">Class Template basic_error_output</a>
 <ul class="sectlevel3">
-<li><a href="#ref_description_10">Description</a></li>
+<li><a href="#ref_description_12">Description</a></li>
 <li><a href="#ref_static_member_variables_3">Static Member Variables</a></li>
+</ul>
+</li>
+<li><a href="#ref_facet_trace_output">Facet trace_output</a>
+<ul class="sectlevel3">
+<li><a href="#ref_synopsis_15">Synopsis</a></li>
+<li><a href="#ref_description_13">Description</a></li>
+<li><a href="#ref_requirements_4">Requirements</a></li>
 </ul>
 </li>
 <li><a href="#ref_class_template_basic_trace_output">Class Template basic_trace_output</a>
 <ul class="sectlevel3">
-<li><a href="#ref_description_11">Description</a></li>
+<li><a href="#ref_description_14">Description</a></li>
 <li><a href="#ref_static_member_variables_4">Static Member Variables</a></li>
 </ul>
 </li>
@@ -699,7 +731,7 @@ pre.rouge .gs {
 <li><a href="#BOOST_OPENMETHOD_OVERRIDERS">Macro BOOST_OPENMETHOD_OVERRIDERS</a></li>
 <li><a href="#ref_concept_restrictedoutputstream">Concept RestrictedOutputStream</a>
 <ul class="sectlevel3">
-<li><a href="#ref_description_12">Description</a></li>
+<li><a href="#ref_description_15">Description</a></li>
 <li><a href="#ref_requirements_5">Requirements</a></li>
 </ul>
 </li>
@@ -2767,6 +2799,68 @@ the object&#8217;s dynamic type. Load the pointer to the v-table from
 </div>
 </div>
 <div class="sect2">
+<h3 id="ref_class_template_basic_domain">Class template basic_domain</h3>
+<div class="paragraph">
+<p><code>basic_domain</code> - A collection of classes and methods registered in <em>Policy</em>. It
+also contains the v-tables for the classes and the dispatch tables for the
+methods with more than one virtual argument.</p>
+</div>
+<div class="sect3">
+<h4 id="ref_synopsis_6">Synopsis</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
+<span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
+<span class="k">namespace</span> <span class="n">policies</span> <span class="p">{</span>
+
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Policy</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">basic_domain</span> <span class="p">{</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
+    <span class="k">static</span> <span class="n">vptr_type</span> <span class="n">static_vptr</span><span class="p">;</span>
+    <span class="c1">// more unspecified static state</span>
+<span class="p">};</span>
+
+<span class="p">}}}</span></code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="ref_description_6">Description</h4>
+<div class="paragraph">
+<p><strong>Template Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Policy</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The policy.</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="ref_static_member_variables_2">Static Member Variables</h4>
+<div class="sect4">
+<h5 id="ref_static_vptr">static_vptr</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
+<span class="k">static</span> <span class="n">vptr_type</span> <span class="n">static_vptr</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Contains the pointer to the v-table for <em>class</em>. Set by <code>initialize</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="ref_class_template_basic_policy">Class Template basic_policy</h3>
 <div class="paragraph">
 <p><code>basic_policy</code> - A CRT template that implements a policy, which consists of a a
@@ -2775,7 +2869,7 @@ obtain a pointer to a v-table from an object, how to report errors, whether to
 perform runtime sanity checks, etc.</p>
 </div>
 <div class="sect3">
-<h4 id="ref_synopsis_6">Synopsis</h4>
+<h4 id="ref_synopsis_7">Synopsis</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
@@ -2808,7 +2902,7 @@ perform runtime sanity checks, etc.</p>
 <hr>
 </div>
 <div class="sect3">
-<h4 id="ref_description_6">Description</h4>
+<h4 id="ref_description_7">Description</h4>
 <div class="paragraph">
 <p><strong>Template Parameters</strong></p>
 </div>
@@ -2910,71 +3004,9 @@ state.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="ref_class_template_basic_domain">Class template basic_domain</h3>
+<h3 id="ref_facet_error_handler">Facet error_handler</h3>
 <div class="paragraph">
-<p><code>basic_domain</code> - A collection of classes and methods registered in <em>Policy</em>. It
-also contains the v-tables for the classes and the dispatch tables for the
-methods with more than one virtual argument.</p>
-</div>
-<div class="sect3">
-<h4 id="ref_synopsis_7">Synopsis</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">policies</span> <span class="p">{</span>
-
-<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Policy</span><span class="p">&gt;</span>
-<span class="k">struct</span> <span class="nc">basic_domain</span> <span class="p">{</span>
-    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
-    <span class="k">static</span> <span class="n">vptr_type</span> <span class="n">static_vptr</span><span class="p">;</span>
-    <span class="c1">// more unspecified static state</span>
-<span class="p">};</span>
-
-<span class="p">}}}</span></code></pre>
-</div>
-</div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="ref_description_7">Description</h4>
-<div class="paragraph">
-<p><strong>Template Parameters</strong></p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Policy</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The policy.</p></td>
-</tr>
-</tbody>
-</table>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="ref_static_member_variables_2">Static Member Variables</h4>
-<div class="sect4">
-<h5 id="ref_static_vptr">static_vptr</h5>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
-<span class="k">static</span> <span class="n">vptr_type</span> <span class="n">static_vptr</span><span class="p">;</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Contains the pointer to the v-table for <em>class</em>. Set by <code>initialize</code>.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="ref_facet_error_output">Facet error_output</h3>
-<div class="paragraph">
-<p><code>error_output</code> - A facet that provides a stream for writing error messages.</p>
+<p><code>error_handler</code> - A facet that handles errors.</p>
 </div>
 <div class="sect3">
 <h4 id="ref_synopsis_8">Synopsis</h4>
@@ -2984,7 +3016,7 @@ methods with more than one virtual argument.</p>
 <span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
 <span class="k">namespace</span> <span class="n">policies</span> <span class="p">{</span>
 
-<span class="k">struct</span> <span class="nc">error_output</span> <span class="p">{};</span>
+<span class="k">struct</span> <span class="nc">error_handler</span> <span class="p">{};</span>
 
 <span class="p">}}}</span></code></pre>
 </div>
@@ -2992,9 +3024,18 @@ methods with more than one virtual argument.</p>
 <hr>
 </div>
 <div class="sect3">
+<h4 id="ref_description_8">Description</h4>
+<div class="paragraph">
+<p>When an error is encountered, either during <code>initialize</code> or method dispatch, the
+program is terminated via a call to <code>abort</code>. If this facet is present in the
+policy, its <code>error</code> function is called with an error object. It can prevent termination by throwing an exception.</p>
+</div>
+<hr>
+</div>
+<div class="sect3">
 <h4 id="ref_requirements">Requirements</h4>
 <div class="paragraph">
-<p>Implementations of <code>error_output</code> provide the following functions:</p>
+<p>Implementations of <code>error_handler</code> must provide the following functions:</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -3010,53 +3051,18 @@ methods with more than one virtual argument.</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>error_stream</p>
+<p>template&lt;class T&gt; static auto error(const T&amp;) &#8594; void</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>A static variable that satisfies the requirements of <code>RestrictedOutputStream</code>.</p>
+<p>A function template that takes an error object.</p>
 </div></div></td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="ref_facet_trace_output">Facet trace_output</h3>
-<div class="paragraph">
-<p><code>trace_output</code> - A facet that provides a stream for writing trace messages.</p>
-</div>
-<div class="sect3">
-<h4 id="ref_synopsis_9">Synopsis</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">policies</span> <span class="p">{</span>
-
-<span class="k">struct</span> <span class="nc">trace_output</span> <span class="p">{};</span>
-
-<span class="p">}}}</span></code></pre>
-</div>
-</div>
 <hr>
 </div>
 <div class="sect3">
-<h4 id="ref_description_8">Description</h4>
-<div class="paragraph">
-<p><code>initialize</code> can be directed to describe the classes and methods in a policy,
-and how the dispatch tables are built, by including this facet in the policy,
-and setting <code>trace_enabled</code> to <code>true</code>. The content and the format of the
-description is not documented, beyond the guarantee that it provides an
-exhaustive account of table construction, and may change between major, minor
-and patch versions.</p>
-</div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="ref_requirements_2">Requirements</h4>
-<div class="paragraph">
-<p>Implementations of <code>trace_output</code> provide the following functions:</p>
-</div>
+<h4 id="ref_implementations">Implementations</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -3064,50 +3070,147 @@ and patch versions.</p>
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">trace_enabled</th>
-<th class="tableblock halign-left valign-top">A static variable that satisfies the requirements of <code>RestrictedOutputStream</code>.</th>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Name</p>
+<p>throw_error_handler</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Description</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>trace_enabled</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>A static <code>bool</code> variable that is <code>true</code> if tracing is on.</p>
+<p>Throws the error object as an exception.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>trace_stream</p>
+<p>vectored_error_handler</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>A static variable that satisfies the requirements of <code>RestrictedOutputStream</code>.</p>
+<p>Calls an error handler via a <code>std::function</code>, which
+defaults to printing a description of the error to <code>stderr</code>. Included in the
+<code>debug</code> policy.</p>
 </div></div></td>
 </tr>
 </tbody>
 </table>
-<div class="admonitionblock note">
-<table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ref_class_template_vectored_error_handler">Class template vectored_error_handler</h3>
+<div class="paragraph">
+<p><code>throw_error_handler</code> - An implementation of the <code>error_handler</code> facet that
+calls a function, which can be customized, to handle the error.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ref_synopsis_9">Synopsis</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
+<span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
+<span class="k">namespace</span> <span class="n">policies</span> <span class="p">{</span>
+
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Policy</span><span class="p">&gt;</span>
+<span class="k">class</span> <span class="nc">vectored_error_handler</span> <span class="o">:</span> <span class="k">public</span> <span class="k">virtual</span> <span class="n">error_handler</span> <span class="p">{</span>
+  <span class="nl">public:</span>
+    <span class="k">using</span> <span class="n">error_variant</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span>
+        <span class="n">openmethod_error</span><span class="p">,</span> <span class="n">not_implemented_error</span><span class="p">,</span> <span class="n">unknown_class_error</span><span class="p">,</span> <span class="n">hash_search_error</span><span class="p">,</span>
+        <span class="n">method_table_error</span><span class="p">,</span> <span class="n">static_slot_error</span><span class="p">,</span> <span class="n">static_stride_error</span><span class="o">&gt;</span><span class="p">;</span>
+    <span class="k">using</span> <span class="n">function_type</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="k">const</span> <span class="n">error_variant</span><span class="o">&amp;</span> <span class="n">error</span><span class="p">)</span><span class="o">&gt;</span><span class="p">;</span>
+
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Error</span><span class="p">&gt;</span>
+    <span class="k">static</span> <span class="k">auto</span> <span class="n">error</span><span class="p">(</span><span class="k">const</span> <span class="n">Error</span><span class="o">&amp;</span> <span class="n">error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">;</span>
+    <span class="k">static</span> <span class="k">auto</span> <span class="n">set_error_handler</span><span class="p">(</span><span class="n">error_handler_type</span> <span class="n">handler</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">function_type</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="p">}}}</span></code></pre>
+</div>
+</div>
+<hr>
+<div class="sect3">
+<h4 id="ref_description_9">Description</h4>
+<div class="paragraph">
+<p><strong>Template Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
 <tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-<code>Stream</code> is not guaranteed to be a <code>std::ostream</code>. The only guaranteed
-operations are the insertion of <code>const char*</code>, <code>std::string_view</code>, <code>const
-void*</code>, <code>std::size_t</code> and <code>type_id</code>.
-</td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Policy</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The policy containing the facet.</p></td>
 </tr>
+</tbody>
 </table>
+<hr>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="ref_static_member_functions">Static Member Functions</h4>
+<div class="sect4">
+<h5 id="ref_error">error</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Error</span><span class="p">&gt;</span>
+<span class="k">static</span> <span class="k">auto</span> <span class="n">error</span><span class="p">(</span><span class="k">const</span> <span class="n">Error</span><span class="o">&amp;</span> <span class="n">error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Calls the function last set via <code>set_error_handler</code> or, if it was never called,
+and if <em>Policy</em> contains an <code>error_output</code> facet, use it to print a description
+of <code>error</code>.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="ref_error_2">error</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">static</span> <span class="k">auto</span> <span class="n">set_error_handler</span><span class="p">(</span><span class="n">function_type</span> <span class="n">handler</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">function_type</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Sets <code>handler</code> as the function to call in case of error.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ref_class_throw_error_handler">Class throw_error_handler</h3>
+<div class="paragraph">
+<p><code>throw_error_handler</code> - An implementation of the <code>error_handler</code> facet that throws the error as an exception.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
+<span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
+<span class="k">namespace</span> <span class="n">policies</span> <span class="p">{</span>
+
+<span class="k">struct</span> <span class="nc">throw_error_handler</span> <span class="o">:</span> <span class="k">virtual</span> <span class="n">error_handler</span> <span class="p">{</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Error</span><span class="p">&gt;</span>
+    <span class="p">[[</span><span class="n">noreturn</span><span class="p">]]</span> <span class="k">static</span> <span class="k">auto</span> <span class="n">error</span><span class="p">(</span><span class="k">const</span> <span class="n">Error</span><span class="o">&amp;</span> <span class="n">error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="p">}}}</span></code></pre>
+</div>
+</div>
+<hr>
+<div class="sect3">
+<h4 id="ref_static_member_functions_2">Static Member Functions</h4>
+<div class="sect4">
+<h5 id="ref_error_3">error</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Error</span><span class="p">&gt;</span>
+<span class="p">[[</span><span class="n">noreturn</span><span class="p">]]</span> <span class="k">static</span> <span class="k">auto</span> <span class="n">error</span><span class="p">(</span><span class="k">const</span> <span class="n">Error</span><span class="o">&amp;</span> <span class="n">error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Throws <code>error</code>.</p>
+</div>
 </div>
 </div>
 </div>
@@ -3128,7 +3231,7 @@ of types to an <code>ostream</code>-like object.</p>
 <hr>
 </div>
 <div class="sect3">
-<h4 id="ref_requirements_3">Requirements</h4>
+<h4 id="ref_requirements_2">Requirements</h4>
 <div class="paragraph">
 <p>Implementations of <code>rtti</code> provide the following functions:</p>
 </div>
@@ -3220,9 +3323,9 @@ void*</code>, <code>std::size_t</code> and <code>type_id</code>.
 </div>
 </div>
 <div class="sect2">
-<h3 id="ref_facet_error_handler">Facet error_handler</h3>
+<h3 id="ref_class_std_rtti">Class std_rtti</h3>
 <div class="paragraph">
-<p><code>error_handler</code> - A facet that handles errors.</p>
+<p><code>std_rtti</code> - An implementation of the <code>rtti</code> facet that uses standard RTTI.</p>
 </div>
 <div class="sect3">
 <h4 id="ref_synopsis_11">Synopsis</h4>
@@ -3232,7 +3335,21 @@ void*</code>, <code>std::size_t</code> and <code>type_id</code>.
 <span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
 <span class="k">namespace</span> <span class="n">policies</span> <span class="p">{</span>
 
-<span class="k">struct</span> <span class="nc">error_handler</span> <span class="p">{};</span>
+<span class="k">struct</span> <span class="nc">std_rtti</span> <span class="o">:</span> <span class="k">virtual</span> <span class="n">rtti</span> <span class="p">{</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
+    <span class="k">static</span> <span class="k">auto</span> <span class="n">static_type</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">type_id</span><span class="p">;</span>
+
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
+    <span class="k">static</span> <span class="k">auto</span> <span class="n">dynamic_type</span><span class="p">(</span><span class="k">const</span> <span class="n">Class</span><span class="o">&amp;</span> <span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">type_id</span><span class="p">;</span>
+
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Stream</span><span class="p">&gt;</span>
+    <span class="k">static</span> <span class="k">auto</span> <span class="n">type_name</span><span class="p">(</span><span class="n">type_id</span> <span class="n">type</span><span class="p">,</span> <span class="n">Stream</span><span class="o">&amp;</span> <span class="n">stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">;</span>
+
+    <span class="k">static</span> <span class="k">auto</span> <span class="n">type_index</span><span class="p">(</span><span class="n">type_id</span> <span class="n">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">type_index</span><span class="p">;</span>
+
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">D</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">B</span><span class="p">&gt;</span>
+    <span class="k">static</span> <span class="k">auto</span> <span class="n">dynamic_cast_ref</span><span class="p">(</span><span class="n">B</span><span class="o">&amp;&amp;</span> <span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">D</span><span class="p">;</span>
+<span class="p">};</span>
 
 <span class="p">}}}</span></code></pre>
 </div>
@@ -3240,18 +3357,173 @@ void*</code>, <code>std::size_t</code> and <code>type_id</code>.
 <hr>
 </div>
 <div class="sect3">
-<h4 id="ref_description_9">Description</h4>
+<h4 id="ref_member_functions_2">Member Functions</h4>
+<div class="sect4">
+<h5 id="ref_static_type">static_type</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
+<span class="k">static</span> <span class="n">type_id</span> <span class="nf">static_type</span><span class="p">();</span></code></pre>
+</div>
+</div>
 <div class="paragraph">
-<p>When an error is encountered, either during <code>initialize</code> or method dispatch, the
-program is terminated via a call to <code>abort</code>. If this facet is present in the
-policy, its <code>error</code> function is called with an error object.</p>
+<p>Return the address of <code>Class&#8217;s `type_info</code>, cast to a <code>type_id</code>.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="ref_dynamic_type">dynamic_type</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
+<span class="k">static</span> <span class="n">type_id</span> <span class="nf">dynamic_type</span><span class="p">(</span><span class="k">const</span> <span class="n">Class</span><span class="o">&amp;</span> <span class="n">obj</span><span class="p">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Return the address of <code>obj</code>'s <code>type_info</code>, cast to a <code>type_id</code>.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="ref_type_name">type_name</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Stream</span><span class="p">&gt;</span>
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">type_name</span><span class="p">(</span><span class="n">type_id</span> <span class="n">type</span><span class="p">,</span> <span class="n">Stream</span><span class="o">&amp;</span> <span class="n">stream</span><span class="p">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Write the demangled name of the class identified by <code>type</code> to <code>stream</code>.
+Execute <code>stream &lt;&lt; reinterpret_cast&lt;const std::type_info*&gt;(type)&#8594;name()</code>.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="ref_type_index">type_index</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">static</span> <span class="cm">/*unspecified*/</span> <span class="n">type_index</span><span class="p">(</span><span class="n">type_id</span> <span class="n">type</span><span class="p">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Return <code>std::type_index(<strong>reinterpret_cast&lt;const std::type_info</strong>&gt;(type))</code>.</p>
+</div>
+<div class="paragraph">
+<p>The function is required because C++ does <strong>not</strong> guarantee that there is a single
+instance of <code>std::type_info</code> for each specific type.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="ref_dynamic_cast_ref">dynamic_cast_ref</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Derived</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">Base</span><span class="p">&gt;</span>
+<span class="k">static</span> <span class="n">Derived</span> <span class="nf">dynamic_cast_ref</span><span class="p">(</span><span class="n">Base</span><span class="o">&amp;&amp;</span> <span class="n">obj</span><span class="p">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Cast <code>obj</code> using the <code>dynamic_cast</code> operator.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ref_facet_deferred_static_rtti">Facet deferred_static_rtti</h3>
+<div class="paragraph">
+<p><code>deferred_static_rtti</code> - A facet that defers collection of static type ids.</p>
+</div>
+<div class="sect3">
+<h4 id="ref_synopsis_12">Synopsis</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">deferred_static_rtti</span> <span class="o">:</span> <span class="k">virtual</span> <span class="n">rtti</span> <span class="p">{};</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="ref_description_10">Description</h4>
+<div class="paragraph">
+<p>Some custom RTTI systems rely on static constructors to assign type ids.
+OpenMethod itself relies on static constructors to register classes, methods and
+overriders, calling the <code>static_type</code> function from the <code>rtti</code> facet in the
+process. This can result in collecting the type ids <em>before</em> they have been
+initialized. Adding this facet to a policy moves the collection of type ids to  <code>initialize</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="ref_implementations_2">Implementations</h4>
+<div class="paragraph">
+<p>This facet is its own implementation.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ref_facet_class_minimal_rtti">Facet Class minimal_rtti</h3>
+<div class="paragraph">
+<p><code>minimal_rtti</code> - An implementation of the <code>rtti</code> facet that only uses static
+type information.</p>
+</div>
+<div class="sect3">
+<h4 id="ref_synopsis_13">Synopsis</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">minimal_rtti</span> <span class="o">:</span> <span class="k">virtual</span> <span class="n">rtti</span> <span class="p">{</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Class</span><span class="p">&gt;</span>
+    <span class="k">static</span> <span class="k">auto</span> <span class="n">static_type</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">type_id</span><span class="p">;</span>
+<span class="p">};</span></code></pre>
+</div>
 </div>
 <hr>
 </div>
 <div class="sect3">
-<h4 id="ref_requirements_4">Requirements</h4>
+<h4 id="ref_description_11">Description</h4>
 <div class="paragraph">
-<p>Implementations of <code>error_handler</code> must provide the following functions:</p>
+<p><code>minimal_rtti</code> provides the only function strictly required for the <code>rtti</code>
+facet.</p>
+</div>
+<div class="paragraph">
+<p>This facet can be used in programs that call methods solely via
+<code>virtual_ptr</code>s created with the "final" constructs. Virtual inheritance
+is not supported. Classes are not required to be polymorphic.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="ref_static_member_functions_3">Static member functions</h4>
+<div class="sect4">
+<h5 id="ref_static_type_2">static_type</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
+<span class="k">static</span> <span class="k">auto</span> <span class="n">static_type</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">type_id</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Returns the address of a local static <code>char</code> variable, cast to <code>type_id</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ref_facet_error_output">Facet error_output</h3>
+<div class="paragraph">
+<p><code>error_output</code> - A facet that provides a stream for writing error messages.</p>
+</div>
+<div class="sect3">
+<h4 id="ref_synopsis_14">Synopsis</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
+<span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
+<span class="k">namespace</span> <span class="n">policies</span> <span class="p">{</span>
+
+<span class="k">struct</span> <span class="nc">error_output</span> <span class="p">{};</span>
+
+<span class="p">}}}</span></code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="ref_requirements_3">Requirements</h4>
+<div class="paragraph">
+<p>Implementations of <code>error_output</code> provide the following functions:</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -3267,46 +3539,10 @@ policy, its <code>error</code> function is called with an error object.</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>template&lt;class T&gt; static auto error(const T&amp;) &#8594; void</p>
+<p>error_stream</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>A function template that takes an error object.</p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="ref_implementations">Implementations</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>throw_error_handler</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Throws the error object as an exception.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>vectored_error_handler</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Calls an error handler via a <code>std::function</code>, which
-defaults to printing a description of the error to <code>stderr</code>. Included in the
-<code>debug</code> policy.</p>
+<p>A static variable that satisfies the requirements of <code>RestrictedOutputStream</code>.</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -3334,7 +3570,7 @@ defaults to printing a description of the error to <code>stderr</code>. Included
 </div>
 <hr>
 <div class="sect3">
-<h4 id="ref_description_10">Description</h4>
+<h4 id="ref_description_12">Description</h4>
 <div class="paragraph">
 <p><strong>Template Parameters</strong></p>
 </div>
@@ -3374,6 +3610,97 @@ it.</p>
 </div>
 </div>
 <div class="sect2">
+<h3 id="ref_facet_trace_output">Facet trace_output</h3>
+<div class="paragraph">
+<p><code>trace_output</code> - A facet that provides a stream for writing trace messages.</p>
+</div>
+<div class="sect3">
+<h4 id="ref_synopsis_15">Synopsis</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
+<span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
+<span class="k">namespace</span> <span class="n">policies</span> <span class="p">{</span>
+
+<span class="k">struct</span> <span class="nc">trace_output</span> <span class="p">{};</span>
+
+<span class="p">}}}</span></code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="ref_description_13">Description</h4>
+<div class="paragraph">
+<p><code>initialize</code> can be directed to describe the classes and methods in a policy,
+and how the dispatch tables are built, by including this facet in the policy,
+and setting <code>trace_enabled</code> to <code>true</code>. The content and the format of the
+description is not documented, beyond the guarantee that it provides an
+exhaustive account of table construction, and may change between major, minor
+and patch versions.</p>
+</div>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="ref_requirements_4">Requirements</h4>
+<div class="paragraph">
+<p>Implementations of <code>trace_output</code> provide the following functions:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">trace_enabled</th>
+<th class="tableblock halign-left valign-top">A static variable that satisfies the requirements of <code>RestrictedOutputStream</code>.</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Name</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Description</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>trace_enabled</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>A static <code>bool</code> variable that is <code>true</code> if tracing is on.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>trace_stream</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>A static variable that satisfies the requirements of <code>RestrictedOutputStream</code>.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<code>Stream</code> is not guaranteed to be a <code>std::ostream</code>. The only guaranteed
+operations are the insertion of <code>const char*</code>, <code>std::string_view</code>, <code>const
+void*</code>, <code>std::size_t</code> and <code>type_id</code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="ref_class_template_basic_trace_output">Class Template basic_trace_output</h3>
 <div class="paragraph">
 <p><code>basic_trace_output</code> - An implementation of the <code>trace_output</code> facet that writes
@@ -3396,7 +3723,7 @@ trace messages to <code>stderr</code>.</p>
 </div>
 <hr>
 <div class="sect3">
-<h4 id="ref_description_11">Description</h4>
+<h4 id="ref_description_14">Description</h4>
 <div class="paragraph">
 <p><strong>Template Parameters</strong></p>
 </div>
@@ -3756,7 +4083,7 @@ operations.</p>
 </div>
 <hr>
 <div class="sect3">
-<h4 id="ref_description_12">Description</h4>
+<h4 id="ref_description_15">Description</h4>
 <div class="paragraph">
 <p>While convenient, <code>std::ostream</code> and its implementations constitute a sizeable
 piece of code, which may make it unsuitable for certain applications. OpenMethod

@@ -106,8 +106,8 @@ struct generic_compiler {
                        other) != transitive_derived.end();
         }
 
-        auto indirect_vptr() const -> const vptr_type* {
-            return static_vptr;
+        auto vptr() const -> const vptr_type& {
+            return *static_vptr;
         }
 
         auto type_id_begin() const {

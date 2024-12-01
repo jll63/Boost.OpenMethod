@@ -59,9 +59,9 @@ struct vptr_vector : virtual extern_vptr {
                 }
 
                 if constexpr (is_indirect) {
-                    vptrs[index] = iter->indirect_vptr();
+                    vptrs[index] = &iter->vptr();
                 } else {
-                    vptrs[index] = *iter->indirect_vptr();
+                    vptrs[index] = iter->vptr();
                 }
             }
         }

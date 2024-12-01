@@ -13,6 +13,7 @@
 #include <boost/utility/identity_type.hpp>
 
 #include <boost/openmethod.hpp>
+#include <boost/openmethod/policies/vptr_map.hpp>
 #include <boost/openmethod/compiler.hpp>
 
 using namespace boost::openmethod;
@@ -32,29 +33,37 @@ struct Dog : virtual Animal {
     Dog(const Dog&) = delete;
 };
 
-struct direct_policy : policies::default_::fork<direct_policy> {};
-
-BOOST_OPENMETHOD_CLASSES(Animal, Dog, direct_policy);
-BOOST_OPENMETHOD(
-    direct_method, (virtual_ptr<Animal, direct_policy>), void, direct_policy);
-
-struct indirect_policy
-    : policies::default_::fork<indirect_policy>::replace<
-          policies::vptr,
-          policies::vptr_vector<indirect_policy, indirect_vptr_type>> {};
-
-BOOST_OPENMETHOD_CLASSES(Animal, Dog, indirect_policy);
-BOOST_OPENMETHOD(
-    indirect_method, (virtual_ptr<Animal, indirect_policy>), void,
-    indirect_policy);
-
-void instantiate_methods() {
-    Dog dog;
-    direct_method(dog);
-    indirect_method(dog);
+template<class Policy>
+void init_test() {
+    BOOST_OPENMETHOD_REGISTER(use_classes<Animal, Dog, Policy>);
+    struct id;
+    (void)&method<id(virtual_ptr<Animal, Policy>), void, Policy>::fn;
+    boost::openmethod::initialize<Policy>();
 }
 
-using test_policies = boost::mp11::mp_list<direct_policy, indirect_policy>;
+struct direct_vector_policy : policies::default_::fork<direct_vector_policy> {};
+
+struct indirect_vector_policy
+    : policies::default_::fork<indirect_vector_policy>::replace<
+          policies::vptr,
+          policies::vptr_vector<indirect_vector_policy, indirect_vptr_type>> {};
+
+struct direct_map_policy
+    : policies::default_::fork<direct_map_policy>::replace<
+          policies::vptr,
+          policies::vptr_map<
+              direct_map_policy, std::unordered_map<type_id, vptr_type>>> {};
+
+struct indirect_map_policy
+    : policies::default_::fork<indirect_map_policy>::replace<
+          policies::vptr,
+          policies::vptr_map<
+              indirect_map_policy,
+              std::unordered_map<type_id, indirect_vptr_type>>> {};
+
+using test_policies = boost::mp11::mp_list<
+    direct_vector_policy, indirect_vector_policy, direct_map_policy,
+    indirect_map_policy>;
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_ptr_ctors, Policy, test_policies) {
     static_assert(std::is_same_v<
@@ -66,7 +75,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_ptr_ctors, Policy, test_policies) {
         std::is_same_v<
             decltype(*std::declval<virtual_ptr<Animal, Policy>>()), Animal&>);
 
-    boost::openmethod::initialize<Policy>();
+    init_test<Policy>();
 
     {
         Dog dog;
@@ -87,16 +96,12 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_ptr_ctors, Policy, test_policies) {
             virtual_ptr<Animal, Policy> const_base_copy(p);
         }
 
-        {
-            auto p = virtual_ptr<const Animal, Policy>(dog);
-        }
+        { auto p = virtual_ptr<const Animal, Policy>(dog); }
 
 // #define BOOST_OPENMETHOD_SHOULD_NOT_COMPILE
 // should not compile
 #ifdef BOOST_OPENMETHOD_SHOULD_NOT_COMPILE
-        {
-            auto vptr = virtual_ptr<Dog, Policy>(Dog());
-        }
+        { auto vptr = virtual_ptr<Dog, Policy>(Dog()); }
 #endif
     }
 }
@@ -125,7 +130,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_shared_ptr_ctors, Policy, test_policies) {
                 decltype(*std::declval<virtual_shared_ptr<Animal, Policy>>()),
                 Animal&>);
 
-        boost::openmethod::initialize<Policy>();
+        init_test<Policy>();
 
         auto dog = std::make_shared<Dog>();
 
@@ -169,9 +174,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_shared_ptr_ctors, Policy, test_policies) {
             BOOST_TEST(move_const_ptr.inferior().get() == dog.get());
         }
 
-        {
-            virtual_shared_ptr<Animal, Policy> ptr(dog);
-        }
+        { virtual_shared_ptr<Animal, Policy> ptr(dog); }
 
         {
             // should not compile:
@@ -192,7 +195,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_shared_ptr_ctors, Policy, test_policies) {
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_unique_ptr_ctors, Policy, test_policies) {
-    boost::openmethod::initialize<Policy>();
+    init_test<Policy>();
 
     {
         // a virtual_unique_ptr can be created from a std::unique_ptr
@@ -229,7 +232,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_unique_ptr_ctors, Policy, test_policies) {
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(indirect_virtual_ptr, Policy, test_policies) {
-    boost::openmethod::initialize<Policy>();
+    init_test<Policy>();
 
     Dog dog;
     virtual_ptr<Dog, Policy> p(dog);
@@ -238,9 +241,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(indirect_virtual_ptr, Policy, test_policies) {
     struct Cat : Animal {};
     BOOST_OPENMETHOD_CLASSES(Animal, Cat, Policy);
 
-    boost::openmethod::initialize<Policy>();
+    init_test<Policy>();
 
-    if constexpr (std::is_same_v<Policy, indirect_policy>) {
+    if constexpr (Policy::is_indirect) {
         BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
     } else {
         BOOST_TEST(p.vptr() != Policy::template static_vptr<Dog>);
@@ -257,7 +260,7 @@ BOOST_AUTO_TEST_CASE(virtual_ptr_final_error) {
             }
         });
 
-    boost::openmethod::initialize();
+    init_test<policies::default_>();
     bool threw = false;
 
     try {

@@ -31,13 +31,18 @@ struct vptr_map : virtual extern_vptr {
         for (auto iter = first; iter != last; ++iter) {
             for (auto type_iter = iter->type_id_begin();
                  type_iter != iter->type_id_end(); ++type_iter) {
-                vptrs[*type_iter] = iter->vptr();
+
+                if constexpr (is_indirect) {
+                    vptrs[*type_iter] = &iter->vptr();
+                } else {
+                    vptrs[*type_iter] = iter->vptr();
+                }
             }
         }
     }
 
     template<class Class>
-    static auto dynamic_vptr(const Class& arg) -> vptr_type {
+    static auto dynamic_vptr(const Class& arg) {
         auto type = Policy::dynamic_type(arg);
         auto iter = vptrs.find(type);
 

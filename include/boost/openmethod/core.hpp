@@ -847,7 +847,9 @@ method<Name(Parameters...), ReturnType, Policy>::vptr(const ArgType& arg) const
         // No need to check the method pointer: this was done when the
         // virtual_ptr was created.
     } else if constexpr (detail::has_vptr<ArgType>::value) {
-        if constexpr (Policy::template has_facet<policies::indirect_vptr>) {
+        if constexpr (std::is_same_v<
+                          decltype(arg.boost_openmethod_vptr),
+                          indirect_vptr_type>) {
             return *arg.boost_openmethod_vptr;
         } else {
             return arg.boost_openmethod_vptr;

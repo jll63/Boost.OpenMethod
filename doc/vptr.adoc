@@ -41,8 +41,8 @@ An implementation of `vptr` must provide the following static function template:
 | Name
 | Description
 
-| dynamic_vptr
-| return the address of the v-table for an object
+| _facet_::dynamic_vptr(obj)
+| return the address of the v-table for `obj`
 |===
 
 ## Facet Class extern_vptr
@@ -63,7 +63,7 @@ struct extern_vptr : virtual vptr {};
 | Name
 | Description
 
-| register_vptrs
+| _facet_::register_vptrs(first, last)
 | register the vptrs
 |===
 
@@ -74,16 +74,20 @@ template<typename ForwardIterator>
 auto register_vptrs(ForwardIterator first, ForwardIterator last) -> void;
 ```
 
-`ForwardIterator` is a forward iterator over a range of objects that have the
+`ForwardIterator` is a forward iterator over a range of objects that contain
+information about the type ids and the vptr of a registered class. They have the
 following member functions:
 
 ```c++
-auto indirect_vptr() const -> const vptr_type*;
-auto type_id_begin() -> type_id_forward_iterator;
-auto type_id_end() -> type_id_forward_iterator;
+auto type_id_begin() const -> type_id_forward_iterator;
+auto type_id_end() const -> type_id_forward_iterator;
+auto vptr() const -> const vptr_type&;
 ```
 
-`indirect_vptr` returns a pointer to a pointer to the v-table for a registered
-class.
+`type_id_begin` and `type_id_end` return iterators delimiting a range of
+`type_id`s for the class.
 
-`type_id_begin` and `type_id_end` return a range of `type_id`s for the class.
+`vptr` returns a _reference_ to a _static_ variable containing a pointer to the
+v-table for a registered class. Its value is set by `initialize`. While the
+value of the variable changes with each call to `initialize`, the variable
+itself remains the same.

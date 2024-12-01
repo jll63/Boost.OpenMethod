@@ -54,10 +54,6 @@ struct class_info : static_list<class_info>::static_link {
     bool is_abstract{false};
 
     auto vptr() const {
-        return *static_vptr;
-    }
-
-    auto indirect_vptr() {
         return static_vptr;
     }
 

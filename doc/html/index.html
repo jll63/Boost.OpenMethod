@@ -690,9 +690,10 @@ pre.rouge .gs {
 <li><a href="#ref_member_functions_2">Member Functions</a></li>
 </ul>
 </li>
-<li><a href="#ref_class_vptr_vector_2">Class vptr_vector</a>
+<li><a href="#ref_class_vptr_map">Class vptr_map</a>
 <ul class="sectlevel3">
 <li><a href="#ref_synopsis_13">Synopsis</a></li>
+<li><a href="#ref_description_12">Description</a></li>
 <li><a href="#ref_member_functions_3">Member Functions</a></li>
 </ul>
 </li>
@@ -711,14 +712,14 @@ pre.rouge .gs {
 <li><a href="#ref_facet_deferred_static_rtti">Facet deferred_static_rtti</a>
 <ul class="sectlevel3">
 <li><a href="#ref_synopsis_16">Synopsis</a></li>
-<li><a href="#ref_description_12">Description</a></li>
+<li><a href="#ref_description_13">Description</a></li>
 <li><a href="#ref_implementations_2">Implementations</a></li>
 </ul>
 </li>
 <li><a href="#ref_facet_class_minimal_rtti">Facet Class minimal_rtti</a>
 <ul class="sectlevel3">
 <li><a href="#ref_synopsis_17">Synopsis</a></li>
-<li><a href="#ref_description_13">Description</a></li>
+<li><a href="#ref_description_14">Description</a></li>
 <li><a href="#ref_static_member_functions_3">Static member functions</a></li>
 </ul>
 </li>
@@ -730,20 +731,20 @@ pre.rouge .gs {
 </li>
 <li><a href="#ref_class_template_basic_error_output">Class Template basic_error_output</a>
 <ul class="sectlevel3">
-<li><a href="#ref_description_14">Description</a></li>
+<li><a href="#ref_description_15">Description</a></li>
 <li><a href="#ref_static_member_variables_3">Static Member Variables</a></li>
 </ul>
 </li>
 <li><a href="#ref_facet_trace_output">Facet trace_output</a>
 <ul class="sectlevel3">
 <li><a href="#ref_synopsis_19">Synopsis</a></li>
-<li><a href="#ref_description_15">Description</a></li>
+<li><a href="#ref_description_16">Description</a></li>
 <li><a href="#ref_requirements_6">Requirements</a></li>
 </ul>
 </li>
 <li><a href="#ref_class_template_basic_trace_output">Class Template basic_trace_output</a>
 <ul class="sectlevel3">
-<li><a href="#ref_description_16">Description</a></li>
+<li><a href="#ref_description_17">Description</a></li>
 <li><a href="#ref_static_member_variables_4">Static Member Variables</a></li>
 </ul>
 </li>
@@ -757,7 +758,7 @@ pre.rouge .gs {
 <li><a href="#BOOST_OPENMETHOD_OVERRIDERS">Macro BOOST_OPENMETHOD_OVERRIDERS</a></li>
 <li><a href="#ref_concept_restrictedoutputstream">Concept RestrictedOutputStream</a>
 <ul class="sectlevel3">
-<li><a href="#ref_description_17">Description</a></li>
+<li><a href="#ref_description_18">Description</a></li>
 <li><a href="#ref_requirements_7">Requirements</a></li>
 </ul>
 </li>
@@ -3299,10 +3300,10 @@ facet is optional.</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>dynamic_vptr</p>
+<p><em>facet</em>::dynamic_vptr(obj)</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>return the address of the v-table for an object</p>
+<p>return the address of the v-table for <code>obj</code></p>
 </div></div></td>
 </tr>
 </tbody>
@@ -3337,7 +3338,7 @@ objects. If present, it provides a <code>register_vptrs</code> function, called 
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>register_vptrs</p>
+<p><em>facet</em>::register_vptrs(first, last)</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>register the vptrs</p>
@@ -3354,22 +3355,26 @@ objects. If present, it provides a <code>register_vptrs</code> function, called 
 </div>
 </div>
 <div class="paragraph">
-<p><code>ForwardIterator</code> is a forward iterator over a range of objects that have the
+<p><code>ForwardIterator</code> is a forward iterator over a range of objects that contain
+information about the type ids and the vptr of a registered class. They have the
 following member functions:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">auto</span> <span class="n">indirect_vptr</span><span class="p">()</span> <span class="k">const</span> <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">vptr_type</span><span class="o">*</span><span class="p">;</span>
-<span class="k">auto</span> <span class="n">type_id_begin</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">type_id_forward_iterator</span><span class="p">;</span>
-<span class="k">auto</span> <span class="n">type_id_end</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">type_id_forward_iterator</span><span class="p">;</span></code></pre>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">auto</span> <span class="n">type_id_begin</span><span class="p">()</span> <span class="k">const</span> <span class="o">-&gt;</span> <span class="n">type_id_forward_iterator</span><span class="p">;</span>
+<span class="k">auto</span> <span class="n">type_id_end</span><span class="p">()</span> <span class="k">const</span> <span class="o">-&gt;</span> <span class="n">type_id_forward_iterator</span><span class="p">;</span>
+<span class="k">auto</span> <span class="n">vptr</span><span class="p">()</span> <span class="k">const</span> <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">vptr_type</span><span class="o">&amp;</span><span class="p">;</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p><code>indirect_vptr</code> returns a pointer to a pointer to the v-table for a registered
-class.</p>
+<p><code>type_id_begin</code> and <code>type_id_end</code> return iterators delimiting a range of
+`type_id`s for the class.</p>
 </div>
 <div class="paragraph">
-<p><code>type_id_begin</code> and <code>type_id_end</code> return a range of `type_id`s for the class.</p>
+<p><code>vptr</code> returns a <em>reference</em> to a <em>static</em> variable containing a pointer to the
+v-table for a registered class. Its value is set by <code>initialize</code>. While the
+value of the variable changes with each call to <code>initialize</code>, the variable
+itself remains the same.</p>
 </div>
 </div>
 </div>
@@ -3426,7 +3431,7 @@ the v-tables in a `std::vector</code>.</p>
 </tbody>
 </table>
 <div class="paragraph">
-<p><code>vector_vptr</code> stores the addresses of the v-tables for the classes registered in
+<p><code>vptr_vector</code> stores the addresses of the v-tables for the classes registered in
 <em>Policy</em> in a vector, either as straight pointers, or as pointers to pointers.
 The latter makes it possible for <code>virtual_ptr</code>s to remain valid after a
 call to <code>initialize</code>, thus allowing dynamically loaded shared libraries to add methods, classes and overriders to a domain.</p>
@@ -3472,10 +3477,10 @@ index; otherwise, uses the <code>type_id</code> as the index.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="ref_class_vptr_vector_2">Class vptr_vector</h3>
+<h3 id="ref_class_vptr_map">Class vptr_map</h3>
 <div class="paragraph">
-<p><code>vptr_vector</code> - An implementation of <code>external_vptr that stores the pointers to
-the v-tables in a `std::vector</code>.</p>
+<p><code>vptr_map</code> - An implementation of `external_vptr that stores the pointers to
+the v-tables in a map.</p>
 </div>
 <div class="sect3">
 <h4 id="ref_synopsis_13">Synopsis</h4>
@@ -3485,9 +3490,13 @@ the v-tables in a `std::vector</code>.</p>
 <span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
 <span class="k">namespace</span> <span class="n">policies</span> <span class="p">{</span>
 
-<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Policy</span><span class="p">&gt;</span>
-<span class="k">struct</span> <span class="nc">vptr_vector</span> <span class="o">:</span> <span class="k">virtual</span> <span class="n">extern_vptr</span> <span class="p">{</span>
-    <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vptr_type</span><span class="o">&gt;</span> <span class="n">vptrs</span><span class="p">;</span>
+<span class="cp">### Synopsis
+</span>
+<span class="k">template</span><span class="o">&lt;</span>
+    <span class="k">class</span> <span class="nc">Policy</span><span class="p">,</span>
+    <span class="k">class</span> <span class="nc">Map</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">unordered_map</span><span class="o">&lt;</span><span class="n">type_id</span><span class="p">,</span> <span class="n">vptr_type</span><span class="p">&gt;</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">vptr_map</span> <span class="o">:</span> <span class="k">virtual</span> <span class="n">extern_vptr</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="n">Map</span> <span class="n">vptrs</span><span class="p">;</span>
 
     <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">ForwardIterator</span><span class="p">&gt;</span>
     <span class="k">static</span> <span class="k">auto</span> <span class="n">register_vptrs</span><span class="p">(</span><span class="n">ForwardIterator</span> <span class="n">first</span><span class="p">,</span> <span class="n">ForwardIterator</span> <span class="n">last</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">;</span>
@@ -3502,6 +3511,36 @@ the v-tables in a `std::vector</code>.</p>
 <hr>
 </div>
 <div class="sect3">
+<h4 id="ref_description_12">Description</h4>
+<div class="paragraph">
+<p><strong>Template Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Policy</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The policy containing the facet.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Map</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A map from <code>type_id</code> to a direct_vptr_type or an indirect_vptr_type.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>vptr_map</code> stores the addresses of the v-tables for the classes registered in
+<em>Policy</em> in a map, either as straight pointers, or as pointers to pointers. The
+latter makes it possible for <code>virtual_ptr</code>s to remain valid after a call
+to <code>initialize</code>, thus allowing dynamically loaded shared libraries to add
+methods, classes and overriders to a domain.</p>
+</div>
+<hr>
+</div>
+<div class="sect3">
 <h4 id="ref_member_functions_3">Member Functions</h4>
 <div class="sect4">
 <h5 id="ref_register_vptrs_3">register_vptrs</h5>
@@ -3512,16 +3551,7 @@ the v-tables in a `std::vector</code>.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Stores the pointers to the v-tables in a vector, indexed by the (possibly hashed)
-`type_id`s.</p>
-</div>
-<div class="paragraph">
-<p>If <code>Policy</code> contains a <code>type_hash</code> facet, call its <code>hash_initialize</code>
-function.</p>
-</div>
-<div class="paragraph">
-<p>If <em>Policy</em> contains the <code>runtime_checks</code> facet, checks if <em>Class</em> is
-registered. If not, throws an <code>unknown_class_error</code>.</p>
+<p>Stores the pointers to the v-tables in a <em>Map</em>.</p>
 </div>
 </div>
 <div class="sect4">
@@ -3536,9 +3566,8 @@ registered. If not, throws an <code>unknown_class_error</code>.</p>
 <p>Returns a pointer to the v-table for <code>object</code>.</p>
 </div>
 <div class="paragraph">
-<p>Calls <code>dynamic_type</code> to obtain a <code>type_id</code> for <code>object</code>. If <em>Policy</em>
-contains a <code>type_hash</code> facet, use it to convert the resulting <code>type_id</code> to an
-index; otherwise, use the <code>type_id</code> as the index.</p>
+<p>If <em>Policy</em> contains the <code>runtime_checks</code> facet, checks if <em>Class</em> is
+registered. If it is not, and if <em>Policy</em> contains a <code>error_handler</code> facet, calls its <code>error</code> function; then calls <code>abort</code>.</p>
 </div>
 </div>
 </div>
@@ -3767,7 +3796,7 @@ instance of <code>std::type_info</code> for each specific type.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="ref_description_12">Description</h4>
+<h4 id="ref_description_13">Description</h4>
 <div class="paragraph">
 <p>Some custom RTTI systems rely on static constructors to assign type ids.
 OpenMethod itself relies on static constructors to register classes, methods and
@@ -3802,7 +3831,7 @@ type information.</p>
 <hr>
 </div>
 <div class="sect3">
-<h4 id="ref_description_13">Description</h4>
+<h4 id="ref_description_14">Description</h4>
 <div class="paragraph">
 <p><code>minimal_rtti</code> provides the only function strictly required for the <code>rtti</code>
 facet.</p>
@@ -3899,7 +3928,7 @@ is not supported. Classes are not required to be polymorphic.</p>
 </div>
 <hr>
 <div class="sect3">
-<h4 id="ref_description_14">Description</h4>
+<h4 id="ref_description_15">Description</h4>
 <div class="paragraph">
 <p><strong>Template Parameters</strong></p>
 </div>
@@ -3959,7 +3988,7 @@ it.</p>
 <hr>
 </div>
 <div class="sect3">
-<h4 id="ref_description_15">Description</h4>
+<h4 id="ref_description_16">Description</h4>
 <div class="paragraph">
 <p><code>initialize</code> can be directed to describe the classes and methods in a policy,
 and how the dispatch tables are built, by including this facet in the policy,
@@ -4052,7 +4081,7 @@ trace messages to <code>stderr</code>.</p>
 </div>
 <hr>
 <div class="sect3">
-<h4 id="ref_description_16">Description</h4>
+<h4 id="ref_description_17">Description</h4>
 <div class="paragraph">
 <p><strong>Template Parameters</strong></p>
 </div>
@@ -4412,7 +4441,7 @@ operations.</p>
 </div>
 <hr>
 <div class="sect3">
-<h4 id="ref_description_17">Description</h4>
+<h4 id="ref_description_18">Description</h4>
 <div class="paragraph">
 <p>While convenient, <code>std::ostream</code> and its implementations constitute a sizeable
 piece of code, which may make it unsuitable for certain applications. OpenMethod

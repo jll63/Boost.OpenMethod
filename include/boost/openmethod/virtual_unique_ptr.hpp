@@ -7,8 +7,6 @@
 namespace boost {
 namespace openmethod {
 
-namespace detail {
-
 template<class Class, class Policy>
 struct virtual_ptr_traits<std::unique_ptr<Class>, Policy> {
     static bool constexpr is_smart_ptr = true;
@@ -28,8 +26,6 @@ struct virtual_ptr_traits<std::unique_ptr<Class>, Policy> {
         return Other(ptr);
     }
 };
-
-}
 
 template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
 using virtual_unique_ptr = virtual_ptr<std::unique_ptr<Class>, Policy>;

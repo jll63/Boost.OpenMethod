@@ -93,6 +93,8 @@ struct virtual_traits<std::shared_ptr<T>, Policy> {
     }
 };
 
+} // namespace detail
+
 template<class Class, class Policy>
 struct virtual_ptr_traits<std::shared_ptr<Class>, Policy> {
     static bool constexpr is_smart_ptr = true;
@@ -111,7 +113,7 @@ struct virtual_ptr_traits<std::shared_ptr<Class>, Policy> {
                 std::dynamic_pointer_cast<Other>(ptr.obj), ptr.vp);
         } else {
             return virtual_ptr<std::shared_ptr<Other>, Policy>(
-                std::static_pointer_cast<Other>(ptr.obj), ptr.vp);
+                std::static_pointer_cast<Other>(ptr.inferior()), ptr.vptr());
         }
     }
 };
@@ -119,8 +121,6 @@ struct virtual_ptr_traits<std::shared_ptr<Class>, Policy> {
 template<class Class, class Policy>
 struct virtual_ptr_traits<const std::shared_ptr<Class>&, Policy>
     : virtual_ptr_traits<std::shared_ptr<Class>, Policy> {};
-
-} // namespace detail
 
 template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
 using virtual_shared_ptr = virtual_ptr<std::shared_ptr<Class>, Policy>;

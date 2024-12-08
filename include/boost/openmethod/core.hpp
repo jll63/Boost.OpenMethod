@@ -263,6 +263,22 @@ struct parameter_traits<const virtual_ptr<Class, Policy>&, Policy>
 // =============================================================================
 // virtual_ptr
 
+template<class Class, class Policy>
+struct virtual_ptr_traits {
+    static bool constexpr is_smart_ptr = false;
+    using element_type = Class;
+
+    static auto dynamic_type(const Class& obj) {
+        return Policy::dynamic_type(obj);
+    }
+
+    template<typename Other>
+    static auto cast(Class* ptr) {
+        return virtual_ptr<Other, Policy>(
+            detail::optimal_cast<Policy, Other&>(*ptr));
+    }
+};
+
 namespace detail {
 
 template<class Class, class Policy>
@@ -279,16 +295,6 @@ struct is_virtual_ptr_aux<virtual_ptr<Class, Policy>> : std::true_type {};
 
 template<class Class, class Policy>
 struct is_virtual_ptr_aux<const virtual_ptr<Class, Policy>&> : std::true_type {
-};
-
-template<class Class, class Policy>
-struct virtual_ptr_traits {
-    static bool constexpr is_smart_ptr = false;
-    using element_type = Class;
-
-    static auto dynamic_type(const element_type& obj) {
-        return Policy::dynamic_type(obj);
-    }
 };
 
 template<class Class, class Policy>
@@ -322,7 +328,7 @@ class virtual_ptr_impl;
 
 template<class Class, class Policy>
 class virtual_ptr_impl<Class, Policy, false> {
-    using traits = detail::virtual_ptr_traits<Class, Policy>;
+    using traits = virtual_ptr_traits<Class, Policy>;
 
     template<class, class>
     friend struct virtual_traits;
@@ -374,27 +380,18 @@ class virtual_ptr_impl<Class, Policy, false> {
     auto operator*() const -> element_type& {
         return *obj;
     }
-
-    template<typename Other>
-    auto cast() const {
-        return virtual_ptr<Other, Policy>(
-            detail::optimal_cast<Policy, Other&>(*obj), vp);
-    }
 };
 
 template<class Class, class Policy>
 class virtual_ptr_impl<Class, Policy, true> {
   public:
-    using traits = detail::virtual_ptr_traits<Class, Policy>;
+    using traits = virtual_ptr_traits<Class, Policy>;
 
     template<class, class>
     friend class virtual_ptr;
 
     template<class, typename>
     friend struct virtual_traits;
-
-    template<class, typename>
-    friend struct virtual_ptr_traits;
 
   protected:
     using vptr_type =
@@ -446,11 +443,6 @@ class virtual_ptr_impl<Class, Policy, true> {
         return obj;
     }
 
-    template<typename Other>
-    auto cast() const {
-        return virtual_ptr_traits<Class, Policy>::template cast<Other>(obj);
-    }
-
   protected:
     template<typename Arg>
     virtual_ptr_impl(Arg&& obj, vptr_type vp)
@@ -464,11 +456,20 @@ template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
 class virtual_ptr : public detail::virtual_ptr_impl<Class, Policy> {
     using impl = detail::virtual_ptr_impl<Class, Policy>;
 
+    template<class, typename>
+    friend struct virtual_ptr_traits;
+
   public:
     using detail::virtual_ptr_impl<Class, Policy>::virtual_ptr_impl;
 
     template<class, class, bool>
     friend class detail::virtual_ptr_impl;
+
+    template<typename Other>
+    auto cast() const {
+        return virtual_ptr_traits<Class, Policy>::template cast<Other>(
+            this->obj);
+    }
 
     template<class Other>
     static auto final(Other&& obj) {

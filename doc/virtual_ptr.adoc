@@ -18,6 +18,7 @@ namespace boost::openmethod {
 template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
 class virtual_ptr {
   public:
+    using traits = virtual_ptr_traits<Class, Policy>;
     using element_type = Class;
 
     // if not specialized

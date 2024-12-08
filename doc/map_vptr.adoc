@@ -1,0 +1,78 @@
+
+## Class vptr_map
+
+`vptr_map` - An implementation of `external_vptr that stores the pointers to
+the v-tables in a map.
+
+### Synopsis
+
+```c++
+namespace boost {
+namespace openmethod {
+namespace policies {
+
+### Synopsis
+
+template<
+    class Policy,
+    class Map = std::unordered_map<type_id, vptr_type>>
+struct vptr_map : virtual extern_vptr {
+    static Map vptrs;
+
+    template<typename ForwardIterator>
+    static auto register_vptrs(ForwardIterator first, ForwardIterator last) -> void;
+
+    template<class Class>
+    static auto dynamic_vptr(const Class& arg) -> vptr_type;
+};
+
+}}}
+```
+
+---
+
+### Description
+
+*Template Parameters*
+
+[cols="1,1"]
+|===
+
+| _Policy_
+| The policy containing the facet.
+
+| _Map_
+| A map from `type_id` to a direct_vptr_type or an indirect_vptr_type.
+
+|===
+
+`vptr_map` stores the addresses of the v-tables for the classes registered in
+_Policy_ in a map, either as straight pointers, or as pointers to pointers. The
+latter makes it possible for `virtual_ptr`{empty}s to remain valid after a call
+to `initialize`, thus allowing dynamically loaded shared libraries to add
+methods, classes and overriders to a domain.
+
+---
+
+### Member Functions
+
+#### register_vptrs
+
+```c++
+template<typename ForwardIterator>
+auto register_vptrs(ForwardIterator first, ForwardIterator last) -> void;
+```
+
+Stores the pointers to the v-tables in a _Map_.
+
+#### dynamic_vptr
+
+```c++
+template<class Class>
+auto dynamic_vptr(const Class& object) -> vptr_type;
+```
+
+Returns a pointer to the v-table for `object`.
+
+If _Policy_ contains the `runtime_checks` facet, checks if _Class_ is
+registered. If it is not, and if _Policy_ contains a `error_handler` facet, calls its `error` function; then calls `abort`.

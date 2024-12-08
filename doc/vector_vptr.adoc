@@ -1,0 +1,78 @@
+
+## Class vptr_vector
+
+`vptr_vector` - An implementation of `external_vptr that stores the pointers to
+the v-tables in a `std::vector`.
+
+### Synopsis
+
+```c++
+namespace boost {
+namespace openmethod {
+namespace policies {
+
+template<class Policy, typename VptrType = direct_vptr_type>
+struct vptr_vector : virtual extern_vptr {
+    static std::vector<VptrType> vptrs;
+
+    template<typename ForwardIterator>
+    static auto register_vptrs(ForwardIterator first, ForwardIterator last) -> void;
+
+    template<class Class>
+    static auto dynamic_vptr(const Class& arg) -> vptr_type;
+};
+
+}}}
+```
+
+---
+
+### Description
+
+*Template Parameters*
+
+[cols="1,1"]
+|===
+
+| _Policy_
+| The policy containing the facet.
+
+| _VptrType_
+| Either direct_vptr_type or indirect_vptr_type.
+
+|===
+
+`vptr_vector` stores the addresses of the v-tables for the classes registered in
+_Policy_ in a vector, either as straight pointers, or as pointers to pointers.
+The latter makes it possible for `virtual_ptr`{empty}s to remain valid after a
+call to `initialize`, thus allowing dynamically loaded shared libraries to add methods, classes and overriders to a domain.
+
+---
+
+### Member Functions
+
+#### register_vptrs
+
+```c++
+template<typename ForwardIterator>
+auto register_vptrs(ForwardIterator first, ForwardIterator last) -> void;
+```
+
+Stores the pointers to the v-tables in a vector, indexed by the (possibly hashed)
+`type_id`s.
+
+If `Policy` contains a `type_hash` facet, call its `hash_initialize`
+function.
+
+#### dynamic_vptr
+
+```c++
+template<class Class>
+auto dynamic_vptr(const Class& object) -> vptr_type;
+```
+
+Returns a pointer to the v-table for `object`.
+
+Calls `dynamic_type` to obtain a `type_id` for `object`. If _Policy_
+contains a `type_hash` facet, uses it to convert the resulting `type_id` to an
+index; otherwise, uses the `type_id` as the index.

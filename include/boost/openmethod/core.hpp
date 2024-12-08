@@ -437,7 +437,7 @@ class virtual_ptr_impl<Class, Policy, true> {
         return *get();
     }
 
-    auto inferior() const -> const Class& {
+    auto pointer() const -> const Class& {
         return obj;
     }
 

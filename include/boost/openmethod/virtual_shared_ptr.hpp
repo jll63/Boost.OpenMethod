@@ -113,7 +113,7 @@ struct virtual_ptr_traits<std::shared_ptr<Class>, Policy> {
                 std::dynamic_pointer_cast<Other>(ptr.obj), ptr.vp);
         } else {
             return virtual_ptr<std::shared_ptr<Other>, Policy>(
-                std::static_pointer_cast<Other>(ptr.inferior()), ptr.vptr());
+                std::static_pointer_cast<Other>(ptr.pointer()), ptr.vptr());
         }
     }
 };

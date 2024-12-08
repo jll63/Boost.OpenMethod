@@ -37,6 +37,7 @@ class virtual_ptr {
     auto get() const -> element_type*;
     auto operator->() const -> element_type*;
     auto operator*() const -> element_type&;
+    auto pointer() const -> const Class*&;
 
     template<typename Other>
     auto cast() const -> virtual_ptr<Other, Policy>;
@@ -64,7 +65,7 @@ inline auto final_virtual_ptr(Class& obj) -> virtual_ptr<Class, Policy>;
 |===
 
 | _Class_
-| A class registered in _Policy_.
+| A class registered in _Policy_, or a smart pointer to such a class.
 
 
 | _Policy_ | A policy. Defaults to the BOOST_OPENMETHOD_DEFAULT_POLICY

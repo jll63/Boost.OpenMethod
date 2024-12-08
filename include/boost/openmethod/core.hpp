@@ -379,6 +379,10 @@ class virtual_ptr_impl<Class, Policy, false> {
     auto operator*() const -> element_type& {
         return *obj;
     }
+
+    auto pointer() const -> const Class*& {
+        return obj;
+    }
 };
 
 template<class Class, class Policy>
@@ -437,7 +441,7 @@ class virtual_ptr_impl<Class, Policy, true> {
         return *get();
     }
 
-    auto inferior() const -> const Class& {
+    auto pointer() const -> const Class& {
         return obj;
     }
 

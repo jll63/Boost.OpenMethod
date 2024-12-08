@@ -20,11 +20,19 @@ class virtual_ptr {
   public:
     using traits = virtual_ptr_traits<Class, Policy>;
     using element_type = Class;
+    static constexpr bool smart_ptr = virtual_ptr_traits<Class, Policy>::smart_ptr;
 
-    // if not specialized
-    template<class Other> virtual_ptr(Other& other);
-    template<class Other> virtual_ptr(virtual_ptr<Other, Policy>& other);
-    template<class Other> virtual_ptr(const virtual_ptr<Other, Policy>& other);
+    template<class Other>
+    virtual_ptr(Other& other) /*requires(!smart_ptr)*/;
+    template<class Other>
+    virtual_ptr(virtual_ptr<Other, Policy>& other) /*requires(!smart_ptr)*/;
+
+    virtual_ptr(const Class& other) /*requires(smart_ptr)*/;
+    virtual_ptr(Class&& other) /*requires(smart_ptr)*/;
+    template<class Other>
+    virtual_ptr(const virtual_ptr<Other, Policy>& other)  /*requires(smart_ptr)*/;
+    template<class Other>
+    virtual_ptr(virtual_ptr<Other, Policy>&& other) /*requires(smart_ptr)*/;
 
     auto get() const -> element_type*;
     auto operator->() const -> element_type*;

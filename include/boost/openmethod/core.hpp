@@ -265,7 +265,7 @@ struct parameter_traits<const virtual_ptr<Class, Policy>&, Policy>
 
 template<class Class, class Policy>
 struct virtual_ptr_traits {
-    static bool constexpr is_smart_ptr = false;
+    static bool constexpr smart_ptr = false;
     using element_type = Class;
 
     static auto dynamic_type(const Class& obj) {
@@ -323,7 +323,7 @@ constexpr bool is_virtual_ptr = detail::is_virtual_ptr_aux<T>::value;
 
 template<
     class Type, class Policy,
-    bool IsSmartPtr = virtual_ptr_traits<Type, Policy>::is_smart_ptr>
+    bool SmartPtr = virtual_ptr_traits<Type, Policy>::smart_ptr>
 class virtual_ptr_impl;
 
 template<class Class, class Policy>
@@ -337,7 +337,6 @@ class virtual_ptr_impl<Class, Policy, false> {
     friend struct virtual_ptr_traits;
 
   protected:
-    static constexpr bool is_smart = false;
     static constexpr bool is_indirect = Policy::is_indirect;
 
     using vptr_type = std::conditional_t<
@@ -399,7 +398,6 @@ class virtual_ptr_impl<Class, Policy, true> {
 
     static constexpr bool is_indirect =
         std::is_same_v<vptr_type, indirect_vptr_type>;
-    static constexpr bool is_smart = true;
 
     Class obj;
     vptr_type vp;
@@ -464,6 +462,9 @@ class virtual_ptr : public detail::virtual_ptr_impl<Class, Policy> {
 
     template<class, class, bool>
     friend class detail::virtual_ptr_impl;
+
+    static constexpr bool smart_ptr =
+        virtual_ptr_traits<Class, Policy>::smart_ptr;
 
     template<typename Other>
     auto cast() const {

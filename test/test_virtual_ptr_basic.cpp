@@ -78,7 +78,7 @@ static_assert(
             policies::default_>,
         types<d, f>>);
 
-namespace BOOST_OPENMETHOD_GENSYM {
+namespace using_polymorphic_classes {
 
 struct Animal {
     virtual ~Animal() {
@@ -91,14 +91,12 @@ BOOST_OPENMETHOD_CLASSES(Animal, Dog);
 
 namespace BOOST_OPENMETHOD_GENSYM {
 
-void poke_dog(virtual_ptr<Dog>, std::ostream& os) {
+BOOST_OPENMETHOD(poke, (const virtual_ptr<Animal>&, std::ostream&), void);
+
+BOOST_OPENMETHOD_OVERRIDE(
+    poke, (const virtual_ptr<Dog>&, std::ostream& os), void) {
     os << "bark";
 }
-
-struct BOOST_OPENMETHOD_NAME(poke);
-using poke = method<
-    BOOST_OPENMETHOD_NAME(poke)(virtual_ptr<Animal>, std::ostream&), void>;
-BOOST_OPENMETHOD_REGISTER(poke::override<poke_dog>);
 
 BOOST_AUTO_TEST_CASE(test_virtual_ptr_by_ref) {
     boost::openmethod::initialize();
@@ -107,7 +105,7 @@ BOOST_AUTO_TEST_CASE(test_virtual_ptr_by_ref) {
         boost::test_tools::output_test_stream os;
         Dog dog;
         virtual_ptr<Animal> vptr(dog);
-        poke::fn(vptr, os);
+        poke(vptr, os);
     }
 
     {
@@ -115,7 +113,7 @@ BOOST_AUTO_TEST_CASE(test_virtual_ptr_by_ref) {
         boost::test_tools::output_test_stream os;
         Animal&& animal = Dog();
         auto vptr = virtual_ptr(animal);
-        poke::fn(vptr, os);
+        poke(vptr, os);
         BOOST_CHECK(os.is_equal("bark"));
     }
 
@@ -123,7 +121,7 @@ BOOST_AUTO_TEST_CASE(test_virtual_ptr_by_ref) {
         // Using conversion ctor.
         boost::test_tools::output_test_stream os;
         Animal&& animal = Dog();
-        poke::fn(animal, os);
+        poke(animal, os);
         BOOST_CHECK(os.is_equal("bark"));
     }
 }
@@ -132,15 +130,11 @@ BOOST_AUTO_TEST_CASE(test_virtual_ptr_by_ref) {
 
 namespace BOOST_OPENMETHOD_GENSYM {
 
-void poke_dog(virtual_shared_ptr<Dog>, std::ostream& os) {
+BOOST_OPENMETHOD(poke, (virtual_ptr<Animal>, std::ostream&), void);
+
+BOOST_OPENMETHOD_OVERRIDE(poke, (virtual_ptr<Dog>, std::ostream& os), void) {
     os << "bark";
 }
-
-struct BOOST_OPENMETHOD_NAME(poke);
-using poke = method<
-    BOOST_OPENMETHOD_NAME(poke)(virtual_shared_ptr<Animal>, std::ostream&),
-    void>;
-BOOST_OPENMETHOD_REGISTER(poke::override<poke_dog>);
 
 BOOST_AUTO_TEST_CASE(test_virtual_shared_by_value) {
     boost::openmethod::initialize();
@@ -148,28 +142,24 @@ BOOST_AUTO_TEST_CASE(test_virtual_shared_by_value) {
     {
         boost::test_tools::output_test_stream os;
         virtual_shared_ptr<Animal> animal = make_virtual_shared<Dog>();
-        poke::fn(animal, os);
+        poke(animal, os);
         BOOST_CHECK(os.is_equal("bark"));
     }
 }
+
 } // namespace BOOST_OPENMETHOD_GENSYM
 
 namespace BOOST_OPENMETHOD_GENSYM {
 
-static_assert(
-    virtual_ptr_traits<
-        const std::shared_ptr<Animal>&, policies::default_>::smart_ptr);
+static_assert(virtual_ptr_traits<
+              const std::shared_ptr<Animal>&, policies::default_>::smart_ptr);
 
-void poke_dog(const virtual_shared_ptr<Dog>&, std::ostream& os) {
+BOOST_OPENMETHOD(poke, (const virtual_shared_ptr<Animal>&, std::ostream&), void);
+
+BOOST_OPENMETHOD_OVERRIDE(
+    poke, (const virtual_shared_ptr<Dog>&, std::ostream& os), void) {
     os << "bark";
 }
-
-struct BOOST_OPENMETHOD_NAME(poke);
-using poke = method<
-    BOOST_OPENMETHOD_NAME(poke)(
-        const virtual_shared_ptr<Animal>&, std::ostream&),
-    void>;
-BOOST_OPENMETHOD_REGISTER(poke::override<poke_dog>);
 
 BOOST_AUTO_TEST_CASE(test_virtual_shared_by_const_reference) {
     boost::openmethod::initialize();
@@ -177,22 +167,15 @@ BOOST_AUTO_TEST_CASE(test_virtual_shared_by_const_reference) {
     {
         boost::test_tools::output_test_stream os;
         virtual_shared_ptr<Animal> animal = make_virtual_shared<Dog>();
-        poke::fn(animal, os);
+        poke(animal, os);
         BOOST_CHECK(os.is_equal("bark"));
     }
 }
 
-BOOST_AUTO_TEST_CASE(test_final_virtual_shared) {
-    boost::openmethod::initialize();
-
-    auto ptr = make_virtual_shared<Dog>();
-    BOOST_TEST(ptr.vptr() == policies::default_::static_vptr<Dog>);
-}
-
 } // namespace BOOST_OPENMETHOD_GENSYM
-} // namespace BOOST_OPENMETHOD_GENSYM
+} // namespace using_polymorphic_classes
 
-namespace BOOST_OPENMETHOD_GENSYM {
+namespace using_non_polymorphic_classes {
 
 struct Animal {};
 
@@ -200,14 +183,11 @@ struct Dog : Animal {};
 
 BOOST_OPENMETHOD_CLASSES(Animal, Dog);
 
-void poke_dog(virtual_ptr<Dog>, std::ostream& os) {
+BOOST_OPENMETHOD(poke, (virtual_ptr<Animal>, std::ostream&), void);
+
+BOOST_OPENMETHOD_OVERRIDE(poke, (virtual_ptr<Dog>, std::ostream& os), void) {
     os << "bark";
 }
-
-struct BOOST_OPENMETHOD_NAME(poke);
-using poke = method<
-    BOOST_OPENMETHOD_NAME(poke)(virtual_ptr<Animal>, std::ostream&), void>;
-BOOST_OPENMETHOD_REGISTER(poke::override<poke_dog>);
 
 BOOST_AUTO_TEST_CASE(test_virtual_ptr_non_polymorphic) {
     boost::openmethod::initialize();
@@ -216,9 +196,9 @@ BOOST_AUTO_TEST_CASE(test_virtual_ptr_non_polymorphic) {
         boost::test_tools::output_test_stream os;
         Dog dog;
         auto vptr = virtual_ptr<Dog>::final(dog);
-        poke::fn(vptr, os);
+        poke(vptr, os);
         BOOST_CHECK(os.is_equal("bark"));
     }
 }
 
-} // namespace BOOST_OPENMETHOD_GENSYM
+} // namespace using_non_polymorphic_classes

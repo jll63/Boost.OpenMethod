@@ -10,7 +10,7 @@ include::method.adoc[]
 include::method_override.adoc[]
 include::virtual_.adoc[]
 include::virtual_ptr.adoc[]
-include::virtual_smart_ptr.adoc[]
+include::virtual_ptr_traits.adoc[]
 
 include::abstract_policy.adoc[]
 include::basic_domain.adoc[]

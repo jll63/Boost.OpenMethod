@@ -14,8 +14,7 @@
 
 #include <boost/openmethod/detail/types.hpp>
 
-namespace boost {
-namespace openmethod {
+namespace boost::openmethod {
 
 // =============================================================================
 // Registering classes
@@ -192,20 +191,6 @@ struct virtual_traits<T*, Policy> {
     }
 };
 
-template<typename T, class Policy>
-struct virtual_traits<T&&, Policy> {
-    using virtual_type = std::remove_cv_t<T>;
-
-    static auto rarg(const T& arg) -> const T& {
-        return arg;
-    }
-
-    template<typename D>
-    static auto cast(T&& obj) -> D&& {
-        return detail::optimal_cast<Policy, D&&>(obj);
-    }
-};
-
 // =============================================================================
 // Common details
 
@@ -265,17 +250,18 @@ struct parameter_traits<const virtual_ptr<Class, Policy>&, Policy>
 
 template<class Class, class Policy>
 struct virtual_ptr_traits {
-    static bool constexpr smart_ptr = false;
     using element_type = Class;
+    static bool constexpr smart_ptr = false;
 
-    static auto dynamic_type(const Class& obj) {
+    static auto dynamic_type(const Class& obj) -> type_id {
         return Policy::dynamic_type(obj);
     }
 
     template<typename Other>
-    static auto cast(Class* ptr) {
+    static auto cast(const virtual_ptr<Class, Policy>& ptr)
+        -> virtual_ptr<Other, Policy> {
         return virtual_ptr<Other, Policy>(
-            detail::optimal_cast<Policy, Other&>(*ptr));
+            detail::optimal_cast<Policy, Other&>(*ptr), ptr.vptr());
     }
 };
 
@@ -328,8 +314,6 @@ class virtual_ptr_impl;
 
 template<class Class, class Policy>
 class virtual_ptr_impl<Class, Policy, false> {
-    using traits = virtual_ptr_traits<Class, Policy>;
-
     template<class, class>
     friend struct virtual_traits;
 
@@ -350,7 +334,8 @@ class virtual_ptr_impl<Class, Policy, false> {
     }
 
   public:
-    using element_type = Class;
+    using traits = virtual_ptr_traits<Class, Policy>;
+    using element_type = typename traits::element_type;
 
     template<class Other>
     virtual_ptr_impl(Other& other) {
@@ -389,6 +374,7 @@ template<class Class, class Policy>
 class virtual_ptr_impl<Class, Policy, true> {
   public:
     using traits = virtual_ptr_traits<Class, Policy>;
+    using element_type = typename traits::element_type;
 
     template<class, class>
     friend class virtual_ptr;
@@ -407,8 +393,6 @@ class virtual_ptr_impl<Class, Policy, true> {
     vptr_type vp;
 
   public:
-    using element_type = typename traits::element_type;
-
     virtual_ptr_impl(const Class& other) {
         vp = Policy::dynamic_vptr(*other);
         obj = other;
@@ -472,8 +456,7 @@ class virtual_ptr : public detail::virtual_ptr_impl<Class, Policy> {
 
     template<typename Other>
     auto cast() const {
-        return virtual_ptr_traits<Class, Policy>::template cast<Other>(
-            this->obj);
+        return virtual_ptr_traits<Class, Policy>::template cast<Other>(*this);
     }
 
     template<class Other>
@@ -1085,7 +1068,6 @@ method<Name(Parameters...), ReturnType, Policy>::override_impl<
     fn.specs.push_back(info);
 }
 
-} // namespace openmethod
-} // namespace boost
+} // namespace boost::openmethod
 
 #endif

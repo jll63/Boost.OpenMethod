@@ -100,20 +100,19 @@ struct virtual_ptr_traits<std::shared_ptr<Class>, Policy> {
     static bool constexpr smart_ptr = true;
     using element_type = Class;
 
-    static auto dynamic_type(const std::shared_ptr<Class>& obj) {
+    static auto dynamic_type(const std::shared_ptr<Class>& obj) -> type_id {
         return Policy::dynamic_type(*obj);
     }
 
     template<typename Other>
-    static auto cast(const virtual_ptr<std::shared_ptr<Class>, Policy>& ptr)
-        -> decltype(auto) {
-
+    static decltype(auto)
+    cast(const virtual_ptr<std::shared_ptr<Class>, Policy>& ptr) {
         if constexpr (detail::requires_dynamic_cast<Class&, Other&>) {
             return virtual_ptr<std::shared_ptr<Other>, Policy>(
-                std::dynamic_pointer_cast<Other>(ptr.obj), ptr.vp);
+                std::dynamic_pointer_cast<Other>(ptr.pointer()), ptr.vp);
         } else {
             return virtual_ptr<std::shared_ptr<Other>, Policy>(
-                std::static_pointer_cast<Other>(ptr.pointer()), ptr.vptr());
+                std::static_pointer_cast<Other>(ptr.pointer()), ptr.vp);
         }
     }
 };

@@ -12,18 +12,26 @@ struct virtual_ptr_traits<std::unique_ptr<Class>, Policy> {
     static bool constexpr smart_ptr = true;
     using element_type = Class;
 
-    static auto dynamic_type(const std::unique_ptr<Class>& ptr) {
+    static auto dynamic_type(const std::unique_ptr<Class>& ptr) -> type_id {
         return Policy::dynamic_type(*ptr);
     }
 
     template<typename Other>
-    static auto cast(virtual_ptr<std::unique_ptr<Class>, Policy> ptr)
-        -> decltype(auto) {
-        static_assert(
-            std::is_base_of_v<Class, Other>,
-            "std::unique_ptr only supports upcast");
+    static decltype(auto)
+    cast(virtual_ptr<std::unique_ptr<Class>, Policy>&& ptr) {
+        auto p = ptr.obj.release();
 
-        return Other(ptr);
+        if constexpr (detail::requires_dynamic_cast<Class&, Other&>) {
+            return virtual_ptr<std::unique_ptr<Other>, Policy>(
+                std::dynamic_pointer_cast<Other>(
+                    std::unique_ptr<Other>(ptr.obj.release())),
+                ptr.vp);
+        } else {
+            return virtual_ptr<std::unique_ptr<Other>, Policy>(
+                std::static_pointer_cast<Other>(
+                    std::unique_ptr<Other>(ptr.obj.release())),
+                ptr.vp);
+        }
     }
 };
 

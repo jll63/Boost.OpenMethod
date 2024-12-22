@@ -6,20 +6,19 @@
 `virtual_ptr` - A fat pointer that combines a pointer to an object and a
 pointer to its v-table.
 
-### Headers
-
-`<boost/openmethod/core.hpp>`, `<boost/openmethod.hpp>`
-
 ### Synopsis
 
+`virtual_ptr` is defined in `<boost/openmethod/core.hpp>`.
+
 ```c++
-namespace boost::openmethod {
+namespace boost {
+namespace openmethod {
 
 template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
 class virtual_ptr {
   public:
     using traits = virtual_ptr_traits<Class, Policy>;
-    using element_type = Class;
+    using element_type = typename traits::Class;
     static constexpr bool smart_ptr = virtual_ptr_traits<Class, Policy>::smart_ptr;
 
     template<class Other>
@@ -52,7 +51,9 @@ inline auto final_virtual_ptr(Class& obj) -> virtual_ptr<
 
 template<class Policy, class Class>
 inline auto final_virtual_ptr(Class& obj) -> virtual_ptr<Class, Policy>;
-}
+
+} // namespace openmethod
+} // namespace boost
 ```
 
 ---

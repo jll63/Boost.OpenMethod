@@ -9,10 +9,7 @@
 #include <boost/openmethod/macros/name.hpp>
 #include <boost/openmethod/macros/register.hpp>
 
-#include <boost/preprocessor/punctuation/comma_if.hpp>
-#include <boost/preprocessor/repetition/repeat.hpp>
-#include <boost/preprocessor/tuple/elem.hpp>
-#include <boost/preprocessor/tuple/size.hpp>
+#include <boost/preprocessor/cat.hpp>
 
 #define BOOST_OPENMETHOD_OVERRIDERS(NAME)                                      \
     BOOST_PP_CAT(BOOST_OPENMETHOD_NAME(NAME), _overriders)

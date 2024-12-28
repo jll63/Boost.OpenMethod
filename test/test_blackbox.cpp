@@ -5,7 +5,12 @@
 
 #include <iostream>
 #include <stdexcept>
+#include <string>
 #include <type_traits>
+
+#include <boost/preprocessor/seq/for_each.hpp>
+#include <boost/preprocessor/stringize.hpp>
+#include <boost/preprocessor/variadic/to_seq.hpp>
 
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/compiler.hpp>
@@ -17,121 +22,154 @@
 
 using namespace boost::openmethod;
 
-namespace states {
+namespace TEST_NS {
+
+// Check that references to virtual arguments are cast correctly, even in
+// presence of multiple and virtual inheritance.
 
 using policy = test_policy_<__COUNTER__>;
-using std::string;
 
 struct Animal {
     Animal(const Animal&) = delete;
+
     Animal() : name("wrong") {
     }
 
     virtual ~Animal() {
     }
 
+    explicit Animal(std::string str) {
+        name = std::move(str);
+    }
+
     std::string name;
 };
 
-struct Dog : Animal {
-    Dog(string n) {
-        name = n;
-    }
+struct Property {
+    std::string owner = "Bill";
 };
 
-struct Cat : virtual Animal {
-    Cat(string n) {
-        name = n;
-    }
+struct Dog : Property, Animal {
+    using Animal::Animal;
+};
+
+struct Cat : Property, virtual Animal {
+    using Animal::Animal;
 };
 
 BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, policy);
 
-BOOST_OPENMETHOD(name, (virtual_<const Animal&>), string, policy);
+BOOST_OPENMETHOD(name, (virtual_<const Animal&>), std::string, policy);
 
-BOOST_OPENMETHOD_OVERRIDE(name, (const Cat& cat), string) {
-    return "cat " + cat.name;
+BOOST_OPENMETHOD_OVERRIDE(name, (const Cat& cat), std::string) {
+    return cat.owner + "'s cat " + cat.name;
 }
 
-BOOST_OPENMETHOD_OVERRIDE(name, (const Dog& dog), string) {
-    return "dog " + dog.name;
+BOOST_OPENMETHOD_OVERRIDE(name, (const Dog& dog), std::string) {
+    return dog.owner + "'s dog " + dog.name;
 }
 
-BOOST_AUTO_TEST_CASE(initializing) {
+BOOST_AUTO_TEST_CASE(cast_args_lvalue_refs) {
     initialize<policy>();
-    const Animal& dog = Dog("spot");
-    BOOST_TEST("dog spot" == name(dog));
-    const Animal& cat = Cat("felix");
-    BOOST_TEST("cat felix" == name(cat));
+    std::unique_ptr<Animal> dog = std::make_unique<Dog>("Spot");
+    BOOST_TEST("Bill's dog Spot" == name(*dog));
+    std::unique_ptr<Animal> cat = std::make_unique<Cat>("Felix");
+    BOOST_TEST("Bill's cat Felix" == name(*cat));
 }
 
-} // namespace states
+BOOST_OPENMETHOD(move_name, (virtual_<Animal&&>), std::string, policy);
+
+BOOST_OPENMETHOD_OVERRIDE(move_name, (Cat && cat), std::string) {
+    return std::move(cat.name);
+}
+
+BOOST_OPENMETHOD_OVERRIDE(move_name, (Dog && dog), std::string) {
+    return std::move(dog.name);
+}
+
+BOOST_AUTO_TEST_CASE(cast_args_rvalue_refs) {
+    initialize<policy>();
+    std::unique_ptr<Animal> dog = std::make_unique<Dog>("Spot");
+    BOOST_TEST("Spot" == move_name(std::move(*dog)));
+    BOOST_TEST("" == dog->name);
+    std::unique_ptr<Animal> cat = std::make_unique<Cat>("Felix");
+    BOOST_TEST("Felix" == move_name(std::move(*cat)));
+    BOOST_TEST("" == cat->name);
+}
+
+} // namespace TEST_NS
 
 namespace matrices {
 
 using policy = test_policy_<__COUNTER__>;
 
+#define TYPES                                                                  \
+    NONE, MATRIX, DIAGONAL, SCALAR_MATRIX, SCALAR_DIAGONAL, MATRIX_SCALAR,     \
+        DIAGONAL_SCALAR, MATRIX_MATRIX, MATRIX_DIAGONAL, DIAGONAL_DIAGONAL,    \
+        DIAGONAL_MATRIX, MATRIX_DENSE, DENSE_MATRIX
+
+enum Type { TYPES };
+
+using Types = std::pair<Type, Type>;
+
+std::ostream& operator<<(std::ostream& os, Type t) {
+#define TYPE_TO_STRING(r, data, elem) BOOST_PP_STRINGIZE(elem),
+    static const char* names[] = {BOOST_PP_SEQ_FOR_EACH(
+        TYPE_TO_STRING, _, BOOST_PP_VARIADIC_TO_SEQ(TYPES))};
+    return os << names[t];
+}
+
+std::ostream& operator<<(std::ostream& os, Types o) {
+    os << o.first << ", " << o.second;
+    return os;
+}
+
 struct matrix {
     virtual ~matrix() {
     }
+
+    Type type;
 };
 
 struct dense_matrix : matrix {};
 struct diagonal_matrix : matrix {};
 
-enum Subtype {
-    MATRIX,
-    DIAGONAL,
-    SCALAR_MATRIX,
-    SCALAR_DIAGONAL,
-    MATRIX_SCALAR,
-    DIAGONAL_SCALAR,
-    MATRIX_MATRIX,
-    DIAGONAL_DIAGONAL
-};
+} // namespace matrices
+
+namespace TEST_NS {
+
+using namespace matrices;
 
 BOOST_OPENMETHOD_CLASSES(matrix, dense_matrix, diagonal_matrix, policy);
 
 BOOST_OPENMETHOD(
-    times, (virtual_<const matrix&>, virtual_<const matrix&>), Subtype, policy);
-BOOST_OPENMETHOD(times, (double, virtual_<const matrix&>), Subtype, policy);
-BOOST_OPENMETHOD(times, (virtual_<const matrix&>, double), Subtype, policy);
+    times, (virtual_<const matrix&>, virtual_<const matrix&>), Types, policy);
+BOOST_OPENMETHOD(times, (double, virtual_<const matrix&>), Types, policy);
+BOOST_OPENMETHOD(times, (virtual_<const matrix&>, double), Types, policy);
 
-BOOST_OPENMETHOD_OVERRIDE(times, (const matrix&, const matrix&), Subtype) {
-    return MATRIX_MATRIX;
+BOOST_OPENMETHOD_OVERRIDE(times, (const matrix&, const matrix&), Types) {
+    return Types(MATRIX_MATRIX, NONE);
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    times, (const diagonal_matrix&, const diagonal_matrix&), Subtype) {
-    return DIAGONAL_DIAGONAL;
+    times, (const diagonal_matrix&, const diagonal_matrix&), Types) {
+    return Types(DIAGONAL_DIAGONAL, MATRIX_MATRIX);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(times, (double a, const matrix& m), Subtype) {
-    return SCALAR_MATRIX;
+BOOST_OPENMETHOD_OVERRIDE(times, (double a, const matrix& m), Types) {
+    return Types(SCALAR_MATRIX, NONE);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(
-    times, (double a, const diagonal_matrix& m), Subtype) {
-    return SCALAR_DIAGONAL;
+BOOST_OPENMETHOD_OVERRIDE(times, (double a, const diagonal_matrix& m), Types) {
+    return Types(SCALAR_DIAGONAL, SCALAR_MATRIX);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(
-    times, (const diagonal_matrix& m, double a), Subtype) {
-    return DIAGONAL_SCALAR;
+BOOST_OPENMETHOD_OVERRIDE(times, (const diagonal_matrix& m, double a), Types) {
+    return Types(DIAGONAL_SCALAR, MATRIX_SCALAR);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(times, (const matrix& m, double a), Subtype) {
-    return MATRIX_SCALAR;
-}
-
-BOOST_OPENMETHOD(zero, (virtual_<matrix&>), Subtype, policy);
-
-BOOST_OPENMETHOD_OVERRIDE(zero, (dense_matrix & m), Subtype) {
-    return MATRIX;
-}
-
-BOOST_OPENMETHOD_OVERRIDE(zero, (diagonal_matrix & m), Subtype) {
-    return DIAGONAL;
+BOOST_OPENMETHOD_OVERRIDE(times, (const matrix& m, double a), Types) {
+    return Types(MATRIX_SCALAR, NONE);
 }
 
 BOOST_AUTO_TEST_CASE(simple) {
@@ -141,63 +179,44 @@ BOOST_AUTO_TEST_CASE(simple) {
         // pass by const ref
         const matrix& dense = dense_matrix();
         const matrix& diag = diagonal_matrix();
-        BOOST_TEST(times(dense, dense) == MATRIX_MATRIX);
-        BOOST_TEST(times(diag, diag) == DIAGONAL_DIAGONAL);
-        BOOST_TEST(times(diag, dense) == MATRIX_MATRIX);
-        BOOST_TEST(times(2, dense) == SCALAR_MATRIX);
-        BOOST_TEST(times(dense, 2) == MATRIX_SCALAR);
-        BOOST_TEST(times(diag, 2) == DIAGONAL_SCALAR);
-    }
-
-    {
-        // pass by ref
-        dense_matrix dense;
-        BOOST_TEST(zero(dense) == MATRIX);
-        diagonal_matrix diagonal;
-        BOOST_TEST(zero(diagonal) == DIAGONAL);
+        BOOST_TEST(times(dense, dense) == Types(MATRIX_MATRIX, NONE));
+        BOOST_TEST(
+            times(diag, diag) == Types(DIAGONAL_DIAGONAL, MATRIX_MATRIX));
+        BOOST_TEST(times(diag, dense) == Types(MATRIX_MATRIX, NONE));
+        BOOST_TEST(times(2, dense) == Types(SCALAR_MATRIX, NONE));
+        BOOST_TEST(times(dense, 2) == Types(MATRIX_SCALAR, NONE));
+        BOOST_TEST(times(diag, 2) == Types(DIAGONAL_SCALAR, MATRIX_SCALAR));
     }
 }
 
-} // namespace matrices
+} // namespace TEST_NS
 
-namespace ambiguity {
+namespace TEST_NS {
+
+using namespace matrices;
 
 using policy = test_policy_<__COUNTER__>;
-
-struct matrix {
-    virtual ~matrix() {
-    }
-};
-
-struct dense_matrix : matrix {};
-struct diagonal_matrix : matrix {};
-
-enum Subtype { NONE, MATRIX_MATRIX, MATRIX_DIAGONAL, DIAGONAL_MATRIX };
 
 BOOST_OPENMETHOD_CLASSES(matrix, dense_matrix, diagonal_matrix, policy);
 
 BOOST_OPENMETHOD(
-    times, (virtual_<const matrix&>, virtual_<const matrix&>),
-    std::pair<Subtype, Subtype>, policy);
+    times, (virtual_<const matrix&>, virtual_<const matrix&>), Types, policy);
 
-BOOST_OPENMETHOD_OVERRIDE(
-    times, (const matrix&, const matrix&), std::pair<Subtype, Subtype>) {
+BOOST_OPENMETHOD_OVERRIDE(times, (const matrix&, const matrix&), Types) {
     BOOST_TEST(!has_next());
-    return std::pair(MATRIX_MATRIX, NONE);
+    return Types(MATRIX_MATRIX, NONE);
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    times, (const matrix& a, const diagonal_matrix& b),
-    std::pair<Subtype, Subtype>) {
+    times, (const matrix& a, const diagonal_matrix& b), Types) {
     BOOST_TEST(has_next());
-    return std::pair(MATRIX_DIAGONAL, next(a, b).first);
+    return Types(MATRIX_DIAGONAL, next(a, b).first);
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    times, (const diagonal_matrix& a, const matrix& b),
-    std::pair<Subtype, Subtype>) {
+    times, (const diagonal_matrix& a, const matrix& b), Types) {
     BOOST_TEST(has_next());
-    return std::pair(DIAGONAL_MATRIX, next(a, b).first);
+    return Types(DIAGONAL_MATRIX, next(a, b).first);
 }
 
 BOOST_AUTO_TEST_CASE(ambiguity) {
@@ -218,21 +237,13 @@ BOOST_AUTO_TEST_CASE(ambiguity) {
     BOOST_TEST((result1 == result2));
 }
 
-} // namespace ambiguity
-namespace covariant_return_type {
+} // namespace TEST_NS
+
+namespace TEST_NS {
+
+using namespace matrices;
 
 using policy = test_policy_<__COUNTER__>;
-
-enum Subtype { MATRIX_MATRIX, MATRIX_DENSE, DENSE_MATRIX };
-
-struct matrix {
-    virtual ~matrix() {
-    }
-
-    Subtype type;
-};
-
-struct dense_matrix : matrix {};
 
 BOOST_OPENMETHOD_CLASSES(matrix, dense_matrix, policy);
 
@@ -263,7 +274,7 @@ BOOST_AUTO_TEST_CASE(covariant_return_type) {
     BOOST_TEST(result->type == DENSE_MATRIX);
 }
 
-} // namespace covariant_return_type
+} // namespace TEST_NS
 
 namespace test_next_fn {
 
@@ -488,7 +499,7 @@ namespace test_comma_in_return_type {
 using policy = test_policy_<__COUNTER__>;
 
 struct Test {
-    virtual ~Test() {};
+    virtual ~Test(){};
 };
 
 BOOST_OPENMETHOD_CLASSES(Test, policy);

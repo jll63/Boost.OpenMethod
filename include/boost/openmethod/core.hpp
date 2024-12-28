@@ -178,17 +178,23 @@ struct virtual_traits<T&, Policy> {
 };
 
 template<typename T, class Policy>
-struct virtual_traits<T*, Policy> {
-    using virtual_type = std::remove_cv_t<T>;
+struct virtual_traits<T&&, Policy> {
+    using virtual_type = T;
 
-    static auto rarg(const T* arg) -> const T& {
-        return *arg;
+    static auto rarg(const T& arg) -> const T& {
+        return arg;
     }
 
     template<typename D>
-    static auto cast(T* obj) -> D* {
-        return &detail::optimal_cast<Policy, D&>(*obj);
+    static auto cast(T&& obj) -> D&& {
+        return detail::optimal_cast<Policy, D&&>(obj);
     }
+};
+
+// For covariant return types.
+template<typename T, class Policy>
+struct virtual_traits<T*, Policy> {
+    using virtual_type = std::remove_cv_t<T>;
 };
 
 // =============================================================================

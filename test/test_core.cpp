@@ -41,14 +41,6 @@ static_assert(
 
 static_assert(
     std::is_same_v<
-        virtual_traits<base*, policies::default_>::virtual_type, base>);
-
-static_assert(
-    std::is_same_v<
-        virtual_traits<const base*, policies::default_>::virtual_type, base>);
-
-static_assert(
-    std::is_same_v<
         virtual_traits<base&&, policies::default_>::virtual_type, base>);
 
 static_assert(

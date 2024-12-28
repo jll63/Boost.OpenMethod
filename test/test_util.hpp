@@ -14,4 +14,6 @@ struct test_policy_ :
 {
 };
 
+#define TEST_NS BOOST_PP_CAT(test, __COUNTER__)
+
 #endif

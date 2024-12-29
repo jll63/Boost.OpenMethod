@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <string>
 #include <type_traits>
+#include <any>
 
 #include <boost/preprocessor/seq/for_each.hpp>
 #include <boost/preprocessor/stringize.hpp>
@@ -22,24 +23,18 @@
 
 using namespace boost::openmethod;
 
-namespace TEST_NS {
-
-// Check that references to virtual arguments are cast correctly, even in
-// presence of multiple and virtual inheritance.
-
-using policy = test_policy_<__COUNTER__>;
+namespace animals {
 
 struct Animal {
-    Animal(const Animal&) = delete;
-
-    Animal() : name("wrong") {
-    }
-
-    virtual ~Animal() {
-    }
-
     explicit Animal(std::string str) {
         name = std::move(str);
+    }
+
+    Animal(const Animal&) = delete;
+
+    Animal(Animal&&) = default;
+
+    virtual ~Animal() {
     }
 
     std::string name;
@@ -57,6 +52,16 @@ struct Cat : Property, virtual Animal {
     using Animal::Animal;
 };
 
+} // namespace animals
+
+// -----------------------------------------------------------------------------
+// pass virtual args by lvalue references
+
+namespace TEST_NS {
+
+using policy = test_policy_<__COUNTER__>;
+using namespace animals;
+
 BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, policy);
 
 BOOST_OPENMETHOD(name, (virtual_<const Animal&>), std::string, policy);
@@ -71,30 +76,132 @@ BOOST_OPENMETHOD_OVERRIDE(name, (const Dog& dog), std::string) {
 
 BOOST_AUTO_TEST_CASE(cast_args_lvalue_refs) {
     initialize<policy>();
-    std::unique_ptr<Animal> dog = std::make_unique<Dog>("Spot");
-    BOOST_TEST("Bill's dog Spot" == name(*dog));
-    std::unique_ptr<Animal> cat = std::make_unique<Cat>("Felix");
-    BOOST_TEST("Bill's cat Felix" == name(*cat));
+
+    Dog spot("Spot");
+    BOOST_TEST(name(spot) == "Bill's dog Spot");
+
+    Cat felix("Felix");
+    BOOST_TEST(name(felix) == "Bill's cat Felix");
+}
+} // namespace TEST_NS
+
+namespace TEST_NS {
+
+using policy = test_policy_<__COUNTER__>;
+using namespace animals;
+
+} // namespace TEST_NS
+
+// -----------------------------------------------------------------------------
+// pass virtual args by rvalue references
+
+namespace TEST_NS {
+
+using policy = test_policy_<__COUNTER__>;
+using namespace animals;
+
+BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, policy);
+
+BOOST_OPENMETHOD(
+    teleport, (virtual_<Animal&&>), std::unique_ptr<Animal>, policy);
+
+BOOST_OPENMETHOD_OVERRIDE(teleport, (Cat && cat), std::unique_ptr<Animal>) {
+    return std::make_unique<Cat>(std::move(cat));
 }
 
-BOOST_OPENMETHOD(move_name, (virtual_<Animal&&>), std::string, policy);
-
-BOOST_OPENMETHOD_OVERRIDE(move_name, (Cat && cat), std::string) {
-    return std::move(cat.name);
-}
-
-BOOST_OPENMETHOD_OVERRIDE(move_name, (Dog && dog), std::string) {
-    return std::move(dog.name);
+BOOST_OPENMETHOD_OVERRIDE(teleport, (Dog && dog), std::unique_ptr<Animal>) {
+    return std::make_unique<Dog>(std::move(dog));
 }
 
 BOOST_AUTO_TEST_CASE(cast_args_rvalue_refs) {
     initialize<policy>();
-    std::unique_ptr<Animal> dog = std::make_unique<Dog>("Spot");
-    BOOST_TEST("Spot" == move_name(std::move(*dog)));
-    BOOST_TEST("" == dog->name);
-    std::unique_ptr<Animal> cat = std::make_unique<Cat>("Felix");
-    BOOST_TEST("Felix" == move_name(std::move(*cat)));
-    BOOST_TEST("" == cat->name);
+
+    {
+        Dog spot("Spot");
+        auto animal = teleport(std::move(spot));
+        BOOST_TEST(animal->name == "Spot");
+        BOOST_TEST(spot.name == "");
+    }
+
+    {
+        Cat felix("Felix");
+        auto animal = teleport(std::move(felix));
+        BOOST_TEST(animal->name == "Felix");
+        BOOST_TEST(felix.name == "");
+    }
+}
+} // namespace TEST_NS
+
+namespace TEST_NS {
+
+// -----------------------------------------------------------------------------
+// pass virtual args by shared_ptr by value
+
+using policy = test_policy_<__COUNTER__>;
+using namespace animals;
+
+BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, policy);
+
+BOOST_OPENMETHOD(
+    name, (virtual_<std::shared_ptr<const Animal>>), std::string, policy);
+
+BOOST_OPENMETHOD_OVERRIDE(name, (std::shared_ptr<const Cat> cat), std::string) {
+    return cat->owner + "'s cat " + cat->name;
+}
+
+BOOST_OPENMETHOD_OVERRIDE(name, (std::shared_ptr<const Dog> dog), std::string) {
+    return dog->owner + "'s dog " + dog->name;
+}
+
+BOOST_AUTO_TEST_CASE(cast_args_shared_ptr_by_value) {
+    initialize<policy>();
+
+    auto spot = std::make_shared<Dog>("Spot");
+    BOOST_TEST(name(spot) == "Bill's dog Spot");
+
+    auto felix = std::make_shared<Cat>("Felix");
+    BOOST_TEST(name(felix) == "Bill's cat Felix");
+}
+} // namespace TEST_NS
+
+namespace TEST_NS {
+
+using policy = test_policy_<__COUNTER__>;
+using namespace animals;
+} // namespace TEST_NS
+
+namespace TEST_NS {
+
+// -----------------------------------------------------------------------------
+// pass virtual args by shared_ptr by ref
+
+using policy = test_policy_<__COUNTER__>;
+using namespace animals;
+
+BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, policy);
+
+BOOST_OPENMETHOD(
+    name, (virtual_<const std::shared_ptr<const Animal>&>), std::string,
+    policy);
+
+BOOST_OPENMETHOD_OVERRIDE(
+    name, (const std::shared_ptr<const Cat>& cat), std::string) {
+    return cat->owner + "'s cat " + cat->name;
+}
+
+BOOST_OPENMETHOD_OVERRIDE(
+    name, (const std::shared_ptr<const Dog>& dog), std::string) {
+    return dog->owner + "'s dog " + dog->name;
+}
+
+BOOST_AUTO_TEST_CASE(cast_args_shared_ptr_by_ref) {
+    initialize<policy>();
+
+    auto spot = std::make_shared<Dog>("Spot");
+    BOOST_TEST(name(spot) == "Bill's dog Spot");
+
+    auto felix = std::make_shared<Cat>("Felix");
+    BOOST_TEST(name(felix) == "Bill's cat Felix");
 }
 
 } // namespace TEST_NS
@@ -318,13 +425,7 @@ BOOST_AUTO_TEST_CASE(test_next_fn) {
 
 namespace errors {
 
-struct matrix {
-    virtual ~matrix() {
-    }
-};
-
-struct dense_matrix : matrix {};
-struct diagonal_matrix : matrix {};
+using namespace matrices;
 
 BOOST_OPENMETHOD_CLASSES(matrix, dense_matrix, diagonal_matrix, matrix);
 

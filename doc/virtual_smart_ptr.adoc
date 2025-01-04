@@ -1,7 +1,7 @@
 
 [#virtual_ptr_smart]
 
-## Class template virtual_ptr<smart_ptr, ...>
+## Class template virtual_ptr<is_smart_ptr, ...>
 
 ### Description
 

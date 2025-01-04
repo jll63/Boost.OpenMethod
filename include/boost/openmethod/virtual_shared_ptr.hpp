@@ -10,7 +10,7 @@ namespace openmethod {
 
 template<class Class, class Policy>
 struct virtual_ptr_traits<std::shared_ptr<Class>, Policy> {
-    static bool constexpr smart_ptr = true;
+    static bool constexpr is_smart_ptr = true;
     using element_type = Class;
 
     static auto dynamic_type(const std::shared_ptr<Class>& obj) -> type_id {

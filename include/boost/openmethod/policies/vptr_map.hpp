@@ -18,7 +18,7 @@ namespace policies {
 template<class Policy, class Map = std::unordered_map<type_id, vptr_type>>
 struct vptr_map : virtual extern_vptr {
     static_assert(
-        std::is_same_v<typename Map::mapped_type, direct_vptr_type> ||
+        std::is_same_v<typename Map::mapped_type, vptr_type> ||
         std::is_same_v<typename Map::mapped_type, indirect_vptr_type>);
 
     static constexpr bool is_indirect =

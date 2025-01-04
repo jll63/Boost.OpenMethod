@@ -27,6 +27,8 @@ struct shared_ptr_traits<const std::shared_ptr<T>&> {
     using virtual_type = T;
 };
 
+} // namespace detail
+
 template<typename T, class Policy>
 struct virtual_traits<const std::shared_ptr<T>&, Policy> {
     using virtual_type = std::remove_cv_t<T>;
@@ -37,6 +39,8 @@ struct virtual_traits<const std::shared_ptr<T>&, Policy> {
 
     template<class DERIVED>
     static void check_cast() {
+        using namespace boost::openmethod::detail;
+
         static_assert(shared_ptr_traits<DERIVED>::is_shared_ptr);
         static_assert(
             shared_ptr_traits<DERIVED>::is_const_ref,
@@ -48,6 +52,8 @@ struct virtual_traits<const std::shared_ptr<T>&, Policy> {
 
     template<class DERIVED>
     static auto cast(const std::shared_ptr<T>& obj) {
+        using namespace boost::openmethod::detail;
+
         check_cast<DERIVED>();
 
         if constexpr (detail::requires_dynamic_cast<T*, DERIVED>) {
@@ -70,6 +76,8 @@ struct virtual_traits<std::shared_ptr<T>, Policy> {
 
     template<class DERIVED>
     static void check_cast() {
+        using namespace boost::openmethod::detail;
+
         static_assert(shared_ptr_traits<DERIVED>::is_shared_ptr);
         static_assert(
             !shared_ptr_traits<DERIVED>::is_const_ref,
@@ -80,6 +88,8 @@ struct virtual_traits<std::shared_ptr<T>, Policy> {
     }
     template<class DERIVED>
     static auto cast(const std::shared_ptr<T>& obj) {
+        using namespace boost::openmethod::detail;
+
         check_cast<DERIVED>();
 
         if constexpr (detail::requires_dynamic_cast<T*, DERIVED>) {
@@ -92,7 +102,6 @@ struct virtual_traits<std::shared_ptr<T>, Policy> {
     }
 };
 
-} // namespace detail
 } // namespace openmethod
 } // namespace boost
 

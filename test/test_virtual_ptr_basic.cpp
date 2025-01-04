@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE(test_virtual_shared_by_value) {
 namespace BOOST_OPENMETHOD_GENSYM {
 
 static_assert(virtual_ptr_traits<
-              const std::shared_ptr<Animal>&, policies::default_>::smart_ptr);
+              const std::shared_ptr<Animal>&, policies::default_>::is_smart_ptr);
 
 BOOST_OPENMETHOD(poke, (const virtual_shared_ptr<Animal>&, std::ostream&), void);
 

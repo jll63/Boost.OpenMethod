@@ -1,0 +1,82 @@
+## virtual_ptr_traits
+:idprefix: virtual_ptr_traits_
+
+### Description
+
+`virtual_ptr_traits` class template is used by `virtual_ptr` to examine and
+manipulate the pointer to the object.
+
+### Synopsis
+
+`virtual_ptr_traits` is defined in `<boost/openmethod/core.hpp>`.
+
+```c++
+namespace boost::openmethod {
+
+template<class Class, class Policy>
+struct virtual_ptr_traits {
+    using element_type = Class;
+
+    static bool constexpr is_smart_ptr = false;
+
+    static auto dynamic_type(const Class& obj) -> type_id;
+
+    template<typename Other>
+    static auto cast(const virtual_ptr<Class, Policy>& ptr)
+        -> virtual_ptr<Other, Policy>;
+};
+
+} // namespace boost::openmethod
+
+*Template Parameters*
+
+[cols="1,1"]
+|===
+
+| _Class_
+| A class registered in _Policy_, or a smart pointer to such a class.
+
+
+| _Policy_ | A policy. Defaults to the BOOST_OPENMETHOD_DEFAULT_POLICY
+preprocessor symbol.
+
+### Specializations
+
+`virtual_ptr_traits<std::shared_ptr<Class>, Policy>`: defined in
+`<boost/openmethod/core.hpp>`.
+
+`virtual_ptr_traits<std::unique_ptr<Class>, Policy>`: defined in
+`<boost/openmethod/core.hpp>`. Does _not_ implement `cast`.
+```
+
+### Members
+
+```c++
+using element_type = Class;
+```
+
+The class of the object pointed to. It is independent of the type of the pointer
+itself; i.e., `virtual_ptr_traits<Animal, Policy>::element_type` and
+`virtual_ptr_traits<std::shared_ptr<Animal>, Policy>::element_type` are both
+`Animal`.
+
+```c++
+static bool constexpr is_smart_ptr = Class;
+```
+
+`true` if the pointer to the object is a smart pointer.
+
+```c++
+static auto dynamic_type(const Class& obj) -> type_id;
+```
+
+Returns the type_id of the object.
+
+
+```c++
+template<typename Other>
+static auto cast(const virtual_ptr<Class, Policy>& ptr)
+    -> const virtual_ptr<Other, Policy>;
+```
+
+Casts `ptr` to `Other`

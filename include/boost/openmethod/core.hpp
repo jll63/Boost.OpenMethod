@@ -117,22 +117,8 @@ struct is_policy_fn : std::is_base_of<policies::abstract_policy, T> {};
 template<typename... T>
 struct is_policy_fn<types<T...>> : std::false_type {};
 
-} // namespace detail
-
-template<class... Classes>
-using use_classes = typename detail::use_classes_aux<
-    boost::mp11::mp_at<
-        detail::types<Classes..., BOOST_OPENMETHOD_DEFAULT_POLICY>,
-        boost::mp11::mp_find_if<
-            detail::types<Classes..., BOOST_OPENMETHOD_DEFAULT_POLICY>,
-            detail::is_policy_fn>>,
-    boost::mp11::mp_remove_if<
-        detail::types<Classes...>, detail::is_policy_fn>>::type;
-
 // =============================================================================
 // optimal_cast
-
-namespace detail {
 
 template<typename B, typename D, typename = void>
 struct requires_dynamic_cast_ref_aux : std::true_type {};
@@ -154,6 +140,60 @@ auto optimal_cast(B&& obj) -> decltype(auto) {
         return static_cast<D>(obj);
     }
 }
+
+// =============================================================================
+// Common details
+
+template<typename T>
+struct is_virtual : std::false_type {};
+
+template<typename T>
+struct is_virtual<virtual_<T>> : std::true_type {};
+
+template<typename T>
+struct remove_virtual_aux {
+    using type = T;
+};
+
+template<typename T>
+struct remove_virtual_aux<virtual_<T>> {
+    using type = T;
+};
+
+template<typename T>
+using remove_virtual = typename remove_virtual_aux<T>::type;
+
+template<typename T, class Policy>
+using virtual_type = typename virtual_traits<T, Policy>::virtual_type;
+
+template<typename MethodArgList>
+using virtual_types = boost::mp11::mp_transform<
+    remove_virtual, boost::mp11::mp_filter<detail::is_virtual, MethodArgList>>;
+
+template<typename T, class Policy>
+struct parameter_traits {
+    static auto rarg(const T& arg) {
+        return nullptr;
+    }
+
+    template<typename>
+    static decltype(auto) cast(T value) {
+        return std::forward<T>(value);
+    }
+};
+
+template<typename T, class Policy>
+struct parameter_traits<virtual_<T>, Policy> : virtual_traits<T, Policy> {};
+
+template<class Class, class Policy>
+struct parameter_traits<virtual_ptr<Class, Policy>, Policy>
+    : virtual_traits<virtual_ptr<Class, Policy>, Policy> {};
+
+template<class Class, class Policy>
+struct parameter_traits<const virtual_ptr<Class, Policy>&, Policy>
+    : virtual_traits<const virtual_ptr<Class, Policy>&, Policy> {};
+
+} // namespace detail
 
 // =============================================================================
 // virtual_traits
@@ -197,59 +237,15 @@ struct virtual_traits<T*, Policy> {
     using virtual_type = std::remove_cv_t<T>;
 };
 
-// =============================================================================
-// Common details
-
-template<typename T>
-struct is_virtual : std::false_type {};
-
-template<typename T>
-struct is_virtual<virtual_<T>> : std::true_type {};
-
-template<typename T>
-struct remove_virtual_aux {
-    using type = T;
-};
-
-template<typename T>
-struct remove_virtual_aux<virtual_<T>> {
-    using type = T;
-};
-
-template<typename T>
-using remove_virtual = typename remove_virtual_aux<T>::type;
-
-template<typename T, class Policy>
-using virtual_type = typename virtual_traits<T, Policy>::virtual_type;
-
-template<typename MethodArgList>
-using virtual_types = boost::mp11::mp_transform<
-    remove_virtual, boost::mp11::mp_filter<detail::is_virtual, MethodArgList>>;
-
-template<typename T, class Policy>
-struct parameter_traits {
-    static auto rarg(const T& arg) -> const T& {
-        return arg;
-    }
-
-    template<typename>
-    static auto cast(T value) -> T {
-        return std::forward<T>(value);
-    }
-};
-
-template<typename T, class Policy>
-struct parameter_traits<virtual_<T>, Policy> : virtual_traits<T, Policy> {};
-
-template<class Class, class Policy>
-struct parameter_traits<virtual_ptr<Class, Policy>, Policy>
-    : virtual_traits<virtual_ptr<Class, Policy>, Policy> {};
-
-template<class Class, class Policy>
-struct parameter_traits<const virtual_ptr<Class, Policy>&, Policy>
-    : virtual_traits<const virtual_ptr<Class, Policy>&, Policy> {};
-
-} // namespace detail
+template<class... Classes>
+using use_classes = typename detail::use_classes_aux<
+    boost::mp11::mp_at<
+        detail::types<Classes..., BOOST_OPENMETHOD_DEFAULT_POLICY>,
+        boost::mp11::mp_find_if<
+            detail::types<Classes..., BOOST_OPENMETHOD_DEFAULT_POLICY>,
+            detail::is_policy_fn>>,
+    boost::mp11::mp_remove_if<
+        detail::types<Classes...>, detail::is_policy_fn>>::type;
 
 // =============================================================================
 // virtual_ptr
@@ -257,7 +253,7 @@ struct parameter_traits<const virtual_ptr<Class, Policy>&, Policy>
 template<class Class, class Policy>
 struct virtual_ptr_traits {
     using element_type = Class;
-    static bool constexpr smart_ptr = false;
+    static bool constexpr is_smart_ptr = false;
 
     static auto dynamic_type(const Class& obj) -> type_id {
         return Policy::dynamic_type(obj);
@@ -289,33 +285,12 @@ template<class Class, class Policy>
 struct is_virtual_ptr_aux<const virtual_ptr<Class, Policy>&> : std::true_type {
 };
 
-template<class Class, class Policy>
-struct virtual_traits<virtual_ptr<Class, Policy>, Policy> {
-    using ptr_traits = virtual_ptr_traits<Class, Policy>;
-    using virtual_type = typename ptr_traits::element_type;
-
-    static auto rarg(const virtual_ptr<Class, Policy>& ptr)
-        -> const virtual_ptr<Class, Policy>& {
-        return ptr;
-    }
-
-    template<typename Derived>
-    static auto cast(const virtual_ptr<Class, Policy>& ptr) -> decltype(auto) {
-        return ptr.template cast<
-            typename std::remove_reference_t<Derived>::element_type>();
-    }
-};
-
-template<class Class, class Policy>
-struct virtual_traits<const virtual_ptr<Class, Policy>&, Policy>
-    : virtual_traits<virtual_ptr<Class, Policy>, Policy> {};
-
 template<typename T>
 constexpr bool is_virtual_ptr = detail::is_virtual_ptr_aux<T>::value;
 
 template<
     class Type, class Policy,
-    bool SmartPtr = virtual_ptr_traits<Type, Policy>::smart_ptr>
+    bool IsSmartPtr = virtual_ptr_traits<Type, Policy>::is_smart_ptr>
 class virtual_ptr_impl;
 
 template<class Class, class Policy>
@@ -335,10 +310,6 @@ class virtual_ptr_impl<Class, Policy, false> {
     Class* obj;
     vptr_type vp;
 
-    template<class Other>
-    virtual_ptr_impl(Other& other, vptr_type vp) : obj(&other), vp(vp) {
-    }
-
   public:
     using traits = virtual_ptr_traits<Class, Policy>;
     using element_type = typename traits::element_type;
@@ -357,6 +328,18 @@ class virtual_ptr_impl<Class, Policy, false> {
     template<class Other>
     virtual_ptr_impl(virtual_ptr<Other, Policy>& other)
         : obj(other.get()), vp(other.vp) {
+        // Why is this needed? Consider this conversion conversion from
+        // smart to dumb pointer:
+        //      virtual_ptr<std::shared_ptr<const Node>> p = ...;
+        //      virtual_ptr<const Node> q = p;
+        // Since 'p' is not const, in the absence of this ctor,
+        // virtual_ptr_impl(Other&) would be preferred to
+        // virtual_ptr_impl(const virtual_ptr<Other, Policy>& other), and
+        // that is incorrect.
+    }
+
+    template<class Other>
+    virtual_ptr_impl(Other& other, vptr_type vp) : obj(&other), vp(vp) {
     }
 
     Class* get() const {
@@ -399,12 +382,20 @@ class virtual_ptr_impl<Class, Policy, true> {
     vptr_type vp;
 
   public:
-    virtual_ptr_impl(const Class& other) {
+    template<class Other>
+    virtual_ptr_impl(
+        const Other& other,
+        std::enable_if_t<virtual_ptr_traits<Other, Policy>::is_smart_ptr, int> =
+            0) {
         vp = Policy::dynamic_vptr(*other);
         obj = other;
     }
 
-    virtual_ptr_impl(Class&& other) {
+    template<class Other>
+    virtual_ptr_impl(
+        Other&& other,
+        std::enable_if_t<virtual_ptr_traits<Other, Policy>::is_smart_ptr, int> =
+            0) {
         vp = Policy::dynamic_vptr(*other);
         obj = std::move(other);
     }
@@ -435,7 +426,6 @@ class virtual_ptr_impl<Class, Policy, true> {
         return obj;
     }
 
-  protected:
     template<typename Arg>
     virtual_ptr_impl(Arg&& obj, vptr_type vp)
         : obj(std::forward<Arg>(obj)), vp(vp) {
@@ -443,6 +433,9 @@ class virtual_ptr_impl<Class, Policy, true> {
 };
 
 } // namespace detail
+
+template<class Policy, class Class>
+inline auto final_virtual_ptr(Class&& obj);
 
 template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
 class virtual_ptr : public detail::virtual_ptr_impl<Class, Policy> {
@@ -457,8 +450,7 @@ class virtual_ptr : public detail::virtual_ptr_impl<Class, Policy> {
     template<class, class, bool>
     friend class detail::virtual_ptr_impl;
 
-    static constexpr bool smart_ptr =
-        virtual_ptr_traits<Class, Policy>::smart_ptr;
+    static constexpr bool is_smart_ptr = impl::traits::is_smart_ptr;
 
     template<typename Other>
     auto cast() const {
@@ -505,28 +497,57 @@ class virtual_ptr : public detail::virtual_ptr_impl<Class, Policy> {
             return this->vp;
         }
     }
-
-    friend bool operator==(const virtual_ptr& a, const virtual_ptr& b) {
-        return a.obj == b.obj;
-    }
-
-    friend bool operator!=(const virtual_ptr& a, const virtual_ptr& b) {
-        return a.obj != b.obj;
-    }
 };
 
 template<class Class>
 virtual_ptr(Class&) -> virtual_ptr<Class, BOOST_OPENMETHOD_DEFAULT_POLICY>;
 
 template<class Policy, class Class>
-inline auto final_virtual_ptr(Class& obj) {
-    return virtual_ptr<Class, Policy>::final(obj);
+inline auto final_virtual_ptr(Class&& obj) {
+    return virtual_ptr<std::remove_reference_t<Class>, Policy>::final(
+        std::forward<Class>(obj));
 }
 
 template<class Class>
-inline auto final_virtual_ptr(Class& obj) {
-    return virtual_ptr<Class>::final(obj);
+inline auto final_virtual_ptr(Class&& obj) {
+    return virtual_ptr<std::remove_reference_t<Class>>::final(
+        std::forward<Class>(obj));
 }
+
+template<class Left, class Right, class Policy>
+bool operator==(
+    const virtual_ptr<Left, Policy>& left,
+    const virtual_ptr<Right, Policy>& right) {
+    return &*left == &*right;
+}
+
+template<class Left, class Right, class Policy>
+bool operator!=(
+    const virtual_ptr<Left, Policy>& left,
+    const virtual_ptr<Right, Policy>& right) {
+    return !(left == right);
+}
+
+template<class Class, class Policy>
+struct virtual_traits<virtual_ptr<Class, Policy>, Policy> {
+    using ptr_traits = virtual_ptr_traits<Class, Policy>;
+    using virtual_type = typename ptr_traits::element_type;
+
+    static auto rarg(const virtual_ptr<Class, Policy>& ptr)
+        -> const virtual_ptr<Class, Policy>& {
+        return ptr;
+    }
+
+    template<typename Derived>
+    static auto cast(const virtual_ptr<Class, Policy>& ptr) -> decltype(auto) {
+        return ptr.template cast<
+            typename std::remove_reference_t<Derived>::element_type>();
+    }
+};
+
+template<class Class, class Policy>
+struct virtual_traits<const virtual_ptr<Class, Policy>&, Policy>
+    : virtual_traits<virtual_ptr<Class, Policy>, Policy> {};
 
 // =============================================================================
 // Method
@@ -762,7 +783,7 @@ method<Name(Parameters...), ReturnType, Policy>::method() {
     method_info::not_implemented = (void*)not_implemented_handler;
     method_info::method_type = Policy::template static_type<method>();
     method_info::return_type = Policy::template static_type<
-        typename detail::virtual_traits<ReturnType, Policy>::virtual_type>();
+        typename virtual_traits<ReturnType, Policy>::virtual_type>();
     Policy::methods.push_back(*this);
 }
 

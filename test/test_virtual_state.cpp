@@ -199,12 +199,12 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_unique_ptr_ctors, Policy, test_policies) {
 
     {
         // a virtual_unique_ptr can be created from a std::unique_ptr
-        std::unique_ptr<Dog> smart_ptr = std::make_unique<Dog>();
-        auto dumb_ptr = smart_ptr.get();
-        virtual_unique_ptr<Dog, Policy> virtual_smart_ptr(std::move(smart_ptr));
+        std::unique_ptr<Dog> is_smart_ptr = std::make_unique<Dog>();
+        auto dumb_ptr = is_smart_ptr.get();
+        virtual_unique_ptr<Dog, Policy> virtual_smart_ptr(std::move(is_smart_ptr));
 
         // and ownership is transferred
-        BOOST_TEST(smart_ptr.get() == nullptr);
+        BOOST_TEST(is_smart_ptr.get() == nullptr);
         BOOST_TEST(virtual_smart_ptr.get() == dumb_ptr);
     }
 

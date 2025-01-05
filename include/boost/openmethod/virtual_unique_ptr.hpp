@@ -18,18 +18,15 @@ struct virtual_ptr_traits<std::unique_ptr<Class>, Policy> {
 
     template<typename Other>
     static decltype(auto)
-    cast(virtual_ptr<std::unique_ptr<Class>, Policy>&& ptr) {
-        auto p = ptr.obj.release();
-
+    cast(virtual_ptr<std::unique_ptr<Class>, Policy> ptr) {
         if constexpr (detail::requires_dynamic_cast<Class&, Other&>) {
             return virtual_ptr<std::unique_ptr<Other>, Policy>(
-                std::dynamic_pointer_cast<Other>(
-                    std::unique_ptr<Other>(ptr.obj.release())),
+                std::unique_ptr<Other>(
+                    &dynamic_cast<Other&>(*ptr.obj.release())),
                 ptr.vp);
         } else {
             return virtual_ptr<std::unique_ptr<Other>, Policy>(
-                std::static_pointer_cast<Other>(
-                    std::unique_ptr<Other>(ptr.obj.release())),
+                std::unique_ptr<Other>(static_cast<Other*>(ptr.obj.release())),
                 ptr.vp);
         }
     }

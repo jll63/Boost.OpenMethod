@@ -173,6 +173,30 @@ BOOST_AUTO_TEST_CASE(test_virtual_shared_by_const_reference) {
 }
 
 } // namespace BOOST_OPENMETHOD_GENSYM
+
+namespace BOOST_OPENMETHOD_GENSYM {
+
+static_assert(virtual_ptr_traits<
+              std::unique_ptr<Animal>, policies::default_>::is_smart_ptr);
+
+BOOST_OPENMETHOD(poke, (virtual_unique_ptr<Animal>, std::ostream&), void);
+
+BOOST_OPENMETHOD_OVERRIDE(
+    poke, (virtual_unique_ptr<Dog>, std::ostream& os), void) {
+    os << "bark";
+}
+
+BOOST_AUTO_TEST_CASE(test_virtual_unique) {
+    boost::openmethod::initialize();
+
+    {
+        boost::test_tools::output_test_stream os;
+        poke(make_virtual_unique<Dog>(), os);
+        BOOST_CHECK(os.is_equal("bark"));
+    }
+}
+
+} // namespace BOOST_OPENMETHOD_GENSYM
 } // namespace using_polymorphic_classes
 
 namespace using_non_polymorphic_classes {

@@ -453,8 +453,19 @@ class virtual_ptr : public detail::virtual_ptr_impl<Class, Policy> {
     static constexpr bool is_smart_ptr = impl::traits::is_smart_ptr;
 
     template<typename Other>
-    auto cast() const {
+    decltype(auto) cast() & {
         return virtual_ptr_traits<Class, Policy>::template cast<Other>(*this);
+    }
+
+    template<typename Other>
+    decltype(auto) cast() const& {
+        return virtual_ptr_traits<Class, Policy>::template cast<Other>(*this);
+    }
+
+    template<typename Other>
+    decltype(auto) cast() && {
+        return virtual_ptr_traits<Class, Policy>::template cast<Other>(
+            std::move(*this));
     }
 
     template<class Other>
@@ -539,8 +550,14 @@ struct virtual_traits<virtual_ptr<Class, Policy>, Policy> {
     }
 
     template<typename Derived>
-    static auto cast(const virtual_ptr<Class, Policy>& ptr) -> decltype(auto) {
+    static decltype(auto) cast(const virtual_ptr<Class, Policy>& ptr) {
         return ptr.template cast<
+            typename std::remove_reference_t<Derived>::element_type>();
+    }
+
+    template<typename Derived>
+    static decltype(auto) cast(virtual_ptr<Class, Policy>&& ptr) {
+        return std::move(ptr).template cast<
             typename std::remove_reference_t<Derived>::element_type>();
     }
 };
@@ -1057,7 +1074,8 @@ auto method<Name(Parameters...), ReturnType, Policy>::
         "virtual_ptr mismatch");
     return Overrider(
         detail::parameter_traits<Parameters, Policy>::template cast<
-            OverriderParameters>(detail::remove_virtual<Parameters>(arg))...);
+            OverriderParameters>(
+            std::forward<detail::remove_virtual<Parameters>>(arg))...);
 }
 
 // -----------------------------------------------------------------------------

@@ -1,5 +1,6 @@
 
 [#virtual_ptr]
+:idprefix: virtual_ptr_
 
 ## virtual_ptr<Class, Policy>
 
@@ -9,7 +10,9 @@
 pointer to its v-table.
 
 `Class` must be a class registered in `Policy`; or a smart pointer to such a
-class, in which case `virtual_ptr_traits` must be specialized for `Class`.
+class, in which case template class `virtual_ptr_traits` must be specialized for
+`Class`. Specializations for `std::unique_ptr` and `std::shared_ptr` are
+provided; see the documentation of `virtual_ptr_traits` for more information.
 
 ### Synopsis
 
@@ -153,8 +156,8 @@ static auto final(Other&& obj);
 
 Constructs a `virtual_ptr` from a reference to an object, or from a smart
 pointer. It is assumed that the static and dynamic types are the same. The
-v-table pointer is initialized from `Policy::static_vptr` for the class, which
-needs not be polymorphic.
+v-table pointer is initialized from the `Policy::static_vptr` for the class,
+which needs not be polymorphic.
 
 #### get
 
@@ -207,6 +210,26 @@ virtual_ptr(Class&) -> virtual_ptr<Class, BOOST_OPENMETHOD_DEFAULT_POLICY>;
 
 ---
 
+### Free Aliases
+
+#### virtual_shared_ptr
+
+```c++
+template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
+using virtual_shared_ptr = virtual_ptr<std::shared_ptr<Class>, Policy>;
+```
+
+Defined in `<boost/openmethod/virtual_shared_ptr.hpp>`.
+
+#### virtual_unique_ptr
+
+```c++
+template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
+using virtual_unique_ptr = virtual_ptr<std::unique_ptr<Class>, Policy>;
+```
+
+Defined in `<boost/openmethod/virtual_unique_ptr.hpp>`.
+
 ### Free Functions
 
 #### final_virtual_ptr
@@ -222,6 +245,34 @@ inline auto final_virtual_ptr(Class&& obj);
 Utility functions equivalent to `virtual_ptr<Class, Policy>::final(obj)`.
 
 If `Policy` is not specified, `BOOST_OPENMETHOD_DEFAULT_POLICY` is used.
+
+#### make_virtual_shared
+
+```c++
+template<
+    class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY, typename... T>
+inline auto make_virtual_shared(T&&... args);
+```
+
+Defined in `<boost/openmethod/virtual_shared_ptr.hpp>`.
+
+Creates an object using `std::make_shared` and returns a `virtual_shared_ptr` to
+it. The v-table pointer is initialized from the the `Policy::static_vptr` for
+the class, which needs not be polymorphic.
+
+#### make_virtual_unique
+
+```c++
+template<
+    class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY, typename... T>
+inline auto make_virtual_unique(T&&... args);
+```
+
+Defined in `<boost/openmethod/virtual_unique_ptr.hpp>`.
+
+Creates an object using `std::make_unique` and returns a `virtual_unique_ptr` to
+it. The v-table pointer is initialized from the the `Policy::static_vptr` for
+the class, which needs not be polymorphic.
 
 #### operator==
 

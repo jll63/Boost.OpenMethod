@@ -1,5 +1,7 @@
 
-## Facet Class vptr
+## policies::vptr
+
+:idprefix: facets_vptr
 
 `vptr` - A facet that provides a pointer to the v-table for an object.
 

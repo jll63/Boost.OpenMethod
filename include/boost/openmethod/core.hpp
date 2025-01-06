@@ -539,8 +539,29 @@ bool operator!=(
 
 template<class Class, class Policy>
 struct virtual_traits<virtual_ptr<Class, Policy>, Policy> {
-    using ptr_traits = virtual_ptr_traits<Class, Policy>;
-    using virtual_type = typename ptr_traits::element_type;
+    using virtual_type =
+        typename virtual_ptr_traits<Class, Policy>::element_type;
+
+    static auto rarg(const virtual_ptr<Class, Policy>& ptr)
+        -> const virtual_ptr<Class, Policy>& {
+        return ptr;
+    }
+
+    template<typename Derived>
+    static decltype(auto) cast(const virtual_ptr<Class, Policy>& ptr) {
+        return ptr.template cast<typename Derived::element_type>();
+    }
+
+    template<typename Derived>
+    static decltype(auto) cast(virtual_ptr<Class, Policy>&& ptr) {
+        return std::move(ptr).template cast<typename Derived::element_type>();
+    }
+};
+
+template<class Class, class Policy>
+struct virtual_traits<const virtual_ptr<Class, Policy>&, Policy> {
+    using virtual_type =
+        typename virtual_ptr_traits<Class, Policy>::element_type;
 
     static auto rarg(const virtual_ptr<Class, Policy>& ptr)
         -> const virtual_ptr<Class, Policy>& {
@@ -555,14 +576,9 @@ struct virtual_traits<virtual_ptr<Class, Policy>, Policy> {
 
     template<typename Derived>
     static decltype(auto) cast(virtual_ptr<Class, Policy>&& ptr) {
-        return std::move(ptr).template cast<
-            typename std::remove_reference_t<Derived>::element_type>();
+        return std::move(ptr).template cast<typename Derived::element_type>();
     }
 };
-
-template<class Class, class Policy>
-struct virtual_traits<const virtual_ptr<Class, Policy>&, Policy>
-    : virtual_traits<virtual_ptr<Class, Policy>, Policy> {};
 
 // =============================================================================
 // Method

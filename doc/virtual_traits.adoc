@@ -5,7 +5,86 @@
 
 ### Description
 
-`virtual_traits` is a class template used by `method` to manipulate the
-pointer to the object.
+`virtual_traits` is used by `method` to handle formal parameters, and by
+`method::fn` to handle arguments.
+
+`method` requires a specialization of `virtual_traits` for `T` and the `Policy`
 
 ### Synopsis
+
+```c++
+// <boost/openmethod/core.hpp>
+
+namespace boost::openmethod {
+
+template<typename T, class Policy>
+struct virtual_traits {
+    using virtual_type = void;
+};
+
+template<..., class Policy>
+struct virtual_traits<..., Policy> {
+    using virtual_type = ...;
+    static auto rarg(const T& arg) -> ...;
+    template<typename Derived> static auto cast(T& obj) -> ...;
+};
+```
+
+### Members
+
+#### virtual_type
+
+```c++
+using virtual_type = ...;
+```
+
+Extracts the class to use for overrider selection from type of the formal
+parameter. If that type is _not_ decorated with `virtual_`, `virtual_type` is
+`void`, none of the other members are required, and the parameter does not
+participate in overrider selection.
+
+For example, `virtual_type` in the following specializations are all `T`:
+
+* `virtual_traits<virtual_<T&>, Policy>`
+* `virtual_traits<virtual_<const std::shared_ptr<T>&>, Policy>`
+* `virtual_traits<virtual_<virtual_ptr<T, Policy>>, Policy>`
+
+#### rarg
+
+```c++
+static auto rarg(T arg) -> ...;
+```
+
+Returns a value for the purpose of obtaining a v-table pointer for `arg`. This
+is guaranteed to be a read-only operation.
+
+For example, `rarg` returns a `const T&` for a `T&`, `const T&`, `T&&`,
+`std::shared_ptr<T>`; and a `const virtual_ptr<Class, Policy>&` for
+`virtual_ptr<Class, Policy>`.
+
+
+#### cast
+
+```c++
+template<typename Derived>
+static auto cast(T& obj) -> ...;
+```
+
+Casts argument `obj` to the type expected by an overrider.
+
+For example, if a method takes a `virtual_<Animal&>`, an overrider for `Cat&`
+will use `virtual_traits` to cast a `Animal&` to a `Cat&`.
+
+### Specializations
+
+Specializations are provided for:
+
+* `T&`
+* `T&&`
+* `std::shared_ptr<T>`: defined in <boost/openmethod/shared_ptr.hpp>
+* `const std::shared_ptr<T>&`: defined in <boost/openmethod/shared_ptr.hpp>
+* `virtual_ptr<T, Policy>`
+* `const virtual_ptr<T, Policy>&`
+* `virtual_ptr<std::shared_ptr<T>>`: defined in <boost/openmethod/virtual_shared_ptr.hpp>
+* `const virtual_ptr<std::shared_ptr<T>>&`: defined in <boost/openmethod/virtual_shared_ptr.hpp>
+* `virtual_ptr<std::unique_ptr<T>>`: defined in <boost/openmethod/virtual_unique_ptr.hpp>

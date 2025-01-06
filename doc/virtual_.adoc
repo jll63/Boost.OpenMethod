@@ -12,6 +12,8 @@ See the documentation of `virtual_traits` for more information.
 ### Synopsis
 
 ```c++
+// <boost/openmethod/core.hpp>
+
 namespace boost::openmethod {
 
 template<typename T>

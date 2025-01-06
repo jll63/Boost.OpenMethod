@@ -10,9 +10,9 @@ pointer to the object.
 
 ### Synopsis
 
-`virtual_ptr_traits` is defined in `<boost/openmethod/core.hpp>`.
-
 ```c++
+// <boost/openmethod/core.hpp>
+
 namespace boost::openmethod {
 
 template<class Class, class Policy>

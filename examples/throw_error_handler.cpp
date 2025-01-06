@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-#include <boost/openmethod/policy.hpp>
+#include <boost/openmethod/policies.hpp>
 #include <boost/openmethod/policies/throw_error_handler.hpp>
 
 struct Animal {

@@ -8,7 +8,7 @@
 
 ### <boost/openmethod/compiler.hpp>
 
-### <boost/openmethod/policy.hpp>
+### <boost/openmethod/policies.hpp>
 
 ### <boost/openmethod/macros.hpp>
 

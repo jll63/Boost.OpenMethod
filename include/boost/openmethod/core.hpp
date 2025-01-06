@@ -6,13 +6,11 @@
 
 #include <boost/assert.hpp>
 
-#include <boost/openmethod/policy.hpp>
+#include <boost/openmethod/policies.hpp>
 
 #ifndef BOOST_OPENMETHOD_DEFAULT_POLICY
 #define BOOST_OPENMETHOD_DEFAULT_POLICY ::boost::openmethod::policies::default_
 #endif
-
-#include <boost/openmethod/detail/types.hpp>
 
 namespace boost::openmethod {
 

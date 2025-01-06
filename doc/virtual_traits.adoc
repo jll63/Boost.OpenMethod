@@ -1,0 +1,11 @@
+
+## virtual_traits<Class, Policy>
+
+:idprefix: virtual_traits_
+
+### Description
+
+`virtual_traits` is a class template used by `method` to manipulate the
+pointer to the object.
+
+### Synopsis

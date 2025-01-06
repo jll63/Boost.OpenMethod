@@ -2,7 +2,6 @@
 #define BOOST_OPENMETHOD_DETAIL_TYPES_HPP
 
 #include <cstdint>
-#include <limits>
 #include <string_view>
 
 #include <boost/openmethod/detail/static_list.hpp>
@@ -11,7 +10,8 @@ namespace boost {
 namespace openmethod {
 
 using type_id = std::uintptr_t;
-constexpr type_id invalid_type = (std::numeric_limits<type_id>::max)();
+using vptr_type = const std::uintptr_t*;
+using indirect_vptr_type = const vptr_type*;
 
 template<typename T>
 struct virtual_;
@@ -22,8 +22,38 @@ struct virtual_ptr;
 template<typename T, class Policy>
 struct virtual_traits;
 
-using vptr_type = const std::uintptr_t*;
-using indirect_vptr_type = const vptr_type*;
+// -----------------------------------------------------------------------------
+// Error handling
+
+struct openmethod_error {};
+
+struct not_implemented_error : openmethod_error {
+    type_id method;
+    std::size_t arity;
+    static constexpr std::size_t max_types = 16;
+    type_id types[max_types];
+};
+
+struct unknown_class_error : openmethod_error {
+    type_id type;
+};
+
+struct hash_search_error : openmethod_error {
+    std::size_t attempts;
+    std::size_t buckets;
+};
+
+struct method_table_error : openmethod_error {
+    type_id type;
+};
+
+struct static_offset_error : openmethod_error {
+    type_id method;
+    int actual, expected;
+};
+
+struct static_slot_error : static_offset_error {};
+struct static_stride_error : static_offset_error {};
 
 namespace detail {
 

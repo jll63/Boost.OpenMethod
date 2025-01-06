@@ -23,39 +23,6 @@ using method_catalog = detail::static_list<detail::method_info>;
 
 } // namespace detail
 
-// -----------------------------------------------------------------------------
-// Error handling
-
-struct openmethod_error {};
-
-struct not_implemented_error : openmethod_error {
-    type_id method;
-    std::size_t arity;
-    static constexpr std::size_t max_types = 16;
-    type_id types[max_types];
-};
-
-struct unknown_class_error : openmethod_error {
-    type_id type;
-};
-
-struct hash_search_error : openmethod_error {
-    std::size_t attempts;
-    std::size_t buckets;
-};
-
-struct method_table_error : openmethod_error {
-    type_id type;
-};
-
-struct static_offset_error : openmethod_error {
-    type_id method;
-    int actual, expected;
-};
-
-struct static_slot_error : static_offset_error {};
-struct static_stride_error : static_offset_error {};
-
 namespace policies {
 
 struct abstract_policy {};

@@ -175,8 +175,8 @@ struct parameter_traits {
     }
 
     template<typename>
-    static decltype(auto) cast(T value) {
-        return std::forward<T>(value);
+    static auto cast(T value) -> T {
+        return value;
     }
 };
 

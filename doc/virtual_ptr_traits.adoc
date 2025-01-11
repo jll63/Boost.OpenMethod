@@ -1,8 +1,6 @@
 
 ## virtual_ptr_traits<Class, Policy>
 
-:idprefix: virtual_ptr_traits_
-
 ### Description
 
 `virtual_ptr_traits` is a class template used by `virtual_ptr` to manipulate the
@@ -10,9 +8,9 @@ pointer to the object.
 
 ### Synopsis
 
-```c++
-// <boost/openmethod/core.hpp>
+Defined in <boost/openmethod/core.hpp>
 
+```c++
 namespace boost::openmethod {
 
 template<class Class, class Policy>

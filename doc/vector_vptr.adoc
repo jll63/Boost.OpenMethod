@@ -1,10 +1,9 @@
 
-## Class vptr_vector
-
-`vptr_vector` - An implementation of `external_vptr that stores the pointers to
-the v-tables in a `std::vector`.
+## vptr_vector
 
 ### Synopsis
+
+Defined in <boost/openmethod/policies/vptr_vector.hpp>.
 
 ```c++
 namespace boost {
@@ -25,31 +24,21 @@ struct vptr_vector : virtual extern_vptr {
 }}}
 ```
 
----
-
 ### Description
 
-*Template Parameters*
+`vptr_vector` is an implementation or `external_vptr` that stores the pointers
+to the v-tables in a `std::vector`.
 
-[cols="1,1"]
-|===
-
-| _Policy_
-| The policy containing the facet.
-
-| _VptrType_
-| Either direct_vptr_type or indirect_vptr_type.
-
-|===
+`Policy` is the policy containing the facet. `VptrType` is either vptr_type or
+indirect_vptr_type.
 
 `vptr_vector` stores the addresses of the v-tables for the classes registered in
 _Policy_ in a vector, either as straight pointers, or as pointers to pointers.
 The latter makes it possible for `virtual_ptr`{empty}s to remain valid after a
-call to `initialize`, thus allowing dynamically loaded shared libraries to add methods, classes and overriders to a domain.
+call to `initialize`, thus allowing dynamically loaded shared libraries to add
+methods, classes and overriders to a domain.
 
----
-
-### Member Functions
+### Members
 
 #### register_vptrs
 

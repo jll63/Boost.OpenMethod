@@ -1,17 +1,18 @@
-## Class abstract_policy
-
-abstract_policy - The base class of all policies.
-
----
+## abstract_policy
 
 ### Synopsis
 
+Defined in <boost/openmethod/policies/core.hpp>.
+
 ```c++
-namespace boost {
-namespace openmethod {
-namespace policies {
+namespace boost::openmethod::policies {
 
 struct abstract_policy {};
 
-}}}
+}
 ```
+### Description
+
+`abstract_policy` is a required base class for a policy. It makes it possible
+for meta-functions such as `use_classes` to discriminate between user classes
+and the (optional) policy class.

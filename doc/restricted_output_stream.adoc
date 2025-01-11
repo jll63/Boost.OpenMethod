@@ -1,21 +1,15 @@
 
-## Concept RestrictedOutputStream
-
-RestrictedOutputStream - A `std::ostream`-like class with a reduced set of
-operations.
-
----
+## RestrictedOutputStream
 
 ### Description
+
+RestrictedOutputStream is a concept describing a `std::ostream`-like class with
+a reduced set of operations.
 
 While convenient, `std::ostream` and its implementations constitute a sizeable
 piece of code, which may make it unsuitable for certain applications. OpenMethod
 uses a small subset of the operations supported by `std::ostream`. By default,
 the library uses a lightweight implementation based on the C stream functions.
-
----
-
-### Requirements
 
 Implementations of `RestrictedOutputStream` provide the following functions:
 

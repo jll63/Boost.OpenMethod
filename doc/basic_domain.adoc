@@ -1,42 +1,28 @@
 
-## Class template basic_domain
-
-`basic_domain` - A collection of classes and methods registered in _Policy_. It
-also contains the v-tables for the classes and the dispatch tables for the
-methods with more than one virtual argument.
+## basic_domain
 
 ### Synopsis
 
+Defined in <boost/openmethod/policies/core.hpp>.
+
 ```c++
-namespace boost {
-namespace openmethod {
-namespace policies {
+namespace boost::openmethod::policies {
 
 template<class Policy>
 struct basic_domain {
-    template<class Class>
-    static vptr_type static_vptr;
-    // more unspecified static state
+    template<class Class> static vptr_type static_vptr;
+    // unspecified members
 };
 
-}}}
+}
 ```
-
----
 
 ### Description
 
-*Template Parameters*
+`basic_domain` is a registry of classes and methods registered in a _Policy_,
+and their dispatch tables.
 
-[cols="1,1"]
-|===
-|_Policy_
-| The policy.
-|===
-
----
-
-### Static Member Variables
+### Members
 
 #### static_vptr
 

@@ -1,20 +1,17 @@
 
 [#BOOST_OPENMETHOD_NAME]
-## Macro BOOST_OPENMETHOD_NAME
+
+## Macro BOOST_OPENMETHOD_NAME(NAME)
+
+### Synopsis
+
+Defined in <boost/openmethod/macros/name.hpp>.
 
 ```c++
 #define BOOST_OPENMETHOD_NAME(NAME) boost_openmethod_#NAME
 ```
 
-*Macro Parameters*
+### Description
 
-[cols="1,1"]
-|===
-
-|_NAME_
-| The name of a method.
-
-|===
-
-`BOOST_OPENMETHOD_NAME` is used by the macro API to generate the `Name`
-parameter of a `method`.
+Generate a long name from a short name, hopefully avoiding conflicts with
+user-defined names.

@@ -1,19 +1,15 @@
 
 ## policies::vptr
 
-:idprefix: facets_vptr
-
-`vptr` - A facet that provides a pointer to the v-table for an object.
-
 ### Synopsis
 
 ```c++
 struct vptr {};
 ```
 
----
-
 ### Description
+
+`vptr` is a facet that obtains a pointer to the v-table for an object.
 
 OpenMethod implements method dispatch in a way similar to native virtual
 function dispatch: for each virtual argument, fetch a pointer to the dispatch
@@ -43,31 +39,27 @@ An implementation of `vptr` must provide the following static function template:
 | Name
 | Description
 
-| _facet_::dynamic_vptr(obj)
+| static dynamic_vptr(obj);
 | return the address of the v-table for `obj`
 |===
 
-## Facet Class extern_vptr
+## extern_vptr
 
-`extern_vptr` is a specialization of `vptr` that stores vptrs outside of the
-objects. If present, it provides a `register_vptrs` function, called by
-`initalize` to register the vptrs.
+### Synopsis
 
 ```c++
 struct extern_vptr : virtual vptr {};
 ```
 
+### Description
+
+`extern_vptr` is a specialization of `vptr` that stores vptrs outside of the
+objects. If present, it provides a `register_vptrs` function, called by
+`initalize` to register the vptrs.
+
 ### Requirements
 
 [cols="a,a", options="header"]
-
-|===
-| Name
-| Description
-
-| _facet_::register_vptrs(first, last)
-| register the vptrs
-|===
 
 #### register_vptrs
 
@@ -79,6 +71,8 @@ auto register_vptrs(ForwardIterator first, ForwardIterator last) -> void;
 `ForwardIterator` is a forward iterator over a range of objects that contain
 information about the type ids and the vptr of a registered class. They have the
 following member functions:
+
+#### type_id_begin, type_id_end, vptr
 
 ```c++
 auto type_id_begin() const -> type_id_forward_iterator;

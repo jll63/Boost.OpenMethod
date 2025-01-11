@@ -1,8 +1,5 @@
 
-## Facet Class minimal_rtti
-
-`minimal_rtti` - An implementation of the `rtti` facet that only uses static
-type information.
+## minimal_rtti
 
 ### Synopsis
 
@@ -13,9 +10,10 @@ struct minimal_rtti : virtual rtti {
 };
 ```
 
----
-
 ### Description
+
+`minimal_rtti` is an implementation of the `rtti` facet that only uses static
+type information.
 
 `minimal_rtti` provides the only function strictly required for the `rtti`
 facet.
@@ -24,7 +22,7 @@ This facet can be used in programs that call methods solely via
 `virtual_ptr`{empty}s created with the "final" constructs. Virtual inheritance
 is not supported. Classes are not required to be polymorphic.
 
-### Static member functions
+### Members
 
 
 #### static_type

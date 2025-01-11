@@ -1,20 +1,11 @@
 
 ## virtual_traits<Class, Policy>
 
-:idprefix: virtual_traits_
-
-### Description
-
-`virtual_traits` is used by `method` to handle formal parameters, and by
-`method::fn` to handle arguments.
-
-`method` requires a specialization of `virtual_traits` for `T` and the `Policy`
-
 ### Synopsis
 
-```c++
-// <boost/openmethod/core.hpp>
+Defined in <boost/openmethod/core.hpp>.
 
+```c++
 namespace boost::openmethod {
 
 template<typename T, class Policy>
@@ -29,6 +20,13 @@ struct virtual_traits<..., Policy> {
     template<typename Derived> static auto cast(T& obj) -> ...;
 };
 ```
+
+### Description
+
+`virtual_traits` is used by `method` to handle formal parameters, and by
+`method::fn` to handle arguments.
+
+`method` requires a specialization of `virtual_traits` for `T` and the `Policy`
 
 ### Members
 
@@ -48,6 +46,7 @@ For example, `virtual_type` in the following specializations are all `T`:
 * `virtual_traits<virtual_<T&>, Policy>`
 * `virtual_traits<virtual_<const std::shared_ptr<T>&>, Policy>`
 * `virtual_traits<virtual_<virtual_ptr<T, Policy>>, Policy>`
+* `virtual_traits<virtual_<const virtual_ptr<std::shared_ptr<T>>&>, Policy>`
 
 #### rarg
 

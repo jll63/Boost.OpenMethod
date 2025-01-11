@@ -1,19 +1,19 @@
 
-## Facet rtti
-
-`rtti` - A facet that provides type information for classes and objects,
-implements downcast in presence of virtual inheritance, and writes descriptions
-of types to an `ostream`-like object.
+## rtti
 
 ### Synopsis
+
+Defined in <boost/openmethod/policies/core.hpp>.
 
 ```c++
 struct rtti {};
 ```
 
----
+### Description
 
-### Requirements
+The `rtti` facet provides type information for classes and objects, implements
+downcast in presence of virtual inheritance, and writes descriptions of types to
+an `ostream`-like object.
 
 Implementations of `rtti` provide the following functions:
 
@@ -45,6 +45,4 @@ Implementations of `rtti` provide the following functions:
 | if using virtual inheritance
 |===
 
-NOTE: `Stream` is not guaranteed to be a `std::ostream`. The only guaranteed
-operations are the insertion of `const char*`, `std::string_view`, `const
-void*`, `std::size_t` and `type_id`.
+`Stream` is a model of RestrictedOutputStream.

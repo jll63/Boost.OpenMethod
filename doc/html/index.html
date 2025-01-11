@@ -582,15 +582,14 @@ pre.rouge .gs {
 </li>
 <li><a href="#tutorial_reference">Reference</a>
 <ul class="sectlevel2">
-<li><a href="#method">Class Template method</a>
+<li><a href="#method">method&lt;Name(Parameters&#8230;&#8203;), ReturnType, Policy&gt;</a>
 <ul class="sectlevel3">
-<li><a href="#ref_synopsis">Synopsis</a></li>
 <li><a href="#ref_description">Description</a></li>
+<li><a href="#ref_synopsis">Synopsis</a></li>
+<li><a href="#ref_members">Members</a></li>
 <li><a href="#ref_constructor">Constructor</a></li>
 <li><a href="#ref_destructor">Destructor</a></li>
-<li><a href="#ref_member_functions">Member Functions</a></li>
 <li><a href="#ref_static_member_variables">Static Member Variables</a></li>
-<li><a href="#ref_member_templates">Member Templates</a></li>
 </ul>
 </li>
 <li><a href="#method_override">Class Template method::override</a>
@@ -632,29 +631,30 @@ pre.rouge .gs {
 <li><a href="#virtual_ptr_traits_specializations">Specializations</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_traits_class_abstract_policy">Class abstract_policy</a>
+<li><a href="#virtual_ptr_traits_abstract_policy">abstract_policy</a>
 <ul class="sectlevel3">
+<li><a href="#virtual_ptr_traits_description_2">Description</a></li>
 <li><a href="#virtual_ptr_traits_synopsis_2">Synopsis</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_traits_class_template_basic_domain">Class template basic_domain</a>
+<li><a href="#virtual_ptr_traits_basic_domainpolicy">basic_domain&lt;Policy&gt;</a>
 <ul class="sectlevel3">
+<li><a href="#virtual_ptr_traits_description_3">Description</a></li>
 <li><a href="#virtual_ptr_traits_synopsis_3">Synopsis</a></li>
-<li><a href="#virtual_ptr_traits_description_2">Description</a></li>
-<li><a href="#virtual_ptr_traits_static_member_variables">Static Member Variables</a></li>
+<li><a href="#virtual_ptr_traits_members_2">Members</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_traits_class_template_basic_policy">Class Template basic_policy</a>
+<li><a href="#virtual_ptr_traits_basic_policypolicy_facets">basic_policy&lt;Policy, Facets&#8230;&#8203;&gt;</a>
 <ul class="sectlevel3">
+<li><a href="#virtual_ptr_traits_description_4">Description</a></li>
 <li><a href="#virtual_ptr_traits_synopsis_4">Synopsis</a></li>
-<li><a href="#virtual_ptr_traits_description_3">Description</a></li>
-<li><a href="#virtual_ptr_traits_member_meta_functions">Member Meta-Functions</a></li>
+<li><a href="#virtual_ptr_traits_members_3">Members</a></li>
 </ul>
 </li>
 <li><a href="#virtual_ptr_traits_facet_error_handler">Facet error_handler</a>
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_traits_synopsis_5">Synopsis</a></li>
-<li><a href="#virtual_ptr_traits_description_4">Description</a></li>
+<li><a href="#virtual_ptr_traits_description_5">Description</a></li>
 <li><a href="#virtual_ptr_traits_requirements">Requirements</a></li>
 <li><a href="#virtual_ptr_traits_implementations">Implementations</a></li>
 </ul>
@@ -662,7 +662,7 @@ pre.rouge .gs {
 <li><a href="#virtual_ptr_traits_class_template_vectored_error_handler">Class template vectored_error_handler</a>
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_traits_synopsis_6">Synopsis</a></li>
-<li><a href="#virtual_ptr_traits_description_5">Description</a></li>
+<li><a href="#virtual_ptr_traits_description_6">Description</a></li>
 <li><a href="#virtual_ptr_traits_static_member_functions">Static Member Functions</a></li>
 </ul>
 </li>
@@ -730,36 +730,78 @@ pre.rouge .gs {
 <li><a href="#facets_vptrrequirements_4">Requirements</a></li>
 </ul>
 </li>
-<li><a href="#facets_vptrclass_template_basic_error_output">Class Template basic_error_output</a>
+<li><a href="#facets_vptrbasic_error_outputpolicy_stream">basic_error_output&lt;Policy, Stream&gt;</a>
 <ul class="sectlevel3">
 <li><a href="#facets_vptrdescription_6">Description</a></li>
+<li><a href="#facets_vptrsynopsis_9">Synopsis</a></li>
 <li><a href="#facets_vptrstatic_member_variables">Static Member Variables</a></li>
 </ul>
 </li>
 <li><a href="#facets_vptrfacet_trace_output">Facet trace_output</a>
 <ul class="sectlevel3">
-<li><a href="#facets_vptrsynopsis_9">Synopsis</a></li>
+<li><a href="#facets_vptrsynopsis_10">Synopsis</a></li>
 <li><a href="#facets_vptrdescription_7">Description</a></li>
 <li><a href="#facets_vptrrequirements_5">Requirements</a></li>
 </ul>
 </li>
-<li><a href="#facets_vptrclass_template_basic_trace_output">Class Template basic_trace_output</a>
+<li><a href="#facets_vptrbasic_trace_outputpolicy_stream">basic_trace_output&lt;Policy, Stream&gt;</a>
 <ul class="sectlevel3">
 <li><a href="#facets_vptrdescription_8">Description</a></li>
-<li><a href="#facets_vptrstatic_member_variables_2">Static Member Variables</a></li>
+<li><a href="#facets_vptrsynopsis_11">Synopsis</a></li>
+<li><a href="#facets_vptrmembers">Members</a></li>
 </ul>
 </li>
-<li><a href="#BOOST_OPENMETHOD">Macro BOOST_OPENMETHOD</a></li>
-<li><a href="#BOOST_OPENMETHOD_OVERRIDE">Macro BOOST_OPENMETHOD_OVERRIDE</a></li>
-<li><a href="#BOOST_OPENMETHOD_INLINE_OVERRIDE">Macro BOOST_OPENMETHOD_INLINE_OVERRIDE</a></li>
-<li><a href="#BOOST_OPENMETHOD_REGISTER">Macro BOOST_OPENMETHOD_REGISTER</a></li>
-<li><a href="#BOOST_OPENMETHOD_CLASSES">Macro BOOST_OPENMETHOD_CLASSES</a></li>
-<li><a href="#BOOST_OPENMETHOD_DEFAULT_POLICY">Macro BOOST_OPENMETHOD_DEFAULT_POLICY</a></li>
-<li><a href="#BOOST_OPENMETHOD_NAME">Macro BOOST_OPENMETHOD_NAME</a></li>
-<li><a href="#BOOST_OPENMETHOD_OVERRIDERS">Macro BOOST_OPENMETHOD_OVERRIDERS</a></li>
-<li><a href="#facets_vptrconcept_restrictedoutputstream">Concept RestrictedOutputStream</a>
+<li><a href="#BOOST_OPENMETHOD">Macro BOOST_OPENMETHOD</a>
 <ul class="sectlevel3">
 <li><a href="#facets_vptrdescription_9">Description</a></li>
+<li><a href="#facets_vptrsynopsis_12">Synopsis</a></li>
+<li><a href="#facets_vptreffects">Effects</a></li>
+</ul>
+</li>
+<li><a href="#BOOST_OPENMETHOD_OVERRIDE">BOOST_OPENMETHOD_OVERRIDE</a>
+<ul class="sectlevel3">
+<li><a href="#facets_vptrdescription_10">Description</a></li>
+<li><a href="#facets_vptrsynopsis_13">Synopsis</a></li>
+<li><a href="#facets_vptreffects_2">Effects</a></li>
+</ul>
+</li>
+<li><a href="#BOOST_OPENMETHOD_INLINE_OVERRIDE">BOOST_OPENMETHOD_INLINE_OVERRIDE(NAME, (PARAMETERS&#8230;&#8203;), RETURN_TYPE)</a>
+<ul class="sectlevel3">
+<li><a href="#facets_vptrsynopsis_14">Synopsis</a></li>
+</ul>
+</li>
+<li><a href="#BOOST_OPENMETHOD_REGISTER">BOOST_OPENMETHOD_REGISTER</a>
+<ul class="sectlevel3">
+<li><a href="#facets_vptrdescription_11">Description</a></li>
+<li><a href="#facets_vptrsynopsis_15">Synopsis</a></li>
+</ul>
+</li>
+<li><a href="#BOOST_OPENMETHOD_CLASSES">BOOST_OPENMETHOD_CLASSES(CLASSES&#8230;&#8203;[, POLICY])</a>
+<ul class="sectlevel3">
+<li><a href="#facets_vptrdescription_12">Description</a></li>
+<li><a href="#facets_vptrsynopsis_16">Synopsis</a></li>
+</ul>
+</li>
+<li><a href="#BOOST_OPENMETHOD_DEFAULT_POLICY">BOOST_OPENMETHOD_DEFAULT_POLICY</a>
+<ul class="sectlevel3">
+<li><a href="#facets_vptrdescription_13">Description</a></li>
+</ul>
+</li>
+<li><a href="#BOOST_OPENMETHOD_NAME">Macro BOOST_OPENMETHOD_NAME(NAME)</a>
+<ul class="sectlevel3">
+<li><a href="#facets_vptrdescription_14">Description</a></li>
+<li><a href="#facets_vptrsynopsis_17">Synopsis</a></li>
+<li><a href="#BOOST_OPENMETHOD_OVERRIDERS">Description</a></li>
+</ul>
+</li>
+<li><a href="#facets_vptrboost_openmethod_overriders">BOOST_OPENMETHOD_OVERRIDERS</a>
+<ul class="sectlevel3">
+<li><a href="#facets_vptrsynopsis_18">Synopsis</a></li>
+</ul>
+</li>
+<li><a href="#facets_vptrconcept_restrictedoutputstream">Concept RestrictedOutputStream</a>
+<ul class="sectlevel3">
+<li><a href="#facets_vptrdescription_15">Description</a></li>
 <li><a href="#facets_vptrrequirements_6">Requirements</a></li>
 </ul>
 </li>
@@ -1975,16 +2017,16 @@ reading the type information until <code>initialize</code> is called.</p>
 <h2 id="tutorial_reference">Reference</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="method">Class Template method</h3>
-<div class="paragraph">
-<p><code>boost::openmethod::method</code> - A class that implements an open-method.</p>
+<h3 id="method">method&lt;Name(Parameters&#8230;&#8203;), ReturnType, Policy&gt;</h3>
+<div class="sect3">
+<h4 id="ref_description">Description</h4>
+
 </div>
 <div class="sect3">
 <h4 id="ref_synopsis">Synopsis</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span> <span class="p">{</span>
 
 <span class="k">template</span><span class="o">&lt;</span>
     <span class="k">typename</span> <span class="nc">Method</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">ReturnType</span><span class="p">,</span>
@@ -2013,41 +2055,13 @@ reading the type information until <code>initialize</code> is called.</p>
     <span class="o">~</span><span class="n">method</span><span class="p">();</span>
 <span class="p">};</span>
 
-<span class="p">}}</span></code></pre>
+<span class="p">}</span></code></pre>
 </div>
 </div>
-<hr>
 </div>
 <div class="sect3">
-<h4 id="ref_description">Description</h4>
-<div class="paragraph">
-<p><strong>Template Parameters</strong></p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Name</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The name of the method.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Parameters</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The formal parameters of the method.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>ReturnType</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The return type of the method.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Policy</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The policy.</p></td>
-</tr>
-</tbody>
-</table>
-<hr>
+<h4 id="ref_members">Members</h4>
+
 </div>
 <div class="sect3">
 <h4 id="ref_constructor">Constructor</h4>
@@ -2063,7 +2077,6 @@ reading the type information until <code>initialize</code> is called.</p>
 <p>The constructor is private. The only instance is the static member variable
 <code>fn</code>.</p>
 </div>
-<hr>
 </div>
 <div class="sect3">
 <h4 id="ref_destructor">Destructor</h4>
@@ -2075,10 +2088,6 @@ reading the type information until <code>initialize</code> is called.</p>
 <div class="paragraph">
 <p>Remove the method from the list of methods registered in <code>Policy</code>.</p>
 </div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="ref_member_functions">Member Functions</h4>
 <div class="sect4">
 <h5 id="ref_operator">operator()</h5>
 <div class="listingblock">
@@ -2130,7 +2139,6 @@ types.</p>
 </li>
 </ol>
 </div>
-<hr>
 </div>
 </div>
 <div class="sect3">
@@ -2146,11 +2154,7 @@ types.</p>
 <p>The <code>method</code>'s unique instance. The method is called via the call
 operator on <code>fn</code>: <code>method::fn(args&#8230;&#8203;)</code>.</p>
 </div>
-<hr>
 </div>
-</div>
-<div class="sect3">
-<h4 id="ref_member_templates">Member Templates</h4>
 <div class="sect4">
 <h5 id="ref_override">override</h5>
 <div class="listingblock">
@@ -2364,6 +2368,9 @@ participate in overrider selection.</p>
 </li>
 <li>
 <p><code>virtual_traits&lt;virtual_&lt;virtual_ptr&lt;T, Policy&gt;&gt;, Policy&gt;</code></p>
+</li>
+<li>
+<p><code>virtual_traits&lt;virtual_&lt;const virtual_ptr&lt;std::shared_ptr&lt;T&gt;&gt;&amp;&gt;, Policy&gt;</code></p>
 </li>
 </ul>
 </div>
@@ -2975,74 +2982,61 @@ pointer of the same kind (e.g. <code>std::shared_ptr&lt;Animal&gt;</code> and
 </div>
 </div>
 <div class="sect2">
-<h3 id="virtual_ptr_traits_class_abstract_policy">Class abstract_policy</h3>
+<h3 id="virtual_ptr_traits_abstract_policy">abstract_policy</h3>
+<div class="sect3">
+<h4 id="virtual_ptr_traits_description_2">Description</h4>
 <div class="paragraph">
-<p>abstract_policy - The base class of all policies.</p>
+<p><code>abstract_policy</code> is a required base class for a policy. It makes it possible
+for meta-functions such as <code>use_classes</code> to discriminate between user classes
+and the (optional) policy class.</p>
 </div>
-<hr>
+</div>
 <div class="sect3">
 <h4 id="virtual_ptr_traits_synopsis_2">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/policies/core.hpp&gt;.</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">policies</span> <span class="p">{</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">policies</span> <span class="p">{</span>
 
 <span class="k">struct</span> <span class="nc">abstract_policy</span> <span class="p">{};</span>
 
-<span class="p">}}}</span></code></pre>
+<span class="p">}</span></code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="virtual_ptr_traits_class_template_basic_domain">Class template basic_domain</h3>
+<h3 id="virtual_ptr_traits_basic_domainpolicy">basic_domain&lt;Policy&gt;</h3>
+<div class="sect3">
+<h4 id="virtual_ptr_traits_description_3">Description</h4>
 <div class="paragraph">
-<p><code>basic_domain</code> - A collection of classes and methods registered in <em>Policy</em>. It
-also contains the v-tables for the classes and the dispatch tables for the
-methods with more than one virtual argument.</p>
+<p><code>basic_domain</code> is a registry of classes and methods registered in a <em>Policy</em>,
+and their dispatch tables.</p>
+</div>
 </div>
 <div class="sect3">
 <h4 id="virtual_ptr_traits_synopsis_3">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/policies/core.hpp&gt;.</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">policies</span> <span class="p">{</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">policies</span> <span class="p">{</span>
 
 <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Policy</span><span class="p">&gt;</span>
 <span class="k">struct</span> <span class="nc">basic_domain</span> <span class="p">{</span>
-    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
-    <span class="k">static</span> <span class="n">vptr_type</span> <span class="n">static_vptr</span><span class="p">;</span>
-    <span class="c1">// more unspecified static state</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span> <span class="k">static</span> <span class="n">vptr_type</span> <span class="n">static_vptr</span><span class="p">;</span>
+    <span class="c1">// unspecified members</span>
 <span class="p">};</span>
 
-<span class="p">}}}</span></code></pre>
+<span class="p">}</span></code></pre>
 </div>
 </div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="virtual_ptr_traits_description_2">Description</h4>
-<div class="paragraph">
-<p><strong>Template Parameters</strong></p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Policy</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The policy.</p></td>
-</tr>
-</tbody>
-</table>
-<hr>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_traits_static_member_variables">Static Member Variables</h4>
+<h4 id="virtual_ptr_traits_members_2">Members</h4>
 <div class="sect4">
 <h5 id="virtual_ptr_traits_static_vptr">static_vptr</h5>
 <div class="listingblock">
@@ -3058,20 +3052,30 @@ methods with more than one virtual argument.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="virtual_ptr_traits_class_template_basic_policy">Class Template basic_policy</h3>
+<h3 id="virtual_ptr_traits_basic_policypolicy_facets">basic_policy&lt;Policy, Facets&#8230;&#8203;&gt;</h3>
+<div class="sect3">
+<h4 id="virtual_ptr_traits_description_4">Description</h4>
 <div class="paragraph">
-<p><code>basic_policy</code> - A CRT template that implements a policy, which consists of a a
-collection of methods, classes, dispatch data, and facets, specifying how to
-obtain a pointer to a v-table from an object, how to report errors, whether to
-perform runtime sanity checks, etc.</p>
+<p><code>basic_policy</code> implements a policy, which consists of a a collection of methods,
+classes, dispatch data, and facets, which specify how to obtain a pointer to a
+v-table from an object, how to report errors, whether to perform runtime sanity
+checks, etc.</p>
+</div>
+<div class="paragraph">
+<p>Some of these functionalities require static variables local to the policy.
+Forthis reason, <code>basic_policy</code> uses the CRTP pattern to provide ensure that two
+different policies - and the facets they contain - get their own copies of the
+static state.</p>
+</div>
 </div>
 <div class="sect3">
 <h4 id="virtual_ptr_traits_synopsis_4">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/policies/core.hpp&gt;.</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">policies</span> <span class="p">{</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">policies</span> <span class="p">{</span>
 
 <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Policy</span><span class="p">,</span> <span class="k">class</span><span class="o">...</span> <span class="nc">Facets</span><span class="p">&gt;</span>
 <span class="k">struct</span> <span class="nc">basic_policy</span> <span class="o">:</span> <span class="k">virtual</span> <span class="n">abstract_policy</span><span class="p">,</span>
@@ -3093,36 +3097,12 @@ perform runtime sanity checks, etc.</p>
     <span class="k">using</span> <span class="n">remove</span> <span class="o">=</span> <span class="cm">/*unspecified*/</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="p">}}}</span></code></pre>
+<span class="p">}</span></code></pre>
 </div>
 </div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="virtual_ptr_traits_description_3">Description</h4>
-<div class="paragraph">
-<p><strong>Template Parameters</strong></p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Policy</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The policy.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Facets</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">A collection of facets.</p></td>
-</tr>
-</tbody>
-</table>
-<hr>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_traits_member_meta_functions">Member Meta-Functions</h4>
+<h4 id="virtual_ptr_traits_members_3">Members</h4>
 <div class="sect4">
 <h5 id="virtual_ptr_traits_has_facet">has_facet</h5>
 <div class="listingblock">
@@ -3144,9 +3124,10 @@ perform runtime sanity checks, etc.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Creates a new policy by copying an existing one. <em>NewPolicy</em>, and the facets it
-contains, do not share any state with the original <em>Policy</em>. The new policy does
-not retain any knowledge of the classes and methods registered in the original.</p>
+<p>Creates a new policy from an existing one. <em>NewPolicy</em>, and the facets it
+contains, do not share static variables with the original <em>Policy</em>. The new
+policy does not retain any knowledge of the classes and methods registered in
+the original.</p>
 </div>
 </div>
 <div class="sect4">
@@ -3159,7 +3140,7 @@ not retain any knowledge of the classes and methods registered in the original.<
 </div>
 <div class="paragraph">
 <p>Creates a new policy by adding <em>MoreFacets</em> to the original policy&#8217;s collection
-of facets. The original policy and the new one share the same static state.</p>
+of facets. The original policy and the new one share static variables.</p>
 </div>
 </div>
 <div class="sect4">
@@ -3176,8 +3157,7 @@ with <em>NewFacet</em>. It is not an error if <em>policy</em> does not contain s
 in that case, the new policy contains the same facet as the original one.</p>
 </div>
 <div class="paragraph">
-<p>The original policy and the new one share the same static
-state.</p>
+<p>The original policy and the new one share static variables.</p>
 </div>
 </div>
 <div class="sect4">
@@ -3194,8 +3174,7 @@ It is not an error if <em>policy</em> does not contain such a facet; in that cas
 new policy contains the same facet as the original one.</p>
 </div>
 <div class="paragraph">
-<p>The original policy and the new one share the same static
-state.</p>
+<p>The original policy and the new one share static variables.</p>
 </div>
 </div>
 </div>
@@ -3221,7 +3200,7 @@ state.</p>
 <hr>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_traits_description_4">Description</h4>
+<h4 id="virtual_ptr_traits_description_5">Description</h4>
 <div class="paragraph">
 <p>When an error is encountered, either during <code>initialize</code> or method dispatch, the
 program is terminated via a call to <code>abort</code>. If this facet is present in the
@@ -3327,7 +3306,7 @@ calls a function, which can be customized, to handle the error.</p>
 <hr>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_traits_description_5">Description</h4>
+<h4 id="virtual_ptr_traits_description_6">Description</h4>
 <div class="paragraph">
 <p><strong>Template Parameters</strong></p>
 </div>
@@ -4078,47 +4057,31 @@ is not supported. Classes are not required to be polymorphic.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="facets_vptrclass_template_basic_error_output">Class Template basic_error_output</h3>
+<h3 id="facets_vptrbasic_error_outputpolicy_stream">basic_error_output&lt;Policy, Stream&gt;</h3>
+<div class="sect3">
+<h4 id="facets_vptrdescription_6">Description</h4>
 <div class="paragraph">
-<p><code>basic_error_output</code> - An implementation of the <code>error_output</code> facet that writes error messages to <code>stderr</code>.</p>
+<p><code>basic_error_output</code> is an implementation of <code>error_output</code> that writes error
+messages to a <code>RestrictedOutputStream</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="facets_vptrsynopsis_9">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/policies/basic_error_output.hpp&gt;.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">policies</span> <span class="p">{</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">policies</span> <span class="p">{</span>
 
 <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Policy</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">Stream</span> <span class="o">=</span> <span class="cm">/*unspecified*/</span><span class="p">&gt;</span>
 <span class="k">struct</span> <span class="nc">basic_error_output</span> <span class="o">:</span> <span class="k">virtual</span> <span class="n">error_output</span> <span class="p">{</span>
     <span class="k">static</span> <span class="n">Stream</span> <span class="n">error_stream</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="p">}}}</span></code></pre>
+<span class="p">}</span></code></pre>
 </div>
 </div>
-<hr>
-<div class="sect3">
-<h4 id="facets_vptrdescription_6">Description</h4>
-<div class="paragraph">
-<p><strong>Template Parameters</strong></p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Policy</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The policy containing the facet.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Stream</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">A type that satisfies the requirements of <code>RestrictedOutputStream</code>.</p></td>
-</tr>
-</tbody>
-</table>
-<hr>
 </div>
 <div class="sect3">
 <h4 id="facets_vptrstatic_member_variables">Static Member Variables</h4>
@@ -4143,7 +4106,7 @@ it.</p>
 <p><code>trace_output</code> - A facet that provides a stream for writing trace messages.</p>
 </div>
 <div class="sect3">
-<h4 id="facets_vptrsynopsis_9">Synopsis</h4>
+<h4 id="facets_vptrsynopsis_10">Synopsis</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
@@ -4229,16 +4192,22 @@ void*</code>, <code>std::size_t</code> and <code>type_id</code>.
 </div>
 </div>
 <div class="sect2">
-<h3 id="facets_vptrclass_template_basic_trace_output">Class Template basic_trace_output</h3>
+<h3 id="facets_vptrbasic_trace_outputpolicy_stream">basic_trace_output&lt;Policy, Stream&gt;</h3>
+<div class="sect3">
+<h4 id="facets_vptrdescription_8">Description</h4>
 <div class="paragraph">
-<p><code>basic_trace_output</code> - An implementation of the <code>trace_output</code> facet that writes
-trace messages to <code>stderr</code>.</p>
+<p><code>basic_error_output</code> is an implementation of <code>trace_output</code> that writes error
+messages to a <code>RestrictedOutputStream</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="facets_vptrsynopsis_11">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/policies/basic_trace_output.hpp&gt;.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">policies</span> <span class="p">{</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">policies</span> <span class="p">{</span>
 
 <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Policy</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">Stream</span> <span class="o">=</span> <span class="cm">/*unspecified*/</span><span class="p">&gt;</span>
 <span class="k">struct</span> <span class="nc">basic_trace_output</span> <span class="o">:</span> <span class="k">virtual</span> <span class="n">trace_output</span> <span class="p">{</span>
@@ -4246,35 +4215,12 @@ trace messages to <code>stderr</code>.</p>
     <span class="k">static</span> <span class="n">Stream</span> <span class="n">trace_stream</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="p">}}}</span></code></pre>
+<span class="p">}</span></code></pre>
 </div>
 </div>
-<hr>
-<div class="sect3">
-<h4 id="facets_vptrdescription_8">Description</h4>
-<div class="paragraph">
-<p><strong>Template Parameters</strong></p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Policy</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The policy containing the facet.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Stream</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">A type that satisfies the requirements of <code>RestrictedOutputStream</code>.</p></td>
-</tr>
-</tbody>
-</table>
-<hr>
 </div>
 <div class="sect3">
-<h4 id="facets_vptrstatic_member_variables_2">Static Member Variables</h4>
+<h4 id="facets_vptrmembers">Members</h4>
 <div class="sect4">
 <h5 id="facets_vptrtrace_enabled">trace_enabled</h5>
 <div class="listingblock">
@@ -4303,43 +4249,25 @@ open it.</p>
 </div>
 <div class="sect2">
 <h3 id="BOOST_OPENMETHOD">Macro BOOST_OPENMETHOD</h3>
+<div class="sect3">
+<h4 id="facets_vptrdescription_9">Description</h4>
+<div class="paragraph">
+<p>Declares a method.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="facets_vptrsynopsis_12">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/macros.hpp&gt;.</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD</span><span class="p">(</span><span class="n">NAME</span><span class="p">,</span> <span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...),</span> <span class="n">RETURN_TYPE</span> <span class="p">[,</span> <span class="n">POLICY</span><span class="p">])</span></code></pre>
+<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD</span><span class="p">(</span><span class="n">NAME</span><span class="p">,</span> <span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...),</span> <span class="n">RETURN_TYPE</span> <span class="p">[,</span> <span class="n">POLICY</span><span class="p">]);</span></code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p><strong>Macro Parameters</strong></p>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>NAME</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The name of the method.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>PARAMETERS</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The formal parameters of the method, consisting of a list of comma-separated
-  <strong>types</strong>. At least one parameter decorated with <code>virtual_</code> or <code>virtual_ptr</code> is
-  required.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>RETURN_TYPE</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The return type of the method.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>POLICY</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">An optional policy. If not specified, <code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> is used.</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Create an open-method.</p>
-</div>
+<div class="sect3">
+<h4 id="facets_vptreffects">Effects</h4>
 <div class="paragraph">
 <p>The macro expands to several constructs, the most important of which is an
 inline function called <code>NAME</code>, with a formal parameter list that consists of the
@@ -4376,8 +4304,24 @@ types listed in <code>PARAMETERS</code>, stripped from any <code>virtual_</code>
 </div>
 </div>
 </div>
+</div>
 <div class="sect2">
-<h3 id="BOOST_OPENMETHOD_OVERRIDE">Macro BOOST_OPENMETHOD_OVERRIDE</h3>
+<h3 id="BOOST_OPENMETHOD_OVERRIDE">BOOST_OPENMETHOD_OVERRIDE</h3>
+<div class="sect3">
+<h4 id="facets_vptrdescription_10">Description</h4>
+<div class="paragraph">
+<p><code>BOOST_OPENMETHOD_OVERRIDE</code> adds an overrider to a method.</p>
+</div>
+<div class="paragraph">
+<p>The method is deduced from a call to a method guide function with the
+overrider&#8217;s arguments.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="facets_vptrsynopsis_13">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/macros.hpp&gt;.</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span><span class="n">NAME</span><span class="p">,</span> <span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...),</span> <span class="n">RETURN_TYPE</span><span class="p">)</span> <span class="p">{</span>
@@ -4385,54 +4329,21 @@ types listed in <code>PARAMETERS</code>, stripped from any <code>virtual_</code>
 <span class="p">}</span></code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p><strong>Macro Parameters</strong></p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>NAME</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The name of the method.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>PARAMETERS</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The formal parameters of the method, consisting of a list of comma-separated
-  <strong>types</strong>.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>RETURN_TYPE</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The return type of the method.</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Add an overrider to an open-method.</p>
-</div>
-<div class="paragraph">
-<p><code>BOOST_OPENMETHOD_OVERRIDE</code> locates an open-method that can be called using the
-overrider&#8217;s parameters, and adds the overrider to the method&#8217;s list of
-overriders.</p>
-</div>
-<div class="paragraph">
-<p>The open-method is deduced from a call to a method guide function with the
-overrider&#8217;s arguments:</p>
-</div>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">using</span> <span class="n">method_type</span> <span class="o">=</span> <span class="k">decltype</span><span class="p">(</span><span class="n">BOOST_OPENMETHOD_NAME</span><span class="p">(</span><span class="n">NAME</span><span class="p">)</span><span class="n">_guide</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">A</span><span class="o">&gt;</span><span class="p">()...))</span></code></pre>
 </div>
 </div>
+</div>
+<div class="sect3">
+<h4 id="facets_vptreffects_2">Effects</h4>
 <div class="paragraph">
 <p>The macro creates several entities in the current scope.</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>A class template that acts as a container for the overriders of all methods
+<p>A class template that acts as a container for the overriders of the methods
 called <code>NAME</code>:</p>
 </li>
 </ul>
@@ -4454,17 +4365,38 @@ called <code>NAME</code>:</p>
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">BOOST_OPENMETHOD_OVERRIDERS</span><span class="p">(</span><span class="n">NAME</span><span class="p">)</span><span class="o">&lt;</span><span class="n">RETURN_TYPE</span><span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...)</span><span class="o">&gt;</span> <span class="p">{</span>
     <span class="k">static</span> <span class="k">auto</span> <span class="n">fn</span><span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...)</span> <span class="o">-&gt;</span> <span class="n">RETURN_TYPE</span><span class="p">;</span>
     <span class="k">static</span> <span class="k">auto</span> <span class="n">has_next</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="p">;</span>
-    <span class="k">using</span> <span class="n">method_type</span> <span class="o">=</span> <span class="p">...;</span>
-    <span class="k">static</span> <span class="n">method_</span><span class="o">::</span><span class="n">_type</span><span class="o">::</span><span class="n">return_type</span> <span class="n">next</span><span class="p">(</span><span class="cm">/* method_parameters */</span><span class="p">);</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="o">...</span> <span class="nc">Args</span><span class="p">&gt;</span>
+    <span class="k">static</span> <span class="k">auto</span> <span class="n">next</span><span class="p">(</span><span class="k">typename</span><span class="p">...</span> <span class="n">Args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RETURN_TYPE</span><span class="p">;</span>
 <span class="p">};</span>
-<span class="k">auto</span> <span class="n">BOOST_OPENMETHOD_OVERRIDERS</span><span class="p">(</span><span class="n">NAME</span><span class="p">)</span><span class="o">&lt;</span><span class="n">RETURN_TYPE</span><span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...)</span><span class="o">&gt;::</span><span class="n">fn</span><span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...)</span> <span class="o">-&gt;</span> <span class="n">RETURN_TYPE</span> <span class="p">{</span>
-    <span class="c1">// body</span>
-<span class="p">}</span></code></pre>
+
+<span class="n">where</span><span class="o">:</span>
+
+<span class="o">*</span> <span class="err">`</span><span class="n">fn</span><span class="err">`</span> <span class="n">is</span> <span class="n">the</span> <span class="n">overrider</span> <span class="n">function</span><span class="p">.</span>
+
+<span class="o">*</span> <span class="err">`</span><span class="n">has_next</span><span class="p">()</span><span class="err">`</span> <span class="n">returns</span> <span class="err">`</span><span class="nb">true</span><span class="err">`</span> <span class="k">if</span> <span class="n">a</span> <span class="n">less</span> <span class="n">specialized</span> <span class="n">overrider</span> <span class="n">exists</span><span class="p">.</span>
+
+<span class="o">*</span> <span class="err">`</span><span class="n">next</span><span class="p">(</span><span class="n">Args</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span><span class="err">`</span> <span class="n">calls</span> <span class="n">the</span> <span class="n">next</span> <span class="n">most</span> <span class="n">specialized</span> <span class="n">overrider</span> <span class="n">via</span> <span class="n">the</span>
+<span class="n">pointer</span> <span class="n">stored</span> <span class="n">in</span> <span class="n">the</span> <span class="n">method</span><span class="err">'</span><span class="n">s</span> <span class="err">`</span><span class="n">next</span><span class="o">&lt;</span><span class="n">fn</span><span class="o">&gt;</span><span class="err">`</span> <span class="n">member</span> <span class="n">variable</span><span class="p">.</span>
+
+<span class="n">Finally</span><span class="p">,</span> <span class="n">the</span> <span class="n">macro</span> <span class="n">starts</span> <span class="n">the</span> <span class="n">definition</span> <span class="n">of</span> <span class="n">the</span> <span class="n">overrider</span> <span class="n">function</span><span class="o">:</span>
+
+<span class="err">```</span><span class="n">c</span><span class="o">++</span>
+<span class="k">auto</span> <span class="n">BOOST_OPENMETHOD_OVERRIDERS</span><span class="p">(</span><span class="n">NAME</span><span class="p">)</span><span class="o">&lt;</span><span class="n">RETURN_TYPE</span><span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...)</span><span class="o">&gt;</span>
+<span class="o">::</span><span class="n">fn</span><span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...)</span> <span class="o">-&gt;</span> <span class="n">RETURN_TYPE</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The block following the call to the macro is the body of the function.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="BOOST_OPENMETHOD_INLINE_OVERRIDE">Macro BOOST_OPENMETHOD_INLINE_OVERRIDE</h3>
+<h3 id="BOOST_OPENMETHOD_INLINE_OVERRIDE">BOOST_OPENMETHOD_INLINE_OVERRIDE(NAME, (PARAMETERS&#8230;&#8203;), RETURN_TYPE)</h3>
+<div class="sect3">
+<h4 id="facets_vptrsynopsis_14">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/macros.hpp&gt;.</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_INLINE_OVERRIDE</span><span class="p">(</span><span class="n">NAME</span><span class="p">,</span> <span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...),</span> <span class="n">RETURN_TYPE</span><span class="p">)</span> <span class="p">{</span>
@@ -4474,67 +4406,73 @@ called <code>NAME</code>:</p>
 </div>
 <div class="paragraph">
 <p><code>BOOST_OPENMETHOD_INLINE_OVERRIDE</code> performs the same function as
-<code>BOOST_OPENMETHOD_OVERRIDE</code>, but the overrider is defined inline.</p>
+<code>BOOST_OPENMETHOD_OVERRIDE</code>, except that the overrider is defined inline.</p>
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="BOOST_OPENMETHOD_REGISTER">Macro BOOST_OPENMETHOD_REGISTER</h3>
+<h3 id="BOOST_OPENMETHOD_REGISTER">BOOST_OPENMETHOD_REGISTER</h3>
+<div class="sect3">
+<h4 id="facets_vptrdescription_11">Description</h4>
+<div class="paragraph">
+<p>Creates a static instance of <code>TYPE</code>, using a unique generated name.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="facets_vptrsynopsis_15">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/macros/register.hpp&gt;.</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_REGISTER</span><span class="p">(</span><span class="n">TYPE</span><span class="p">)</span></code></pre>
+<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_REGISTER</span><span class="p">(</span><span class="n">TYPE</span><span class="p">);</span></code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p><strong>Macro Parameters</strong></p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>TYPE</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">A type name.</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Create a static instance of <code>TYPE</code>, using a unique generated name.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="BOOST_OPENMETHOD_CLASSES">Macro BOOST_OPENMETHOD_CLASSES</h3>
+<h3 id="BOOST_OPENMETHOD_CLASSES">BOOST_OPENMETHOD_CLASSES(CLASSES&#8230;&#8203;[, POLICY])</h3>
+<div class="sect3">
+<h4 id="facets_vptrdescription_12">Description</h4>
+<div class="paragraph">
+<p>Register <code>CLASSES</code> in POLICY. If <code>POLICY</code> is not specified, use the default
+policy.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+The default policy is the value of <code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> at
+the point <code>&lt;boost/openmethod/core.hpp&gt;</code> is included. Changing the value of this
+symbol has no effect after that point.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>This macro is a wrapper around <code>use_classes</code>; see its documentation for more
+details.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="facets_vptrsynopsis_16">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/macros.hpp&gt;.</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_CLASSES</span><span class="p">(</span><span class="n">CLASSES</span><span class="p">...[,</span> <span class="n">POLICY</span><span class="p">])</span></code></pre>
+<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_CLASSES</span><span class="p">(</span><span class="n">CLASSES</span><span class="p">...[,</span> <span class="n">POLICY</span><span class="p">]);</span></code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p><strong>Macro Parameters</strong></p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>CLASSES</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">A comma-separated list of classes.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>POLICY</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">An optional policy. If not specified, <code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> is used.</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Register <code>CLASSES</code> with a policy.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="BOOST_OPENMETHOD_DEFAULT_POLICY">Macro BOOST_OPENMETHOD_DEFAULT_POLICY</h3>
+<h3 id="BOOST_OPENMETHOD_DEFAULT_POLICY">BOOST_OPENMETHOD_DEFAULT_POLICY</h3>
+<div class="sect3">
+<h4 id="facets_vptrdescription_13">Description</h4>
 <div class="paragraph">
 <p>The name of the default policy.</p>
 </div>
@@ -4547,7 +4485,8 @@ parameter of <code>method</code>, <code>use_classes</code>, and other constructs
 <div class="paragraph">
 <p><code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> can be defined by a program to change the
 default policy globally. Once <code>&lt;boost/openmethod/core.hpp&gt;</code> has been included,
-redefining the symbol has no effect. The proper sequence is as follows:</p>
+redefining the symbol has no effect. To override the default policy, proceed as
+follows:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -4563,44 +4502,48 @@ redefining the symbol has no effect. The proper sequence is as follows:</p>
 </ol>
 </div>
 </div>
+</div>
 <div class="sect2">
-<h3 id="BOOST_OPENMETHOD_NAME">Macro BOOST_OPENMETHOD_NAME</h3>
+<h3 id="BOOST_OPENMETHOD_NAME">Macro BOOST_OPENMETHOD_NAME(NAME)</h3>
+<div class="sect3">
+<h4 id="facets_vptrdescription_14">Description</h4>
+<div class="paragraph">
+<p>Generate a long name from a short name, hopefully avoiding conflicts with
+user-defined names.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="facets_vptrsynopsis_17">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/macros/name.hpp&gt;.</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="cp">#define BOOST_OPENMETHOD_NAME(NAME) boost_openmethod_#NAME</span></code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p><strong>Macro Parameters</strong></p>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>NAME</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The name of a method.</p></td>
-</tr>
-</tbody>
-</table>
+<div class="sect3">
+<h4 id="BOOST_OPENMETHOD_OVERRIDERS">Description</h4>
 <div class="paragraph">
-<p><code>BOOST_OPENMETHOD_NAME</code> is used by the macro API to generate the <code>Name</code>
-parameter of a <code>method</code>.</p>
+<p><code>BOOST_OPENMETHOD_OVERRIDERS</code> expands to the name of the class template that
+contains the overriders for all the methods with a given name.</p>
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="BOOST_OPENMETHOD_OVERRIDERS">Macro BOOST_OPENMETHOD_OVERRIDERS</h3>
+<h3 id="facets_vptrboost_openmethod_overriders">BOOST_OPENMETHOD_OVERRIDERS</h3>
+<div class="sect3">
+<h4 id="facets_vptrsynopsis_18">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/macros.hpp&gt;.</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="cp">#define BOOST_OPENMETHOD_OVERRIDERS(NAME)                                      \
     BOOST_PP_CAT(BOOST_OPENMETHOD_NAME(NAME), _overriders)</span></code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p><code>BOOST_OPENMETHOD_OVERRIDERS</code> is used by the macro API to generate the name of
-the class template that contains the overriders for the method named <code>NAME</code>.</p>
 </div>
 </div>
 <div class="sect2">
@@ -4611,7 +4554,7 @@ operations.</p>
 </div>
 <hr>
 <div class="sect3">
-<h4 id="facets_vptrdescription_9">Description</h4>
+<h4 id="facets_vptrdescription_15">Description</h4>
 <div class="paragraph">
 <p>While convenient, <code>std::ostream</code> and its implementations constitute a sizeable
 piece of code, which may make it unsuitable for certain applications. OpenMethod

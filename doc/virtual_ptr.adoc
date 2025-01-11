@@ -4,16 +4,6 @@
 
 ## virtual_ptr<Class, Policy>
 
-### Description
-
-`virtual_ptr` is a fat pointer that combines a pointer to an object and a
-pointer to its v-table.
-
-`Class` must be a class registered in `Policy`; or a smart pointer to such a
-class, in which case template class `virtual_ptr_traits` must be specialized for
-`Class`. Specializations for `std::unique_ptr` and `std::shared_ptr` are
-provided; see the documentation of `virtual_ptr_traits` for more information.
-
 ### Synopsis
 
 `virtual_ptr` is defined in `<boost/openmethod/core.hpp>`.
@@ -83,6 +73,16 @@ bool operator!=(
 
 } // namespace boost::openmethod
 ```
+
+### Description
+
+`virtual_ptr` is a fat pointer that combines a pointer to an object and a
+pointer to its v-table.
+
+`Class` must be a class registered in `Policy`; or a smart pointer to such a
+class, in which case template class `virtual_ptr_traits` must be specialized for
+`Class`. Specializations for `std::unique_ptr` and `std::shared_ptr` are
+provided; see the documentation of `virtual_ptr_traits` for more information.
 
 ### Members
 

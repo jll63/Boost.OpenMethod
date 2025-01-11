@@ -1,9 +1,8 @@
 
 [#method_override]
-## Class Template method::override
+## method::override
 
-`boost::openmethod::method::override` - A class that adds an overrider to an
-open-method.
+### Synopsis
 
 ```c++
 namespace boost {
@@ -20,19 +19,9 @@ struct method<Signature, ReturnType, Policy>::override {
 }
 ```
 
----
-
 ### Description
 
-*Template Parameters*
-
-[cols="1,1"]
-|===
-
-|_Functions_
-| Functions to add as overriders of method.
-
-|===
+`boost::openmethod::method::override` adds an overrider to an open-method.
 
 `override` must be instantiated as a *static* object.
 
@@ -53,9 +42,9 @@ a type that is covariant with the type of the method's parameter.
 * The return type of the overrider must be the same as the method's return type
   or, if it is a polymorphic type, covariant with the method's return type.
 
----
+### Members
 
-### Constructor
+#### Constructor
 
 ```c++
 method<Signature, ReturnType, Policy>::override<Functions>::override();
@@ -63,9 +52,7 @@ method<Signature, ReturnType, Policy>::override<Functions>::override();
 
 Add _Functions_ to the overriders of `method`.
 
----
-
-### Destructor
+#### Destructor
 
 ```c++
 method<Signature, ReturnType, Policy>::override<Functions>::~method();

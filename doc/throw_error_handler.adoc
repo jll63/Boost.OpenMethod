@@ -1,9 +1,9 @@
 
-## Class throw_error_handler
-
-`throw_error_handler` - An implementation of the `error_handler` facet that throws the error as an exception.
+## throw_error_handler
 
 ### Synopsis
+
+Defined in <boost/openmethod/policies/throw_error_handler.hpp>.
 
 ```c++
 namespace boost {
@@ -18,7 +18,10 @@ struct throw_error_handler : virtual error_handler {
 }}}
 ```
 
----
+### Description
+
+throw_error_handler is an implementation of the `error_handler` facet that
+throws the error as an exception.
 
 ### Static Member Functions
 

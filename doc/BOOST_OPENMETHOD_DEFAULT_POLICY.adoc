@@ -1,6 +1,9 @@
 
 [#BOOST_OPENMETHOD_DEFAULT_POLICY]
-## Macro BOOST_OPENMETHOD_DEFAULT_POLICY
+
+## BOOST_OPENMETHOD_DEFAULT_POLICY
+
+### Description
 
 The name of the default policy.
 
@@ -11,7 +14,8 @@ parameter of `method`, `use_classes`, and other constructs defined in
 
 `BOOST_OPENMETHOD_DEFAULT_POLICY` can be defined by a program to change the
 default policy globally. Once `<boost/openmethod/core.hpp>` has been included,
-redefining the symbol has no effect. The proper sequence is as follows:
+redefining the symbol has no effect. To override the default policy, proceed as
+follows:
 
 1. Include headers under `boost/openmethod/policies/` as needed.
 2. Create a policy class, and set `BOOST_OPENMETHOD_DEFAULT_POLICY`.

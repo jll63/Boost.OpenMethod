@@ -1,9 +1,6 @@
 
 ## Class vptr_map
 
-`vptr_map` - An implementation of `external_vptr that stores the pointers to
-the v-tables in a map.
-
 ### Synopsis
 
 ```c++
@@ -29,22 +26,10 @@ struct vptr_map : virtual extern_vptr {
 }}}
 ```
 
----
-
 ### Description
 
-*Template Parameters*
-
-[cols="1,1"]
-|===
-
-| _Policy_
-| The policy containing the facet.
-
-| _Map_
-| A map from `type_id` to a direct_vptr_type or an indirect_vptr_type.
-
-|===
+`vptr_map` is an implementation of `external_vptr that stores the pointers to
+the v-tables in a map.
 
 `vptr_map` stores the addresses of the v-tables for the classes registered in
 _Policy_ in a map, either as straight pointers, or as pointers to pointers. The
@@ -52,9 +37,7 @@ latter makes it possible for `virtual_ptr`{empty}s to remain valid after a call
 to `initialize`, thus allowing dynamically loaded shared libraries to add
 methods, classes and overriders to a domain.
 
----
-
-### Member Functions
+### Members
 
 #### register_vptrs
 

@@ -1,9 +1,9 @@
 
-## Class std_rtti
-
-`std_rtti` - An implementation of the `rtti` facet that uses standard RTTI.
+## std_rtti
 
 ### Synopsis
+
+Defined in <boost/openmethod/policies/std_rtti.hpp>.
 
 ```c++
 namespace boost {
@@ -29,7 +29,9 @@ struct std_rtti : virtual rtti {
 }}}
 ```
 
----
+### Description
+
+`std_rtti` - An implementation of the `rtti` facet that uses standard RTTI.
 
 ### Member Functions
 

@@ -16,11 +16,7 @@ namespace openmethod {
 namespace policies {
 
 template<class Policy>
-struct fast_perfect_hash : virtual type_hash {
-    struct report {
-        std::size_t method_table_size, dispatch_table_size;
-        std::size_t hash_search_attempts;
-    };
+class fast_perfect_hash : virtual type_hash {
 
     static type_id hash_mult;
     static std::size_t hash_shift;
@@ -29,6 +25,10 @@ struct fast_perfect_hash : virtual type_hash {
     static std::size_t hash_max;
     static std::vector<type_id> control;
 
+  public:
+    struct report {
+        std::size_t hash_length;
+    };
 #ifdef _MSC_VER
     __forceinline
 #endif
@@ -45,13 +45,15 @@ struct fast_perfect_hash : virtual type_hash {
     }
 
     template<typename ForwardIterator>
-    static void hash_initialize(ForwardIterator first, ForwardIterator last) {
+    static report hash_initialize(ForwardIterator first, ForwardIterator last) {
         if constexpr (Policy::template has_facet<runtime_checks>) {
             hash_initialize(first, last, control);
         } else {
             std::vector<type_id> buckets;
             hash_initialize(first, last, buckets);
         }
+
+        return {hash_length};
     }
 
     template<typename ForwardIterator>

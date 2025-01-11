@@ -1,6 +1,11 @@
 
 [#BOOST_OPENMETHOD_INLINE_OVERRIDE]
-## Macro BOOST_OPENMETHOD_INLINE_OVERRIDE
+
+## BOOST_OPENMETHOD_INLINE_OVERRIDE(NAME, (PARAMETERS...), RETURN_TYPE)
+
+### Synopsis
+
+Defined in <boost/openmethod/macros.hpp>.
 
 ```c++
 BOOST_OPENMETHOD_INLINE_OVERRIDE(NAME, (PARAMETERS...), RETURN_TYPE) {
@@ -8,5 +13,7 @@ BOOST_OPENMETHOD_INLINE_OVERRIDE(NAME, (PARAMETERS...), RETURN_TYPE) {
 }
 ```
 
+### Description
+
 `BOOST_OPENMETHOD_INLINE_OVERRIDE` performs the same function as
-`BOOST_OPENMETHOD_OVERRIDE`, but the overrider is defined inline.
+`BOOST_OPENMETHOD_OVERRIDE`, except that the overrider is defined inline.

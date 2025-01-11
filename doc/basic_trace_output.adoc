@@ -1,13 +1,12 @@
 
-## Class Template basic_trace_output
+## basic_trace_output
 
-`basic_trace_output` - An implementation of the `trace_output` facet that writes
-trace messages to `stderr`.
+### Synopsis
+
+Defined in <boost/openmethod/policies/basic_trace_output.hpp>.
 
 ```c++
-namespace boost {
-namespace openmethod {
-namespace policies {
+namespace boost::openmethod::policies {
 
 template<class Policy, typename Stream = /*unspecified*/>
 struct basic_trace_output : virtual trace_output {
@@ -15,27 +14,15 @@ struct basic_trace_output : virtual trace_output {
     static Stream trace_stream;
 };
 
-}}}
+}
 ```
-
----
 
 ### Description
 
-*Template Parameters*
+`basic_error_output` is an implementation of `trace_output` that writes error
+messages to a `RestrictedOutputStream`.
 
-[cols="1,1"]
-|===
-|_Policy_
-| The policy containing the facet.
-
-|_Stream_
-| A type that satisfies the requirements of `RestrictedOutputStream`.
-|===
-
----
-
-### Static Member Variables
+### Members
 
 #### trace_enabled
 

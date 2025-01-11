@@ -60,9 +60,7 @@ struct enable_forwarder<
     template<typename... A>                                                    \
     struct boost_openmethod_detail_locate_method_aux<void(A...)> {             \
         using type = decltype(NAME##_guide(std::declval<A>()...));             \
-    };                                                                         \
-    using method_type =                                                        \
-        boost_openmethod_detail_locate_method_aux<void ARGS>::type
+    };
 
 #define BOOST_OPENMETHOD_DETAIL_OVERRIDE(INLINE, OVERRIDERS, NAME, ARGS, ...)  \
     template<typename...>                                                      \
@@ -71,18 +69,22 @@ struct enable_forwarder<
     struct OVERRIDERS<__VA_ARGS__ ARGS> {                                      \
         BOOST_OPENMETHOD_DETAIL_LOCATE_METHOD(NAME, ARGS);                     \
         static auto fn ARGS->__VA_ARGS__;                                      \
-        static auto has_next() {                                               \
+        static auto has_next() -> bool {                                       \
+            using method_type =                                                \
+                boost_openmethod_detail_locate_method_aux<void ARGS>::type;    \
             return method_type::next<fn> != method_type::fn.not_implemented;   \
         }                                                                      \
         template<typename... Args>                                             \
         static decltype(auto) next(Args&&... args) {                           \
             BOOST_ASSERT(has_next());                                          \
-            return method_type::next<fn>(std::forward<Args>(args)...);         \
+            return boost_openmethod_detail_locate_method_aux<                  \
+                void ARGS>::type::next<fn>(std::forward<Args>(args)...);       \
         }                                                                      \
     };                                                                         \
     INLINE BOOST_OPENMETHOD_REGISTER(                                          \
-        OVERRIDERS<__VA_ARGS__ ARGS>::method_type::override<                   \
-            OVERRIDERS<__VA_ARGS__ ARGS>::fn>);                                \
+        OVERRIDERS<__VA_ARGS__ ARGS>::                                         \
+            boost_openmethod_detail_locate_method_aux<                         \
+                void ARGS>::type::override<OVERRIDERS<__VA_ARGS__ ARGS>::fn>); \
     INLINE auto OVERRIDERS<__VA_ARGS__ ARGS>::fn ARGS                          \
         ->boost::mp11::mp_back<boost::mp11::mp_list<__VA_ARGS__>>
 

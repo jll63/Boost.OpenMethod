@@ -1,7 +1,5 @@
 
-## Facet error_output
-
-`error_output` - A facet that provides a stream for writing error messages.
+## error_output
 
 ### Synopsis
 
@@ -15,9 +13,9 @@ struct error_output {};
 }}}
 ```
 
----
+### Description
 
-### Requirements
+`error_output` is a facet that provides a stream for writing error messages.
 
 Implementations of `error_output` provide the following functions:
 

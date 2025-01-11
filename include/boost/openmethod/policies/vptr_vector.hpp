@@ -32,8 +32,7 @@ struct vptr_vector : virtual extern_vptr {
         std::size_t size;
 
         if constexpr (Policy::template has_facet<type_hash>) {
-            Policy::hash_initialize(first, last);
-            size = Policy::hash_length;
+            size = Policy::hash_initialize(first, last).hash_length;
         } else {
             size = 0;
 

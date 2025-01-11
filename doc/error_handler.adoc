@@ -1,7 +1,5 @@
 
-## Facet error_handler
-
-`error_handler` - A facet that handles errors.
+## error_handler
 
 ### Synopsis
 
@@ -10,22 +8,41 @@ namespace boost {
 namespace openmethod {
 namespace policies {
 
-struct error_handler {};
+struct error_handler;
+
+struct openmethod_error {};
+
+struct not_implemented_error : openmethod_error {
+    type_id method;
+    std::size_t arity;
+    static constexpr std::size_t max_types = 16;
+    type_id types[max_types];
+};
+
+struct unknown_class_error : openmethod_error {
+    type_id type;
+};
+
+struct hash_search_error : openmethod_error {
+    std::size_t attempts;
+    std::size_t buckets;
+};
+
+struct method_table_error : openmethod_error {
+    type_id type;
+};
 
 }}}
 ```
 
----
-
 ### Description
+
+`error_handler` is a facet that handles errors.
 
 When an error is encountered, either during `initialize` or method dispatch, the
 program is terminated via a call to `abort`. If this facet is present in the
-policy, its `error` function is called with an error object. It can prevent termination by throwing an exception.
-
----
-
-### Requirements
+policy, its `error` function is called with an error object. It can prevent
+termination by throwing an exception.
 
 Implementations of `error_handler` must provide the following functions:
 
@@ -36,8 +53,8 @@ Implementations of `error_handler` must provide the following functions:
 | Name
 | Description
 
-| template<class T> static auto error(const T&) -> void
-| A function template that takes an error object.
+| static auto error(const T&) -> void
+| A function that takes an error object.
 
 |===
 

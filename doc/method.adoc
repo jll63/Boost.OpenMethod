@@ -1,14 +1,13 @@
 
 [#method]
-## Class Template method
+## method<Name(Parameters...), ReturnType, Policy>
 
-`boost::openmethod::method` - A class that implements an open-method.
+### Description
 
 ### Synopsis
 
 ```c++
-namespace boost {
-namespace openmethod {
+namespace boost::openmethod {
 
 template<
     typename Method, typename ReturnType,
@@ -37,34 +36,10 @@ class method<Name(Parameters...), ReturnType, Policy> {
     ~method();
 };
 
-}}
+}
 ```
 
----
-
-### Description
-
-*Template Parameters*
-
-[cols="1,1"]
-|===
-
-|_Name_
-| The name of the method.
-
-|_Parameters_
-| The formal parameters of the method.
-
-|_ReturnType_
-| The return type of the method.
-
-
-|_Policy_
-| The policy.
-
-|===
-
----
+### Members
 
 ### Constructor
 
@@ -77,8 +52,6 @@ Add the method to the list of methods registered in `Policy`.
 The constructor is private. The only instance is the static member variable
 `fn`.
 
----
-
 ### Destructor
 
 ```c++
@@ -86,10 +59,6 @@ The constructor is private. The only instance is the static member variable
 ```
 
 Remove the method from the list of methods registered in `Policy`.
-
----
-
-### Member Functions
 
 #### operator()
 
@@ -127,9 +96,6 @@ resolution, with extra rules to handle ambiguities. It proceeds as follows:
    is not specified, but it is the same across calls with the same arguments
    types.
 
-
----
-
 ### Static Member Variables
 
 #### fn
@@ -140,10 +106,6 @@ method fn;
 
 The `method`{empty}'s unique instance. The method is called via the call
 operator on `fn`: `method::fn(args...)`.
-
----
-
-### Member Templates
 
 #### override
 

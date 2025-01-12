@@ -6,11 +6,13 @@
 Defined in <boost/openmethod/policies/core.hpp>.
 
 ```c++
-namespace boost::openmethod::policies {
+namespace boost::openmethod {
+
+namespace policies {
 
 template<class Policy, class... Facets>
 struct basic_policy : virtual abstract_policy,
-                      virtual basic_domain<Policy>,
+                      virtual domain<Policy>,
                       virtual Facets... {
     template<class Facet>
     static constexpr bool has_facet = /*unspecified*/;
@@ -28,7 +30,19 @@ struct basic_policy : virtual abstract_policy,
     using remove = /*unspecified*/;
 };
 
-}
+struct release : basic_policy<release, ...> {};
+
+struct debug : release::add<...> {};
+
+} // policies
+
+#ifdef NDEBUG
+using default_policy = policies::release;
+#else
+using default_policy = policies::debug;
+#endif
+
+} // boost::openmethod
 ```
 
 ### Description
@@ -101,3 +115,30 @@ It is not an error if _policy_ does not contain such a facet; in that case, the
 new policy contains the same facet as the original one.
 
 The original policy and the new one share static variables.
+
+### Non-members
+
+#### release
+
+```c++
+struct release;
+```
+
+A policy that contains facet implementations `std_rtti`, `fast_perfect_hash`,
+`vptr_vector` and `vectored_error_handler`.
+
+#### debug
+
+```c++
+struct debug;
+```
+
+The `release` policy with additional facet implementations `runtime_checks`,
+`basic_error_output` and basic_trace_output.
+
+NOTE: `debug` extends `release` but it does not a fork it. Both policies use the
+same `domain`.
+
+#### default_policy
+
+An alias for `release` if `NDEBUG` is defined, and for `debug` otherwise.

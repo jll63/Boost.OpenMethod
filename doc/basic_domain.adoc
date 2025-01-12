@@ -1,5 +1,5 @@
 
-## basic_domain
+## domain
 
 ### Synopsis
 
@@ -9,7 +9,7 @@ Defined in <boost/openmethod/policies/core.hpp>.
 namespace boost::openmethod::policies {
 
 template<class Policy>
-struct basic_domain {
+struct domain {
     template<class Class> static vptr_type static_vptr;
     // unspecified members
 };
@@ -19,7 +19,7 @@ struct basic_domain {
 
 ### Description
 
-`basic_domain` is a registry of classes and methods registered in a _Policy_,
+`domain` is a registry of classes and methods registered in a _Policy_,
 and their dispatch tables.
 
 ### Members

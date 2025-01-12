@@ -60,10 +60,10 @@ struct debug;
 struct release;
 
 // -----------------------------------------------------------------------------
-// basic_domain
+// domain
 
 template<class Policy>
-struct basic_domain {
+struct domain {
     static detail::class_catalog classes;
     static detail::method_catalog methods;
     template<class Class>
@@ -72,17 +72,17 @@ struct basic_domain {
 };
 
 template<class Policy>
-detail::class_catalog basic_domain<Policy>::classes;
+detail::class_catalog domain<Policy>::classes;
 
 template<class Policy>
-detail::method_catalog basic_domain<Policy>::methods;
+detail::method_catalog domain<Policy>::methods;
 
 template<class Policy>
 template<class Class>
-vptr_type basic_domain<Policy>::static_vptr;
+vptr_type domain<Policy>::static_vptr;
 
 template<class Policy>
-std::vector<std::uintptr_t> basic_domain<Policy>::dispatch_data;
+std::vector<std::uintptr_t> domain<Policy>::dispatch_data;
 
 template<typename Policy, class Facet>
 struct rebind_facet {
@@ -98,7 +98,7 @@ struct rebind_facet<NewPolicy, GenericFacet<OldPolicy, Args...>> {
 
 template<class Policy, class... Facets>
 struct basic_policy : virtual abstract_policy,
-                      virtual basic_domain<Policy>,
+                      virtual domain<Policy>,
                       virtual Facets... {
     using facets = detail::types<Facets...>;
 

@@ -20,7 +20,6 @@ class fast_perfect_hash : type_hash {
 
     static type_id hash_mult;
     static std::size_t hash_shift;
-    static std::size_t hash_span;
     static std::size_t hash_min;
     static std::size_t hash_max;
     static std::vector<type_id> control;
@@ -104,7 +103,6 @@ void fast_perfect_hash<Policy>::hash_initialize(
         bool found = false;
         std::size_t attempts = 0;
         buckets.resize(hash_size);
-        hash_span = 0;
 
         while (!found && attempts < 100000) {
             std::fill(buckets.begin(), buckets.end(), static_cast<type_id>(-1));
@@ -160,7 +158,7 @@ void fast_perfect_hash<Policy>::hash_initialize(
 
 template<class Policy>
 void fast_perfect_hash<Policy>::check(std::size_t index, type_id type) {
-    if (index >= hash_span || control[index] != type) {
+    if (index < hash_min || index >= hash_max || control[index] != type) {
         if constexpr (Policy::template has_facet<error_handler>) {
             unknown_class_error error;
             error.type = type;
@@ -175,8 +173,6 @@ template<class Policy>
 type_id fast_perfect_hash<Policy>::hash_mult;
 template<class Policy>
 std::size_t fast_perfect_hash<Policy>::hash_shift;
-template<class Policy>
-std::size_t fast_perfect_hash<Policy>::hash_span;
 template<class Policy>
 std::size_t fast_perfect_hash<Policy>::hash_min;
 template<class Policy>

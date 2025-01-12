@@ -70,6 +70,10 @@ static auto hash_type_id(type_id type) -> type_id;
 Returns `(type * M) >> S`, where `M` and `S` are factors found by
 `hash_initialize`.
 
+If the policy has a `runtime_checks` facet, `hash_type_id` checks that `type`
+corresponds to a registered class. If not, it reports a `unknown_class_error`
+using the policy's error_handler facet, if present, then calls `abort`.
+
 #### hash_initialize
 
 ```c++
@@ -79,3 +83,10 @@ auto hash_initialize(ForwardIterator first, ForwardIterator last) -> Report;
 
 Finds factors `M` and `S` such that `hash_type_id` is a collision-free hash
 function.
+
+If no such factors cannot be found, `hash_initialize` reports a
+`hash_search_error` using the policy's error_handler facet, if present, the
+calls `abort`.
+
+If the policy has a `trace_output` facet, `hash_initialize` uses it to write a
+summary of the search.

@@ -10,7 +10,7 @@ The name of the default policy.
 `BOOST_OPENMETHOD_DEFAULT_POLICY` is the default value for the `Policy` template
 parameter of `method`, `use_classes`, and other constructs defined in
 `<boost/openmethod/core.hpp>`. If it is not defined,
-`::boost::openmethod::policy::default_` is used.
+`::boost::openmethod::policy::default_policy` is used.
 
 `BOOST_OPENMETHOD_DEFAULT_POLICY` can be defined by a program to change the
 default policy globally. Once `<boost/openmethod/core.hpp>` has been included,

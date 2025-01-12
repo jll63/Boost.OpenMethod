@@ -9,7 +9,7 @@
 #include <boost/openmethod/policies.hpp>
 
 #ifndef BOOST_OPENMETHOD_DEFAULT_POLICY
-#define BOOST_OPENMETHOD_DEFAULT_POLICY ::boost::openmethod::policies::default_
+#define BOOST_OPENMETHOD_DEFAULT_POLICY ::boost::openmethod::default_policy
 #endif
 
 namespace boost::openmethod {

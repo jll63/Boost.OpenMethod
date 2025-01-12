@@ -61,7 +61,7 @@ struct custom_rtti : policies::rtti {
     }
 };
 
-struct test_policy : policies::default_::fork<test_policy>::replace<
+struct test_policy : default_policy::fork<test_policy>::replace<
                          policies::rtti, custom_rtti> {};
 
 BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_policy);
@@ -151,7 +151,7 @@ struct custom_rtti : policies::rtti {
 };
 
 struct test_policy
-    : policies::default_::fork<test_policy>::replace<
+    : default_policy::fork<test_policy>::replace<
           policies::rtti, custom_rtti>::remove<policies::type_hash> {};
 
 BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_policy);
@@ -304,7 +304,7 @@ struct custom_rtti : policies::rtti {
 };
 
 struct test_policy
-    : policies::default_::fork<test_policy>::replace<
+    : default_policy::fork<test_policy>::replace<
           policies::rtti, custom_rtti>::remove<policies::type_hash> {};
 
 BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_policy);
@@ -441,7 +441,7 @@ struct custom_rtti : policies::deferred_static_rtti {
 };
 
 struct test_policy
-    : policies::default_::fork<test_policy>::replace<
+    : default_policy::fork<test_policy>::replace<
           policies::rtti, custom_rtti>::remove<policies::type_hash> {};
 
 BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_policy);

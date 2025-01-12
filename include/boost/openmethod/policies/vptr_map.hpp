@@ -22,7 +22,7 @@ template<
         std::conditional_t<
             std::is_base_of_v<indirect_extern_vptr, Base>, const vptr_type*,
             vptr_type>>>
-struct vptr_map : virtual Base {
+class vptr_map : virtual Base {
     static_assert(std::is_base_of_v<extern_vptr, Base>);
     static constexpr bool is_indirect =
         std::is_base_of_v<indirect_extern_vptr, Base>;
@@ -35,6 +35,7 @@ struct vptr_map : virtual Base {
 
     static Map vptrs;
 
+  public:
     template<typename ForwardIterator>
     static void register_vptrs(ForwardIterator first, ForwardIterator last) {
         for (auto iter = first; iter != last; ++iter) {

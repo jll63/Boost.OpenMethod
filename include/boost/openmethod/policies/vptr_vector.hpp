@@ -14,7 +14,7 @@ namespace openmethod {
 namespace policies {
 
 template<class Policy, class Base = extern_vptr>
-struct vptr_vector : Base {
+class vptr_vector : Base {
     static_assert(std::is_base_of_v<extern_vptr, Base>);
     static constexpr bool is_indirect =
         std::is_base_of_v<indirect_extern_vptr, Base>;
@@ -22,6 +22,7 @@ struct vptr_vector : Base {
         std::conditional_t<is_indirect, const vptr_type*, vptr_type>;
     static std::vector<element_type> vptrs;
 
+  public:
     template<typename ForwardIterator>
     static auto register_vptrs(ForwardIterator first, ForwardIterator last)
         -> void {

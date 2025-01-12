@@ -28,7 +28,7 @@ int main() {
     namespace bom = boost::openmethod;
     bom::initialize();
 
-    bom::policies::default_::set_error_handler(
+    bom::default_policy::set_error_handler(
         [](const auto& openmethod_error) {
             std::visit([](auto&& arg) { throw arg; }, openmethod_error);
         });

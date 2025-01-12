@@ -440,7 +440,7 @@ BOOST_OPENMETHOD_OVERRIDE(
     times, (const matrix&, const diagonal_matrix&), void) {
 }
 
-void test_handler(const policies::default_::error_variant& error_v) {
+void test_handler(const default_policy::error_variant& error_v) {
     if (auto error = std::get_if<not_implemented_error>(&error_v)) {
         throw *error;
     }

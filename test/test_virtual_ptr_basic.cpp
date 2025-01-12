@@ -41,32 +41,32 @@ static_assert(
 static_assert(std::is_same_v<
               overrider_virtual_types<
                   types<virtual_<a&>, b, virtual_<c&>>, types<d&, e, f&>,
-                  policies::default_>,
+                  default_policy>,
               types<d, f>>);
 
 static_assert(
-    std::is_same_v<virtual_type<std::shared_ptr<a>, policies::default_>, a>);
+    std::is_same_v<virtual_type<std::shared_ptr<a>, default_policy>, a>);
 
 static_assert(
     std::is_same_v<
-        virtual_traits<virtual_ptr<a>, policies::default_>::virtual_type, a>);
+        virtual_traits<virtual_ptr<a>, default_policy>::virtual_type, a>);
 
 static_assert(std::is_same_v<
               select_overrider_virtual_type_aux<
-                  virtual_ptr<base>, virtual_ptr<a>, policies::default_>::type,
+                  virtual_ptr<base>, virtual_ptr<a>, default_policy>::type,
               a>);
 
 static_assert(std::is_same_v<
               overrider_virtual_types<
                   types<virtual_ptr<a>, b, virtual_ptr<c>>,
-                  types<virtual_ptr<d>, e, virtual_ptr<f>>, policies::default_>,
+                  types<virtual_ptr<d>, e, virtual_ptr<f>>, default_policy>,
               types<d, f>>);
 
 static_assert(std::is_same_v<
               overrider_virtual_types<
                   types<const virtual_ptr<base>&, b, const virtual_ptr<base>&>,
                   types<const virtual_ptr<d>&, e, const virtual_ptr<f>&>,
-                  policies::default_>,
+                  default_policy>,
               types<d, f>>);
 
 static_assert(
@@ -75,7 +75,7 @@ static_assert(
             types<
                 virtual_<std::shared_ptr<a>>, b, virtual_<std::shared_ptr<c>>>,
             types<std::shared_ptr<d>, e, std::shared_ptr<f>>,
-            policies::default_>,
+            default_policy>,
         types<d, f>>);
 
 namespace using_polymorphic_classes {
@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE(test_virtual_shared_by_value) {
 namespace BOOST_OPENMETHOD_GENSYM {
 
 static_assert(virtual_ptr_traits<
-              const std::shared_ptr<Animal>&, policies::default_>::is_smart_ptr);
+              const std::shared_ptr<Animal>&, default_policy>::is_smart_ptr);
 
 BOOST_OPENMETHOD(poke, (const virtual_shared_ptr<Animal>&, std::ostream&), void);
 
@@ -177,7 +177,7 @@ BOOST_AUTO_TEST_CASE(test_virtual_shared_by_const_reference) {
 namespace BOOST_OPENMETHOD_GENSYM {
 
 static_assert(virtual_ptr_traits<
-              std::unique_ptr<Animal>, policies::default_>::is_smart_ptr);
+              std::unique_ptr<Animal>, default_policy>::is_smart_ptr);
 
 BOOST_OPENMETHOD(poke, (virtual_unique_ptr<Animal>, std::ostream&), void);
 

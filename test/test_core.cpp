@@ -33,19 +33,19 @@ struct f : base {};
 
 static_assert(
     std::is_same_v<
-        virtual_traits<base&, policies::default_>::virtual_type, base>);
+        virtual_traits<base&, default_policy>::virtual_type, base>);
 
 static_assert(
     std::is_same_v<
-        virtual_traits<const base&, policies::default_>::virtual_type, base>);
+        virtual_traits<const base&, default_policy>::virtual_type, base>);
 
 static_assert(
     std::is_same_v<
-        virtual_traits<base&&, policies::default_>::virtual_type, base>);
+        virtual_traits<base&&, default_policy>::virtual_type, base>);
 
 static_assert(
     std::is_same_v<
-        virtual_traits<int, policies::default_>::virtual_type, void>);
+        virtual_traits<int, default_policy>::virtual_type, void>);
 
 static_assert(
     std::is_same_v<
@@ -64,7 +64,7 @@ static_assert(
 
 static_assert(
     std::is_same_v<
-        virtual_type<a&, policies::default_>,
+        virtual_type<a&, default_policy>,
         a
     >);
 
@@ -80,7 +80,7 @@ static_assert(
 static_assert(
     std::is_same_v<
         boost::mp11::mp_transform_q<
-            boost::mp11::mp_bind_back<virtual_type, policies::default_>,
+            boost::mp11::mp_bind_back<virtual_type, default_policy>,
             boost::mp11::mp_transform<
                 remove_virtual,
                 types< virtual_<a&>, virtual_<c&> >
@@ -92,7 +92,7 @@ static_assert(
 static_assert(
     std::is_same_v<
         boost::mp11::mp_transform_q<
-            boost::mp11::mp_bind_back<virtual_type, policies::default_>,
+            boost::mp11::mp_bind_back<virtual_type, default_policy>,
             boost::mp11::mp_transform<
                 remove_virtual,
                 boost::mp11::mp_filter<
@@ -113,8 +113,8 @@ static_assert(
 BOOST_AUTO_TEST_CASE(test_policy) {
     {
         // test is_policy_compatible
-        struct policy1 : policies::default_::fork<policy1> {};
-        struct policy2 : policies::default_::fork<policy2> {};
+        struct policy1 : default_policy::fork<policy1> {};
+        struct policy2 : default_policy::fork<policy2> {};
         static_assert(detail::is_policy_compatible<
                       policy1, virtual_ptr<a, policy1>>::value);
         static_assert(detail::is_policy_compatible<policy1, int>::value);
@@ -124,33 +124,33 @@ BOOST_AUTO_TEST_CASE(test_policy) {
 
     {
         // check that forked policy does not share static data with original
-        struct policy : policies::default_::fork<policy> {};
-        BOOST_TEST(&policy::methods != &policies::default_::methods);
-        BOOST_TEST(&policy::classes != &policies::default_::classes);
+        struct policy : default_policy::fork<policy> {};
+        BOOST_TEST(&policy::methods != &default_policy::methods);
+        BOOST_TEST(&policy::classes != &default_policy::classes);
         BOOST_TEST(
             &policy::static_vptr<void> !=
-            &policies::default_::static_vptr<void>);
+            &default_policy::static_vptr<void>);
         BOOST_TEST(
-            &policy::dispatch_data != &policies::default_::dispatch_data);
+            &policy::dispatch_data != &default_policy::dispatch_data);
     }
 
     {
         // check that adding a facet keeps static data from original
-        struct policy : policies::default_::add<policies::indirect_vptr> {};
-        BOOST_TEST(&policy::methods == &policies::default_::methods);
-        BOOST_TEST(&policy::classes == &policies::default_::classes);
+        struct policy : default_policy::add<policies::indirect_vptr> {};
+        BOOST_TEST(&policy::methods == &default_policy::methods);
+        BOOST_TEST(&policy::classes == &default_policy::classes);
         BOOST_TEST(
             &policy::static_vptr<void> ==
-            &policies::default_::static_vptr<void>);
+            &default_policy::static_vptr<void>);
         BOOST_TEST(
-            &policy::dispatch_data == &policies::default_::dispatch_data);
+            &policy::dispatch_data == &default_policy::dispatch_data);
     }
 }
 
 BOOST_AUTO_TEST_CASE(test_type_id_list) {
     type_id expected[] = {type_id(&typeid(a)), type_id(&typeid(b))};
-    auto iter = type_id_list<types<a&, b&>, policies::default_>::begin;
-    auto last = type_id_list<types<a&, b&>, policies::default_>::end;
+    auto iter = type_id_list<types<a&, b&>, default_policy>::begin;
+    auto last = type_id_list<types<a&, b&>, default_policy>::end;
     BOOST_TEST_REQUIRE(last - iter == 2);
     BOOST_TEST_REQUIRE(*iter++ == type_id(&typeid(a)));
     BOOST_TEST_REQUIRE(*iter++ == type_id(&typeid(b)));
@@ -172,7 +172,7 @@ BOOST_OPENMETHOD(poke, (virtual_<Animal&>), std::tuple<int, int>);
 
 namespace intrusive_vptr {
 
-struct policy : policies::default_::fork<policy> {};
+struct policy : default_policy::fork<policy> {};
 struct indirect_policy : policy::add<policies::indirect_vptr> {};
 
 struct Nothing {};
@@ -253,34 +253,34 @@ BOOST_AUTO_TEST_CASE(casts) {
     const Carnivore& carnivore = dog;
 
     BOOST_TEST(
-        (&virtual_traits<const Animal&, policies::default_>::cast<
+        (&virtual_traits<const Animal&, default_policy>::cast<
               const Mammal&>(animal)
               .m) == &dog.m);
     BOOST_TEST(
-        (&virtual_traits<const Animal&, policies::default_>::cast<
+        (&virtual_traits<const Animal&, default_policy>::cast<
               const Carnivore&>(animal)
               .c) == &dog.c);
     BOOST_TEST(
-        (&virtual_traits<const Animal&, policies::default_>::cast<
+        (&virtual_traits<const Animal&, default_policy>::cast<
               const Mammal&>(animal)
               .m) == &dog.m);
     BOOST_TEST(
-        (&virtual_traits<const Animal&, policies::default_>::cast<const Dog&>(
+        (&virtual_traits<const Animal&, default_policy>::cast<const Dog&>(
               animal)
               .d) == &dog.d);
     BOOST_TEST(
-        (&virtual_traits<const Mammal&, policies::default_>::cast<const Dog&>(
+        (&virtual_traits<const Mammal&, default_policy>::cast<const Dog&>(
               mammal)
               .d) == &dog.d);
     BOOST_TEST(
-        (&virtual_traits<const Carnivore&, policies::default_>::cast<
+        (&virtual_traits<const Carnivore&, default_policy>::cast<
               const Dog&>(carnivore)
               .c) == &dog.c);
 
     using voidp = const void*;
-    using virtual_animal_t = virtual_type<const Animal&, policies::default_>;
+    using virtual_animal_t = virtual_type<const Animal&, default_policy>;
     static_assert(std::is_same_v<virtual_animal_t, Animal>, "animal");
-    using virtual_mammal_t = virtual_type<const Mammal&, policies::default_>;
+    using virtual_mammal_t = virtual_type<const Mammal&, default_policy>;
     static_assert(std::is_same_v<virtual_mammal_t, Mammal>, "mammal");
 }
 
@@ -305,22 +305,22 @@ static_assert(
     std::is_same_v<
         use_classes<Animal, Dog, Bulldog, Cat, Dolphin>,
         std::tuple<
-            class_declaration_aux<policies::default_, types<Animal, Animal>>,
-            class_declaration_aux<policies::default_, types<Dog, Animal, Dog>>,
+            class_declaration_aux<default_policy, types<Animal, Animal>>,
+            class_declaration_aux<default_policy, types<Dog, Animal, Dog>>,
             class_declaration_aux<
-                policies::default_, types<Bulldog, Animal, Dog, Bulldog>>,
-            class_declaration_aux<policies::default_, types<Cat, Animal, Cat>>,
+                default_policy, types<Bulldog, Animal, Dog, Bulldog>>,
+            class_declaration_aux<default_policy, types<Cat, Animal, Cat>>,
             class_declaration_aux<
-                policies::default_, types<Dolphin, Animal, Dolphin>>>>);
+                default_policy, types<Dolphin, Animal, Dolphin>>>>);
 
 struct my_policy : policies::abstract_policy {};
 
 static_assert(std::is_same_v<
               use_classes<Animal, Dog>,
-              use_classes_aux<policies::default_, types<Animal, Dog>>::type>);
+              use_classes_aux<default_policy, types<Animal, Dog>>::type>);
 
 static_assert(std::is_same_v<
-              use_classes<Animal, Dog, my_policy, policies::default_>,
+              use_classes<Animal, Dog, my_policy, default_policy>,
               use_classes_aux<my_policy, types<Animal, Dog>>::type>);
 
 } // namespace test_use_classes

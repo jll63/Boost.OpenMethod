@@ -18,6 +18,7 @@
 #include <boost/openmethod/compiler.hpp>
 
 using namespace boost::openmethod;
+using namespace boost::openmethod::policies;
 
 struct Animal {
     virtual ~Animal() {
@@ -42,24 +43,18 @@ void init_test() {
     boost::openmethod::initialize<Policy>();
 }
 
-struct direct_vector_policy : policies::default_::fork<direct_vector_policy> {};
+struct direct_vector_policy : default_policy::fork<direct_vector_policy> {};
 
 struct indirect_vector_policy
-    : policies::default_::fork<indirect_vector_policy>::replace<
-          policies::vptr,
-          policies::vptr_vector<
-              indirect_vector_policy, policies::indirect_extern_vptr>> {};
+    : default_policy::fork<indirect_vector_policy>::replace<
+          vptr, vptr_vector<indirect_vector_policy, indirect_extern_vptr>> {};
 
-struct direct_map_policy
-    : policies::default_::fork<direct_map_policy>::replace<
-          policies::vptr, policies::vptr_map<direct_map_policy>> {};
+struct direct_map_policy : default_policy::fork<direct_map_policy>::replace<
+                               vptr, vptr_map<direct_map_policy>> {};
 
 struct indirect_map_policy
-    : policies::default_::fork<indirect_map_policy>::replace<
-          policies::vptr,
-          policies::vptr_map<
-              indirect_map_policy, policies::indirect_extern_vptr>> {};
-static_assert(indirect_map_policy::is_indirect);
+    : default_policy::fork<indirect_map_policy>::replace<
+          vptr, vptr_map<indirect_map_policy, indirect_extern_vptr>> {};
 
 using test_policies = boost::mp11::mp_list<
     direct_vector_policy, indirect_vector_policy, direct_map_policy,
@@ -269,7 +264,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(indirect_virtual_ptr, Policy, test_policies) {
     BOOST_TEST_MESSAGE(
         "static_vptr<Dog> = " << Policy::template static_vptr<Dog>);
 
-    if constexpr (Policy::is_indirect) {
+    if constexpr (Policy::template has_facet<indirect_extern_vptr>) {
         BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
     } else {
         BOOST_TEST(p.vptr() != Policy::template static_vptr<Dog>);
@@ -277,8 +272,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(indirect_virtual_ptr, Policy, test_policies) {
 }
 
 BOOST_AUTO_TEST_CASE(virtual_ptr_final_error) {
-    auto prev_handler = policies::default_::set_error_handler(
-        [](const policies::default_::error_variant& ev) {
+    auto prev_handler =
+        default_policy::set_error_handler([](const default_policy::error_variant& ev) {
             if (auto error = std::get_if<method_table_error>(&ev)) {
                 static_assert(
                     std::is_same_v<decltype(error), const method_table_error*>);
@@ -286,7 +281,7 @@ BOOST_AUTO_TEST_CASE(virtual_ptr_final_error) {
             }
         });
 
-    init_test<policies::default_>();
+    init_test<default_policy>();
     bool threw = false;
 
     try {
@@ -294,16 +289,16 @@ BOOST_AUTO_TEST_CASE(virtual_ptr_final_error) {
         Animal& animal = snoopy;
         virtual_ptr<Animal>::final(animal);
     } catch (const method_table_error& error) {
-        policies::default_::set_error_handler(prev_handler);
+        default_policy::set_error_handler(prev_handler);
         BOOST_TEST(error.type == reinterpret_cast<type_id>(&typeid(Dog)));
         threw = true;
     } catch (...) {
-        policies::default_::set_error_handler(prev_handler);
+        default_policy::set_error_handler(prev_handler);
         BOOST_FAIL("wrong exception");
         return;
     }
 
-    if constexpr (policies::default_::has_facet<policies::runtime_checks>) {
+    if constexpr (default_policy::has_facet<runtime_checks>) {
         if (!threw) {
             BOOST_FAIL("should have thrown");
         }

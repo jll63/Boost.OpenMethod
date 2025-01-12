@@ -11,7 +11,6 @@ namespace openmethod {
 
 using type_id = std::uintptr_t;
 using vptr_type = const std::uintptr_t*;
-using indirect_vptr_type = const vptr_type*;
 
 template<typename T>
 struct virtual_;

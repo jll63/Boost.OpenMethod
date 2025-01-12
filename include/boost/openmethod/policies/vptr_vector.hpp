@@ -13,16 +13,14 @@ namespace boost {
 namespace openmethod {
 namespace policies {
 
-template<class Policy, typename VptrType = vptr_type>
-struct vptr_vector : virtual extern_vptr {
-    static_assert(
-        std::is_same_v<VptrType, vptr_type> ||
-        std::is_same_v<VptrType, indirect_vptr_type>);
-
+template<class Policy, class Base = extern_vptr>
+struct vptr_vector : Base {
+    static_assert(std::is_base_of_v<extern_vptr, Base>);
     static constexpr bool is_indirect =
-        std::is_same_v<VptrType, indirect_vptr_type>;
-
-    static std::vector<VptrType> vptrs;
+        std::is_base_of_v<indirect_extern_vptr, Base>;
+    using element_type =
+        std::conditional_t<is_indirect, const vptr_type*, vptr_type>;
+    static std::vector<element_type> vptrs;
 
     template<typename ForwardIterator>
     static auto register_vptrs(ForwardIterator first, ForwardIterator last)
@@ -67,19 +65,24 @@ struct vptr_vector : virtual extern_vptr {
     }
 
     template<class Class>
-    static auto dynamic_vptr(const Class& arg) -> VptrType {
+    static auto dynamic_vptr(const Class& arg) -> const vptr_type& {
         auto index = Policy::dynamic_type(arg);
 
         if constexpr (Policy::template has_facet<type_hash>) {
             index = Policy::hash_type_id(index);
         }
 
-        return vptrs[index];
+        if constexpr (is_indirect) {
+            return *vptrs[index];
+        } else {
+            return vptrs[index];
+        }
     }
 };
 
-template<class Policy, typename VptrType>
-std::vector<VptrType> vptr_vector<Policy, VptrType>::vptrs;
+template<class Policy, class Base>
+std::vector<typename vptr_vector<Policy, Base>::element_type>
+    vptr_vector<Policy, Base>::vptrs;
 
 } // namespace policies
 } // namespace openmethod

@@ -33,15 +33,14 @@ facet is optional.
 
 An implementation of `vptr` must provide the following static function template:
 
-[cols="a,a", options="header"]
+#### dynamic_vptr;
 
-|===
-| Name
-| Description
 
-| static dynamic_vptr(obj);
-| return the address of the v-table for `obj`
-|===
+```c++
+template<class Class>
+static auto dynamic_vptr(const Class& obj) -> VptrType
+```
+
 
 ## extern_vptr
 

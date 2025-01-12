@@ -6,6 +6,15 @@
 
 // include::headers.adoc[]
 
+include::BOOST_OPENMETHOD.adoc[]
+include::BOOST_OPENMETHOD_OVERRIDE.adoc[]
+include::BOOST_OPENMETHOD_INLINE_OVERRIDE.adoc[]
+include::BOOST_OPENMETHOD_REGISTER.adoc[]
+include::BOOST_OPENMETHOD_CLASSES.adoc[]
+include::BOOST_OPENMETHOD_DEFAULT_POLICY.adoc[]
+include::BOOST_OPENMETHOD_NAME.adoc[]
+include::BOOST_OPENMETHOD_OVERRIDERS.adoc[]
+
 include::method.adoc[]
 include::method_override.adoc[]
 include::virtual_.adoc[]
@@ -30,14 +39,4 @@ include::error_output.adoc[]
 include::basic_error_output.adoc[]
 include::trace_output.adoc[]
 include::basic_trace_output.adoc[]
-
-include::BOOST_OPENMETHOD.adoc[]
-include::BOOST_OPENMETHOD_OVERRIDE.adoc[]
-include::BOOST_OPENMETHOD_INLINE_OVERRIDE.adoc[]
-include::BOOST_OPENMETHOD_REGISTER.adoc[]
-include::BOOST_OPENMETHOD_CLASSES.adoc[]
-include::BOOST_OPENMETHOD_DEFAULT_POLICY.adoc[]
-include::BOOST_OPENMETHOD_NAME.adoc[]
-include::BOOST_OPENMETHOD_OVERRIDERS.adoc[]
-
 include::restricted_output_stream.adoc[]

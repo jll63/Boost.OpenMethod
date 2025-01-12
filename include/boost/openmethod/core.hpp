@@ -293,29 +293,15 @@ class virtual_ptr_impl;
 
 template<class Class, class Policy>
 class virtual_ptr_impl<Class, Policy, false> {
-    template<class, class>
-    friend struct virtual_traits;
-
-    template<class, class>
-    friend struct virtual_ptr_traits;
-
-  protected:
-    static constexpr bool is_indirect = Policy::is_indirect;
-
-    using vptr_type = std::conditional_t<
-        is_indirect, std::uintptr_t const* const*, std::uintptr_t const*>;
-
-    Class* obj;
-    vptr_type vp;
-
   public:
     using traits = virtual_ptr_traits<Class, Policy>;
     using element_type = typename traits::element_type;
+    static constexpr bool is_indirect =
+        Policy::template has_facet<policies::indirect_extern_vptr>;
 
     template<class Other>
-    virtual_ptr_impl(Other& other) {
-        obj = &other;
-        vp = Policy::dynamic_vptr(other);
+    virtual_ptr_impl(Other& other)
+        : obj(&other), vp(Policy::dynamic_vptr(other)) {
     }
 
     template<class Other>
@@ -355,6 +341,16 @@ class virtual_ptr_impl<Class, Policy, false> {
     auto pointer() const -> const Class*& {
         return obj;
     }
+
+    template<class, class>
+    friend struct virtual_traits;
+
+    template<class, class>
+    friend struct virtual_ptr_traits;
+
+  protected:
+    std::conditional_t<is_indirect, const vptr_type&, vptr_type> vp;
+    Class* obj;
 };
 
 template<class Class, class Policy>
@@ -370,32 +366,27 @@ class virtual_ptr_impl<Class, Policy, true> {
     friend struct virtual_traits;
 
   protected:
-    using vptr_type =
-        decltype(Policy::dynamic_vptr(std::declval<virtual_ptr_impl>()));
-
     static constexpr bool is_indirect =
-        std::is_same_v<vptr_type, indirect_vptr_type>;
+        Policy::template has_facet<policies::indirect_extern_vptr>;
 
+    std::conditional_t<is_indirect, const vptr_type&, vptr_type> vp;
     Class obj;
-    vptr_type vp;
 
   public:
     template<class Other>
     virtual_ptr_impl(
         const Other& other,
         std::enable_if_t<virtual_ptr_traits<Other, Policy>::is_smart_ptr, int> =
-            0) {
-        vp = Policy::dynamic_vptr(*other);
-        obj = other;
+            0)
+        : obj(other), vp(Policy::dynamic_vptr(*other)) {
     }
 
     template<class Other>
     virtual_ptr_impl(
         Other&& other,
         std::enable_if_t<virtual_ptr_traits<Other, Policy>::is_smart_ptr, int> =
-            0) {
-        vp = Policy::dynamic_vptr(*other);
-        obj = std::move(other);
+            0)
+        : obj(std::move(other)), vp(Policy::dynamic_vptr(*other)) {
     }
 
     template<class Other>
@@ -425,7 +416,7 @@ class virtual_ptr_impl<Class, Policy, true> {
     }
 
     template<typename Arg>
-    virtual_ptr_impl(Arg&& obj, vptr_type vp)
+    virtual_ptr_impl(Arg&& obj, const vptr_type& vp)
         : obj(std::forward<Arg>(obj)), vp(vp) {
     }
 };
@@ -488,23 +479,12 @@ class virtual_ptr : public detail::virtual_ptr_impl<Class, Policy> {
             }
         }
 
-        typename impl::vptr_type static_vptr;
-
-        if constexpr (impl::is_indirect) {
-            static_vptr = &Policy::template static_vptr<other_type>;
-        } else {
-            static_vptr = Policy::template static_vptr<other_type>;
-        }
-
-        return virtual_ptr(std::forward<Other>(obj), static_vptr);
+        return virtual_ptr(
+            std::forward<Other>(obj), Policy::template static_vptr<other_type>);
     }
 
     auto vptr() const {
-        if constexpr (impl::is_indirect) {
-            return *this->vp;
-        } else {
-            return this->vp;
-        }
+        return this->vp;
     }
 };
 
@@ -896,7 +876,7 @@ method<Name(Parameters...), ReturnType, Policy>::vptr(const ArgType& arg) const
     } else if constexpr (detail::has_vptr<ArgType>::value) {
         if constexpr (std::is_same_v<
                           decltype(arg.boost_openmethod_vptr),
-                          indirect_vptr_type>) {
+                          const vptr_type*>) {
             return *arg.boost_openmethod_vptr;
         } else {
             return arg.boost_openmethod_vptr;

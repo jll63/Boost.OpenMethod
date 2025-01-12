@@ -186,7 +186,7 @@ BOOST_OPENMETHOD(poke, (virtual_<Animal&>), void, policy);
 struct Cat : Animal, set_vptr<Cat, policy> {};
 
 struct Indirect : set_vptr<Indirect, indirect_policy> {
-    indirect_vptr_type boost_openmethod_vptr;
+    const vptr_type* boost_openmethod_vptr;
 };
 
 BOOST_OPENMETHOD(whatever, (virtual_<Indirect&>), void, indirect_policy);

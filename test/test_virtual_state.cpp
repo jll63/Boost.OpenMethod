@@ -10,6 +10,7 @@
 #define BOOST_TEST_MODULE openmethod
 #include <boost/test/included/unit_test.hpp>
 
+#include <boost/core/demangle.hpp>
 #include <boost/utility/identity_type.hpp>
 
 #include <boost/openmethod.hpp>
@@ -46,20 +47,19 @@ struct direct_vector_policy : policies::default_::fork<direct_vector_policy> {};
 struct indirect_vector_policy
     : policies::default_::fork<indirect_vector_policy>::replace<
           policies::vptr,
-          policies::vptr_vector<indirect_vector_policy, indirect_vptr_type>> {};
+          policies::vptr_vector<
+              indirect_vector_policy, policies::indirect_extern_vptr>> {};
 
 struct direct_map_policy
     : policies::default_::fork<direct_map_policy>::replace<
-          policies::vptr,
-          policies::vptr_map<
-              direct_map_policy, std::unordered_map<type_id, vptr_type>>> {};
+          policies::vptr, policies::vptr_map<direct_map_policy>> {};
 
 struct indirect_map_policy
     : policies::default_::fork<indirect_map_policy>::replace<
           policies::vptr,
           policies::vptr_map<
-              indirect_map_policy,
-              std::unordered_map<type_id, indirect_vptr_type>>> {};
+              indirect_map_policy, policies::indirect_extern_vptr>> {};
+static_assert(indirect_map_policy::is_indirect);
 
 using test_policies = boost::mp11::mp_list<
     direct_vector_policy, indirect_vector_policy, direct_map_policy,
@@ -243,16 +243,31 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_unique_ptr_ctors, Policy, test_policies) {
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(indirect_virtual_ptr, Policy, test_policies) {
+    BOOST_TEST_MESSAGE(
+        "Policy = " << boost::core::demangle(typeid(Policy).name()));
+
     init_test<Policy>();
 
     Dog dog;
     virtual_ptr<Dog, Policy> p(dog);
+
+    BOOST_TEST_MESSAGE("After first call to initialize:");
+    BOOST_TEST_MESSAGE("p.vptr() = " << p.vptr());
+    BOOST_TEST_MESSAGE(
+        "static_vptr<Dog> = " << Policy::template static_vptr<Dog>);
     BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
 
+    // Add a class, to make sure dispatch data is not re-constructed in the same
+    // place with the same values:
     struct Cat : Animal {};
     BOOST_OPENMETHOD_CLASSES(Animal, Cat, Policy);
 
     init_test<Policy>();
+
+    BOOST_TEST_MESSAGE("After second call to initialize:");
+    BOOST_TEST_MESSAGE("p.vptr() = " << p.vptr());
+    BOOST_TEST_MESSAGE(
+        "static_vptr<Dog> = " << Policy::template static_vptr<Dog>);
 
     if constexpr (Policy::is_indirect) {
         BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);

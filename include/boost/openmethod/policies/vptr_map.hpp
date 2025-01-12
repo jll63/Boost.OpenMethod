@@ -15,14 +15,23 @@ namespace boost {
 namespace openmethod {
 namespace policies {
 
-template<class Policy, class Map = std::unordered_map<type_id, vptr_type>>
-struct vptr_map : virtual extern_vptr {
+template<
+    class Policy, class Base = extern_vptr,
+    class Map = std::unordered_map<
+        type_id,
+        std::conditional_t<
+            std::is_base_of_v<indirect_extern_vptr, Base>, const vptr_type*,
+            vptr_type>>>
+struct vptr_map : virtual Base {
+    static_assert(std::is_base_of_v<extern_vptr, Base>);
+    static constexpr bool is_indirect =
+        std::is_base_of_v<indirect_extern_vptr, Base>;
     static_assert(
         std::is_same_v<typename Map::mapped_type, vptr_type> ||
-        std::is_same_v<typename Map::mapped_type, indirect_vptr_type>);
-
-    static constexpr bool is_indirect =
-        std::is_same_v<typename Map::mapped_type, indirect_vptr_type>;
+        std::is_same_v<typename Map::mapped_type, const vptr_type*>);
+    static_assert(
+        std::is_same_v<typename Map::mapped_type, const vptr_type*> ==
+        is_indirect);
 
     static Map vptrs;
 
@@ -42,7 +51,7 @@ struct vptr_map : virtual extern_vptr {
     }
 
     template<class Class>
-    static auto dynamic_vptr(const Class& arg) {
+    static auto dynamic_vptr(const Class& arg) -> const vptr_type& {
         auto type = Policy::dynamic_type(arg);
         auto iter = vptrs.find(type);
 
@@ -58,12 +67,16 @@ struct vptr_map : virtual extern_vptr {
             }
         }
 
-        return iter->second;
+        if constexpr (is_indirect) {
+            return *iter->second;
+        } else {
+            return iter->second;
+        }
     }
 };
 
-template<class Policy, class Map>
-Map vptr_map<Policy, Map>::vptrs;
+template<class Policy, class Base, class Map>
+Map vptr_map<Policy, Base, Map>::vptrs;
 
 } // namespace policies
 } // namespace openmethod

@@ -44,13 +44,12 @@ auto fight_bear(VirtualWarriorPtr, VirtualAxePtr, VirtualBearPtr) {
     return "kill bear";
 }
 
-template<int Name>
-struct indirect_test_policy : test_policy_<Name> {
-    static constexpr bool use_indirect_method_pointers = true;
+template<int N>
+struct indirect_test_policy : test_policy_<N> {
 };
 
-template<int Name>
-using policy_types = types<test_policy_<Name>, indirect_test_policy<Name>>;
+template<int N>
+using policy_types = types<test_policy_<N>, indirect_test_policy<N>>;
 
 struct BOOST_OPENMETHOD_NAME(poke);
 struct BOOST_OPENMETHOD_NAME(fight);
@@ -73,7 +72,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
 
     using vptr_player = virtual_ptr<Player, Policy>;
     static_assert(detail::is_virtual_ptr<vptr_player>);
-    using vptr_cat = virtual_ptr<Bear, Policy>;
+    using vptr_bear = virtual_ptr<Bear, Policy>;
 
     Player player;
     auto virtual_player = vptr_player::final(player);
@@ -82,24 +81,25 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
         (virtual_player.vptr() == Policy::template static_vptr<Player>));
 
     Bear bear;
-    BOOST_TEST((&*vptr_cat::final(bear)) == &bear);
+    BOOST_TEST((&*vptr_bear::final(bear)) == &bear);
     BOOST_TEST(
-        (vptr_cat::final(bear).vptr() == Policy::template static_vptr<Bear>));
+        (vptr_bear::final(bear).vptr() == Policy::template static_vptr<Bear>));
 
     BOOST_TEST(
         (vptr_player(bear).vptr() == Policy::template static_vptr<Bear>));
 
-    vptr_cat virtual_cat_ptr(bear);
-    vptr_player virtual_player_ptr = virtual_cat_ptr;
+    vptr_bear virtual_bear_ptr(bear);
+    vptr_player virtual_player_ptr = virtual_bear_ptr;
 
     struct upcast {
         static void fn(vptr_player) {
         }
     };
 
-    upcast::fn(virtual_cat_ptr);
+    upcast::fn(virtual_bear_ptr);
 
     auto data = Policy::dispatch_data.data();
+    std::fill_n(data, Policy::dispatch_data.size(), 0);
 
     while (data == Policy::dispatch_data.data()) {
         Policy::dispatch_data.resize(2 * Policy::dispatch_data.size());
@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
     initialize<Policy>();
 
     BOOST_TEST(
-        (virtual_cat_ptr.vptr() == Policy::template static_vptr<Bear>) ==
+        (virtual_bear_ptr.vptr() == Policy::template static_vptr<Bear>) ==
         Policy::template has_facet<policies::indirect_vptr>);
 }
 } // namespace BOOST_OPENMETHOD_GENSYM

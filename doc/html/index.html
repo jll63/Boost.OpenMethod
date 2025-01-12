@@ -582,41 +582,86 @@ pre.rouge .gs {
 </li>
 <li><a href="#tutorial_reference">Reference</a>
 <ul class="sectlevel2">
+<li><a href="#BOOST_OPENMETHOD">Macro BOOST_OPENMETHOD</a>
+<ul class="sectlevel3">
+<li><a href="#ref_synopsis">Synopsis</a></li>
+<li><a href="#ref_description">Description</a></li>
+<li><a href="#ref_effects">Effects</a></li>
+</ul>
+</li>
+<li><a href="#BOOST_OPENMETHOD_OVERRIDE">BOOST_OPENMETHOD_OVERRIDE</a>
+<ul class="sectlevel3">
+<li><a href="#ref_synopsis_2">Synopsis</a></li>
+<li><a href="#ref_description_2">Description</a></li>
+</ul>
+</li>
+<li><a href="#BOOST_OPENMETHOD_INLINE_OVERRIDE">BOOST_OPENMETHOD_INLINE_OVERRIDE(NAME, (PARAMETERS&#8230;&#8203;), RETURN_TYPE)</a>
+<ul class="sectlevel3">
+<li><a href="#ref_synopsis_3">Synopsis</a></li>
+<li><a href="#ref_description_3">Description</a></li>
+</ul>
+</li>
+<li><a href="#BOOST_OPENMETHOD_REGISTER">BOOST_OPENMETHOD_REGISTER</a>
+<ul class="sectlevel3">
+<li><a href="#ref_synopsis_4">Synopsis</a></li>
+<li><a href="#ref_description_4">Description</a></li>
+</ul>
+</li>
+<li><a href="#BOOST_OPENMETHOD_CLASSES">BOOST_OPENMETHOD_CLASSES(CLASSES&#8230;&#8203;[, POLICY])</a>
+<ul class="sectlevel3">
+<li><a href="#ref_synopsis_5">Synopsis</a></li>
+<li><a href="#ref_description_5">Description</a></li>
+</ul>
+</li>
+<li><a href="#BOOST_OPENMETHOD_DEFAULT_POLICY">BOOST_OPENMETHOD_DEFAULT_POLICY</a>
+<ul class="sectlevel3">
+<li><a href="#ref_description_6">Description</a></li>
+</ul>
+</li>
+<li><a href="#BOOST_OPENMETHOD_NAME">Macro BOOST_OPENMETHOD_NAME(NAME)</a>
+<ul class="sectlevel3">
+<li><a href="#ref_synopsis_6">Synopsis</a></li>
+<li><a href="#ref_description_7">Description</a></li>
+<li><a href="#BOOST_OPENMETHOD_OVERRIDERS">Synopsis</a></li>
+<li><a href="#ref_description_8">Description</a></li>
+</ul>
+</li>
+<li><a href="#ref_boost_openmethod_overriders">BOOST_OPENMETHOD_OVERRIDERS</a></li>
 <li><a href="#method">method&lt;Name(Parameters&#8230;&#8203;), ReturnType, Policy&gt;</a>
 <ul class="sectlevel3">
-<li><a href="#ref_description">Description</a></li>
-<li><a href="#ref_synopsis">Synopsis</a></li>
+<li><a href="#ref_description_9">Description</a></li>
+<li><a href="#ref_synopsis_7">Synopsis</a></li>
 <li><a href="#ref_members">Members</a></li>
 <li><a href="#ref_constructor">Constructor</a></li>
 <li><a href="#ref_destructor">Destructor</a></li>
 <li><a href="#ref_static_member_variables">Static Member Variables</a></li>
 </ul>
 </li>
-<li><a href="#method_override">Class Template method::override</a>
+<li><a href="#method_override">method::override</a>
 <ul class="sectlevel3">
-<li><a href="#ref_description_2">Description</a></li>
-<li><a href="#ref_constructor_2">Constructor</a></li>
-<li><a href="#ref_destructor_2">Destructor</a></li>
+<li><a href="#ref_synopsis_8">Synopsis</a></li>
+<li><a href="#ref_description_10">Description</a></li>
+<li><a href="#ref_members_2">Members</a></li>
 </ul>
 </li>
-<li><a href="#ref_virtual_t">virtual_&lt;T&gt;</a>
+<li><a href="#ref_virtual">virtual_</a>
 <ul class="sectlevel3">
-<li><a href="#ref_description_3">Description</a></li>
-<li><a href="#ref_synopsis_2">Synopsis</a></li>
+<li><a href="#ref_synopsis_9">Synopsis</a></li>
+<li><a href="#ref_description_11">Description</a></li>
 </ul>
 </li>
 <li><a href="#ref_virtual_traitsclass_policy">virtual_traits&lt;Class, Policy&gt;</a>
 <ul class="sectlevel3">
-<li><a href="#virtual_traits_description">Description</a></li>
-<li><a href="#virtual_traits_synopsis">Synopsis</a></li>
-<li><a href="#virtual_traits_members">Members</a></li>
-<li><a href="#virtual_traits_specializations">Specializations</a></li>
+<li><a href="#ref_synopsis_10">Synopsis</a></li>
+<li><a href="#ref_description_12">Description</a></li>
+<li><a href="#ref_members_3">Members</a></li>
+<li><a href="#ref_specializations">Specializations</a></li>
 </ul>
 </li>
 <li><a href="#virtual_ptr">virtual_ptr&lt;Class, Policy&gt;</a>
 <ul class="sectlevel3">
-<li><a href="#virtual_ptr_description">Description</a></li>
 <li><a href="#virtual_ptr_synopsis">Synopsis</a></li>
+<li><a href="#virtual_ptr_description">Description</a></li>
 <li><a href="#virtual_ptr_members">Members</a></li>
 <li><a href="#virtual_ptr_deduction_guides">Deduction guides</a></li>
 <li><a href="#virtual_ptr_free_aliases">Free Aliases</a></li>
@@ -625,184 +670,157 @@ pre.rouge .gs {
 </li>
 <li><a href="#virtual_ptr_virtual_ptr_traitsclass_policy">virtual_ptr_traits&lt;Class, Policy&gt;</a>
 <ul class="sectlevel3">
-<li><a href="#virtual_ptr_traits_description">Description</a></li>
-<li><a href="#virtual_ptr_traits_synopsis">Synopsis</a></li>
-<li><a href="#virtual_ptr_traits_members">Members</a></li>
-<li><a href="#virtual_ptr_traits_specializations">Specializations</a></li>
+<li><a href="#virtual_ptr_description_2">Description</a></li>
+<li><a href="#virtual_ptr_synopsis_2">Synopsis</a></li>
+<li><a href="#virtual_ptr_members_2">Members</a></li>
+<li><a href="#virtual_ptr_specializations">Specializations</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_traits_abstract_policy">abstract_policy</a>
+<li><a href="#virtual_ptr_abstract_policy">abstract_policy</a>
 <ul class="sectlevel3">
-<li><a href="#virtual_ptr_traits_description_2">Description</a></li>
-<li><a href="#virtual_ptr_traits_synopsis_2">Synopsis</a></li>
+<li><a href="#virtual_ptr_synopsis_3">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_3">Description</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_traits_basic_domainpolicy">basic_domain&lt;Policy&gt;</a>
+<li><a href="#virtual_ptr_basic_domain">basic_domain</a>
 <ul class="sectlevel3">
-<li><a href="#virtual_ptr_traits_description_3">Description</a></li>
-<li><a href="#virtual_ptr_traits_synopsis_3">Synopsis</a></li>
-<li><a href="#virtual_ptr_traits_members_2">Members</a></li>
+<li><a href="#virtual_ptr_synopsis_4">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_4">Description</a></li>
+<li><a href="#virtual_ptr_members_3">Members</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_traits_basic_policypolicy_facets">basic_policy&lt;Policy, Facets&#8230;&#8203;&gt;</a>
+<li><a href="#virtual_ptr_basic_policy">basic_policy</a>
 <ul class="sectlevel3">
-<li><a href="#virtual_ptr_traits_description_4">Description</a></li>
-<li><a href="#virtual_ptr_traits_synopsis_4">Synopsis</a></li>
-<li><a href="#virtual_ptr_traits_members_3">Members</a></li>
+<li><a href="#virtual_ptr_synopsis_5">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_5">Description</a></li>
+<li><a href="#virtual_ptr_members_4">Members</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_traits_facet_error_handler">Facet error_handler</a>
+<li><a href="#virtual_ptr_rtti">rtti</a>
 <ul class="sectlevel3">
-<li><a href="#virtual_ptr_traits_synopsis_5">Synopsis</a></li>
-<li><a href="#virtual_ptr_traits_description_5">Description</a></li>
-<li><a href="#virtual_ptr_traits_requirements">Requirements</a></li>
-<li><a href="#virtual_ptr_traits_implementations">Implementations</a></li>
+<li><a href="#virtual_ptr_synopsis_6">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_6">Description</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_traits_class_template_vectored_error_handler">Class template vectored_error_handler</a>
+<li><a href="#virtual_ptr_std_rtti">std_rtti</a>
 <ul class="sectlevel3">
-<li><a href="#virtual_ptr_traits_synopsis_6">Synopsis</a></li>
-<li><a href="#virtual_ptr_traits_description_6">Description</a></li>
-<li><a href="#virtual_ptr_traits_static_member_functions">Static Member Functions</a></li>
+<li><a href="#virtual_ptr_synopsis_7">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_7">Description</a></li>
+<li><a href="#virtual_ptr_member_functions">Member Functions</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_traits_class_throw_error_handler">Class throw_error_handler</a>
+<li><a href="#virtual_ptr_deferred_static_rtti">deferred_static_rtti</a>
 <ul class="sectlevel3">
-<li><a href="#virtual_ptr_traits_synopsis_7">Synopsis</a></li>
-<li><a href="#virtual_ptr_traits_static_member_functions_2">Static Member Functions</a></li>
+<li><a href="#virtual_ptr_synopsis_8">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_8">Description</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_traits_policiesvptr">policies::vptr</a>
+<li><a href="#virtual_ptr_minimal_rtti">minimal_rtti</a>
 <ul class="sectlevel3">
-<li><a href="#facets_vptrsynopsis">Synopsis</a></li>
-<li><a href="#facets_vptrdescription">Description</a></li>
-<li><a href="#facets_vptrrequirements">Requirements</a></li>
+<li><a href="#virtual_ptr_synopsis_9">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_9">Description</a></li>
+<li><a href="#virtual_ptr_members_5">Members</a></li>
 </ul>
 </li>
-<li><a href="#facets_vptrfacet_class_extern_vptr">Facet Class extern_vptr</a>
+<li><a href="#virtual_ptr_policiesvptr">policies::vptr</a>
 <ul class="sectlevel3">
-<li><a href="#facets_vptrrequirements_2">Requirements</a></li>
+<li><a href="#virtual_ptr_synopsis_10">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_10">Description</a></li>
+<li><a href="#virtual_ptr_requirements">Requirements</a></li>
 </ul>
 </li>
-<li><a href="#facets_vptrclass_vptr_vector">Class vptr_vector</a>
+<li><a href="#virtual_ptr_extern_vptr">extern_vptr</a>
 <ul class="sectlevel3">
-<li><a href="#facets_vptrsynopsis_2">Synopsis</a></li>
-<li><a href="#facets_vptrdescription_2">Description</a></li>
-<li><a href="#facets_vptrmember_functions">Member Functions</a></li>
+<li><a href="#virtual_ptr_synopsis_11">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_11">Description</a></li>
+<li><a href="#virtual_ptr_requirements_2">Requirements</a></li>
 </ul>
 </li>
-<li><a href="#facets_vptrclass_vptr_map">Class vptr_map</a>
+<li><a href="#virtual_ptr_extern_vptr_2">extern_vptr</a>
 <ul class="sectlevel3">
-<li><a href="#facets_vptrsynopsis_3">Synopsis</a></li>
-<li><a href="#facets_vptrdescription_3">Description</a></li>
-<li><a href="#facets_vptrmember_functions_2">Member Functions</a></li>
+<li><a href="#virtual_ptr_synopsis_12">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_12">Description</a></li>
 </ul>
 </li>
-<li><a href="#facets_vptrfacet_rtti">Facet rtti</a>
+<li><a href="#virtual_ptr_vptr_vector">vptr_vector</a>
 <ul class="sectlevel3">
-<li><a href="#facets_vptrsynopsis_4">Synopsis</a></li>
-<li><a href="#facets_vptrrequirements_3">Requirements</a></li>
+<li><a href="#virtual_ptr_synopsis_13">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_13">Description</a></li>
+<li><a href="#virtual_ptr_members_6">Members</a></li>
 </ul>
 </li>
-<li><a href="#facets_vptrclass_std_rtti">Class std_rtti</a>
+<li><a href="#virtual_ptr_vptr_map">vptr_map</a>
 <ul class="sectlevel3">
-<li><a href="#facets_vptrsynopsis_5">Synopsis</a></li>
-<li><a href="#facets_vptrmember_functions_3">Member Functions</a></li>
+<li><a href="#virtual_ptr_synopsis_14">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_14">Description</a></li>
+<li><a href="#virtual_ptr_members_7">Members</a></li>
 </ul>
 </li>
-<li><a href="#facets_vptrfacet_deferred_static_rtti">Facet deferred_static_rtti</a>
+<li><a href="#virtual_ptr_type_hash">type_hash</a>
 <ul class="sectlevel3">
-<li><a href="#facets_vptrsynopsis_6">Synopsis</a></li>
-<li><a href="#facets_vptrdescription_4">Description</a></li>
-<li><a href="#facets_vptrimplementations">Implementations</a></li>
+<li><a href="#virtual_ptr_synopsis_15">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_15">Description</a></li>
+<li><a href="#virtual_ptr_requirements_3">Requirements</a></li>
+<li><a href="#virtual_ptr_hash_type_id">hash_type_id</a></li>
 </ul>
 </li>
-<li><a href="#facets_vptrfacet_class_minimal_rtti">Facet Class minimal_rtti</a>
+<li><a href="#virtual_ptr_fast_perfect_hash">fast_perfect_hash</a>
 <ul class="sectlevel3">
-<li><a href="#facets_vptrsynopsis_7">Synopsis</a></li>
-<li><a href="#facets_vptrdescription_5">Description</a></li>
-<li><a href="#facets_vptrstatic_member_functions">Static member functions</a></li>
+<li><a href="#virtual_ptr_synopsis_16">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_16">Description</a></li>
+<li><a href="#virtual_ptr_members_8">Members</a></li>
 </ul>
 </li>
-<li><a href="#facets_vptrfacet_error_output">Facet error_output</a>
+<li><a href="#virtual_ptr_error_handler">error_handler</a>
 <ul class="sectlevel3">
-<li><a href="#facets_vptrsynopsis_8">Synopsis</a></li>
-<li><a href="#facets_vptrrequirements_4">Requirements</a></li>
+<li><a href="#virtual_ptr_synopsis_17">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_17">Description</a></li>
+<li><a href="#virtual_ptr_implementations">Implementations</a></li>
 </ul>
 </li>
-<li><a href="#facets_vptrbasic_error_outputpolicy_stream">basic_error_output&lt;Policy, Stream&gt;</a>
+<li><a href="#virtual_ptr_vectored_error_handler">vectored_error_handler</a>
 <ul class="sectlevel3">
-<li><a href="#facets_vptrdescription_6">Description</a></li>
-<li><a href="#facets_vptrsynopsis_9">Synopsis</a></li>
-<li><a href="#facets_vptrstatic_member_variables">Static Member Variables</a></li>
+<li><a href="#virtual_ptr_synopsis_18">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_18">Description</a></li>
+<li><a href="#virtual_ptr_members_9">Members</a></li>
 </ul>
 </li>
-<li><a href="#facets_vptrfacet_trace_output">Facet trace_output</a>
+<li><a href="#virtual_ptr_throw_error_handler">throw_error_handler</a>
 <ul class="sectlevel3">
-<li><a href="#facets_vptrsynopsis_10">Synopsis</a></li>
-<li><a href="#facets_vptrdescription_7">Description</a></li>
-<li><a href="#facets_vptrrequirements_5">Requirements</a></li>
+<li><a href="#virtual_ptr_synopsis_19">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_19">Description</a></li>
+<li><a href="#virtual_ptr_static_member_functions">Static Member Functions</a></li>
 </ul>
 </li>
-<li><a href="#facets_vptrbasic_trace_outputpolicy_stream">basic_trace_output&lt;Policy, Stream&gt;</a>
+<li><a href="#virtual_ptr_error_output">error_output</a>
 <ul class="sectlevel3">
-<li><a href="#facets_vptrdescription_8">Description</a></li>
-<li><a href="#facets_vptrsynopsis_11">Synopsis</a></li>
-<li><a href="#facets_vptrmembers">Members</a></li>
+<li><a href="#virtual_ptr_synopsis_20">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_20">Description</a></li>
 </ul>
 </li>
-<li><a href="#BOOST_OPENMETHOD">Macro BOOST_OPENMETHOD</a>
+<li><a href="#virtual_ptr_basic_error_output">basic_error_output</a>
 <ul class="sectlevel3">
-<li><a href="#facets_vptrdescription_9">Description</a></li>
-<li><a href="#facets_vptrsynopsis_12">Synopsis</a></li>
-<li><a href="#facets_vptreffects">Effects</a></li>
+<li><a href="#virtual_ptr_synopsis_21">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_21">Description</a></li>
+<li><a href="#virtual_ptr_members_10">Members</a></li>
 </ul>
 </li>
-<li><a href="#BOOST_OPENMETHOD_OVERRIDE">BOOST_OPENMETHOD_OVERRIDE</a>
+<li><a href="#virtual_ptr_trace_output">trace_output</a>
 <ul class="sectlevel3">
-<li><a href="#facets_vptrdescription_10">Description</a></li>
-<li><a href="#facets_vptrsynopsis_13">Synopsis</a></li>
-<li><a href="#facets_vptreffects_2">Effects</a></li>
+<li><a href="#virtual_ptr_synopsis_22">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_22">Description</a></li>
 </ul>
 </li>
-<li><a href="#BOOST_OPENMETHOD_INLINE_OVERRIDE">BOOST_OPENMETHOD_INLINE_OVERRIDE(NAME, (PARAMETERS&#8230;&#8203;), RETURN_TYPE)</a>
+<li><a href="#virtual_ptr_basic_trace_output">basic_trace_output</a>
 <ul class="sectlevel3">
-<li><a href="#facets_vptrsynopsis_14">Synopsis</a></li>
+<li><a href="#virtual_ptr_synopsis_23">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_23">Description</a></li>
+<li><a href="#virtual_ptr_members_11">Members</a></li>
 </ul>
 </li>
-<li><a href="#BOOST_OPENMETHOD_REGISTER">BOOST_OPENMETHOD_REGISTER</a>
+<li><a href="#virtual_ptr_restrictedoutputstream">RestrictedOutputStream</a>
 <ul class="sectlevel3">
-<li><a href="#facets_vptrdescription_11">Description</a></li>
-<li><a href="#facets_vptrsynopsis_15">Synopsis</a></li>
-</ul>
-</li>
-<li><a href="#BOOST_OPENMETHOD_CLASSES">BOOST_OPENMETHOD_CLASSES(CLASSES&#8230;&#8203;[, POLICY])</a>
-<ul class="sectlevel3">
-<li><a href="#facets_vptrdescription_12">Description</a></li>
-<li><a href="#facets_vptrsynopsis_16">Synopsis</a></li>
-</ul>
-</li>
-<li><a href="#BOOST_OPENMETHOD_DEFAULT_POLICY">BOOST_OPENMETHOD_DEFAULT_POLICY</a>
-<ul class="sectlevel3">
-<li><a href="#facets_vptrdescription_13">Description</a></li>
-</ul>
-</li>
-<li><a href="#BOOST_OPENMETHOD_NAME">Macro BOOST_OPENMETHOD_NAME(NAME)</a>
-<ul class="sectlevel3">
-<li><a href="#facets_vptrdescription_14">Description</a></li>
-<li><a href="#facets_vptrsynopsis_17">Synopsis</a></li>
-<li><a href="#BOOST_OPENMETHOD_OVERRIDERS">Description</a></li>
-</ul>
-</li>
-<li><a href="#facets_vptrboost_openmethod_overriders">BOOST_OPENMETHOD_OVERRIDERS</a>
-<ul class="sectlevel3">
-<li><a href="#facets_vptrsynopsis_18">Synopsis</a></li>
-</ul>
-</li>
-<li><a href="#facets_vptrconcept_restrictedoutputstream">Concept RestrictedOutputStream</a>
-<ul class="sectlevel3">
-<li><a href="#facets_vptrdescription_15">Description</a></li>
-<li><a href="#facets_vptrrequirements_6">Requirements</a></li>
+<li><a href="#virtual_ptr_description_24">Description</a></li>
 </ul>
 </li>
 </ul>
@@ -1367,7 +1385,8 @@ name can get tedious, so OpenMethod provides a macro for that:</p>
 </span>
 <span class="k">class</span> <span class="nf">BOOST_OPENMETHOD_NAME</span><span class="p">(</span><span class="n">poke</span><span class="p">);</span>
 
-<span class="k">using</span> <span class="n">poke</span> <span class="o">=</span> <span class="n">method</span><span class="o">&lt;</span><span class="n">BOOST_OPENMETHOD_NAME</span><span class="p">(</span><span class="n">poke</span><span class="p">)(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span><span class="p">),</span> <span class="kt">void</span><span class="o">&gt;</span><span class="p">;</span></code></pre>
+<span class="k">using</span> <span class="n">poke</span> <span class="o">=</span> <span class="n">method</span><span class="o">&lt;</span>
+    <span class="n">BOOST_OPENMETHOD_NAME</span><span class="p">(</span><span class="n">poke</span><span class="p">)(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span><span class="p">),</span> <span class="kt">void</span><span class="o">&gt;</span><span class="p">;</span></code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -1605,7 +1624,7 @@ is a tweak of <code>policies::release</code>:</p>
 </div>
 </div>
 <div class="paragraph">
-<p><code>boost::openmethod::policies::default_</code> is an alias to the <code>release</code> or the
+<p><code>boost::openmethod::default_policy</code> is an alias to the <code>release</code> or the
 <code>debug</code> policy, depending on the value of preprocessor symbols <code>NDEBUG</code>. The
 default policy can be overriden by defining the macroprocessor symbol
 <code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> <em>before</em> including
@@ -1644,7 +1663,7 @@ error to <code>stderr</code> in the <code>debug</code> policy, and does nothing 
     <span class="k">namespace</span> <span class="n">bom</span> <span class="o">=</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="p">;</span>
     <span class="n">bom</span><span class="o">::</span><span class="n">initialize</span><span class="p">();</span>
 
-    <span class="n">bom</span><span class="o">::</span><span class="n">policies</span><span class="o">::</span><span class="n">default_</span><span class="o">::</span><span class="n">set_error_handler</span><span class="p">([](</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="n">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">bom</span><span class="o">::</span><span class="n">default_policy</span><span class="o">::</span><span class="n">set_error_handler</span><span class="p">([](</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="n">error</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">std</span><span class="o">::</span><span class="n">visit</span><span class="p">([](</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">arg</span><span class="p">)</span> <span class="p">{</span> <span class="k">throw</span> <span class="n">arg</span><span class="p">;</span> <span class="p">},</span> <span class="n">error</span><span class="p">);</span>
     <span class="p">});</span>
 
@@ -1681,7 +1700,7 @@ facet implementaion.</p>
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">bom</span> <span class="o">=</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="p">;</span>
 
 <span class="k">struct</span> <span class="nc">throwing_policy</span>
-    <span class="o">:</span> <span class="n">bom</span><span class="o">::</span><span class="n">policies</span><span class="o">::</span><span class="n">default_</span><span class="o">::</span><span class="n">fork</span><span class="o">&lt;</span><span class="n">throwing_policy</span><span class="o">&gt;::</span><span class="n">replace</span><span class="o">&lt;</span>
+    <span class="o">:</span> <span class="n">bom</span><span class="o">::</span><span class="n">default_policy</span><span class="o">::</span><span class="n">fork</span><span class="o">&lt;</span><span class="n">throwing_policy</span><span class="o">&gt;::</span><span class="n">replace</span><span class="o">&lt;</span>
           <span class="n">bom</span><span class="o">::</span><span class="n">policies</span><span class="o">::</span><span class="n">error_handler</span><span class="p">,</span> <span class="n">bom</span><span class="o">::</span><span class="n">policies</span><span class="o">::</span><span class="n">throw_error</span><span class="o">&gt;</span> <span class="p">{};</span>
 
 <span class="n">BOOST_OPENMETHOD_CLASSES</span><span class="p">(</span><span class="n">Animal</span><span class="p">,</span> <span class="n">Cat</span><span class="p">,</span> <span class="n">Dog</span><span class="p">,</span> <span class="n">throwing_policy</span><span class="p">);</span>
@@ -2017,13 +2036,313 @@ reading the type information until <code>initialize</code> is called.</p>
 <h2 id="tutorial_reference">Reference</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="method">method&lt;Name(Parameters&#8230;&#8203;), ReturnType, Policy&gt;</h3>
+<h3 id="BOOST_OPENMETHOD">Macro BOOST_OPENMETHOD</h3>
+<div class="sect3">
+<h4 id="ref_synopsis">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/macros.hpp&gt;.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD</span><span class="p">(</span><span class="n">NAME</span><span class="p">,</span> <span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...),</span> <span class="n">RETURN_TYPE</span> <span class="p">[,</span> <span class="n">POLICY</span><span class="p">]);</span></code></pre>
+</div>
+</div>
+</div>
 <div class="sect3">
 <h4 id="ref_description">Description</h4>
+<div class="paragraph">
+<p>Declares a method.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="ref_effects">Effects</h4>
+<div class="paragraph">
+<p>The macro expands to several constructs, the most important of which is an
+inline function called <code>NAME</code>, with a formal parameter list that consists of the
+types listed in <code>PARAMETERS</code>, stripped from any <code>virtual_</code> decorator
+(<code>virtual_ptr</code>s are preserved), and returning a <code>RETURN_TYPE</code>.</p>
+</div>
+<div class="paragraph">
+<p>The function creates additional entities:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A <code>struct</code> forward declaration that acts as the method&#8217;s identifier:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nf">BOOST_OPENMETHOD_NAME</span><span class="p">(</span><span class="n">NAME</span><span class="p">);</span></code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A guide function used to match overriders with the method:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">auto</span> <span class="n">BOOST_OPENMETHOD_NAME</span><span class="p">(</span><span class="n">NAME</span><span class="p">)</span><span class="n">_guide</span><span class="p">(...)</span>
+    <span class="o">-&gt;</span> <span class="o">::</span><span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">method</span><span class="o">&lt;</span>
+        <span class="n">BOOST_OPENMETHOD_NAME</span><span class="p">(</span><span class="n">NAME</span><span class="p">)(</span><span class="n">PARAMETERS</span><span class="p">...),</span> <span class="n">RETURN_TYPE</span> <span class="p">[,</span> <span class="n">POLICY</span><span class="p">]</span><span class="o">&gt;</span><span class="p">;</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BOOST_OPENMETHOD_OVERRIDE">BOOST_OPENMETHOD_OVERRIDE</h3>
+<div class="sect3">
+<h4 id="ref_synopsis_2">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/macros.hpp&gt;.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span><span class="n">NAME</span><span class="p">,</span> <span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...),</span> <span class="n">RETURN_TYPE</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// body</span>
+<span class="p">}</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">using</span> <span class="n">method_type</span> <span class="o">=</span> <span class="k">decltype</span><span class="p">(</span><span class="n">BOOST_OPENMETHOD_NAME</span><span class="p">(</span><span class="n">NAME</span><span class="p">)</span><span class="n">_guide</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">A</span><span class="o">&gt;</span><span class="p">()...))</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="ref_description_2">Description</h4>
+<div class="paragraph">
+<p><code>BOOST_OPENMETHOD_OVERRIDE</code> adds an overrider to a method.</p>
+</div>
+<div class="paragraph">
+<p>The method is deduced from a call to a method guide function with the
+overrider&#8217;s arguments.</p>
+</div>
+<div class="paragraph">
+<p>The macro creates several entities in the current scope.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A class template that acts as a container for the overriders of the methods
+called <code>NAME</code>:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="o">...</span><span class="p">&gt;</span> <span class="n">BOOST_OPENMETHOD_OVERRIDERS</span><span class="p">(</span><span class="n">NAME</span><span class="p">);</span></code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A specialization of the container template for the overrider:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">BOOST_OPENMETHOD_OVERRIDERS</span><span class="p">(</span><span class="n">NAME</span><span class="p">)</span><span class="o">&lt;</span><span class="n">RETURN_TYPE</span><span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...)</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="k">auto</span> <span class="n">fn</span><span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...)</span> <span class="o">-&gt;</span> <span class="n">RETURN_TYPE</span><span class="p">;</span>
+    <span class="k">static</span> <span class="k">auto</span> <span class="n">has_next</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="p">;</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="o">...</span> <span class="nc">Args</span><span class="p">&gt;</span>
+    <span class="k">static</span> <span class="k">auto</span> <span class="n">next</span><span class="p">(</span><span class="k">typename</span><span class="p">...</span> <span class="n">Args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RETURN_TYPE</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="n">where</span><span class="o">:</span>
+
+<span class="o">*</span> <span class="err">`</span><span class="n">fn</span><span class="err">`</span> <span class="n">is</span> <span class="n">the</span> <span class="n">overrider</span> <span class="n">function</span><span class="p">.</span>
+
+<span class="o">*</span> <span class="err">`</span><span class="n">has_next</span><span class="p">()</span><span class="err">`</span> <span class="n">returns</span> <span class="err">`</span><span class="nb">true</span><span class="err">`</span> <span class="k">if</span> <span class="n">a</span> <span class="n">less</span> <span class="n">specialized</span> <span class="n">overrider</span> <span class="n">exists</span><span class="p">.</span>
+
+<span class="o">*</span> <span class="err">`</span><span class="n">next</span><span class="p">(</span><span class="n">Args</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span><span class="err">`</span> <span class="n">calls</span> <span class="n">the</span> <span class="n">next</span> <span class="n">most</span> <span class="n">specialized</span> <span class="n">overrider</span> <span class="n">via</span> <span class="n">the</span>
+<span class="n">pointer</span> <span class="n">stored</span> <span class="n">in</span> <span class="n">the</span> <span class="n">method</span><span class="err">'</span><span class="n">s</span> <span class="err">`</span><span class="n">next</span><span class="o">&lt;</span><span class="n">fn</span><span class="o">&gt;</span><span class="err">`</span> <span class="n">member</span> <span class="n">variable</span><span class="p">.</span>
+
+<span class="n">Finally</span><span class="p">,</span> <span class="n">the</span> <span class="n">macro</span> <span class="n">starts</span> <span class="n">the</span> <span class="n">definition</span> <span class="n">of</span> <span class="n">the</span> <span class="n">overrider</span> <span class="n">function</span><span class="o">:</span>
+
+<span class="err">```</span><span class="n">c</span><span class="o">++</span>
+<span class="k">auto</span> <span class="n">BOOST_OPENMETHOD_OVERRIDERS</span><span class="p">(</span><span class="n">NAME</span><span class="p">)</span><span class="o">&lt;</span><span class="n">RETURN_TYPE</span><span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...)</span><span class="o">&gt;</span>
+<span class="o">::</span><span class="n">fn</span><span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...)</span> <span class="o">-&gt;</span> <span class="n">RETURN_TYPE</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The block following the call to the macro is the body of the function.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BOOST_OPENMETHOD_INLINE_OVERRIDE">BOOST_OPENMETHOD_INLINE_OVERRIDE(NAME, (PARAMETERS&#8230;&#8203;), RETURN_TYPE)</h3>
+<div class="sect3">
+<h4 id="ref_synopsis_3">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/macros.hpp&gt;.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_INLINE_OVERRIDE</span><span class="p">(</span><span class="n">NAME</span><span class="p">,</span> <span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...),</span> <span class="n">RETURN_TYPE</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// body</span>
+<span class="p">}</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="ref_description_3">Description</h4>
+<div class="paragraph">
+<p><code>BOOST_OPENMETHOD_INLINE_OVERRIDE</code> performs the same function as
+<code>BOOST_OPENMETHOD_OVERRIDE</code>, except that the overrider is defined inline.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BOOST_OPENMETHOD_REGISTER">BOOST_OPENMETHOD_REGISTER</h3>
+<div class="sect3">
+<h4 id="ref_synopsis_4">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/macros/register.hpp&gt;.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="ref_description_4">Description</h4>
+<div class="paragraph">
+<p>Creates a static instance of <code>TYPE</code>, using a unique generated name.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_REGISTER</span><span class="p">(</span><span class="n">TYPE</span><span class="p">);</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BOOST_OPENMETHOD_CLASSES">BOOST_OPENMETHOD_CLASSES(CLASSES&#8230;&#8203;[, POLICY])</h3>
+<div class="sect3">
+<h4 id="ref_synopsis_5">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/macros.hpp&gt;.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_CLASSES</span><span class="p">(</span><span class="n">CLASSES</span><span class="p">...[,</span> <span class="n">POLICY</span><span class="p">]);</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="ref_description_5">Description</h4>
+<div class="paragraph">
+<p>Register <code>CLASSES</code> in POLICY. If <code>POLICY</code> is not specified, use the default
+policy.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+The default policy is the value of <code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> at
+the point <code>&lt;boost/openmethod/core.hpp&gt;</code> is included. Changing the value of this
+symbol has no effect after that point.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>This macro is a wrapper around <code>use_classes</code>; see its documentation for more
+details.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BOOST_OPENMETHOD_DEFAULT_POLICY">BOOST_OPENMETHOD_DEFAULT_POLICY</h3>
+<div class="sect3">
+<h4 id="ref_description_6">Description</h4>
+<div class="paragraph">
+<p>The name of the default policy.</p>
+</div>
+<div class="paragraph">
+<p><code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> is the default value for the <code>Policy</code> template
+parameter of <code>method</code>, <code>use_classes</code>, and other constructs defined in
+<code>&lt;boost/openmethod/core.hpp&gt;</code>. If it is not defined,
+<code>::boost::openmethod::policy::default_policy</code> is used.</p>
+</div>
+<div class="paragraph">
+<p><code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> can be defined by a program to change the
+default policy globally. Once <code>&lt;boost/openmethod/core.hpp&gt;</code> has been included,
+redefining the symbol has no effect. To override the default policy, proceed as
+follows:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Include headers under <code>boost/openmethod/policies/</code> as needed.</p>
+</li>
+<li>
+<p>Create a policy class, and set <code>BOOST_OPENMETHOD_DEFAULT_POLICY</code>.</p>
+</li>
+<li>
+<p>Include <code>&lt;boost/openmethod/core.hpp&gt;</code>.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BOOST_OPENMETHOD_NAME">Macro BOOST_OPENMETHOD_NAME(NAME)</h3>
+<div class="sect3">
+<h4 id="ref_synopsis_6">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/macros/name.hpp&gt;.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="cp">#define BOOST_OPENMETHOD_NAME(NAME) boost_openmethod_#NAME</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="ref_description_7">Description</h4>
+<div class="paragraph">
+<p>Generate a long name from a short name, hopefully avoiding conflicts with
+user-defined names.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="BOOST_OPENMETHOD_OVERRIDERS">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/macros.hpp&gt;.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="cp">#define BOOST_OPENMETHOD_OVERRIDERS(NAME)                                      \
+    BOOST_PP_CAT(BOOST_OPENMETHOD_NAME(NAME), _overriders)</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="ref_description_8">Description</h4>
+<div class="paragraph">
+<p><code>BOOST_OPENMETHOD_OVERRIDERS</code> expands to the name of the class template that
+contains the overriders for all the methods with a given name.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ref_boost_openmethod_overriders">BOOST_OPENMETHOD_OVERRIDERS</h3>
+
+</div>
+<div class="sect2">
+<h3 id="method">method&lt;Name(Parameters&#8230;&#8203;), ReturnType, Policy&gt;</h3>
+<div class="sect3">
+<h4 id="ref_description_9">Description</h4>
 
 </div>
 <div class="sect3">
-<h4 id="ref_synopsis">Synopsis</h4>
+<h4 id="ref_synopsis_7">Synopsis</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span> <span class="p">{</span>
@@ -2184,11 +2503,9 @@ overrider that would be called for the same tuple of virtual arguments if
 </div>
 </div>
 <div class="sect2">
-<h3 id="method_override">Class Template method::override</h3>
-<div class="paragraph">
-<p><code>boost::openmethod::method::override</code> - A class that adds an overrider to an
-open-method.</p>
-</div>
+<h3 id="method_override">method::override</h3>
+<div class="sect3">
+<h4 id="ref_synopsis_8">Synopsis</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
@@ -2205,24 +2522,12 @@ open-method.</p>
 <span class="p">}</span></code></pre>
 </div>
 </div>
-<hr>
-<div class="sect3">
-<h4 id="ref_description_2">Description</h4>
-<div class="paragraph">
-<p><strong>Template Parameters</strong></p>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Functions</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Functions to add as overriders of method.</p></td>
-</tr>
-</tbody>
-</table>
+<div class="sect3">
+<h4 id="ref_description_10">Description</h4>
+<div class="paragraph">
+<p><code>boost::openmethod::method::override</code> adds an overrider to an open-method.</p>
+</div>
 <div class="paragraph">
 <p><code>override</code> must be instantiated as a <strong>static</strong> object.</p>
 </div>
@@ -2253,10 +2558,11 @@ or, if it is a polymorphic type, covariant with the method&#8217;s return type.<
 </li>
 </ul>
 </div>
-<hr>
 </div>
 <div class="sect3">
-<h4 id="ref_constructor_2">Constructor</h4>
+<h4 id="ref_members_2">Members</h4>
+<div class="sect4">
+<h5 id="ref_constructor_2">Constructor</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="n">method</span><span class="o">&lt;</span><span class="n">Signature</span><span class="p">,</span> <span class="n">ReturnType</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;::</span><span class="k">override</span><span class="o">&lt;</span><span class="n">Functions</span><span class="o">&gt;::</span><span class="k">override</span><span class="p">();</span></code></pre>
@@ -2265,10 +2571,9 @@ or, if it is a polymorphic type, covariant with the method&#8217;s return type.<
 <div class="paragraph">
 <p>Add <em>Functions</em> to the overriders of <code>method</code>.</p>
 </div>
-<hr>
 </div>
-<div class="sect3">
-<h4 id="ref_destructor_2">Destructor</h4>
+<div class="sect4">
+<h5 id="ref_destructor_2">Destructor</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="n">method</span><span class="o">&lt;</span><span class="n">Signature</span><span class="p">,</span> <span class="n">ReturnType</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;::</span><span class="k">override</span><span class="o">&lt;</span><span class="n">Functions</span><span class="o">&gt;::~</span><span class="n">method</span><span class="p">();</span></code></pre>
@@ -2279,19 +2584,11 @@ or, if it is a polymorphic type, covariant with the method&#8217;s return type.<
 </div>
 </div>
 </div>
+</div>
 <div class="sect2">
-<h3 id="ref_virtual_t">virtual_&lt;T&gt;</h3>
+<h3 id="ref_virtual">virtual_</h3>
 <div class="sect3">
-<h4 id="ref_description_3">Description</h4>
-<div class="paragraph">
-<p>Marks a formal parameter of a method as virtual. Requires a specialization of
-<code>virtual_traits</code> for <code>T</code> and the <code>Policy</code> of the method. Specializations for
-<code>T&amp;</code>, <code>T&amp;&amp;</code>, <code>std::shared_ptr&lt;T&gt;</code> and <code>const std::shared_ptr&lt;T&gt;&amp;</code> are provided.
-See the documentation of <code>virtual_traits</code> for more information.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="ref_synopsis_2">Synopsis</h4>
+<h4 id="ref_synopsis_9">Synopsis</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="c1">// &lt;boost/openmethod/core.hpp&gt;</span>
@@ -2305,26 +2602,26 @@ See the documentation of <code>virtual_traits</code> for more information.</p>
 </div>
 </div>
 </div>
+<div class="sect3">
+<h4 id="ref_description_11">Description</h4>
+<div class="paragraph">
+<p>Marks a formal parameter of a method as virtual. Requires a specialization of
+<code>virtual_traits</code> for <code>T</code> and the <code>Policy</code> of the method. Specializations for
+<code>T&amp;</code>, <code>T&amp;&amp;</code>, <code>std::shared_ptr&lt;T&gt;</code> and <code>const std::shared_ptr&lt;T&gt;&amp;</code> are provided.
+See the documentation of <code>virtual_traits</code> for more information.</p>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="ref_virtual_traitsclass_policy">virtual_traits&lt;Class, Policy&gt;</h3>
 <div class="sect3">
-<h4 id="virtual_traits_description">Description</h4>
+<h4 id="ref_synopsis_10">Synopsis</h4>
 <div class="paragraph">
-<p><code>virtual_traits</code> is used by <code>method</code> to handle formal parameters, and by
-<code>method::fn</code> to handle arguments.</p>
+<p>Defined in &lt;boost/openmethod/core.hpp&gt;.</p>
 </div>
-<div class="paragraph">
-<p><code>method</code> requires a specialization of <code>virtual_traits</code> for <code>T</code> and the <code>Policy</code></p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="virtual_traits_synopsis">Synopsis</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="c1">// &lt;boost/openmethod/core.hpp&gt;</span>
-
-<span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span> <span class="p">{</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span> <span class="p">{</span>
 
 <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Policy</span><span class="p">&gt;</span>
 <span class="k">struct</span> <span class="nc">virtual_traits</span> <span class="p">{</span>
@@ -2341,9 +2638,19 @@ See the documentation of <code>virtual_traits</code> for more information.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_traits_members">Members</h4>
+<h4 id="ref_description_12">Description</h4>
+<div class="paragraph">
+<p><code>virtual_traits</code> is used by <code>method</code> to handle formal parameters, and by
+<code>method::fn</code> to handle arguments.</p>
+</div>
+<div class="paragraph">
+<p><code>method</code> requires a specialization of <code>virtual_traits</code> for <code>T</code> and the <code>Policy</code></p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="ref_members_3">Members</h4>
 <div class="sect4">
-<h5 id="virtual_traits_virtual_type">virtual_type</h5>
+<h5 id="ref_virtual_type">virtual_type</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">using</span> <span class="n">virtual_type</span> <span class="o">=</span> <span class="p">...;</span></code></pre>
@@ -2376,7 +2683,7 @@ participate in overrider selection.</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="virtual_traits_rarg">rarg</h5>
+<h5 id="ref_rarg">rarg</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">static</span> <span class="k">auto</span> <span class="n">rarg</span><span class="p">(</span><span class="n">T</span> <span class="n">arg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">...;</span></code></pre>
@@ -2393,7 +2700,7 @@ is guaranteed to be a read-only operation.</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="virtual_traits_cast">cast</h5>
+<h5 id="ref_cast">cast</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Derived</span><span class="p">&gt;</span>
@@ -2410,7 +2717,7 @@ will use <code>virtual_traits</code> to cast a <code>Animal&amp;</code> to a <co
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_traits_specializations">Specializations</h4>
+<h4 id="ref_specializations">Specializations</h4>
 <div class="paragraph">
 <p>Specializations are provided for:</p>
 </div>
@@ -2449,19 +2756,6 @@ will use <code>virtual_traits</code> to cast a <code>Animal&amp;</code> to a <co
 </div>
 <div class="sect2">
 <h3 id="virtual_ptr">virtual_ptr&lt;Class, Policy&gt;</h3>
-<div class="sect3">
-<h4 id="virtual_ptr_description">Description</h4>
-<div class="paragraph">
-<p><code>virtual_ptr</code> is a fat pointer that combines a pointer to an object and a
-pointer to its v-table.</p>
-</div>
-<div class="paragraph">
-<p><code>Class</code> must be a class registered in <code>Policy</code>; or a smart pointer to such a
-class, in which case template class <code>virtual_ptr_traits</code> must be specialized for
-<code>Class</code>. Specializations for <code>std::unique_ptr</code> and <code>std::shared_ptr</code> are
-provided; see the documentation of <code>virtual_ptr_traits</code> for more information.</p>
-</div>
-</div>
 <div class="sect3">
 <h4 id="virtual_ptr_synopsis">Synopsis</h4>
 <div class="paragraph">
@@ -2533,6 +2827,19 @@ provided; see the documentation of <code>virtual_ptr_traits</code> for more info
 
 <span class="p">}</span> <span class="c1">// namespace boost::openmethod</span></code></pre>
 </div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_description">Description</h4>
+<div class="paragraph">
+<p><code>virtual_ptr</code> is a fat pointer that combines a pointer to an object and a
+pointer to its v-table.</p>
+</div>
+<div class="paragraph">
+<p><code>Class</code> must be a class registered in <code>Policy</code>; or a smart pointer to such a
+class, in which case template class <code>virtual_ptr_traits</code> must be specialized for
+<code>Class</code>. Specializations for <code>std::unique_ptr</code> and <code>std::shared_ptr</code> are
+provided; see the documentation of <code>virtual_ptr_traits</code> for more information.</p>
 </div>
 </div>
 <div class="sect3">
@@ -2816,19 +3123,20 @@ the class, which needs not be polymorphic.</p>
 <div class="sect2">
 <h3 id="virtual_ptr_virtual_ptr_traitsclass_policy">virtual_ptr_traits&lt;Class, Policy&gt;</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_traits_description">Description</h4>
+<h4 id="virtual_ptr_description_2">Description</h4>
 <div class="paragraph">
 <p><code>virtual_ptr_traits</code> is a class template used by <code>virtual_ptr</code> to manipulate the
 pointer to the object.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_traits_synopsis">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_2">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/core.hpp&gt;</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="c1">// &lt;boost/openmethod/core.hpp&gt;</span>
-
-<span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span> <span class="p">{</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span> <span class="p">{</span>
 
 <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Policy</span><span class="p">&gt;</span>
 <span class="k">struct</span> <span class="nc">virtual_ptr_traits</span> <span class="p">{</span>
@@ -2848,9 +3156,9 @@ pointer to the object.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_traits_members">Members</h4>
+<h4 id="virtual_ptr_members_2">Members</h4>
 <div class="sect4">
-<h5 id="virtual_ptr_traits_is_smart_ptr">is_smart_ptr</h5>
+<h5 id="virtual_ptr_is_smart_ptr_2">is_smart_ptr</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">static</span> <span class="kt">bool</span> <span class="k">constexpr</span> <span class="n">is_smart_ptr</span> <span class="o">=</span> <span class="p">...;</span></code></pre>
@@ -2861,7 +3169,7 @@ pointer to the object.</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="virtual_ptr_traits_element_type">element_type</h5>
+<h5 id="virtual_ptr_element_type_2">element_type</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">using</span> <span class="n">element_type</span> <span class="o">=</span> <span class="p">...;</span></code></pre>
@@ -2873,7 +3181,7 @@ otherwise, it is the class of the object pointed to.</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="virtual_ptr_traits_dynamic_type">dynamic_type</h5>
+<h5 id="virtual_ptr_dynamic_type">dynamic_type</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">static</span> <span class="k">auto</span> <span class="n">dynamic_type</span><span class="p">(</span><span class="k">const</span> <span class="n">Class</span><span class="o">&amp;</span> <span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">type_id</span><span class="p">;</span></code></pre>
@@ -2884,7 +3192,7 @@ otherwise, it is the class of the object pointed to.</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="virtual_ptr_traits_cast">cast</h5>
+<h5 id="virtual_ptr_cast_2">cast</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Other</span><span class="p">&gt;</span>
@@ -2900,9 +3208,9 @@ pointer of the same kind (e.g. <code>std::shared_ptr&lt;Animal&gt;</code> and
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_traits_specializations">Specializations</h4>
+<h4 id="virtual_ptr_specializations">Specializations</h4>
 <div class="sect4">
-<h5 id="virtual_ptr_traits_virtual_ptr_traitsstdshared_ptrclass_policy">virtual_ptr_traits&lt;std::shared_ptr&lt;Class&gt;, Policy&gt;</h5>
+<h5 id="virtual_ptr_virtual_ptr_traitsstdshared_ptrclass_policy">virtual_ptr_traits&lt;std::shared_ptr&lt;Class&gt;, Policy&gt;</h5>
 <div class="paragraph">
 <p>Defined in <code>&lt;boost/openmethod/virtual_shared_ptr.hpp&gt;</code>.</p>
 </div>
@@ -2935,7 +3243,7 @@ pointer of the same kind (e.g. <code>std::shared_ptr&lt;Animal&gt;</code> and
 </div>
 </div>
 <div class="sect4">
-<h5 id="virtual_ptr_traits_virtual_ptr_traitsstdunique_ptrclass_policy">virtual_ptr_traits&lt;std::unique_ptr&lt;Class&gt;, Policy&gt;</h5>
+<h5 id="virtual_ptr_virtual_ptr_traitsstdunique_ptrclass_policy">virtual_ptr_traits&lt;std::unique_ptr&lt;Class&gt;, Policy&gt;</h5>
 <div class="paragraph">
 <p>Defined in <code>&lt;boost/openmethod/virtual_unique_ptr.hpp&gt;</code>.</p>
 </div>
@@ -2982,17 +3290,9 @@ pointer of the same kind (e.g. <code>std::shared_ptr&lt;Animal&gt;</code> and
 </div>
 </div>
 <div class="sect2">
-<h3 id="virtual_ptr_traits_abstract_policy">abstract_policy</h3>
+<h3 id="virtual_ptr_abstract_policy">abstract_policy</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_traits_description_2">Description</h4>
-<div class="paragraph">
-<p><code>abstract_policy</code> is a required base class for a policy. It makes it possible
-for meta-functions such as <code>use_classes</code> to discriminate between user classes
-and the (optional) policy class.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="virtual_ptr_traits_synopsis_2">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_3">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/core.hpp&gt;.</p>
 </div>
@@ -3006,18 +3306,19 @@ and the (optional) policy class.</p>
 </div>
 </div>
 </div>
+<div class="sect3">
+<h4 id="virtual_ptr_description_3">Description</h4>
+<div class="paragraph">
+<p><code>abstract_policy</code> is a required base class for a policy. It makes it possible
+for meta-functions such as <code>use_classes</code> to discriminate between user classes
+and the (optional) policy class.</p>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="virtual_ptr_traits_basic_domainpolicy">basic_domain&lt;Policy&gt;</h3>
+<h3 id="virtual_ptr_basic_domain">basic_domain</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_traits_description_3">Description</h4>
-<div class="paragraph">
-<p><code>basic_domain</code> is a registry of classes and methods registered in a <em>Policy</em>,
-and their dispatch tables.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="virtual_ptr_traits_synopsis_3">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_4">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/core.hpp&gt;.</p>
 </div>
@@ -3036,9 +3337,16 @@ and their dispatch tables.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_traits_members_2">Members</h4>
+<h4 id="virtual_ptr_description_4">Description</h4>
+<div class="paragraph">
+<p><code>basic_domain</code> is a registry of classes and methods registered in a <em>Policy</em>,
+and their dispatch tables.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_members_3">Members</h4>
 <div class="sect4">
-<h5 id="virtual_ptr_traits_static_vptr">static_vptr</h5>
+<h5 id="virtual_ptr_static_vptr">static_vptr</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
@@ -3052,24 +3360,9 @@ and their dispatch tables.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="virtual_ptr_traits_basic_policypolicy_facets">basic_policy&lt;Policy, Facets&#8230;&#8203;&gt;</h3>
+<h3 id="virtual_ptr_basic_policy">basic_policy</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_traits_description_4">Description</h4>
-<div class="paragraph">
-<p><code>basic_policy</code> implements a policy, which consists of a a collection of methods,
-classes, dispatch data, and facets, which specify how to obtain a pointer to a
-v-table from an object, how to report errors, whether to perform runtime sanity
-checks, etc.</p>
-</div>
-<div class="paragraph">
-<p>Some of these functionalities require static variables local to the policy.
-Forthis reason, <code>basic_policy</code> uses the CRTP pattern to provide ensure that two
-different policies - and the facets they contain - get their own copies of the
-static state.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="virtual_ptr_traits_synopsis_4">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_5">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/core.hpp&gt;.</p>
 </div>
@@ -3102,9 +3395,24 @@ static state.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_traits_members_3">Members</h4>
+<h4 id="virtual_ptr_description_5">Description</h4>
+<div class="paragraph">
+<p><code>basic_policy</code> implements a policy, which consists of a a collection of methods,
+classes, dispatch data, and facets, which specify how to obtain a pointer to a
+v-table from an object, how to report errors, whether to perform runtime sanity
+checks, etc.</p>
+</div>
+<div class="paragraph">
+<p>Some of these functionalities require static variables local to the policy.
+Forthis reason, <code>basic_policy</code> uses the CRTP pattern to provide ensure that two
+different policies - and the facets they contain - get their own copies of the
+static state.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_members_4">Members</h4>
 <div class="sect4">
-<h5 id="virtual_ptr_traits_has_facet">has_facet</h5>
+<h5 id="virtual_ptr_has_facet">has_facet</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Facet</span><span class="p">&gt;</span>
@@ -3116,7 +3424,7 @@ static state.</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="virtual_ptr_traits_fork">fork</h5>
+<h5 id="virtual_ptr_fork">fork</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">NewPolicy</span><span class="p">&gt;</span>
@@ -3131,7 +3439,7 @@ the original.</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="virtual_ptr_traits_add">add</h5>
+<h5 id="virtual_ptr_add">add</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span><span class="o">...</span> <span class="nc">MoreFacets</span><span class="p">&gt;</span>
@@ -3144,7 +3452,7 @@ of facets. The original policy and the new one share static variables.</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="virtual_ptr_traits_replace">replace</h5>
+<h5 id="virtual_ptr_replace">replace</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Base</span><span class="p">,</span> <span class="k">class</span> <span class="nc">NewFacet</span><span class="p">&gt;</span>
@@ -3161,7 +3469,7 @@ in that case, the new policy contains the same facet as the original one.</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="virtual_ptr_traits_remove">remove</h5>
+<h5 id="virtual_ptr_remove">remove</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Base</span><span class="p">&gt;</span>
@@ -3180,565 +3488,25 @@ new policy contains the same facet as the original one.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="virtual_ptr_traits_facet_error_handler">Facet error_handler</h3>
-<div class="paragraph">
-<p><code>error_handler</code> - A facet that handles errors.</p>
-</div>
+<h3 id="virtual_ptr_rtti">rtti</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_traits_synopsis_5">Synopsis</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">policies</span> <span class="p">{</span>
-
-<span class="k">struct</span> <span class="nc">error_handler</span> <span class="p">{};</span>
-
-<span class="p">}}}</span></code></pre>
-</div>
-</div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="virtual_ptr_traits_description_5">Description</h4>
+<h4 id="virtual_ptr_synopsis_6">Synopsis</h4>
 <div class="paragraph">
-<p>When an error is encountered, either during <code>initialize</code> or method dispatch, the
-program is terminated via a call to <code>abort</code>. If this facet is present in the
-policy, its <code>error</code> function is called with an error object. It can prevent termination by throwing an exception.</p>
+<p>Defined in &lt;boost/openmethod/policies/core.hpp&gt;.</p>
 </div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="virtual_ptr_traits_requirements">Requirements</h4>
-<div class="paragraph">
-<p>Implementations of <code>error_handler</code> must provide the following functions:</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>template&lt;class T&gt; static auto error(const T&amp;) &#8594; void</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>A function template that takes an error object.</p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="virtual_ptr_traits_implementations">Implementations</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>throw_error_handler</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Throws the error object as an exception.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>vectored_error_handler</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Calls an error handler via a <code>std::function</code>, which
-defaults to printing a description of the error to <code>stderr</code>. Included in the
-<code>debug</code> policy.</p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="virtual_ptr_traits_class_template_vectored_error_handler">Class template vectored_error_handler</h3>
-<div class="paragraph">
-<p><code>throw_error_handler</code> - An implementation of the <code>error_handler</code> facet that
-calls a function, which can be customized, to handle the error.</p>
-</div>
-<div class="sect3">
-<h4 id="virtual_ptr_traits_synopsis_6">Synopsis</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">policies</span> <span class="p">{</span>
-
-<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Policy</span><span class="p">&gt;</span>
-<span class="k">class</span> <span class="nc">vectored_error_handler</span> <span class="o">:</span> <span class="k">public</span> <span class="k">virtual</span> <span class="n">error_handler</span> <span class="p">{</span>
-  <span class="nl">public:</span>
-    <span class="k">using</span> <span class="n">error_variant</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span>
-        <span class="n">openmethod_error</span><span class="p">,</span> <span class="n">not_implemented_error</span><span class="p">,</span> <span class="n">unknown_class_error</span><span class="p">,</span> <span class="n">hash_search_error</span><span class="p">,</span>
-        <span class="n">method_table_error</span><span class="p">,</span> <span class="n">static_slot_error</span><span class="p">,</span> <span class="n">static_stride_error</span><span class="o">&gt;</span><span class="p">;</span>
-    <span class="k">using</span> <span class="n">function_type</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="k">const</span> <span class="n">error_variant</span><span class="o">&amp;</span> <span class="n">error</span><span class="p">)</span><span class="o">&gt;</span><span class="p">;</span>
-
-    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Error</span><span class="p">&gt;</span>
-    <span class="k">static</span> <span class="k">auto</span> <span class="n">error</span><span class="p">(</span><span class="k">const</span> <span class="n">Error</span><span class="o">&amp;</span> <span class="n">error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">;</span>
-    <span class="k">static</span> <span class="k">auto</span> <span class="n">set_error_handler</span><span class="p">(</span><span class="n">error_handler_type</span> <span class="n">handler</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">function_type</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="p">}}}</span></code></pre>
-</div>
-</div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="virtual_ptr_traits_description_6">Description</h4>
-<div class="paragraph">
-<p><strong>Template Parameters</strong></p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Policy</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The policy containing the facet.</p></td>
-</tr>
-</tbody>
-</table>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="virtual_ptr_traits_static_member_functions">Static Member Functions</h4>
-<div class="sect4">
-<h5 id="virtual_ptr_traits_error">error</h5>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Error</span><span class="p">&gt;</span>
-<span class="k">static</span> <span class="k">auto</span> <span class="n">error</span><span class="p">(</span><span class="k">const</span> <span class="n">Error</span><span class="o">&amp;</span> <span class="n">error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">;</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Calls the function last set via <code>set_error_handler</code> or, if it was never called,
-and if <em>Policy</em> contains an <code>error_output</code> facet, use it to print a description
-of <code>error</code>.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="virtual_ptr_traits_error_2">error</h5>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">static</span> <span class="k">auto</span> <span class="n">set_error_handler</span><span class="p">(</span><span class="n">function_type</span> <span class="n">handler</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">function_type</span><span class="p">;</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Sets <code>handler</code> as the function to call in case of error.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="virtual_ptr_traits_class_throw_error_handler">Class throw_error_handler</h3>
-<div class="paragraph">
-<p><code>throw_error_handler</code> - An implementation of the <code>error_handler</code> facet that throws the error as an exception.</p>
-</div>
-<div class="sect3">
-<h4 id="virtual_ptr_traits_synopsis_7">Synopsis</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">policies</span> <span class="p">{</span>
-
-<span class="k">struct</span> <span class="nc">throw_error_handler</span> <span class="o">:</span> <span class="k">virtual</span> <span class="n">error_handler</span> <span class="p">{</span>
-    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Error</span><span class="p">&gt;</span>
-    <span class="p">[[</span><span class="n">noreturn</span><span class="p">]]</span> <span class="k">static</span> <span class="k">auto</span> <span class="n">error</span><span class="p">(</span><span class="k">const</span> <span class="n">Error</span><span class="o">&amp;</span> <span class="n">error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="p">}}}</span></code></pre>
-</div>
-</div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="virtual_ptr_traits_static_member_functions_2">Static Member Functions</h4>
-<div class="sect4">
-<h5 id="virtual_ptr_traits_error_3">error</h5>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Error</span><span class="p">&gt;</span>
-<span class="p">[[</span><span class="n">noreturn</span><span class="p">]]</span> <span class="k">static</span> <span class="k">auto</span> <span class="n">error</span><span class="p">(</span><span class="k">const</span> <span class="n">Error</span><span class="o">&amp;</span> <span class="n">error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">;</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Throws <code>error</code>.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="virtual_ptr_traits_policiesvptr">policies::vptr</h3>
-<div class="paragraph">
-<p><code>vptr</code> - A facet that provides a pointer to the v-table for an object.</p>
-</div>
-<div class="sect3">
-<h4 id="facets_vptrsynopsis">Synopsis</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">vptr</span> <span class="p">{};</span></code></pre>
-</div>
-</div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="facets_vptrdescription">Description</h4>
-<div class="paragraph">
-<p>OpenMethod implements method dispatch in a way similar to native virtual
-function dispatch: for each virtual argument, fetch a pointer to the dispatch
-data (known as the v-table), and use it to select a pointer to a function.
-OpenMethod v-tables contain pointers to functions for unary methods, and, for
-multi-methods, pointers to, and coordinates in, a multi-dimensional table of
-pointers to functions.</p>
-</div>
-<div class="paragraph">
-<p>The <code>vptr</code> facet is used during method call to fetch the vptr for virtual
-arguments corresponding to the <code>virtual_</code> parameters in the method
-declaration. It is also used by the constructor of <code>virtual_ptr</code> to obtain a
-vptr on the basis of an object&#8217;s dynamic type.</p>
-</div>
-<div class="paragraph">
-<p><code>virtual_ptr::final</code>, and the related convenience functions, assume that the
-static and dynamic types of their argument are the same. The vptr is obtained
-statically from the policy&#8217;s <code>static_vptr&lt;Class&gt;</code> member. It is conceivable
-to organize an entire program around the "final" constructs; thus, the <code>vptr</code>
-facet is optional.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="facets_vptrrequirements">Requirements</h4>
-<div class="paragraph">
-<p>An implementation of <code>vptr</code> must provide the following static function template:</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><em>facet</em>::dynamic_vptr(obj)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>return the address of the v-table for <code>obj</code></p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="facets_vptrfacet_class_extern_vptr">Facet Class extern_vptr</h3>
-<div class="paragraph">
-<p><code>extern_vptr</code> is a specialization of <code>vptr</code> that stores vptrs outside of the
-objects. If present, it provides a <code>register_vptrs</code> function, called by
-<code>initalize</code> to register the vptrs.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">extern_vptr</span> <span class="o">:</span> <span class="k">virtual</span> <span class="n">vptr</span> <span class="p">{};</span></code></pre>
-</div>
-</div>
-<div class="sect3">
-<h4 id="facets_vptrrequirements_2">Requirements</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><em>facet</em>::register_vptrs(first, last)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>register the vptrs</p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
-<div class="sect4">
-<h5 id="facets_vptrregister_vptrs">register_vptrs</h5>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">ForwardIterator</span><span class="p">&gt;</span>
-<span class="k">auto</span> <span class="n">register_vptrs</span><span class="p">(</span><span class="n">ForwardIterator</span> <span class="n">first</span><span class="p">,</span> <span class="n">ForwardIterator</span> <span class="n">last</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">;</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p><code>ForwardIterator</code> is a forward iterator over a range of objects that contain
-information about the type ids and the vptr of a registered class. They have the
-following member functions:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">auto</span> <span class="n">type_id_begin</span><span class="p">()</span> <span class="k">const</span> <span class="o">-&gt;</span> <span class="n">type_id_forward_iterator</span><span class="p">;</span>
-<span class="k">auto</span> <span class="n">type_id_end</span><span class="p">()</span> <span class="k">const</span> <span class="o">-&gt;</span> <span class="n">type_id_forward_iterator</span><span class="p">;</span>
-<span class="k">auto</span> <span class="n">vptr</span><span class="p">()</span> <span class="k">const</span> <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">vptr_type</span><span class="o">&amp;</span><span class="p">;</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p><code>type_id_begin</code> and <code>type_id_end</code> return iterators delimiting a range of
-`type_id`s for the class.</p>
-</div>
-<div class="paragraph">
-<p><code>vptr</code> returns a <em>reference</em> to a <em>static</em> variable containing a pointer to the
-v-table for a registered class. Its value is set by <code>initialize</code>. While the
-value of the variable changes with each call to <code>initialize</code>, the variable
-itself remains the same.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="facets_vptrclass_vptr_vector">Class vptr_vector</h3>
-<div class="paragraph">
-<p><code>vptr_vector</code> - An implementation of <code>external_vptr that stores the pointers to
-the v-tables in a `std::vector</code>.</p>
-</div>
-<div class="sect3">
-<h4 id="facets_vptrsynopsis_2">Synopsis</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">policies</span> <span class="p">{</span>
-
-<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Policy</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">VptrType</span> <span class="o">=</span> <span class="n">direct_vptr_type</span><span class="p">&gt;</span>
-<span class="k">struct</span> <span class="nc">vptr_vector</span> <span class="o">:</span> <span class="k">virtual</span> <span class="n">extern_vptr</span> <span class="p">{</span>
-    <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">VptrType</span><span class="o">&gt;</span> <span class="n">vptrs</span><span class="p">;</span>
-
-    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">ForwardIterator</span><span class="p">&gt;</span>
-    <span class="k">static</span> <span class="k">auto</span> <span class="n">register_vptrs</span><span class="p">(</span><span class="n">ForwardIterator</span> <span class="n">first</span><span class="p">,</span> <span class="n">ForwardIterator</span> <span class="n">last</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">;</span>
-
-    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
-    <span class="k">static</span> <span class="k">auto</span> <span class="n">dynamic_vptr</span><span class="p">(</span><span class="k">const</span> <span class="n">Class</span><span class="o">&amp;</span> <span class="n">arg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">vptr_type</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="p">}}}</span></code></pre>
-</div>
-</div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="facets_vptrdescription_2">Description</h4>
-<div class="paragraph">
-<p><strong>Template Parameters</strong></p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Policy</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The policy containing the facet.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>VptrType</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Either direct_vptr_type or indirect_vptr_type.</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p><code>vptr_vector</code> stores the addresses of the v-tables for the classes registered in
-<em>Policy</em> in a vector, either as straight pointers, or as pointers to pointers.
-The latter makes it possible for <code>virtual_ptr</code>s to remain valid after a
-call to <code>initialize</code>, thus allowing dynamically loaded shared libraries to add methods, classes and overriders to a domain.</p>
-</div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="facets_vptrmember_functions">Member Functions</h4>
-<div class="sect4">
-<h5 id="facets_vptrregister_vptrs_2">register_vptrs</h5>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">ForwardIterator</span><span class="p">&gt;</span>
-<span class="k">auto</span> <span class="n">register_vptrs</span><span class="p">(</span><span class="n">ForwardIterator</span> <span class="n">first</span><span class="p">,</span> <span class="n">ForwardIterator</span> <span class="n">last</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">;</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Stores the pointers to the v-tables in a vector, indexed by the (possibly hashed)
-`type_id`s.</p>
-</div>
-<div class="paragraph">
-<p>If <code>Policy</code> contains a <code>type_hash</code> facet, call its <code>hash_initialize</code>
-function.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="facets_vptrdynamic_vptr">dynamic_vptr</h5>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
-<span class="k">auto</span> <span class="n">dynamic_vptr</span><span class="p">(</span><span class="k">const</span> <span class="n">Class</span><span class="o">&amp;</span> <span class="n">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">vptr_type</span><span class="p">;</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Returns a pointer to the v-table for <code>object</code>.</p>
-</div>
-<div class="paragraph">
-<p>Calls <code>dynamic_type</code> to obtain a <code>type_id</code> for <code>object</code>. If <em>Policy</em>
-contains a <code>type_hash</code> facet, uses it to convert the resulting <code>type_id</code> to an
-index; otherwise, uses the <code>type_id</code> as the index.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="facets_vptrclass_vptr_map">Class vptr_map</h3>
-<div class="paragraph">
-<p><code>vptr_map</code> - An implementation of `external_vptr that stores the pointers to
-the v-tables in a map.</p>
-</div>
-<div class="sect3">
-<h4 id="facets_vptrsynopsis_3">Synopsis</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">policies</span> <span class="p">{</span>
-
-<span class="cp">### Synopsis
-</span>
-<span class="k">template</span><span class="o">&lt;</span>
-    <span class="k">class</span> <span class="nc">Policy</span><span class="p">,</span>
-    <span class="k">class</span> <span class="nc">Map</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">unordered_map</span><span class="o">&lt;</span><span class="n">type_id</span><span class="p">,</span> <span class="n">vptr_type</span><span class="p">&gt;</span><span class="o">&gt;</span>
-<span class="k">struct</span> <span class="nc">vptr_map</span> <span class="o">:</span> <span class="k">virtual</span> <span class="n">extern_vptr</span> <span class="p">{</span>
-    <span class="k">static</span> <span class="n">Map</span> <span class="n">vptrs</span><span class="p">;</span>
-
-    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">ForwardIterator</span><span class="p">&gt;</span>
-    <span class="k">static</span> <span class="k">auto</span> <span class="n">register_vptrs</span><span class="p">(</span><span class="n">ForwardIterator</span> <span class="n">first</span><span class="p">,</span> <span class="n">ForwardIterator</span> <span class="n">last</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">;</span>
-
-    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
-    <span class="k">static</span> <span class="k">auto</span> <span class="n">dynamic_vptr</span><span class="p">(</span><span class="k">const</span> <span class="n">Class</span><span class="o">&amp;</span> <span class="n">arg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">vptr_type</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="p">}}}</span></code></pre>
-</div>
-</div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="facets_vptrdescription_3">Description</h4>
-<div class="paragraph">
-<p><strong>Template Parameters</strong></p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Policy</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The policy containing the facet.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Map</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">A map from <code>type_id</code> to a direct_vptr_type or an indirect_vptr_type.</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p><code>vptr_map</code> stores the addresses of the v-tables for the classes registered in
-<em>Policy</em> in a map, either as straight pointers, or as pointers to pointers. The
-latter makes it possible for <code>virtual_ptr</code>s to remain valid after a call
-to <code>initialize</code>, thus allowing dynamically loaded shared libraries to add
-methods, classes and overriders to a domain.</p>
-</div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="facets_vptrmember_functions_2">Member Functions</h4>
-<div class="sect4">
-<h5 id="facets_vptrregister_vptrs_3">register_vptrs</h5>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">ForwardIterator</span><span class="p">&gt;</span>
-<span class="k">auto</span> <span class="n">register_vptrs</span><span class="p">(</span><span class="n">ForwardIterator</span> <span class="n">first</span><span class="p">,</span> <span class="n">ForwardIterator</span> <span class="n">last</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">;</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Stores the pointers to the v-tables in a <em>Map</em>.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="facets_vptrdynamic_vptr_2">dynamic_vptr</h5>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
-<span class="k">auto</span> <span class="n">dynamic_vptr</span><span class="p">(</span><span class="k">const</span> <span class="n">Class</span><span class="o">&amp;</span> <span class="n">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">vptr_type</span><span class="p">;</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Returns a pointer to the v-table for <code>object</code>.</p>
-</div>
-<div class="paragraph">
-<p>If <em>Policy</em> contains the <code>runtime_checks</code> facet, checks if <em>Class</em> is
-registered. If it is not, and if <em>Policy</em> contains a <code>error_handler</code> facet, calls its <code>error</code> function; then calls <code>abort</code>.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="facets_vptrfacet_rtti">Facet rtti</h3>
-<div class="paragraph">
-<p><code>rtti</code> - A facet that provides type information for classes and objects,
-implements downcast in presence of virtual inheritance, and writes descriptions
-of types to an <code>ostream</code>-like object.</p>
-</div>
-<div class="sect3">
-<h4 id="facets_vptrsynopsis_4">Synopsis</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">rtti</span> <span class="p">{};</span></code></pre>
 </div>
 </div>
-<hr>
 </div>
 <div class="sect3">
-<h4 id="facets_vptrrequirements_3">Requirements</h4>
+<h4 id="virtual_ptr_description_6">Description</h4>
+<div class="paragraph">
+<p>The <code>rtti</code> facet provides type information for classes and objects, implements
+downcast in presence of virtual inheritance, and writes descriptions of types to
+an <code>ostream</code>-like object.</p>
+</div>
 <div class="paragraph">
 <p>Implementations of <code>rtti</code> provide the following functions:</p>
 </div>
@@ -3813,29 +3581,18 @@ of types to an <code>ostream</code>-like object.</p>
 </tr>
 </tbody>
 </table>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-<code>Stream</code> is not guaranteed to be a <code>std::ostream</code>. The only guaranteed
-operations are the insertion of <code>const char*</code>, <code>std::string_view</code>, <code>const
-void*</code>, <code>std::size_t</code> and <code>type_id</code>.
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p><code>Stream</code> is a model of RestrictedOutputStream.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="facets_vptrclass_std_rtti">Class std_rtti</h3>
-<div class="paragraph">
-<p><code>std_rtti</code> - An implementation of the <code>rtti</code> facet that uses standard RTTI.</p>
-</div>
+<h3 id="virtual_ptr_std_rtti">std_rtti</h3>
 <div class="sect3">
-<h4 id="facets_vptrsynopsis_5">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_7">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/policies/std_rtti.hpp&gt;.</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
@@ -3861,12 +3618,17 @@ void*</code>, <code>std::size_t</code> and <code>type_id</code>.
 <span class="p">}}}</span></code></pre>
 </div>
 </div>
-<hr>
 </div>
 <div class="sect3">
-<h4 id="facets_vptrmember_functions_3">Member Functions</h4>
+<h4 id="virtual_ptr_description_7">Description</h4>
+<div class="paragraph">
+<p><code>std_rtti</code> - An implementation of the <code>rtti</code> facet that uses standard RTTI.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_member_functions">Member Functions</h4>
 <div class="sect4">
-<h5 id="facets_vptrstatic_type">static_type</h5>
+<h5 id="virtual_ptr_static_type">static_type</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
@@ -3878,7 +3640,7 @@ void*</code>, <code>std::size_t</code> and <code>type_id</code>.
 </div>
 </div>
 <div class="sect4">
-<h5 id="facets_vptrdynamic_type">dynamic_type</h5>
+<h5 id="virtual_ptr_dynamic_type_2">dynamic_type</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
@@ -3890,7 +3652,7 @@ void*</code>, <code>std::size_t</code> and <code>type_id</code>.
 </div>
 </div>
 <div class="sect4">
-<h5 id="facets_vptrtype_name">type_name</h5>
+<h5 id="virtual_ptr_type_name">type_name</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Stream</span><span class="p">&gt;</span>
@@ -3903,7 +3665,7 @@ Execute <code>stream &lt;&lt; reinterpret_cast&lt;const std::type_info*&gt;(type
 </div>
 </div>
 <div class="sect4">
-<h5 id="facets_vptrtype_index">type_index</h5>
+<h5 id="virtual_ptr_type_index">type_index</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">static</span> <span class="cm">/*unspecified*/</span> <span class="n">type_index</span><span class="p">(</span><span class="n">type_id</span> <span class="n">type</span><span class="p">);</span></code></pre>
@@ -3918,7 +3680,7 @@ instance of <code>std::type_info</code> for each specific type.</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="facets_vptrdynamic_cast_ref">dynamic_cast_ref</h5>
+<h5 id="virtual_ptr_dynamic_cast_ref">dynamic_cast_ref</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Derived</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">Base</span><span class="p">&gt;</span>
@@ -3932,12 +3694,9 @@ instance of <code>std::type_info</code> for each specific type.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="facets_vptrfacet_deferred_static_rtti">Facet deferred_static_rtti</h3>
-<div class="paragraph">
-<p><code>deferred_static_rtti</code> - A facet that defers collection of static type ids.</p>
-</div>
+<h3 id="virtual_ptr_deferred_static_rtti">deferred_static_rtti</h3>
 <div class="sect3">
-<h4 id="facets_vptrsynopsis_6">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_8">Synopsis</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">deferred_static_rtti</span> <span class="o">:</span> <span class="k">virtual</span> <span class="n">rtti</span> <span class="p">{};</span></code></pre>
@@ -3945,30 +3704,24 @@ instance of <code>std::type_info</code> for each specific type.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="facets_vptrdescription_4">Description</h4>
+<h4 id="virtual_ptr_description_8">Description</h4>
+<div class="paragraph">
+<p><code>deferred_static_rtti</code> is a facet that defers collection of static type ids.</p>
+</div>
 <div class="paragraph">
 <p>Some custom RTTI systems rely on static constructors to assign type ids.
 OpenMethod itself relies on static constructors to register classes, methods and
 overriders, calling the <code>static_type</code> function from the <code>rtti</code> facet in the
 process. This can result in collecting the type ids <em>before</em> they have been
-initialized. Adding this facet to a policy moves the collection of type ids to  <code>initialize</code>.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="facets_vptrimplementations">Implementations</h4>
-<div class="paragraph">
-<p>This facet is its own implementation.</p>
+initialized. Adding this facet to a policy moves the collection of type ids to
+<code>initialize</code>.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="facets_vptrfacet_class_minimal_rtti">Facet Class minimal_rtti</h3>
-<div class="paragraph">
-<p><code>minimal_rtti</code> - An implementation of the <code>rtti</code> facet that only uses static
-type information.</p>
-</div>
+<h3 id="virtual_ptr_minimal_rtti">minimal_rtti</h3>
 <div class="sect3">
-<h4 id="facets_vptrsynopsis_7">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_9">Synopsis</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">minimal_rtti</span> <span class="o">:</span> <span class="k">virtual</span> <span class="n">rtti</span> <span class="p">{</span>
@@ -3977,10 +3730,13 @@ type information.</p>
 <span class="p">};</span></code></pre>
 </div>
 </div>
-<hr>
 </div>
 <div class="sect3">
-<h4 id="facets_vptrdescription_5">Description</h4>
+<h4 id="virtual_ptr_description_9">Description</h4>
+<div class="paragraph">
+<p><code>minimal_rtti</code> is an implementation of the <code>rtti</code> facet that only uses static
+type information.</p>
+</div>
 <div class="paragraph">
 <p><code>minimal_rtti</code> provides the only function strictly required for the <code>rtti</code>
 facet.</p>
@@ -3992,9 +3748,9 @@ is not supported. Classes are not required to be polymorphic.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="facets_vptrstatic_member_functions">Static member functions</h4>
+<h4 id="virtual_ptr_members_5">Members</h4>
 <div class="sect4">
-<h5 id="facets_vptrstatic_type_2">static_type</h5>
+<h5 id="virtual_ptr_static_type_2">static_type</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
@@ -4008,12 +3764,641 @@ is not supported. Classes are not required to be polymorphic.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="facets_vptrfacet_error_output">Facet error_output</h3>
-<div class="paragraph">
-<p><code>error_output</code> - A facet that provides a stream for writing error messages.</p>
+<h3 id="virtual_ptr_policiesvptr">policies::vptr</h3>
+<div class="sect3">
+<h4 id="virtual_ptr_synopsis_10">Synopsis</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">vptr</span> <span class="p">{};</span></code></pre>
+</div>
+</div>
 </div>
 <div class="sect3">
-<h4 id="facets_vptrsynopsis_8">Synopsis</h4>
+<h4 id="virtual_ptr_description_10">Description</h4>
+<div class="paragraph">
+<p><code>vptr</code> is a facet that obtains a pointer to the v-table for an object.</p>
+</div>
+<div class="paragraph">
+<p>OpenMethod implements method dispatch in a way similar to native virtual
+function dispatch: for each virtual argument, fetch a pointer to the dispatch
+data (known as the v-table), and use it to select a pointer to a function.
+OpenMethod v-tables contain pointers to functions for unary methods, and, for
+multi-methods, pointers to, and coordinates in, a multi-dimensional table of
+pointers to functions.</p>
+</div>
+<div class="paragraph">
+<p>The <code>vptr</code> facet is used during method call to fetch the vptr for virtual
+arguments corresponding to the <code>virtual_</code> parameters in the method
+declaration. It is also used by the constructor of <code>virtual_ptr</code> to obtain a
+vptr on the basis of an object&#8217;s dynamic type.</p>
+</div>
+<div class="paragraph">
+<p><code>virtual_ptr::final</code>, and the related convenience functions, assume that the
+static and dynamic types of their argument are the same. The vptr is obtained
+statically from the policy&#8217;s <code>static_vptr&lt;Class&gt;</code> member. It is conceivable
+to organize an entire program around the "final" constructs; thus, the <code>vptr</code>
+facet is optional.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_requirements">Requirements</h4>
+<div class="paragraph">
+<p>An implementation of <code>vptr</code> must provide the following static members:</p>
+</div>
+<div class="sect4">
+<h5 id="virtual_ptr_dynamic_vptr">dynamic_vptr;</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
+<span class="k">static</span> <span class="k">auto</span> <span class="n">dynamic_vptr</span><span class="p">(</span><span class="k">const</span> <span class="n">Class</span><span class="o">&amp;</span> <span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">vptr_type</span><span class="o">&amp;</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Returns a pointer to the v-table for <code>obj</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<code>dynamic_vptr</code> <em>must</em> return a reference to the pointer, not a value. This
+is required for indirect <code>virtual_ptr</code>s.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="virtual_ptr_extern_vptr">extern_vptr</h3>
+<div class="sect3">
+<h4 id="virtual_ptr_synopsis_11">Synopsis</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">extern_vptr</span> <span class="o">:</span> <span class="k">virtual</span> <span class="n">vptr</span> <span class="p">{};</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_description_11">Description</h4>
+<div class="paragraph">
+<p><code>extern_vptr</code> is a specialization of <code>vptr</code> that stores vptrs outside of the
+objects.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_requirements_2">Requirements</h4>
+<div class="paragraph">
+<p>In addition to the requirements of <code>vptr</code>, an implementation of <code>extern_vptr</code>
+must have the following static members:</p>
+</div>
+<div class="sect4">
+<h5 id="virtual_ptr_register_vptrs">register_vptrs</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">ForwardIterator</span><span class="p">&gt;</span>
+<span class="k">auto</span> <span class="n">register_vptrs</span><span class="p">(</span><span class="n">ForwardIterator</span> <span class="n">first</span><span class="p">,</span> <span class="n">ForwardIterator</span> <span class="n">last</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>ForwardIterator</code> is a forward iterator over a range of objects that contain
+information about the type ids and the vptr of a registered class. They have the
+following member functions:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">auto</span> <span class="n">type_id_begin</span><span class="p">()</span> <span class="k">const</span> <span class="o">-&gt;</span> <span class="n">type_id_forward_iterator</span><span class="p">;</span>
+<span class="k">auto</span> <span class="n">type_id_end</span><span class="p">()</span> <span class="k">const</span> <span class="o">-&gt;</span> <span class="n">type_id_forward_iterator</span><span class="p">;</span>
+<span class="k">auto</span> <span class="n">vptr</span><span class="p">()</span> <span class="k">const</span> <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">vptr_type</span><span class="o">&amp;</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>type_id_begin</code> and <code>type_id_end</code> return iterators delimiting a range of
+`type_id`s for the class.</p>
+</div>
+<div class="paragraph">
+<p><code>vptr</code> returns a <em>reference</em> to a <em>static</em> variable containing a pointer to the
+v-table for a registered class. Its value is set by <code>initialize</code>. While the
+value of the variable changes with each call to <code>initialize</code>, the variable
+itself remains the same.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="virtual_ptr_extern_vptr_2">extern_vptr</h3>
+<div class="sect3">
+<h4 id="virtual_ptr_synopsis_12">Synopsis</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">indirect_extern_vptr</span> <span class="o">:</span> <span class="k">virtual</span> <span class="n">extern_vptr</span> <span class="p">{};</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_description_12">Description</h4>
+<div class="paragraph">
+<p><code>indirect_extern_vptr</code> makes <code>virtual_ptr</code>s use pointers to pointers to a
+v-table, instead of straight pointers. As a consequence, they remain valid after
+a call to <code>initialize</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="virtual_ptr_vptr_vector">vptr_vector</h3>
+<div class="sect3">
+<h4 id="virtual_ptr_synopsis_13">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/policies/vptr_vector.hpp&gt;.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
+<span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
+<span class="k">namespace</span> <span class="n">policies</span> <span class="p">{</span>
+
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Policy</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Base</span> <span class="o">=</span> <span class="n">extern_vptr</span><span class="p">&gt;</span>
+<span class="k">class</span> <span class="nc">vptr_vector</span> <span class="o">:</span> <span class="n">Base</span> <span class="p">{</span>
+  <span class="nl">public:</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">ForwardIterator</span><span class="p">&gt;</span>
+    <span class="k">static</span> <span class="k">auto</span> <span class="n">register_vptrs</span><span class="p">(</span><span class="n">ForwardIterator</span> <span class="n">first</span><span class="p">,</span> <span class="n">ForwardIterator</span> <span class="n">last</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">;</span>
+
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
+    <span class="k">static</span> <span class="k">auto</span> <span class="n">dynamic_vptr</span><span class="p">(</span><span class="k">const</span> <span class="n">Class</span><span class="o">&amp;</span> <span class="n">arg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">vptr_type</span><span class="o">&amp;</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="p">}}}</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_description_13">Description</h4>
+<div class="paragraph">
+<p><code>vptr_vector</code> is an implementation or <code>external_vptr</code> that stores the pointers
+to the v-tables in a <code>std::vector</code>.</p>
+</div>
+<div class="paragraph">
+<p><code>Policy</code> is the policy containing the facet. <code>Base</code> must be either <code>extern_vptr</code>
+or <code>indirect_external_vptr</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_members_6">Members</h4>
+<div class="sect4">
+<h5 id="virtual_ptr_register_vptrs_2">register_vptrs</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">ForwardIterator</span><span class="p">&gt;</span>
+<span class="k">auto</span> <span class="n">register_vptrs</span><span class="p">(</span><span class="n">ForwardIterator</span> <span class="n">first</span><span class="p">,</span> <span class="n">ForwardIterator</span> <span class="n">last</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Stores the pointers to v-tables in a vector, indexed by the (possibly hashed)
+<code>type_id`s of the classes registered in `Policy</code>.</p>
+</div>
+<div class="paragraph">
+<p>If <code>Policy</code> contains a <code>type_hash</code> facet, call its <code>hash_initialize</code>
+function, and uses it to convert the <code>type_id</code>s to an index.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="virtual_ptr_dynamic_vptr_2">dynamic_vptr</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
+<span class="k">auto</span> <span class="n">dynamic_vptr</span><span class="p">(</span><span class="k">const</span> <span class="n">Class</span><span class="o">&amp;</span> <span class="n">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">vptr_type</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Returns a pointer to the v-table for <code>object</code>.</p>
+</div>
+<div class="paragraph">
+<p>Obtains a <code>type_id</code> for <code>object</code> using <code>Policy::dynamic_type</code>. If <em>Policy</em>
+contains a <code>type_hash</code> facet, uses it to convert the result to an index;
+otherwise, uses the <code>type_id</code> as the index.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="virtual_ptr_vptr_map">vptr_map</h3>
+<div class="sect3">
+<h4 id="virtual_ptr_synopsis_14">Synopsis</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
+<span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
+<span class="k">namespace</span> <span class="n">policies</span> <span class="p">{</span>
+
+<span class="cp">### Synopsis
+</span>
+<span class="k">template</span><span class="o">&lt;</span>
+    <span class="k">class</span> <span class="nc">Policy</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Base</span> <span class="o">=</span> <span class="n">extern_vptr</span><span class="p">,</span>
+    <span class="k">class</span> <span class="nc">Map</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">unordered_map</span><span class="o">&lt;</span>
+        <span class="n">type_id</span><span class="p">,</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">conditional_t</span><span class="o">&lt;</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">is_base_of_v</span><span class="o">&lt;</span><span class="n">indirect_extern_vptr</span><span class="p">,</span> <span class="n">Base</span><span class="p">&gt;,</span> <span class="k">const</span> <span class="n">vptr_type</span><span class="o">*</span><span class="p">,</span>
+            <span class="n">vptr_type</span><span class="o">&gt;&gt;&gt;</span>
+<span class="k">class</span> <span class="nc">vptr_map</span> <span class="o">:</span> <span class="k">virtual</span> <span class="n">Base</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="n">Map</span> <span class="n">vptrs</span><span class="p">;</span>
+
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">ForwardIterator</span><span class="p">&gt;</span>
+    <span class="k">static</span> <span class="k">auto</span> <span class="n">register_vptrs</span><span class="p">(</span><span class="n">ForwardIterator</span> <span class="n">first</span><span class="p">,</span> <span class="n">ForwardIterator</span> <span class="n">last</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">;</span>
+
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
+    <span class="k">static</span> <span class="k">auto</span> <span class="n">dynamic_vptr</span><span class="p">(</span><span class="k">const</span> <span class="n">Class</span><span class="o">&amp;</span> <span class="n">arg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">vptr_type</span><span class="o">&amp;</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="p">}}}</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_description_14">Description</h4>
+<div class="paragraph">
+<p><code>vptr_map</code> is an implementation of `external_vptr that stores the pointers to
+the v-tables in a map.</p>
+</div>
+<div class="paragraph">
+<p><code>Policy</code> is the policy containing the facet. <code>Base</code> must be either <code>extern_vptr</code>
+or <code>indirect_external_vptr</code>. <code>Map</code> is an <code>AssociativeContainer</code>. The
+<code>mapped_type</code> is either a pointer to a <code>vptr_type</code>, or a pointer to a
+<code>vptr_type</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_members_7">Members</h4>
+<div class="sect4">
+<h5 id="virtual_ptr_register_vptrs_3">register_vptrs</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">ForwardIterator</span><span class="p">&gt;</span>
+<span class="k">auto</span> <span class="n">register_vptrs</span><span class="p">(</span><span class="n">ForwardIterator</span> <span class="n">first</span><span class="p">,</span> <span class="n">ForwardIterator</span> <span class="n">last</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Stores the pointers to v-tables in a <em>Map</em>.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="virtual_ptr_dynamic_vptr_3">dynamic_vptr</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
+<span class="k">auto</span> <span class="n">dynamic_vptr</span><span class="p">(</span><span class="k">const</span> <span class="n">Class</span><span class="o">&amp;</span> <span class="n">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">vptr_type</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Returns a pointer to the v-table for <code>object</code>.</p>
+</div>
+<div class="paragraph">
+<p>If <em>Policy</em> contains the <code>runtime_checks</code> facet, checks if <em>Class</em> is
+registered. If it is not, and if <em>Policy</em> contains a <code>error_handler</code> facet,
+calls its <code>error</code> function; then calls <code>abort</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="virtual_ptr_type_hash">type_hash</h3>
+<div class="sect3">
+<h4 id="virtual_ptr_synopsis_15">Synopsis</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">type_hash</span> <span class="p">{};</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_description_15">Description</h4>
+<div class="paragraph">
+<p><code>type_hash</code> is a facet that provides a hash function for a fixed set of
+<code>type_id</code>s.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_requirements_3">Requirements</h4>
+
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_hash_type_id">hash_type_id</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">static</span> <span class="k">auto</span> <span class="n">hash_type_id</span><span class="p">(</span><span class="n">type_id</span> <span class="n">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">type_id</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Returns the hash of <code>type</code>.</p>
+</div>
+<div class="sect4">
+<h5 id="virtual_ptr_hash_initialize">hash_initialize</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">ForwardIterator</span><span class="p">&gt;</span>
+<span class="k">static</span> <span class="k">auto</span> <span class="n">hash_initialize</span><span class="p">(</span><span class="n">ForwardIterator</span> <span class="n">first</span><span class="p">,</span> <span class="n">ForwardIterator</span> <span class="n">last</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Report</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Finds a hash function for the <code>type_id</code>s in the range <code>[first, last)</code>.
+<code>ForwardIterator</code> is the same as in <code>vptr_vector::register_vptrs</code>.</p>
+</div>
+<div class="paragraph">
+<p><code>hash_initialize</code> returns a <code>Report</code> object which is required to have two
+members, <code>first</code> and <code>last</code>, which define the range <code>[first, last)</code> of the
+possible output values of the hash function.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="virtual_ptr_fast_perfect_hash">fast_perfect_hash</h3>
+<div class="sect3">
+<h4 id="virtual_ptr_synopsis_16">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/policies/fast_perfect_hash.hpp&gt;.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">class</span> <span class="nc">fast_perfect_hash</span> <span class="o">:</span> <span class="n">type_hash</span>
+<span class="p">{</span>
+  <span class="nl">public:</span>
+    <span class="k">static</span> <span class="k">auto</span> <span class="n">hash_type_id</span><span class="p">(</span><span class="n">type_id</span> <span class="n">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">type_id</span><span class="p">;</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">ForwardIterator</span><span class="p">&gt;</span>
+    <span class="k">static</span> <span class="k">auto</span> <span class="n">hash_initialize</span><span class="p">(</span><span class="n">ForwardIterator</span> <span class="n">first</span><span class="p">,</span> <span class="n">ForwardIterator</span> <span class="n">last</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Report</span><span class="p">;</span>
+<span class="p">};</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_description_16">Description</h4>
+<div class="paragraph">
+<p><code>fast_perfect_hash</code> implements a very fast, perfect (but not minimal) hash
+function for <code>type_id</code>s.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_members_8">Members</h4>
+<div class="paragraph">
+<p>Find two factors</p>
+</div>
+<div class="sect4">
+<h5 id="virtual_ptr_hash_type_id_2">hash_type_id</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">static</span> <span class="k">auto</span> <span class="n">hash_type_id</span><span class="p">(</span><span class="n">type_id</span> <span class="n">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">type_id</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Returns <code>(type * M) &gt;&gt; S</code>, where <code>M</code> and <code>S</code> are factors found by
+<code>hash_initialize</code>.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="virtual_ptr_hash_initialize_2">hash_initialize</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">ForwardIterator</span><span class="p">&gt;</span>
+<span class="k">auto</span> <span class="n">hash_initialize</span><span class="p">(</span><span class="n">ForwardIterator</span> <span class="n">first</span><span class="p">,</span> <span class="n">ForwardIterator</span> <span class="n">last</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Report</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Finds factors <code>M</code> and <code>S</code> such that <code>hash_type_id</code> is a collision-free hash
+function.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="virtual_ptr_error_handler">error_handler</h3>
+<div class="sect3">
+<h4 id="virtual_ptr_synopsis_17">Synopsis</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
+<span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
+<span class="k">namespace</span> <span class="n">policies</span> <span class="p">{</span>
+
+<span class="k">struct</span> <span class="nc">error_handler</span><span class="p">;</span>
+
+<span class="k">struct</span> <span class="nc">openmethod_error</span> <span class="p">{};</span>
+
+<span class="k">struct</span> <span class="nc">not_implemented_error</span> <span class="o">:</span> <span class="n">openmethod_error</span> <span class="p">{</span>
+    <span class="n">type_id</span> <span class="n">method</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">arity</span><span class="p">;</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">max_types</span> <span class="o">=</span> <span class="mi">16</span><span class="p">;</span>
+    <span class="n">type_id</span> <span class="n">types</span><span class="p">[</span><span class="n">max_types</span><span class="p">];</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="nc">unknown_class_error</span> <span class="o">:</span> <span class="n">openmethod_error</span> <span class="p">{</span>
+    <span class="n">type_id</span> <span class="n">type</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="nc">hash_search_error</span> <span class="o">:</span> <span class="n">openmethod_error</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">attempts</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">buckets</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="nc">method_table_error</span> <span class="o">:</span> <span class="n">openmethod_error</span> <span class="p">{</span>
+    <span class="n">type_id</span> <span class="n">type</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="p">}}}</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_description_17">Description</h4>
+<div class="paragraph">
+<p><code>error_handler</code> is a facet that handles errors.</p>
+</div>
+<div class="paragraph">
+<p>When an error is encountered, either during <code>initialize</code> or method dispatch, the
+program is terminated via a call to <code>abort</code>. If this facet is present in the
+policy, its <code>error</code> function is called with an error object. It can prevent
+termination by throwing an exception.</p>
+</div>
+<div class="paragraph">
+<p>Implementations of <code>error_handler</code> must provide the following functions:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>static auto error(const T&amp;) &#8594; void</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>A function that takes an error object.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_implementations">Implementations</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>throw_error_handler</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Throws the error object as an exception.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>vectored_error_handler</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Calls an error handler via a <code>std::function</code>, which
+defaults to printing a description of the error to <code>stderr</code>. Included in the
+<code>debug</code> policy.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="virtual_ptr_vectored_error_handler">vectored_error_handler</h3>
+<div class="sect3">
+<h4 id="virtual_ptr_synopsis_18">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/policies/vectored_error_handler.hpp&gt;.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
+<span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
+<span class="k">namespace</span> <span class="n">policies</span> <span class="p">{</span>
+
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Policy</span><span class="p">&gt;</span>
+<span class="k">class</span> <span class="nc">vectored_error_handler</span> <span class="o">:</span> <span class="k">public</span> <span class="k">virtual</span> <span class="n">error_handler</span> <span class="p">{</span>
+  <span class="nl">public:</span>
+    <span class="k">using</span> <span class="n">error_variant</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span>
+        <span class="n">openmethod_error</span><span class="p">,</span> <span class="n">not_implemented_error</span><span class="p">,</span> <span class="n">unknown_class_error</span><span class="p">,</span>
+        <span class="n">hash_search_error</span><span class="p">,</span> <span class="n">method_table_error</span><span class="p">,</span> <span class="n">static_slot_error</span><span class="p">,</span>
+        <span class="n">static_stride_error</span><span class="o">&gt;</span><span class="p">;</span>
+    <span class="k">using</span> <span class="n">function_type</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="k">const</span> <span class="n">error_variant</span><span class="o">&amp;</span> <span class="n">error</span><span class="p">)</span><span class="o">&gt;</span><span class="p">;</span>
+
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Error</span><span class="p">&gt;</span>
+    <span class="k">static</span> <span class="k">auto</span> <span class="n">error</span><span class="p">(</span><span class="k">const</span> <span class="n">Error</span><span class="o">&amp;</span> <span class="n">error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">;</span>
+    <span class="k">static</span> <span class="k">auto</span> <span class="n">set_error_handler</span><span class="p">(</span><span class="n">error_handler_type</span> <span class="n">handler</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">function_type</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="p">}}}</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_description_18">Description</h4>
+<div class="paragraph">
+<p><code>vectored_error_handler</code> is an implementation of <code>error_handler</code> that calls a
+<code>std::function</code> to handle the error.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_members_9">Members</h4>
+<div class="sect4">
+<h5 id="virtual_ptr_error">error</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Error</span><span class="p">&gt;</span>
+<span class="k">static</span> <span class="k">auto</span> <span class="n">error</span><span class="p">(</span><span class="k">const</span> <span class="n">Error</span><span class="o">&amp;</span> <span class="n">error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Calls the function last set via <code>set_error_handler</code> or, if it was never called,
+and if <em>Policy</em> contains an <code>error_output</code> facet, use it to print a description
+of <code>error</code>.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="virtual_ptr_error_2">error</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">static</span> <span class="k">auto</span> <span class="n">set_error_handler</span><span class="p">(</span><span class="n">function_type</span> <span class="n">handler</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">function_type</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Sets <code>handler</code> as the function to call in case of error.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="virtual_ptr_throw_error_handler">throw_error_handler</h3>
+<div class="sect3">
+<h4 id="virtual_ptr_synopsis_19">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/policies/throw_error_handler.hpp&gt;.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
+<span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
+<span class="k">namespace</span> <span class="n">policies</span> <span class="p">{</span>
+
+<span class="k">struct</span> <span class="nc">throw_error_handler</span> <span class="o">:</span> <span class="k">virtual</span> <span class="n">error_handler</span> <span class="p">{</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Error</span><span class="p">&gt;</span>
+    <span class="p">[[</span><span class="n">noreturn</span><span class="p">]]</span> <span class="k">static</span> <span class="k">auto</span> <span class="n">error</span><span class="p">(</span><span class="k">const</span> <span class="n">Error</span><span class="o">&amp;</span> <span class="n">error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="p">}}}</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_description_19">Description</h4>
+<div class="paragraph">
+<p>throw_error_handler is an implementation of the <code>error_handler</code> facet that
+throws the error as an exception.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_static_member_functions">Static Member Functions</h4>
+<div class="sect4">
+<h5 id="virtual_ptr_error_3">error</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Error</span><span class="p">&gt;</span>
+<span class="p">[[</span><span class="n">noreturn</span><span class="p">]]</span> <span class="k">static</span> <span class="k">auto</span> <span class="n">error</span><span class="p">(</span><span class="k">const</span> <span class="n">Error</span><span class="o">&amp;</span> <span class="n">error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Throws <code>error</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="virtual_ptr_error_output">error_output</h3>
+<div class="sect3">
+<h4 id="virtual_ptr_synopsis_20">Synopsis</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
@@ -4025,10 +4410,12 @@ is not supported. Classes are not required to be polymorphic.</p>
 <span class="p">}}}</span></code></pre>
 </div>
 </div>
-<hr>
 </div>
 <div class="sect3">
-<h4 id="facets_vptrrequirements_4">Requirements</h4>
+<h4 id="virtual_ptr_description_20">Description</h4>
+<div class="paragraph">
+<p><code>error_output</code> is a facet that provides a stream for writing error messages.</p>
+</div>
 <div class="paragraph">
 <p>Implementations of <code>error_output</code> provide the following functions:</p>
 </div>
@@ -4057,16 +4444,9 @@ is not supported. Classes are not required to be polymorphic.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="facets_vptrbasic_error_outputpolicy_stream">basic_error_output&lt;Policy, Stream&gt;</h3>
+<h3 id="virtual_ptr_basic_error_output">basic_error_output</h3>
 <div class="sect3">
-<h4 id="facets_vptrdescription_6">Description</h4>
-<div class="paragraph">
-<p><code>basic_error_output</code> is an implementation of <code>error_output</code> that writes error
-messages to a <code>RestrictedOutputStream</code>.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="facets_vptrsynopsis_9">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_21">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/basic_error_output.hpp&gt;.</p>
 </div>
@@ -4084,9 +4464,16 @@ messages to a <code>RestrictedOutputStream</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="facets_vptrstatic_member_variables">Static Member Variables</h4>
+<h4 id="virtual_ptr_description_21">Description</h4>
+<div class="paragraph">
+<p><code>basic_error_output</code> is an implementation of <code>error_output</code> that writes error
+messages to a <code>RestrictedOutputStream</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_members_10">Members</h4>
 <div class="sect4">
-<h5 id="facets_vptrerror_stream">error_stream</h5>
+<h5 id="virtual_ptr_error_stream">error_stream</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="n">Stream</span>  <span class="n">error_stream</span><span class="p">;</span></code></pre>
@@ -4101,12 +4488,12 @@ it.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="facets_vptrfacet_trace_output">Facet trace_output</h3>
-<div class="paragraph">
-<p><code>trace_output</code> - A facet that provides a stream for writing trace messages.</p>
-</div>
+<h3 id="virtual_ptr_trace_output">trace_output</h3>
 <div class="sect3">
-<h4 id="facets_vptrsynopsis_10">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_22">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/policies/core.hpp&gt;.</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
@@ -4121,7 +4508,10 @@ it.</p>
 <hr>
 </div>
 <div class="sect3">
-<h4 id="facets_vptrdescription_7">Description</h4>
+<h4 id="virtual_ptr_description_22">Description</h4>
+<div class="paragraph">
+<p><code>trace_output</code> is a facet used to write trace messages.</p>
+</div>
 <div class="paragraph">
 <p><code>initialize</code> can be directed to describe the classes and methods in a policy,
 and how the dispatch tables are built, by including this facet in the policy,
@@ -4130,10 +4520,6 @@ description is not documented, beyond the guarantee that it provides an
 exhaustive account of table construction, and may change between major, minor
 and patch versions.</p>
 </div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="facets_vptrrequirements_5">Requirements</h4>
 <div class="paragraph">
 <p>Implementations of <code>trace_output</code> provide the following functions:</p>
 </div>
@@ -4175,33 +4561,12 @@ and patch versions.</p>
 </tr>
 </tbody>
 </table>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-<code>Stream</code> is not guaranteed to be a <code>std::ostream</code>. The only guaranteed
-operations are the insertion of <code>const char*</code>, <code>std::string_view</code>, <code>const
-void*</code>, <code>std::size_t</code> and <code>type_id</code>.
-</td>
-</tr>
-</table>
-</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="facets_vptrbasic_trace_outputpolicy_stream">basic_trace_output&lt;Policy, Stream&gt;</h3>
+<h3 id="virtual_ptr_basic_trace_output">basic_trace_output</h3>
 <div class="sect3">
-<h4 id="facets_vptrdescription_8">Description</h4>
-<div class="paragraph">
-<p><code>basic_error_output</code> is an implementation of <code>trace_output</code> that writes error
-messages to a <code>RestrictedOutputStream</code>.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="facets_vptrsynopsis_11">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_23">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/basic_trace_output.hpp&gt;.</p>
 </div>
@@ -4220,9 +4585,16 @@ messages to a <code>RestrictedOutputStream</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="facets_vptrmembers">Members</h4>
+<h4 id="virtual_ptr_description_23">Description</h4>
+<div class="paragraph">
+<p><code>basic_error_output</code> is an implementation of <code>trace_output</code> that writes error
+messages to a <code>RestrictedOutputStream</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_members_11">Members</h4>
 <div class="sect4">
-<h5 id="facets_vptrtrace_enabled">trace_enabled</h5>
+<h5 id="virtual_ptr_trace_enabled">trace_enabled</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="n">Stream</span>  <span class="n">trace_enabled</span><span class="p">;</span></code></pre>
@@ -4233,7 +4605,7 @@ messages to a <code>RestrictedOutputStream</code>.</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="facets_vptrtrace_stream">trace_stream</h5>
+<h5 id="virtual_ptr_trace_stream">trace_stream</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="n">Stream</span>  <span class="n">trace_stream</span><span class="p">;</span></code></pre>
@@ -4248,323 +4620,19 @@ open it.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="BOOST_OPENMETHOD">Macro BOOST_OPENMETHOD</h3>
+<h3 id="virtual_ptr_restrictedoutputstream">RestrictedOutputStream</h3>
 <div class="sect3">
-<h4 id="facets_vptrdescription_9">Description</h4>
+<h4 id="virtual_ptr_description_24">Description</h4>
 <div class="paragraph">
-<p>Declares a method.</p>
+<p>RestrictedOutputStream is a concept describing a <code>std::ostream</code>-like class with
+a reduced set of operations.</p>
 </div>
-</div>
-<div class="sect3">
-<h4 id="facets_vptrsynopsis_12">Synopsis</h4>
-<div class="paragraph">
-<p>Defined in &lt;boost/openmethod/macros.hpp&gt;.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD</span><span class="p">(</span><span class="n">NAME</span><span class="p">,</span> <span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...),</span> <span class="n">RETURN_TYPE</span> <span class="p">[,</span> <span class="n">POLICY</span><span class="p">]);</span></code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="facets_vptreffects">Effects</h4>
-<div class="paragraph">
-<p>The macro expands to several constructs, the most important of which is an
-inline function called <code>NAME</code>, with a formal parameter list that consists of the
-types listed in <code>PARAMETERS</code>, stripped from any <code>virtual_</code> decorator
-(<code>virtual_ptr</code>s are preserved), and returning a <code>RETURN_TYPE</code>.</p>
-</div>
-<div class="paragraph">
-<p>The function creates additional entities:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>A <code>struct</code> forward declaration that acts as the method&#8217;s identifier:</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nf">BOOST_OPENMETHOD_NAME</span><span class="p">(</span><span class="n">NAME</span><span class="p">);</span></code></pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>A guide function used to match overriders with the method:</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">auto</span> <span class="n">BOOST_OPENMETHOD_NAME</span><span class="p">(</span><span class="n">NAME</span><span class="p">)</span><span class="n">_guide</span><span class="p">(...)</span>
-    <span class="o">-&gt;</span> <span class="o">::</span><span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">method</span><span class="o">&lt;</span>
-        <span class="n">BOOST_OPENMETHOD_NAME</span><span class="p">(</span><span class="n">NAME</span><span class="p">)(</span><span class="n">PARAMETERS</span><span class="p">...),</span> <span class="n">RETURN_TYPE</span> <span class="p">[,</span> <span class="n">POLICY</span><span class="p">]</span><span class="o">&gt;</span><span class="p">;</span></code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="BOOST_OPENMETHOD_OVERRIDE">BOOST_OPENMETHOD_OVERRIDE</h3>
-<div class="sect3">
-<h4 id="facets_vptrdescription_10">Description</h4>
-<div class="paragraph">
-<p><code>BOOST_OPENMETHOD_OVERRIDE</code> adds an overrider to a method.</p>
-</div>
-<div class="paragraph">
-<p>The method is deduced from a call to a method guide function with the
-overrider&#8217;s arguments.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="facets_vptrsynopsis_13">Synopsis</h4>
-<div class="paragraph">
-<p>Defined in &lt;boost/openmethod/macros.hpp&gt;.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span><span class="n">NAME</span><span class="p">,</span> <span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...),</span> <span class="n">RETURN_TYPE</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c1">// body</span>
-<span class="p">}</span></code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">using</span> <span class="n">method_type</span> <span class="o">=</span> <span class="k">decltype</span><span class="p">(</span><span class="n">BOOST_OPENMETHOD_NAME</span><span class="p">(</span><span class="n">NAME</span><span class="p">)</span><span class="n">_guide</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">A</span><span class="o">&gt;</span><span class="p">()...))</span></code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="facets_vptreffects_2">Effects</h4>
-<div class="paragraph">
-<p>The macro creates several entities in the current scope.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>A class template that acts as a container for the overriders of the methods
-called <code>NAME</code>:</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="o">...</span><span class="p">&gt;</span> <span class="n">BOOST_OPENMETHOD_OVERRIDERS</span><span class="p">(</span><span class="n">NAME</span><span class="p">);</span></code></pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>A specialization of the container template for the overrider:</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">BOOST_OPENMETHOD_OVERRIDERS</span><span class="p">(</span><span class="n">NAME</span><span class="p">)</span><span class="o">&lt;</span><span class="n">RETURN_TYPE</span><span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...)</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="k">static</span> <span class="k">auto</span> <span class="n">fn</span><span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...)</span> <span class="o">-&gt;</span> <span class="n">RETURN_TYPE</span><span class="p">;</span>
-    <span class="k">static</span> <span class="k">auto</span> <span class="n">has_next</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="p">;</span>
-    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="o">...</span> <span class="nc">Args</span><span class="p">&gt;</span>
-    <span class="k">static</span> <span class="k">auto</span> <span class="n">next</span><span class="p">(</span><span class="k">typename</span><span class="p">...</span> <span class="n">Args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RETURN_TYPE</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="n">where</span><span class="o">:</span>
-
-<span class="o">*</span> <span class="err">`</span><span class="n">fn</span><span class="err">`</span> <span class="n">is</span> <span class="n">the</span> <span class="n">overrider</span> <span class="n">function</span><span class="p">.</span>
-
-<span class="o">*</span> <span class="err">`</span><span class="n">has_next</span><span class="p">()</span><span class="err">`</span> <span class="n">returns</span> <span class="err">`</span><span class="nb">true</span><span class="err">`</span> <span class="k">if</span> <span class="n">a</span> <span class="n">less</span> <span class="n">specialized</span> <span class="n">overrider</span> <span class="n">exists</span><span class="p">.</span>
-
-<span class="o">*</span> <span class="err">`</span><span class="n">next</span><span class="p">(</span><span class="n">Args</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span><span class="err">`</span> <span class="n">calls</span> <span class="n">the</span> <span class="n">next</span> <span class="n">most</span> <span class="n">specialized</span> <span class="n">overrider</span> <span class="n">via</span> <span class="n">the</span>
-<span class="n">pointer</span> <span class="n">stored</span> <span class="n">in</span> <span class="n">the</span> <span class="n">method</span><span class="err">'</span><span class="n">s</span> <span class="err">`</span><span class="n">next</span><span class="o">&lt;</span><span class="n">fn</span><span class="o">&gt;</span><span class="err">`</span> <span class="n">member</span> <span class="n">variable</span><span class="p">.</span>
-
-<span class="n">Finally</span><span class="p">,</span> <span class="n">the</span> <span class="n">macro</span> <span class="n">starts</span> <span class="n">the</span> <span class="n">definition</span> <span class="n">of</span> <span class="n">the</span> <span class="n">overrider</span> <span class="n">function</span><span class="o">:</span>
-
-<span class="err">```</span><span class="n">c</span><span class="o">++</span>
-<span class="k">auto</span> <span class="n">BOOST_OPENMETHOD_OVERRIDERS</span><span class="p">(</span><span class="n">NAME</span><span class="p">)</span><span class="o">&lt;</span><span class="n">RETURN_TYPE</span><span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...)</span><span class="o">&gt;</span>
-<span class="o">::</span><span class="n">fn</span><span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...)</span> <span class="o">-&gt;</span> <span class="n">RETURN_TYPE</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The block following the call to the macro is the body of the function.</p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="BOOST_OPENMETHOD_INLINE_OVERRIDE">BOOST_OPENMETHOD_INLINE_OVERRIDE(NAME, (PARAMETERS&#8230;&#8203;), RETURN_TYPE)</h3>
-<div class="sect3">
-<h4 id="facets_vptrsynopsis_14">Synopsis</h4>
-<div class="paragraph">
-<p>Defined in &lt;boost/openmethod/macros.hpp&gt;.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_INLINE_OVERRIDE</span><span class="p">(</span><span class="n">NAME</span><span class="p">,</span> <span class="p">(</span><span class="n">PARAMETERS</span><span class="p">...),</span> <span class="n">RETURN_TYPE</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c1">// body</span>
-<span class="p">}</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p><code>BOOST_OPENMETHOD_INLINE_OVERRIDE</code> performs the same function as
-<code>BOOST_OPENMETHOD_OVERRIDE</code>, except that the overrider is defined inline.</p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="BOOST_OPENMETHOD_REGISTER">BOOST_OPENMETHOD_REGISTER</h3>
-<div class="sect3">
-<h4 id="facets_vptrdescription_11">Description</h4>
-<div class="paragraph">
-<p>Creates a static instance of <code>TYPE</code>, using a unique generated name.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="facets_vptrsynopsis_15">Synopsis</h4>
-<div class="paragraph">
-<p>Defined in &lt;boost/openmethod/macros/register.hpp&gt;.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_REGISTER</span><span class="p">(</span><span class="n">TYPE</span><span class="p">);</span></code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="BOOST_OPENMETHOD_CLASSES">BOOST_OPENMETHOD_CLASSES(CLASSES&#8230;&#8203;[, POLICY])</h3>
-<div class="sect3">
-<h4 id="facets_vptrdescription_12">Description</h4>
-<div class="paragraph">
-<p>Register <code>CLASSES</code> in POLICY. If <code>POLICY</code> is not specified, use the default
-policy.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-The default policy is the value of <code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> at
-the point <code>&lt;boost/openmethod/core.hpp&gt;</code> is included. Changing the value of this
-symbol has no effect after that point.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>This macro is a wrapper around <code>use_classes</code>; see its documentation for more
-details.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="facets_vptrsynopsis_16">Synopsis</h4>
-<div class="paragraph">
-<p>Defined in &lt;boost/openmethod/macros.hpp&gt;.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_CLASSES</span><span class="p">(</span><span class="n">CLASSES</span><span class="p">...[,</span> <span class="n">POLICY</span><span class="p">]);</span></code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="BOOST_OPENMETHOD_DEFAULT_POLICY">BOOST_OPENMETHOD_DEFAULT_POLICY</h3>
-<div class="sect3">
-<h4 id="facets_vptrdescription_13">Description</h4>
-<div class="paragraph">
-<p>The name of the default policy.</p>
-</div>
-<div class="paragraph">
-<p><code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> is the default value for the <code>Policy</code> template
-parameter of <code>method</code>, <code>use_classes</code>, and other constructs defined in
-<code>&lt;boost/openmethod/core.hpp&gt;</code>. If it is not defined,
-<code>::boost::openmethod::policy::default_</code> is used.</p>
-</div>
-<div class="paragraph">
-<p><code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> can be defined by a program to change the
-default policy globally. Once <code>&lt;boost/openmethod/core.hpp&gt;</code> has been included,
-redefining the symbol has no effect. To override the default policy, proceed as
-follows:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Include headers under <code>boost/openmethod/policies/</code> as needed.</p>
-</li>
-<li>
-<p>Create a policy class, and set <code>BOOST_OPENMETHOD_DEFAULT_POLICY</code>.</p>
-</li>
-<li>
-<p>Include <code>&lt;boost/openmethod/core.hpp&gt;</code>.</p>
-</li>
-</ol>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="BOOST_OPENMETHOD_NAME">Macro BOOST_OPENMETHOD_NAME(NAME)</h3>
-<div class="sect3">
-<h4 id="facets_vptrdescription_14">Description</h4>
-<div class="paragraph">
-<p>Generate a long name from a short name, hopefully avoiding conflicts with
-user-defined names.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="facets_vptrsynopsis_17">Synopsis</h4>
-<div class="paragraph">
-<p>Defined in &lt;boost/openmethod/macros/name.hpp&gt;.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="cp">#define BOOST_OPENMETHOD_NAME(NAME) boost_openmethod_#NAME</span></code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="BOOST_OPENMETHOD_OVERRIDERS">Description</h4>
-<div class="paragraph">
-<p><code>BOOST_OPENMETHOD_OVERRIDERS</code> expands to the name of the class template that
-contains the overriders for all the methods with a given name.</p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="facets_vptrboost_openmethod_overriders">BOOST_OPENMETHOD_OVERRIDERS</h3>
-<div class="sect3">
-<h4 id="facets_vptrsynopsis_18">Synopsis</h4>
-<div class="paragraph">
-<p>Defined in &lt;boost/openmethod/macros.hpp&gt;.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="cp">#define BOOST_OPENMETHOD_OVERRIDERS(NAME)                                      \
-    BOOST_PP_CAT(BOOST_OPENMETHOD_NAME(NAME), _overriders)</span></code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="facets_vptrconcept_restrictedoutputstream">Concept RestrictedOutputStream</h3>
-<div class="paragraph">
-<p>RestrictedOutputStream - A <code>std::ostream</code>-like class with a reduced set of
-operations.</p>
-</div>
-<hr>
-<div class="sect3">
-<h4 id="facets_vptrdescription_15">Description</h4>
 <div class="paragraph">
 <p>While convenient, <code>std::ostream</code> and its implementations constitute a sizeable
 piece of code, which may make it unsuitable for certain applications. OpenMethod
 uses a small subset of the operations supported by <code>std::ostream</code>. By default,
 the library uses a lightweight implementation based on the C stream functions.</p>
 </div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="facets_vptrrequirements_6">Requirements</h4>
 <div class="paragraph">
 <p>Implementations of <code>RestrictedOutputStream</code> provide the following functions:</p>
 </div>

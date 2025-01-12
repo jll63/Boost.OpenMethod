@@ -16,25 +16,26 @@ namespace openmethod {
 namespace policies {
 
 template<class Policy>
-class fast_perfect_hash : virtual type_hash {
+class fast_perfect_hash : type_hash {
 
     static type_id hash_mult;
     static std::size_t hash_shift;
-    static std::size_t hash_length;
+    static std::size_t hash_span;
     static std::size_t hash_min;
     static std::size_t hash_max;
     static std::vector<type_id> control;
 
+    static void check(std::size_t index, type_id type);
+
   public:
     struct report {
-        std::size_t hash_length;
+        std::size_t first, last;
     };
 #ifdef _MSC_VER
     __forceinline
 #endif
-        static auto
-        hash_type_id(type_id type) -> type_id {
 
+    static auto hash_type_id(type_id type) -> type_id {
         auto index = (hash_mult * type) >> hash_shift;
 
         if constexpr (Policy::template has_facet<runtime_checks>) {
@@ -53,15 +54,13 @@ class fast_perfect_hash : virtual type_hash {
             hash_initialize(first, last, buckets);
         }
 
-        return {hash_length};
+        return {hash_min, hash_max};
     }
 
     template<typename ForwardIterator>
     static void hash_initialize(
         ForwardIterator first, ForwardIterator last,
         std::vector<type_id>& buckets);
-
-    static void check(std::size_t index, type_id type);
 };
 
 template<class Policy>
@@ -105,7 +104,7 @@ void fast_perfect_hash<Policy>::hash_initialize(
         bool found = false;
         std::size_t attempts = 0;
         buckets.resize(hash_size);
-        hash_length = 0;
+        hash_span = 0;
 
         while (!found && attempts < 100000) {
             std::fill(buckets.begin(), buckets.end(), static_cast<type_id>(-1));
@@ -133,14 +132,14 @@ void fast_perfect_hash<Policy>::hash_initialize(
         }
 
         if (found) {
-            hash_length = hash_max + 1;
+            ++hash_max;
 
             if constexpr (trace_enabled) {
                 if (Policy::trace_enabled) {
                     Policy::trace_stream << "  found " << hash_mult << " after "
                                          << total_attempts
-                                         << " attempts; min = " << hash_min
-                                         << ", max = " << hash_max << "\n";
+                                         << " attempts; span = [" << hash_min
+                                         << "," << hash_max << ")\n";
                 }
             }
 
@@ -161,7 +160,7 @@ void fast_perfect_hash<Policy>::hash_initialize(
 
 template<class Policy>
 void fast_perfect_hash<Policy>::check(std::size_t index, type_id type) {
-    if (index >= hash_length || control[index] != type) {
+    if (index >= hash_span || control[index] != type) {
         if constexpr (Policy::template has_facet<error_handler>) {
             unknown_class_error error;
             error.type = type;
@@ -177,7 +176,7 @@ type_id fast_perfect_hash<Policy>::hash_mult;
 template<class Policy>
 std::size_t fast_perfect_hash<Policy>::hash_shift;
 template<class Policy>
-std::size_t fast_perfect_hash<Policy>::hash_length;
+std::size_t fast_perfect_hash<Policy>::hash_span;
 template<class Policy>
 std::size_t fast_perfect_hash<Policy>::hash_min;
 template<class Policy>

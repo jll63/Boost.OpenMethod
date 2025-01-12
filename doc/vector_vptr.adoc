@@ -10,15 +10,14 @@ namespace boost {
 namespace openmethod {
 namespace policies {
 
-template<class Policy, typename VptrType = direct_vptr_type>
-struct vptr_vector : virtual extern_vptr {
-    static std::vector<VptrType> vptrs;
-
+template<class Policy, class Base = extern_vptr>
+class vptr_vector : Base {
+  public:
     template<typename ForwardIterator>
     static auto register_vptrs(ForwardIterator first, ForwardIterator last) -> void;
 
     template<class Class>
-    static auto dynamic_vptr(const Class& arg) -> vptr_type;
+    static auto dynamic_vptr(const Class& arg) -> const vptr_type&;
 };
 
 }}}
@@ -29,14 +28,8 @@ struct vptr_vector : virtual extern_vptr {
 `vptr_vector` is an implementation or `external_vptr` that stores the pointers
 to the v-tables in a `std::vector`.
 
-`Policy` is the policy containing the facet. `VptrType` is either vptr_type or
-indirect_vptr_type.
-
-`vptr_vector` stores the addresses of the v-tables for the classes registered in
-_Policy_ in a vector, either as straight pointers, or as pointers to pointers.
-The latter makes it possible for `virtual_ptr`{empty}s to remain valid after a
-call to `initialize`, thus allowing dynamically loaded shared libraries to add
-methods, classes and overriders to a domain.
+`Policy` is the policy containing the facet. `Base` must be either `extern_vptr`
+or `indirect_external_vptr`.
 
 ### Members
 
@@ -47,11 +40,11 @@ template<typename ForwardIterator>
 auto register_vptrs(ForwardIterator first, ForwardIterator last) -> void;
 ```
 
-Stores the pointers to the v-tables in a vector, indexed by the (possibly hashed)
-`type_id`s.
+Stores the pointers to v-tables in a vector, indexed by the (possibly hashed)
+`type_id`s of the classes registered in `Policy`.
 
 If `Policy` contains a `type_hash` facet, call its `hash_initialize`
-function.
+function, and uses it to convert the `type_id`{empty}s to an index.
 
 #### dynamic_vptr
 
@@ -62,6 +55,6 @@ auto dynamic_vptr(const Class& object) -> vptr_type;
 
 Returns a pointer to the v-table for `object`.
 
-Calls `dynamic_type` to obtain a `type_id` for `object`. If _Policy_
-contains a `type_hash` facet, uses it to convert the resulting `type_id` to an
-index; otherwise, uses the `type_id` as the index.
+Obtains a `type_id` for `object` using `Policy::dynamic_type`. If _Policy_
+contains a `type_hash` facet, uses it to convert the result to an index;
+otherwise, uses the `type_id` as the index.

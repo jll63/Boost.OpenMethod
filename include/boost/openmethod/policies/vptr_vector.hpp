@@ -31,7 +31,8 @@ class vptr_vector : Base {
         std::size_t size;
 
         if constexpr (Policy::template has_facet<type_hash>) {
-            size = Policy::hash_initialize(first, last).hash_length;
+            auto report = Policy::hash_initialize(first, last);
+            size = report.last;
         } else {
             size = 0;
 

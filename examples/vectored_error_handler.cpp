@@ -28,10 +28,9 @@ int main() {
     namespace bom = boost::openmethod;
     bom::initialize();
 
-    bom::default_policy::set_error_handler(
-        [](const auto& openmethod_error) {
-            std::visit([](auto&& arg) { throw arg; }, openmethod_error);
-        });
+    bom::default_policy::set_error_handler([](const auto& openmethod_error) {
+        std::visit([](auto&& arg) { throw arg; }, openmethod_error);
+    });
 
     Cat felix;
     Dog hector, snoopy;

@@ -45,8 +45,7 @@ auto fight_bear(VirtualWarriorPtr, VirtualAxePtr, VirtualBearPtr) {
 }
 
 template<int N>
-struct indirect_test_policy : test_policy_<N> {
-};
+struct indirect_test_policy : test_policy_<N> {};
 
 template<int N>
 using policy_types = types<test_policy_<N>, indirect_test_policy<N>>;
@@ -77,8 +76,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
     Player player;
     auto virtual_player = vptr_player::final(player);
     BOOST_TEST(&*virtual_player == &player);
-    BOOST_TEST(
-        (virtual_player.vptr() == Policy::template static_vptr<Player>));
+    BOOST_TEST((virtual_player.vptr() == Policy::template static_vptr<Player>));
 
     Bear bear;
     BOOST_TEST((&*vptr_bear::final(bear)) == &bear);

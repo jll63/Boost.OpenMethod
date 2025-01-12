@@ -47,9 +47,8 @@ static_assert(std::is_same_v<
 static_assert(
     std::is_same_v<virtual_type<std::shared_ptr<a>, default_policy>, a>);
 
-static_assert(
-    std::is_same_v<
-        virtual_traits<virtual_ptr<a>, default_policy>::virtual_type, a>);
+static_assert(std::is_same_v<
+              virtual_traits<virtual_ptr<a>, default_policy>::virtual_type, a>);
 
 static_assert(std::is_same_v<
               select_overrider_virtual_type_aux<
@@ -74,8 +73,7 @@ static_assert(
         overrider_virtual_types<
             types<
                 virtual_<std::shared_ptr<a>>, b, virtual_<std::shared_ptr<c>>>,
-            types<std::shared_ptr<d>, e, std::shared_ptr<f>>,
-            default_policy>,
+            types<std::shared_ptr<d>, e, std::shared_ptr<f>>, default_policy>,
         types<d, f>>);
 
 namespace using_polymorphic_classes {
@@ -154,7 +152,8 @@ namespace BOOST_OPENMETHOD_GENSYM {
 static_assert(virtual_ptr_traits<
               const std::shared_ptr<Animal>&, default_policy>::is_smart_ptr);
 
-BOOST_OPENMETHOD(poke, (const virtual_shared_ptr<Animal>&, std::ostream&), void);
+BOOST_OPENMETHOD(
+    poke, (const virtual_shared_ptr<Animal>&, std::ostream&), void);
 
 BOOST_OPENMETHOD_OVERRIDE(
     poke, (const virtual_shared_ptr<Dog>&, std::ostream& os), void) {
@@ -176,8 +175,8 @@ BOOST_AUTO_TEST_CASE(test_virtual_shared_by_const_reference) {
 
 namespace BOOST_OPENMETHOD_GENSYM {
 
-static_assert(virtual_ptr_traits<
-              std::unique_ptr<Animal>, default_policy>::is_smart_ptr);
+static_assert(
+    virtual_ptr_traits<std::unique_ptr<Animal>, default_policy>::is_smart_ptr);
 
 BOOST_OPENMETHOD(poke, (virtual_unique_ptr<Animal>, std::ostream&), void);
 

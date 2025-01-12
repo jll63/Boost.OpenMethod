@@ -26,7 +26,8 @@ using namespace boost::openmethod;
 
 class BOOST_OPENMETHOD_NAME(poke);
 
-using poke = method<BOOST_OPENMETHOD_NAME(poke)(std::ostream&, virtual_ptr<Animal>), void>;
+using poke = method<
+    BOOST_OPENMETHOD_NAME(poke)(std::ostream&, virtual_ptr<Animal>), void>;
 // end::method[]
 
 // tag::poke_cat[]
@@ -66,8 +67,8 @@ auto pet_dog(std::ostream& os, virtual_ptr<Dog> dog) {
     os << "wag tail";
 }
 
-using pet =
-    method<BOOST_OPENMETHOD_NAME(pet)(std::ostream&, virtual_ptr<Animal>), void>;
+using pet = method<
+    BOOST_OPENMETHOD_NAME(pet)(std::ostream&, virtual_ptr<Animal>), void>;
 
 BOOST_OPENMETHOD_REGISTER(pet::override<pet_cat, pet_dog>);
 
@@ -91,12 +92,12 @@ int main() {
 
     poke::fn(std::cout, *c); // prints "bark and bite"
     std::cout << "\n";
-// end::main[]
+    // end::main[]
 
     pet::fn(std::cout, *a); // prints "purr"
     std::cout << "\n";
-// tag::main[]
+    // tag::main[]
 
     return 0;
-// end::main[]
+    // end::main[]
 }

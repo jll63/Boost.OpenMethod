@@ -10,8 +10,8 @@
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/compiler.hpp>
 
-using boost::openmethod::virtual_shared_ptr;
 using boost::openmethod::make_virtual_shared;
+using boost::openmethod::virtual_shared_ptr;
 
 using std::cout;
 using std::string;

@@ -128,10 +128,8 @@ BOOST_AUTO_TEST_CASE(test_policy) {
         BOOST_TEST(&policy::methods != &default_policy::methods);
         BOOST_TEST(&policy::classes != &default_policy::classes);
         BOOST_TEST(
-            &policy::static_vptr<void> !=
-            &default_policy::static_vptr<void>);
-        BOOST_TEST(
-            &policy::dispatch_data != &default_policy::dispatch_data);
+            &policy::static_vptr<void> != &default_policy::static_vptr<void>);
+        BOOST_TEST(&policy::dispatch_data != &default_policy::dispatch_data);
     }
 
     {
@@ -140,10 +138,8 @@ BOOST_AUTO_TEST_CASE(test_policy) {
         BOOST_TEST(&policy::methods == &default_policy::methods);
         BOOST_TEST(&policy::classes == &default_policy::classes);
         BOOST_TEST(
-            &policy::static_vptr<void> ==
-            &default_policy::static_vptr<void>);
-        BOOST_TEST(
-            &policy::dispatch_data == &default_policy::dispatch_data);
+            &policy::static_vptr<void> == &default_policy::static_vptr<void>);
+        BOOST_TEST(&policy::dispatch_data == &default_policy::dispatch_data);
     }
 }
 
@@ -253,16 +249,16 @@ BOOST_AUTO_TEST_CASE(casts) {
     const Carnivore& carnivore = dog;
 
     BOOST_TEST(
-        (&virtual_traits<const Animal&, default_policy>::cast<
-              const Mammal&>(animal)
+        (&virtual_traits<const Animal&, default_policy>::cast<const Mammal&>(
+              animal)
               .m) == &dog.m);
     BOOST_TEST(
-        (&virtual_traits<const Animal&, default_policy>::cast<
-              const Carnivore&>(animal)
+        (&virtual_traits<const Animal&, default_policy>::cast<const Carnivore&>(
+              animal)
               .c) == &dog.c);
     BOOST_TEST(
-        (&virtual_traits<const Animal&, default_policy>::cast<
-              const Mammal&>(animal)
+        (&virtual_traits<const Animal&, default_policy>::cast<const Mammal&>(
+              animal)
               .m) == &dog.m);
     BOOST_TEST(
         (&virtual_traits<const Animal&, default_policy>::cast<const Dog&>(
@@ -273,8 +269,8 @@ BOOST_AUTO_TEST_CASE(casts) {
               mammal)
               .d) == &dog.d);
     BOOST_TEST(
-        (&virtual_traits<const Carnivore&, default_policy>::cast<
-              const Dog&>(carnivore)
+        (&virtual_traits<const Carnivore&, default_policy>::cast<const Dog&>(
+              carnivore)
               .c) == &dog.c);
 
     using voidp = const void*;

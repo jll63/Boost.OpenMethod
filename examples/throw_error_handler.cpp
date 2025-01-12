@@ -28,8 +28,7 @@ struct throwing_policy
 
 BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog, throwing_policy);
 
-BOOST_OPENMETHOD(
-    trick, (std::ostream&, virtual_ptr<Animal>), void);
+BOOST_OPENMETHOD(trick, (std::ostream&, virtual_ptr<Animal>), void);
 
 BOOST_OPENMETHOD_OVERRIDE(
     trick, (std::ostream & os, virtual_ptr<Dog> dog), void) {

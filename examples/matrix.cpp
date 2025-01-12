@@ -55,9 +55,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 // matrix * matrix
 
 BOOST_OPENMETHOD(
-    times,
-    (virtual_shared_ptr<const matrix>,
-     virtual_shared_ptr<const matrix>),
+    times, (virtual_shared_ptr<const matrix>, virtual_shared_ptr<const matrix>),
     virtual_shared_ptr<const matrix>);
 
 // catch-all matrix * matrix -> dense_matrix

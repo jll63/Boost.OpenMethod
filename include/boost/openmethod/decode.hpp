@@ -175,9 +175,8 @@ void decode_dispatch_data(Data& init) {
                             << group_index;
                     indent _(trace);
                     trace << type_name(method->method_type);
-                    *decode_iter++ =
-                        (std::uintptr_t)(dispatch_tables[method_index] +
-                                         group_index);
+                    *decode_iter++ = (std::uintptr_t)(
+                        dispatch_tables[method_index] + group_index);
                 }
 
                 trace << "\n";

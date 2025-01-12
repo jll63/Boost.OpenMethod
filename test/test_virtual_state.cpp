@@ -272,8 +272,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(indirect_virtual_ptr, Policy, test_policies) {
 }
 
 BOOST_AUTO_TEST_CASE(virtual_ptr_final_error) {
-    auto prev_handler =
-        default_policy::set_error_handler([](const default_policy::error_variant& ev) {
+    auto prev_handler = default_policy::set_error_handler(
+        [](const default_policy::error_variant& ev) {
             if (auto error = std::get_if<method_table_error>(&ev)) {
                 static_assert(
                     std::is_same_v<decltype(error), const method_table_error*>);

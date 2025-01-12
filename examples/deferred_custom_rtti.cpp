@@ -122,11 +122,13 @@ struct custom_policy
 
 BOOST_OPENMETHOD(poke, (std::ostream&, virtual_ptr<Animal>), void);
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, virtual_ptr<Cat> cat), void) {
+BOOST_OPENMETHOD_OVERRIDE(
+    poke, (std::ostream & os, virtual_ptr<Cat> cat), void) {
     os << "hiss";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, virtual_ptr<Dog> dog), void) {
+BOOST_OPENMETHOD_OVERRIDE(
+    poke, (std::ostream & os, virtual_ptr<Dog> dog), void) {
     os << "bark";
 }
 

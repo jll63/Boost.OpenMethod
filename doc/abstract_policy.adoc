@@ -2,7 +2,7 @@
 
 ### Synopsis
 
-Defined in <boost/openmethod/policies/core.hpp>.
+Defined in <boost/openmethod/policies/basic_policy.hpp>.
 
 ```c++
 namespace boost::openmethod::policies {

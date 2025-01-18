@@ -171,7 +171,7 @@ void call_poke(Animal& a, std::ostream& os) {
     return poke(a, os);
 }
 // mov     rax, qword ptr [rdi + 8]
-// mov     rcx, qword ptr [rip + basic_domain<test_policy>::context+24]
+// mov     rcx, qword ptr [rip + domain<test_policy>::context+24]
 // mov     rax, qword ptr [rcx + 8*rax]
 // mov     rcx, qword ptr [rip + method<test_policy, poke, void
 // (virtual_<Animal&>, basic_ostream<char, char_traits<char> >&)>::fn+80] mov
@@ -324,7 +324,7 @@ void call_poke(Animal& a, std::ostream& os) {
     return poke(a, os);
 }
 // mov     rax, qword ptr [rdi + 8]
-// mov     rcx, qword ptr [rip + basic_domain<test_policy>::context+24]
+// mov     rcx, qword ptr [rip + domain<test_policy>::context+24]
 // mov     rax, qword ptr [rcx + 8*rax]
 // mov     rcx, qword ptr [rip + method<test_policy, poke, void
 // (virtual_<Animal&>, basic_ostream<char, char_traits<char> >&)>::fn+80] mov

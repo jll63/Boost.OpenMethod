@@ -7,7 +7,7 @@
 #ifndef BOOST_OPENMETHOD_POLICY_VPTR_MAP_HPP
 #define BOOST_OPENMETHOD_POLICY_VPTR_MAP_HPP
 
-#include <boost/openmethod/policies/core.hpp>
+#include <boost/openmethod/policies/basic_policy.hpp>
 
 #include <unordered_map>
 

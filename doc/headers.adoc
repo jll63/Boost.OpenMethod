@@ -16,7 +16,7 @@
 
 ### <boost/openmethod/macros/name.hpp>
 
-### <boost/openmethod/policies/core.hpp>
+### <boost/openmethod/policies/basic_policy.hpp>
 
 ### <boost/openmethod/policies/vectored_error_handler.hpp>
 

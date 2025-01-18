@@ -27,7 +27,7 @@ struct Dog : Animal {
     static constexpr unsigned static_type = 3;
 };
 
-#include <boost/openmethod/policies/core.hpp>
+#include <boost/openmethod/policies/basic_policy.hpp>
 #include <boost/openmethod/policies/vptr_vector.hpp>
 
 namespace bom = boost::openmethod;

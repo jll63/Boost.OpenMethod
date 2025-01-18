@@ -7,7 +7,7 @@
 #ifndef BOOST_OPENMETHOD_POLICY_BASIC_TRACE_OUTPUT_HPP
 #define BOOST_OPENMETHOD_POLICY_BASIC_TRACE_OUTPUT_HPP
 
-#include <boost/openmethod/policies/core.hpp>
+#include <boost/openmethod/policies/basic_policy.hpp>
 #include <boost/openmethod/detail/ostdstream.hpp>
 
 namespace boost {

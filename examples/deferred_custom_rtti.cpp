@@ -73,7 +73,7 @@ struct Dog : virtual Animal {
 // put Dog's type_info *after* open-method static ctors to test the
 // deferred_static_rtti policy
 
-#include <boost/openmethod/policies/core.hpp>
+#include <boost/openmethod/policies/basic_policy.hpp>
 #include <boost/openmethod/policies/vptr_vector.hpp>
 
 namespace bom = boost::openmethod;

@@ -11,7 +11,7 @@
 #include <variant>
 #include <vector>
 
-#include <boost/openmethod/policies/core.hpp>
+#include <boost/openmethod/policies/basic_policy.hpp>
 
 #include <boost/openmethod/policies/std_rtti.hpp>
 #include <boost/openmethod/policies/vptr_vector.hpp>

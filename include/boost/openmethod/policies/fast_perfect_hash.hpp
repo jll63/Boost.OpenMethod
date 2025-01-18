@@ -9,7 +9,7 @@
 
 #include <random>
 
-#include <boost/openmethod/policies/core.hpp>
+#include <boost/openmethod/policies/basic_policy.hpp>
 
 namespace boost {
 namespace openmethod {

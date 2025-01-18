@@ -330,11 +330,10 @@ struct key2;
 struct alt_rtti {};
 
 static_assert(
-    std::is_same_v<
-        rebind_facet<key2, basic_domain<key1>>::type, basic_domain<key2>>);
+    std::is_same_v<rebind_facet<key2, domain<key1>>::type, domain<key2>>);
 
 // boost::openmethod::policies::basic_policy<facets::key2, boost::openmethod::policies::std_rtti>,
-// boost::openmethod::policies::basic_policy<boost::openmethod::policies::basic_domain<facets::key2>, boost::openmethod::policies::std_rtti>
+// boost::openmethod::policies::basic_policy<boost::openmethod::policies::domain<facets::key2>, boost::openmethod::policies::std_rtti>
 
 struct policy1 : basic_policy<policy1, std_rtti> {};
 struct policy2 : policy1::fork<policy2> {};

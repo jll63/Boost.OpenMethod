@@ -7,7 +7,7 @@
 #ifndef BOOST_OPENMETHOD_POLICY_MINIMAL_RTTI_HPP
 #define BOOST_OPENMETHOD_POLICY_MINIMAL_RTTI_HPP
 
-#include <boost/openmethod/policies/core.hpp>
+#include <boost/openmethod/policies/basic_policy.hpp>
 
 namespace boost {
 namespace openmethod {

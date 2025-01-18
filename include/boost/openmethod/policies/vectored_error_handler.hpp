@@ -7,7 +7,7 @@
 #ifndef BOOST_OPENMETHOD_POLICY_VECTORED_ERROR_HPP
 #define BOOST_OPENMETHOD_POLICY_VECTORED_ERROR_HPP
 
-#include <boost/openmethod/policies/core.hpp>
+#include <boost/openmethod/policies/basic_policy.hpp>
 
 #include <functional>
 #include <variant>

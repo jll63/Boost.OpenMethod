@@ -1,8 +1,6 @@
 
-[#method]
-## method<Name(Parameters...), ReturnType, Policy>
 
-### Description
+## method
 
 ### Synopsis
 
@@ -39,9 +37,11 @@ class method<Name(Parameters...), ReturnType, Policy> {
 }
 ```
 
+### Description
+
 ### Members
 
-### Constructor
+#### constructor
 
 ```c++
 method();
@@ -52,7 +52,7 @@ Add the method to the list of methods registered in `Policy`.
 The constructor is private. The only instance is the static member variable
 `fn`.
 
-### Destructor
+#### destructor
 
 ```c++
 ~method();

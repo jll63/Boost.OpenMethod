@@ -7,10 +7,10 @@
 
 Defined in <boost/openmethod/macros/register.hpp>.
 
-### Description
-
-Creates a static instance of `TYPE`, using a unique generated name.
-
 ```c++
 BOOST_OPENMETHOD_REGISTER(TYPE);
 ```
+
+### Description
+
+Creates a static instance of `TYPE`, using a unique generated name.

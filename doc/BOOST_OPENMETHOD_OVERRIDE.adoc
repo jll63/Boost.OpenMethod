@@ -13,10 +13,6 @@ BOOST_OPENMETHOD_OVERRIDE(NAME, (PARAMETERS...), RETURN_TYPE) {
 }
 ```
 
-```c++
-using method_type = decltype(BOOST_OPENMETHOD_NAME(NAME)_guide(std::declval<A>()...))
-```
-
 ### Description
 
 `BOOST_OPENMETHOD_OVERRIDE` adds an overrider to a method.
@@ -42,6 +38,7 @@ struct BOOST_OPENMETHOD_OVERRIDERS(NAME)<RETURN_TYPE(PARAMETERS...)> {
     template<typename... Args>
     static auto next(typename... Args) -> RETURN_TYPE;
 };
+```
 
 where:
 
@@ -55,8 +52,8 @@ pointer stored in the method's `next<fn>` member variable.
 Finally, the macro starts the definition of the overrider function:
 
 ```c++
-auto BOOST_OPENMETHOD_OVERRIDERS(NAME)<RETURN_TYPE(PARAMETERS...)>
-::fn(PARAMETERS...) -> RETURN_TYPE
+auto BOOST_OPENMETHOD_OVERRIDERS(NAME)<RETURN_TYPE(PARAMETERS...)>::fn(
+    PARAMETERS...) -> RETURN_TYPE
 ```
 
 The block following the call to the macro is the body of the function.

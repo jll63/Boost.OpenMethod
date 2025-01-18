@@ -1,5 +1,5 @@
 
-[#BOOST_OPENMETHOD_OVERRIDERS]
+## BOOST_OPENMETHOD_OVERRIDERS
 
 ### Synopsis
 
@@ -14,5 +14,3 @@ Defined in <boost/openmethod/macros.hpp>.
 
 `BOOST_OPENMETHOD_OVERRIDERS` expands to the name of the class template that
 contains the overriders for all the methods with a given name.
-
-## BOOST_OPENMETHOD_OVERRIDERS

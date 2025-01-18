@@ -1,7 +1,7 @@
 
 [#BOOST_OPENMETHOD]
 
-## Macro BOOST_OPENMETHOD
+## BOOST_OPENMETHOD
 
 ### Synopsis
 

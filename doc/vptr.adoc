@@ -4,7 +4,11 @@
 ### Synopsis
 
 ```c++
+namespace boost::openmethod::policies {
+
 struct vptr {};
+
+}
 ```
 
 ### Description

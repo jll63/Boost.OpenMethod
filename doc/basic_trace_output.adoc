@@ -27,7 +27,7 @@ messages to a `RestrictedOutputStream`.
 #### trace_enabled
 
 ```c++
-Stream  trace_enabled;
+static bool trace_enabled;
 ```
 
 Set to `true` if environment variable `BOOST_OPENMETHOD_TRACE` is set to `1`.
@@ -35,7 +35,7 @@ Set to `true` if environment variable `BOOST_OPENMETHOD_TRACE` is set to `1`.
 #### trace_stream
 
 ```c++
-Stream  trace_stream;
+static Stream trace_stream;
 ```
 
 Initialized by the default constructor of `Stream`. It is the responsibility of

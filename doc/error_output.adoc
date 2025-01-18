@@ -3,30 +3,25 @@
 
 ### Synopsis
 
+Defined in <boost/openmethod/policies/basic_policy.hpp>.
+
 ```c++
-namespace boost {
-namespace openmethod {
-namespace policies {
+namespace boost::openmethod::policies {
 
 struct error_output {};
 
-}}}
+} // boost::openmethod::policies
 ```
 
 ### Description
 
 `error_output` is a facet that provides a stream for writing error messages.
 
-Implementations of `error_output` provide the following functions:
+### Requirements
 
-[cols="a,a", options="header"]
+#### error_stream
 
-|===
+```c++
+static RestrictedOutputStream error_stream;
 
-| Name
-| Description
-
-| error_stream
-| A static variable that satisfies the requirements of `RestrictedOutputStream`.
-
-|===
+A static variable that satisfies the requirements of `RestrictedOutputStream`.

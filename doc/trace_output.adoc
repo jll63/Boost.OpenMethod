@@ -6,13 +6,11 @@
 Defined in <boost/openmethod/policies/basic_policy.hpp>.
 
 ```c++
-namespace boost {
-namespace openmethod {
-namespace policies {
+namespace boost::openmethod::policies {
 
 struct trace_output {};
 
-}}}
+}
 ```
 
 ---
@@ -28,22 +26,20 @@ description is not documented, beyond the guarantee that it provides an
 exhaustive account of table construction, and may change between major, minor
 and patch versions.
 
-Implementations of `trace_output` provide the following functions:
+### Requirements
 
-[cols="a,a", options="header"]
+#### trace_enabled
 
-|===
+```c++
+static bool trace_enabled;
+```
 
-| trace_enabled
-| A static variable that satisfies the requirements of `RestrictedOutputStream`.
+`true` if tracing is enabled, `false` otherwise.
 
-| Name
-| Description
+#### trace_stream
 
-| trace_enabled
-| A static `bool` variable that is `true` if tracing is on.
+```c++
+static RestrictedOutputStream trace_stream;
+```
 
-| trace_stream
-| A static variable that satisfies the requirements of `RestrictedOutputStream`.
-
-|===
+A static variable that satisfies the requirements of `RestrictedOutputStream`.

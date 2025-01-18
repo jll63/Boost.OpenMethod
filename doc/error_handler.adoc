@@ -3,10 +3,10 @@
 
 ### Synopsis
 
+Defined in <boost/openmethod/policies/basic_policy.hpp>.
+
 ```c++
-namespace boost {
-namespace openmethod {
-namespace policies {
+namespace boost::openmethod::policies {
 
 struct error_handler;
 
@@ -32,7 +32,7 @@ struct method_table_error : openmethod_error {
     type_id type;
 };
 
-}}}
+} // boost::openmethod::policies
 ```
 
 ### Description
@@ -44,37 +44,12 @@ program is terminated via a call to `abort`. If this facet is present in the
 policy, its `error` function is called with an error object. It can prevent
 termination by throwing an exception.
 
+### Requirements
+
 Implementations of `error_handler` must provide the following functions:
 
-[cols="a,a", options="header"]
+#### error
 
-|===
-
-| Name
-| Description
-
-| static auto error(const T&) -> void
-| A function that takes an error object.
-
-|===
-
----
-
-### Implementations
-
-
-[cols="a,a", options="header"]
-
-|===
-
-| Name
-| Description
-
-| throw_error_handler
-| Throws the error object as an exception.
-
-| vectored_error_handler | Calls an error handler via a `std::function`, which
-defaults to printing a description of the error to `stderr`. Included in the
-`debug` policy.
-
-|===
+```c++
+| static auto error(const T&) -> void;
+```

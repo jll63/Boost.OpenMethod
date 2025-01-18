@@ -3,8 +3,14 @@
 
 ### Synopsis
 
+Defined in <boost/openmethod/policies/basic_policy.hpp>.
+
 ```c++
+namespace boost::openmethod::policies {
+
 struct type_hash {};
+
+} // boost::openmethod::policies
 ```
 
 ### Description

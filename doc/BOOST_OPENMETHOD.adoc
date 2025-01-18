@@ -17,18 +17,18 @@ Declares a method.
 
 ### Effects
 
-The macro expands to several constructs, the most important of which is an
-inline function called `NAME`, with a formal parameter list that consists of the
-types listed in `PARAMETERS`, stripped from any `virtual_` decorator
-(`virtual_ptr`{empty}s are preserved), and returning a `RETURN_TYPE`.
-
-The function creates additional entities:
+The macro expands to several constructs:
 
 * A `struct` forward declaration that acts as the method's identifier:
 
 ```c++
 struct BOOST_OPENMETHOD_NAME(NAME);
 ```
+
+* An inline function template, constrained to take the same `PARAMETERS`,
+  without the `virtual_` decorators, returning a `RETURN_TYPE`. The function
+  forwards to +
+  `method<BOOST_OPENMETHOD_NAME(NAME)(PARAMETERS...), RETURN_TYPE, POLICY>::fn`.
 
 * A guide function used to match overriders with the method:
 

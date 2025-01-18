@@ -6,9 +6,7 @@
 Defined in <boost/openmethod/policies/std_rtti.hpp>.
 
 ```c++
-namespace boost {
-namespace openmethod {
-namespace policies {
+namespace boost::openmethod::policies {
 
 struct std_rtti : virtual rtti {
     template<class Class>
@@ -26,14 +24,14 @@ struct std_rtti : virtual rtti {
     static auto dynamic_cast_ref(B&& obj) -> D;
 };
 
-}}}
+} // boost::openmethod::policies
 ```
 
 ### Description
 
-`std_rtti` - An implementation of the `rtti` facet that uses standard RTTI.
+`std_rtti` is an implementation of the `rtti` facet that uses standard RTTI.
 
-### Member Functions
+### Members
 
 #### static_type
 

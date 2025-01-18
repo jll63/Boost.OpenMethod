@@ -6,9 +6,7 @@
 Defined in <boost/openmethod/policies/vectored_error_handler.hpp>.
 
 ```c++
-namespace boost {
-namespace openmethod {
-namespace policies {
+namespace boost::openmethod::policies {
 
 template<class Policy>
 class vectored_error_handler : public virtual error_handler {
@@ -24,7 +22,7 @@ class vectored_error_handler : public virtual error_handler {
     static auto set_error_handler(error_handler_type handler) -> function_type;
 };
 
-}}}
+}
 ```
 
 ### Description

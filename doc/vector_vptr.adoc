@@ -6,9 +6,7 @@
 Defined in <boost/openmethod/policies/vptr_vector.hpp>.
 
 ```c++
-namespace boost {
-namespace openmethod {
-namespace policies {
+namespace boost::openmethod::policies {
 
 template<class Policy, class Base = extern_vptr>
 class vptr_vector : Base {
@@ -20,7 +18,7 @@ class vptr_vector : Base {
     static auto dynamic_vptr(const Class& arg) -> const vptr_type&;
 };
 
-}}}
+}
 ```
 
 ### Description

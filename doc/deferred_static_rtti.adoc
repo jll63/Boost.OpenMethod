@@ -3,8 +3,14 @@
 
 ### Synopsis
 
+Defined in <boost/openmethod/policies/basic_policy.hpp>.
+
 ```c++
+namespace boost::openmethod::policies {
+
 struct deferred_static_rtti : virtual rtti {};
+
+}
 ```
 
 ### Description

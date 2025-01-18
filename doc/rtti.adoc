@@ -6,7 +6,11 @@
 Defined in <boost/openmethod/policies/basic_policy.hpp>.
 
 ```c++
+namespace boost::openmethod::policies {
+
 struct rtti {};
+
+} // boost::openmethod::policies
 ```
 
 ### Description
@@ -15,34 +19,50 @@ The `rtti` facet provides type information for classes and objects, implements
 downcast in presence of virtual inheritance, and writes descriptions of types to
 an `ostream`-like object.
 
-Implementations of `rtti` provide the following functions:
+### Requirements
 
-[cols="a,a,a", options="header"]
+#### static_type
 
-|===
-| Name
-| Description
-| Required
+```c++
+template<class Class>
+static auto static_type() -> type_id;
+```
 
-| type_id static_type<Class>
-| return a `type_id` for `Class`
-| yes
+Returns a `type_id` for `Class`.
 
-| type_id dynamic_type<Class>
-| return a `type_id` for an object's dynamic type
-| if virtual inheritance is used
+#### dynamic_type
 
-| void type_name<Stream>
-| write a description of `type_id` to a stream
-| no
+```c++
+template<class Class>
+static auto dynamic_type(const Class& obj) -> type_id;
+```
 
-| _unspecified_ type_index
-| return a unique key for a `type_id`
-| depending on context
+Returns a `type_id` for an object's dynamic type.
 
-| Derived dynamic_cast_ref<Derived, Base>
-| cast from base class to derived class
-| if using virtual inheritance
-|===
+#### type_name
 
-`Stream` is a model of RestrictedOutputStream.
+```c++
+template<typename Stream>
+static auto type_name(type_id type, Stream& stream) -> void;
+```
+
+Writes a description of `type` to `stream`.
+
+This requirement is optional. `rtti` provides a default implementation that writes `typeid({type})` to `stream`.
+
+#### type_index
+
+```c++
+static auto type_index(type_id type) -> /* unspecified */;
+```
+
+Returns a unique key for `type`. Required only for RTTI systems that possibly assign more than one `type_id` to a type (like standard RTTI).
+
+#### dynamic_cast_ref
+
+```c++
+template<typename D, typename B>
+static auto dynamic_cast_ref(B&& obj) -> D;
+```
+
+Casts `obj` to `D`. Required only if using virtual inheritance.

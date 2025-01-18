@@ -39,6 +39,21 @@ class method<Name(Parameters...), ReturnType, Policy> {
 
 ### Description
 
+`method` implements an open-method that takes a parameter list - `Parameters` -
+and returns a `ReturnType`. `Name` can be any type. Its purpose is to make it
+possible to have multiple methods with the same signature. Typically, `Name` is
+a class whose name reflects the method's purpose.
+
+`Parameters` must contain at least one virtual parameter, i.e. a parameter that
+has a type in the form `virtual_ptr<T, Policy>` or `virtual_<T>`. The dynamic
+types of the virtual arguments (the arguments corresponding to virtual
+parameters in the method's signature) are taken into account to select the
+overrider to call.
+
+A `method` is attached to a `Policy`, which influences several parts of the
+dispatch mechanism - for example, how to obtain a v-table pointer for an object,
+how to report errors, whether to perform sanity checks, etc.
+
 ### Members
 
 #### constructor
@@ -68,8 +83,8 @@ auto operator()(CallParameters... args) const -> ReturnType;
 
 Call the method with the arguments `args`.
 
-`CallParameters` are the `Parameters` where the `virtual_` decorators have been
-removed.
+`CallParameters` are the `Parameters` without the `virtual_` decorators. Note
+that `virtual_ptr`{empty}s are preserved.
 
 The overrider is selected in a process similar to overloaded function
 resolution, with extra rules to handle ambiguities. It proceeds as follows:
@@ -95,6 +110,20 @@ resolution, with extra rules to handle ambiguities. It proceeds as follows:
 7. Otherwise, call one of the remaining overriders. Which overrider is selected
    is not specified, but it is the same across calls with the same arguments
    types.
+
+The dispatch mechanism determines the v-table for each virtual argument (`arg`)
+as follows:
+
+1. Call `virtual_traits::rarg(arg)`. The result is the _resolver_ _argument_, or
+   `rarg.`
+
+2. If `rarg` is a `virtual_ptr`, it contains he pointer to the v-table.
+
+3. If `rarg` has a public `boost_openmethod_vptr` member variable, it is
+   a pointer to the v-table, or a pointer to a pointer to the v-table, depending
+   on the `Policy`.
+
+4. Otherwise, call `Policy::dynamic_vptr(rarg)`.
 
 ### Static Member Variables
 

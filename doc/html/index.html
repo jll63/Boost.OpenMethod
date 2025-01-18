@@ -631,14 +631,14 @@ pre.rouge .gs {
 <li><a href="#ref_synopsis_8">Synopsis</a></li>
 <li><a href="#ref_description_9">Description</a></li>
 <li><a href="#ref_members">Members</a></li>
-<li><a href="#ref_static_member_variables">Static Member Variables</a></li>
+<li><a href="#ref_members_2">Members</a></li>
 </ul>
 </li>
 <li><a href="#method_override">method::override</a>
 <ul class="sectlevel3">
 <li><a href="#ref_synopsis_9">Synopsis</a></li>
 <li><a href="#ref_description_10">Description</a></li>
-<li><a href="#ref_members_2">Members</a></li>
+<li><a href="#ref_members_3">Members</a></li>
 </ul>
 </li>
 <li><a href="#ref_virtual">virtual_</a>
@@ -651,7 +651,7 @@ pre.rouge .gs {
 <ul class="sectlevel3">
 <li><a href="#ref_synopsis_11">Synopsis</a></li>
 <li><a href="#ref_description_12">Description</a></li>
-<li><a href="#ref_members_3">Members</a></li>
+<li><a href="#ref_members_4">Members</a></li>
 <li><a href="#ref_specializations">Specializations</a></li>
 </ul>
 </li>
@@ -660,9 +660,8 @@ pre.rouge .gs {
 <li><a href="#virtual_ptr_synopsis">Synopsis</a></li>
 <li><a href="#virtual_ptr_description">Description</a></li>
 <li><a href="#virtual_ptr_members">Members</a></li>
-<li><a href="#virtual_ptr_deduction_guides">Deduction guides</a></li>
-<li><a href="#virtual_ptr_free_aliases">Free Aliases</a></li>
-<li><a href="#virtual_ptr_free_functions">Free Functions</a></li>
+<li><a href="#virtual_ptr_deduction_guide">Deduction guide</a></li>
+<li><a href="#virtual_ptr_non_members">Non-members</a></li>
 </ul>
 </li>
 <li><a href="#virtual_ptr_virtual_ptr_traitsclass_policy">virtual_ptr_traits&lt;Class, Policy&gt;</a>
@@ -691,7 +690,7 @@ pre.rouge .gs {
 <li><a href="#virtual_ptr_synopsis_5">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_5">Description</a></li>
 <li><a href="#virtual_ptr_members_4">Members</a></li>
-<li><a href="#virtual_ptr_non_members">Non-members</a></li>
+<li><a href="#virtual_ptr_non_members_2">Non-members</a></li>
 </ul>
 </li>
 <li><a href="#virtual_ptr_rtti">rtti</a>
@@ -2087,6 +2086,20 @@ forwards to<br>
         <span class="n">BOOST_OPENMETHOD_NAME</span><span class="p">(</span><span class="n">NAME</span><span class="p">)(</span><span class="n">PARAMETERS</span><span class="p">...),</span> <span class="n">RETURN_TYPE</span> <span class="p">[,</span> <span class="n">POLICY</span><span class="p">]</span><span class="o">&gt;</span><span class="p">;</span></code></pre>
 </div>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+The default value for <code>POLICY</code> is the value of
+<code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> at the point <code>&lt;boost/openmethod/core.hpp&gt;</code> is
+included. Changing the value of this symbol has no effect after that point.
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -2236,8 +2249,7 @@ pointer stored in the method&#8217;s <code>next&lt;fn&gt;</code> member variable
 <div class="sect3">
 <h4 id="ref_description_5">Description</h4>
 <div class="paragraph">
-<p>Register <code>CLASSES</code> in POLICY. If <code>POLICY</code> is not specified, use the default
-policy.</p>
+<p>Register <code>CLASSES</code> in POLICY.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2246,9 +2258,9 @@ policy.</p>
 <div class="title">Note</div>
 </td>
 <td class="content">
-The default policy is the value of <code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> at
-the point <code>&lt;boost/openmethod/core.hpp&gt;</code> is included. Changing the value of this
-symbol has no effect after that point.
+The default value for <code>POLICY</code> is the value of
+<code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> at the point <code>&lt;boost/openmethod/core.hpp&gt;</code> is
+included. Changing the value of this symbol has no effect after that point.
 </td>
 </tr>
 </table>
@@ -2385,8 +2397,8 @@ a class whose name reflects the method&#8217;s purpose.</p>
 </div>
 <div class="paragraph">
 <p><code>Parameters</code> must contain at least one virtual parameter, i.e. a parameter that
-has a type in the form <code>virtual_ptr&lt;T, Policy&gt;</code> or <code>virtual_&lt;T&gt;</code>. The dynamic
-types of the virtual arguments (the arguments corresponding to virtual
+has a type in the form <code>virtual_ptr&lt;T,&#160;Policy&gt;</code> or <code>virtual_&lt;T&gt;</code>. The
+dynamic types of the virtual arguments (the arguments corresponding to virtual
 parameters in the method&#8217;s signature) are taken into account to select the
 overrider to call.</p>
 </div>
@@ -2486,7 +2498,7 @@ as follows:</p>
 <code>rarg.</code></p>
 </li>
 <li>
-<p>If <code>rarg</code> is a <code>virtual_ptr</code>, it contains he pointer to the v-table.</p>
+<p>If <code>rarg</code> is a <code>virtual_ptr</code>, it contains the pointer to the v-table.</p>
 </li>
 <li>
 <p>If <code>rarg</code> has a public <code>boost_openmethod_vptr</code> member variable, it is
@@ -2501,12 +2513,12 @@ on the <code>Policy</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="ref_static_member_variables">Static Member Variables</h4>
+<h4 id="ref_members_2">Members</h4>
 <div class="sect4">
 <h5 id="ref_fn">fn</h5>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="n">method</span> <span class="n">fn</span><span class="p">;</span></code></pre>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">static</span> <span class="n">method</span> <span class="n">fn</span><span class="p">;</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2548,8 +2560,7 @@ overrider that would be called for the same tuple of virtual arguments if
 <h4 id="ref_synopsis_9">Synopsis</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span> <span class="p">{</span>
-<span class="k">namespace</span> <span class="n">openmethod</span> <span class="p">{</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span> <span class="p">{</span>
 
 <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Signature</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">ReturnType</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Policy</span><span class="p">&gt;</span>
 <span class="k">template</span><span class="o">&lt;</span><span class="k">auto</span><span class="p">...</span> <span class="n">Functions</span><span class="p">&gt;</span>
@@ -2558,7 +2569,6 @@ overrider that would be called for the same tuple of virtual arguments if
     <span class="o">~</span><span class="k">override</span><span class="p">();</span>
 <span class="p">};</span>
 
-<span class="p">}</span>
 <span class="p">}</span></code></pre>
 </div>
 </div>
@@ -2566,10 +2576,8 @@ overrider that would be called for the same tuple of virtual arguments if
 <div class="sect3">
 <h4 id="ref_description_10">Description</h4>
 <div class="paragraph">
-<p><code>boost::openmethod::method::override</code> adds an overrider to an open-method.</p>
-</div>
-<div class="paragraph">
-<p><code>override</code> must be instantiated as a <strong>static</strong> object.</p>
+<p><code>override</code>, instantiated as a static object, add one or more overriders to an
+open-method.</p>
 </div>
 <div class="paragraph">
 <p><em>Functions</em> must fulfill the following requirements:</p>
@@ -2600,12 +2608,12 @@ or, if it is a polymorphic type, covariant with the method&#8217;s return type.<
 </div>
 </div>
 <div class="sect3">
-<h4 id="ref_members_2">Members</h4>
+<h4 id="ref_members_3">Members</h4>
 <div class="sect4">
-<h5 id="ref_constructor_2">Constructor</h5>
+<h5 id="ref_constructor_2">constructor</h5>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="n">method</span><span class="o">&lt;</span><span class="n">Signature</span><span class="p">,</span> <span class="n">ReturnType</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;::</span><span class="k">override</span><span class="o">&lt;</span><span class="n">Functions</span><span class="o">&gt;::</span><span class="k">override</span><span class="p">();</span></code></pre>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">override</span><span class="o">&lt;</span><span class="n">Functions</span><span class="o">&gt;::</span><span class="k">override</span><span class="p">();</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2616,7 +2624,7 @@ or, if it is a polymorphic type, covariant with the method&#8217;s return type.<
 <h5 id="ref_destructor_2">Destructor</h5>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="n">method</span><span class="o">&lt;</span><span class="n">Signature</span><span class="p">,</span> <span class="n">ReturnType</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;::</span><span class="k">override</span><span class="o">&lt;</span><span class="n">Functions</span><span class="o">&gt;::~</span><span class="n">method</span><span class="p">();</span></code></pre>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">override</span><span class="o">&lt;</span><span class="n">Functions</span><span class="o">&gt;::~</span><span class="n">method</span><span class="p">();</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2688,7 +2696,7 @@ See the documentation of <code>virtual_traits</code> for more information.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="ref_members_3">Members</h4>
+<h4 id="ref_members_4">Members</h4>
 <div class="sect4">
 <h5 id="ref_virtual_type">virtual_type</h5>
 <div class="listingblock">
@@ -3038,7 +3046,7 @@ or a smart pointer.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_deduction_guides">Deduction guides</h4>
+<h4 id="virtual_ptr_deduction_guide">Deduction guide</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">&gt;</span>
@@ -3048,7 +3056,7 @@ or a smart pointer.</p>
 <hr>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_free_aliases">Free Aliases</h4>
+<h4 id="virtual_ptr_non_members">Non-members</h4>
 <div class="sect4">
 <h5 id="virtual_ptr_virtual_shared_ptr">virtual_shared_ptr</h5>
 <div class="listingblock">
@@ -3073,9 +3081,6 @@ or a smart pointer.</p>
 <p>Defined in <code>&lt;boost/openmethod/virtual_unique_ptr.hpp&gt;</code>.</p>
 </div>
 </div>
-</div>
-<div class="sect3">
-<h4 id="virtual_ptr_free_functions">Free Functions</h4>
 <div class="sect4">
 <h5 id="virtual_ptr_final_virtual_ptr">final_virtual_ptr</h5>
 <div class="listingblock">
@@ -3541,7 +3546,7 @@ new policy contains the same facet as the original one.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_non_members">Non-members</h4>
+<h4 id="virtual_ptr_non_members_2">Non-members</h4>
 <div class="sect4">
 <h5 id="virtual_ptr_release">release</h5>
 <div class="listingblock">

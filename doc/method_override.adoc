@@ -5,8 +5,7 @@
 ### Synopsis
 
 ```c++
-namespace boost {
-namespace openmethod {
+namespace boost::openmethod {
 
 template<typename Signature, typename ReturnType, class Policy>
 template<auto... Functions>
@@ -16,14 +15,12 @@ struct method<Signature, ReturnType, Policy>::override {
 };
 
 }
-}
 ```
 
 ### Description
 
-`boost::openmethod::method::override` adds an overrider to an open-method.
-
-`override` must be instantiated as a *static* object.
+`override`, instantiated as a static object, add one or more overriders to an
+open-method.
 
 _Functions_ must fulfill the following requirements:
 
@@ -44,10 +41,10 @@ a type that is covariant with the type of the method's parameter.
 
 ### Members
 
-#### Constructor
+#### constructor
 
 ```c++
-method<Signature, ReturnType, Policy>::override<Functions>::override();
+override<Functions>::override();
 ```
 
 Add _Functions_ to the overriders of `method`.
@@ -55,7 +52,7 @@ Add _Functions_ to the overriders of `method`.
 #### Destructor
 
 ```c++
-method<Signature, ReturnType, Policy>::override<Functions>::~method();
+override<Functions>::~method();
 ```
 
 Remove _Functions_ from the overriders of `method`.

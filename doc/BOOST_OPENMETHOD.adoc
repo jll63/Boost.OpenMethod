@@ -37,3 +37,7 @@ auto BOOST_OPENMETHOD_NAME(NAME)_guide(...)
     -> ::boost::openmethod::method<
         BOOST_OPENMETHOD_NAME(NAME)(PARAMETERS...), RETURN_TYPE [, POLICY]>;
 ```
+
+NOTE: The default value for `POLICY` is the value of
+`BOOST_OPENMETHOD_DEFAULT_POLICY` at the point `<boost/openmethod/core.hpp>` is
+included. Changing the value of this symbol has no effect after that point.

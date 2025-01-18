@@ -13,12 +13,11 @@ BOOST_OPENMETHOD_CLASSES(CLASSES...[, POLICY]);
 
 ### Description
 
-Register `CLASSES` in POLICY. If `POLICY` is not specified, use the default
-policy.
+Register `CLASSES` in POLICY.
 
-NOTE: The default policy is the value of `BOOST_OPENMETHOD_DEFAULT_POLICY` at
-the point `<boost/openmethod/core.hpp>` is included. Changing the value of this
-symbol has no effect after that point.
+NOTE: The default value for `POLICY` is the value of
+`BOOST_OPENMETHOD_DEFAULT_POLICY` at the point `<boost/openmethod/core.hpp>` is
+included. Changing the value of this symbol has no effect after that point.
 
 This macro is a wrapper around `use_classes`; see its documentation for more
 details.

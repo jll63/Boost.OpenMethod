@@ -201,7 +201,7 @@ auto cast() const -> virtual_ptr<Other, Policy>;
 
 Returns a `virtual_ptr` to the same object, cast to `Other`.
 
-### Deduction guides
+### Deduction guide
 
 ```c++
 template<class Class>
@@ -210,7 +210,7 @@ virtual_ptr(Class&) -> virtual_ptr<Class, BOOST_OPENMETHOD_DEFAULT_POLICY>;
 
 ---
 
-### Free Aliases
+### Non-members
 
 #### virtual_shared_ptr
 
@@ -229,8 +229,6 @@ using virtual_unique_ptr = virtual_ptr<std::unique_ptr<Class>, Policy>;
 ```
 
 Defined in `<boost/openmethod/virtual_unique_ptr.hpp>`.
-
-### Free Functions
 
 #### final_virtual_ptr
 

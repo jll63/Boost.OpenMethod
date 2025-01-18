@@ -45,8 +45,8 @@ possible to have multiple methods with the same signature. Typically, `Name` is
 a class whose name reflects the method's purpose.
 
 `Parameters` must contain at least one virtual parameter, i.e. a parameter that
-has a type in the form `virtual_ptr<T, Policy>` or `virtual_<T>`. The dynamic
-types of the virtual arguments (the arguments corresponding to virtual
+has a type in the form `virtual_ptr<T,{nbsp}Policy>` or `virtual_<T>`. The
+dynamic types of the virtual arguments (the arguments corresponding to virtual
 parameters in the method's signature) are taken into account to select the
 overrider to call.
 
@@ -117,7 +117,7 @@ as follows:
 1. Call `virtual_traits::rarg(arg)`. The result is the _resolver_ _argument_, or
    `rarg.`
 
-2. If `rarg` is a `virtual_ptr`, it contains he pointer to the v-table.
+2. If `rarg` is a `virtual_ptr`, it contains the pointer to the v-table.
 
 3. If `rarg` has a public `boost_openmethod_vptr` member variable, it is
    a pointer to the v-table, or a pointer to a pointer to the v-table, depending
@@ -125,12 +125,12 @@ as follows:
 
 4. Otherwise, call `Policy::dynamic_vptr(rarg)`.
 
-### Static Member Variables
+### Members
 
 #### fn
 
 ```c++
-method fn;
+static method fn;
 ```
 
 The `method`{empty}'s unique instance. The method is called via the call

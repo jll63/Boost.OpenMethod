@@ -1,14 +1,9 @@
 
-## virtual_ptr_traits<Class, Policy>
-
-### Description
-
-`virtual_ptr_traits` is a class template used by `virtual_ptr` to manipulate the
-pointer to the object.
+## virtual_ptr_traits
 
 ### Synopsis
 
-Defined in <boost/openmethod/core.hpp>
+Defined in <boost/openmethod/core.hpp>.
 
 ```c++
 namespace boost::openmethod {
@@ -29,12 +24,17 @@ struct virtual_ptr_traits {
 } // namespace boost::openmethod
 ```
 
+### Description
+
+`virtual_ptr_traits` is a class template used by `virtual_ptr` to manipulate the
+pointer to the object.
+
 ### Members
 
 #### is_smart_ptr
 
 ```c++
-static bool constexpr is_smart_ptr = ...;
+static bool constexpr is_smart_ptr;
 ```
 
 `true` if the pointer to the object is a smart pointer.

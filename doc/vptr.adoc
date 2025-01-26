@@ -1,7 +1,9 @@
 
-## policies::vptr
+## vptr
 
 ### Synopsis
+
+Defined in <boost/openmethod/policies/basic_policy.hpp>.
 
 ```c++
 namespace boost::openmethod::policies {
@@ -35,8 +37,6 @@ facet is optional.
 
 ### Requirements
 
-An implementation of `vptr` must provide the following static members:
-
 #### dynamic_vptr;
 
 ```c++
@@ -64,8 +64,7 @@ objects.
 
 ### Requirements
 
-In addition to the requirements of `vptr`, an implementation of `extern_vptr`
-must have the following static members:
+The requirements of `vptr`, plus the following.
 
 #### register_vptrs
 
@@ -92,16 +91,20 @@ v-table for a registered class. Its value is set by `initialize`. While the
 value of the variable changes with each call to `initialize`, the variable
 itself remains the same.
 
-## extern_vptr
+## indirect_vptr
 
 ### Synopsis
 
 ```c++
-struct indirect_extern_vptr : virtual extern_vptr {};
+struct indirect_vptr {};
 ```
 
 ### Description
 
-`indirect_extern_vptr` makes `virtual_ptr`{empty}s use pointers to pointers to a
-v-table, instead of straight pointers. As a consequence, they remain valid after
-a call to `initialize`.
+`indirect_vptr` is a facet that makes `virtual_ptr`{empty}s and `set_vptr` use
+pointers to pointers to v-tables, instead of straight pointers. As a
+consequence, they remain valid after a call to `initialize`.
+
+### Requirements
+
+None. The facet is its own implementation.

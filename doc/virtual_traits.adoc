@@ -1,5 +1,5 @@
 
-## virtual_traits<Class, Policy>
+## virtual_traits
 
 ### Synopsis
 

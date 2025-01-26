@@ -4,20 +4,16 @@
 ### Synopsis
 
 ```c++
-namespace boost {
-namespace openmethod {
-namespace policies {
+namespace boost::openmethod::policies {
 
 ### Synopsis
 
 template<
-    class Policy, class Base = extern_vptr,
+    class Policy, bool IndirectVptr,
     class Map = std::unordered_map<
         type_id,
-        std::conditional_t<
-            std::is_base_of_v<indirect_extern_vptr, Base>, const vptr_type*,
-            vptr_type>>>
-class vptr_map : virtual Base {
+        std::conditional_t<IndirectVptr, const vptr_type*, vptr_type>>>
+class vptr_map : extern_vptr {
     static Map vptrs;
 
     template<typename ForwardIterator>
@@ -27,7 +23,7 @@ class vptr_map : virtual Base {
     static auto dynamic_vptr(const Class& arg) -> const vptr_type&;
 };
 
-}}}
+}
 ```
 
 ### Description
@@ -35,10 +31,11 @@ class vptr_map : virtual Base {
 `vptr_map` is an implementation of `external_vptr that stores the pointers to
 the v-tables in a map.
 
-`Policy` is the policy containing the facet. `Base` must be either `extern_vptr`
-or `indirect_external_vptr`. `Map` is an `AssociativeContainer`. The
-`mapped_type` is either a pointer to a `vptr_type`, or a pointer to a
-`vptr_type`.
+`Policy` is the policy containing the facet.
+
+`Map` is an `AssociativeContainer`. The `mapped_type` is a pointer to a
+`vptr_type` if `UseIndirectVptrs` is `void`, or a pointer to a `vptr_type` if
+`UseIndirectVptrs` is `indirect_vptr`.
 
 ### Members
 
@@ -55,11 +52,11 @@ Stores the pointers to v-tables in a _Map_.
 
 ```c++
 template<class Class>
-auto dynamic_vptr(const Class& object) -> vptr_type;
+auto dynamic_vptr(const Class& object) -> const vptr_type&;
 ```
 
-Returns a pointer to the v-table for `object`.
+Returns a pointer to the v-table for `object` (by reference).
 
 If _Policy_ contains the `runtime_checks` facet, checks if _Class_ is
-registered. If it is not, and if _Policy_ contains a `error_handler` facet,
-calls its `error` function; then calls `abort`.
+registered. If it is not, and _Policy_ contains a `error_handler` facet, calls
+its `error` function; then calls `abort`.

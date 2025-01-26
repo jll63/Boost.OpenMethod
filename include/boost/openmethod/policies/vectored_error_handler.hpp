@@ -21,7 +21,7 @@ class vectored_error_handler : public virtual error_handler {
   public:
     using error_variant = std::variant<
         openmethod_error, not_implemented_error, unknown_class_error,
-        hash_search_error, method_table_error, static_slot_error,
+        hash_search_error, type_mismatch_error, static_slot_error,
         static_stride_error>;
 
     using function_type = std::function<void(const error_variant& error)>;
@@ -65,7 +65,7 @@ class vectored_error_handler : public virtual error_handler {
                 Policy::error_stream << "unknown class ";
                 Policy::type_name(error->type, Policy::error_stream);
                 Policy::error_stream << "\n";
-            } else if (auto error = std::get_if<method_table_error>(&error_v)) {
+            } else if (auto error = std::get_if<type_mismatch_error>(&error_v)) {
                 Policy::error_stream << "invalid method table for ";
                 Policy::type_name(error->type, Policy::error_stream);
                 Policy::error_stream << "\n";

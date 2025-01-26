@@ -8,13 +8,33 @@ namespace boost {
 namespace openmethod {
 
 template<class Class, class Policy>
+struct virtual_traits<std::unique_ptr<Class>, Policy> {
+    using virtual_type = std::remove_cv_t<Class>;
+
+    static auto rarg(const std::unique_ptr<Class>& arg) -> const Class& {
+        return *arg;
+    }
+
+    template<typename Other>
+    static decltype(auto)
+    cast(virtual_ptr<std::unique_ptr<Class>, Policy> ptr) {
+        if constexpr (detail::requires_dynamic_cast<Class&, Other&>) {
+            return virtual_ptr<std::unique_ptr<Other>, Policy>(
+                std::unique_ptr<Other>(
+                    &dynamic_cast<Other&>(*ptr.obj.release())),
+                ptr.vp);
+        } else {
+            return virtual_ptr<std::unique_ptr<Other>, Policy>(
+                std::unique_ptr<Other>(static_cast<Other*>(ptr.obj.release())),
+                ptr.vp);
+        }
+    }
+};
+
+template<class Class, class Policy>
 struct virtual_ptr_traits<std::unique_ptr<Class>, Policy> {
     static bool constexpr is_smart_ptr = true;
     using element_type = Class;
-
-    static auto dynamic_type(const std::unique_ptr<Class>& ptr) -> type_id {
-        return Policy::dynamic_type(*ptr);
-    }
 
     template<typename Other>
     static decltype(auto)

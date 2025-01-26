@@ -42,7 +42,7 @@ struct hash_search_error : openmethod_error {
     std::size_t buckets;
 };
 
-struct method_table_error : openmethod_error {
+struct type_mismatch_error : openmethod_error {
     type_id type;
 };
 

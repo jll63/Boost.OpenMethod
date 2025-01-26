@@ -8,7 +8,7 @@ Defined in <boost/openmethod/policies/vptr_vector.hpp>.
 ```c++
 namespace boost::openmethod::policies {
 
-template<class Policy, class Base = extern_vptr>
+template<class Policy, typename UseIndirectVptrs = void>
 class vptr_vector : Base {
   public:
     template<typename ForwardIterator>
@@ -23,11 +23,11 @@ class vptr_vector : Base {
 
 ### Description
 
-`vptr_vector` is an implementation or `external_vptr` that stores the pointers
-to the v-tables in a `std::vector`.
+`vptr_vector` is an implementation or `external_vptr` that keeps the pointers
+to the v-tables in a `std::vector`. If `UseIndirectVptrs` is `indirect_vptr`,
+stores pointers to pointers to the v-tables.
 
-`Policy` is the policy containing the facet. `Base` must be either `extern_vptr`
-or `indirect_external_vptr`.
+`Policy` is the policy containing the facet.
 
 ### Members
 
@@ -48,10 +48,10 @@ function, and uses it to convert the `type_id`{empty}s to an index.
 
 ```c++
 template<class Class>
-auto dynamic_vptr(const Class& object) -> vptr_type;
+auto dynamic_vptr(const Class& object) -> const vptr_type&;
 ```
 
-Returns a pointer to the v-table for `object`.
+Returns a pointer to the v-table for `object` (by reference).
 
 Obtains a `type_id` for `object` using `Policy::dynamic_type`. If _Policy_
 contains a `type_hash` facet, uses it to convert the result to an index;

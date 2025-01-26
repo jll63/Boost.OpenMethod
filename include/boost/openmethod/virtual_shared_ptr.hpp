@@ -13,10 +13,6 @@ struct virtual_ptr_traits<std::shared_ptr<Class>, Policy> {
     static bool constexpr is_smart_ptr = true;
     using element_type = Class;
 
-    static auto dynamic_type(const std::shared_ptr<Class>& obj) -> type_id {
-        return Policy::dynamic_type(*obj);
-    }
-
     template<typename Other>
     static decltype(auto)
     cast(const virtual_ptr<std::shared_ptr<Class>, Policy>& ptr) {

@@ -48,7 +48,6 @@ struct indirect_vptr {};
 struct type_hash {};
 struct vptr {};
 struct extern_vptr : vptr {};
-struct indirect_extern_vptr : extern_vptr {};
 struct error_output {};
 struct trace_output {};
 struct runtime_checks {};

@@ -22,12 +22,14 @@ struct Animal {
 struct Dog : Animal {
     Dog(const char* name, const char* type = static_type) : Animal(name, type) {
     }
+
     static constexpr const char* static_type = "Dog";
 };
 
 struct Cat : Animal {
     Cat(const char* name, const char* type = static_type) : Animal(name, type) {
     }
+
     static constexpr const char* static_type = "Cat";
 };
 

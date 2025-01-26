@@ -1,0 +1,49 @@
+
+## set_vptr
+
+### Synopsis
+
+Defined in <boost/openmethod/core.hpp>.
+
+```c++
+namespace boost::openmethod {
+
+template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
+struct set_vptr {
+    set_vptr();
+    ~set_vptr();
+};
+
+} // namespace boost::openmethod
+```
+
+### Description
+
+`set_vptr` is a CRTP class template that sets the `boost_openmethod_vptr` of
+`Class` objects according to the static `Class` type.
+
+`Class` must contain a `boost_openmethod_vptr` member of the appropriate type
+(`vptr_type` or `const vptr_type*`).
+
+### Members
+
+#### constructor
+
+```c++
+set_vptr();
+```
+
+Casts `this` to `Class` and sets its `boost_openmethod_vptr` to the value of
+`Policy::static_vptr<Class>`, or to its address if `Policy` contains
+`indirect_vptr`.
+
+
+#### destructor
+
+```c++
+~set_vptr();
+```
+
+Casts `this` to `Class` and sets its `boost_openmethod_vptr` to `nullptr`. As a
+consequence, intrusive vptrs do not support passing an object being destroyed as
+an argument to a method.

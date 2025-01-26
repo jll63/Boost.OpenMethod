@@ -16,22 +16,24 @@ namespace openmethod {
 namespace policies {
 
 template<
-    class Policy, class Base = extern_vptr,
+    class Policy, typename UseIndirectVptrs = void,
     class Map = std::unordered_map<
         type_id,
         std::conditional_t<
-            std::is_base_of_v<indirect_extern_vptr, Base>, const vptr_type*,
+            std::is_same_v<UseIndirectVptrs, indirect_vptr>, const vptr_type*,
             vptr_type>>>
-class vptr_map : virtual Base {
-    static_assert(std::is_base_of_v<extern_vptr, Base>);
-    static constexpr bool is_indirect =
-        std::is_base_of_v<indirect_extern_vptr, Base>;
+class vptr_map : extern_vptr {
+    static_assert(
+        std::is_same_v<UseIndirectVptrs, indirect_vptr> ||
+        std::is_same_v<UseIndirectVptrs, void>);
+    static constexpr bool use_indirect_vptrs =
+        std::is_same_v<UseIndirectVptrs, indirect_vptr>;
     static_assert(
         std::is_same_v<typename Map::mapped_type, vptr_type> ||
         std::is_same_v<typename Map::mapped_type, const vptr_type*>);
     static_assert(
         std::is_same_v<typename Map::mapped_type, const vptr_type*> ==
-        is_indirect);
+        use_indirect_vptrs);
 
     static Map vptrs;
 
@@ -42,7 +44,7 @@ class vptr_map : virtual Base {
             for (auto type_iter = iter->type_id_begin();
                  type_iter != iter->type_id_end(); ++type_iter) {
 
-                if constexpr (is_indirect) {
+                if constexpr (use_indirect_vptrs) {
                     vptrs[*type_iter] = &iter->vptr();
                 } else {
                     vptrs[*type_iter] = iter->vptr();
@@ -68,7 +70,7 @@ class vptr_map : virtual Base {
             }
         }
 
-        if constexpr (is_indirect) {
+        if constexpr (use_indirect_vptrs) {
             return *iter->second;
         } else {
             return iter->second;
@@ -76,8 +78,8 @@ class vptr_map : virtual Base {
     }
 };
 
-template<class Policy, class Base, class Map>
-Map vptr_map<Policy, Base, Map>::vptrs;
+template<class Policy, typename UseIndirectVptrs, class Map>
+Map vptr_map<Policy, UseIndirectVptrs, Map>::vptrs;
 
 } // namespace policies
 } // namespace openmethod

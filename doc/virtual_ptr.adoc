@@ -2,7 +2,7 @@
 [#virtual_ptr]
 :idprefix: virtual_ptr_
 
-## virtual_ptr<Class, Policy>
+## virtual_ptr
 
 ### Synopsis
 

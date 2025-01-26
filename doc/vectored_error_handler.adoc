@@ -13,7 +13,7 @@ class vectored_error_handler : public virtual error_handler {
   public:
     using error_variant = std::variant<
         openmethod_error, not_implemented_error, unknown_class_error,
-        hash_search_error, method_table_error, static_slot_error,
+        hash_search_error, type_mismatch_error, static_slot_error,
         static_stride_error>;
     using function_type = std::function<void(const error_variant& error)>;
 

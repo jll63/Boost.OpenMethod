@@ -31,4 +31,4 @@ template<class Class>
 static vptr_type static_vptr;
 ```
 
-Contains the pointer to the v-table for _class_. Set by `initialize`.
+Contains the pointer to the v-table for _Class_. Set by `initialize`.

@@ -133,7 +133,7 @@ constexpr bool requires_dynamic_cast =
 template<class Policy, class D, class B>
 auto optimal_cast(B&& obj) -> decltype(auto) {
     if constexpr (requires_dynamic_cast<B, D>) {
-        return Policy::template dynamic_cast_ref<D>(obj);
+        return Policy::template dynamic_cast_ref<D>(std::forward<B>(obj));
     } else {
         return static_cast<D>(obj);
     }
@@ -253,10 +253,6 @@ struct virtual_ptr_traits {
     using element_type = Class;
     static bool constexpr is_smart_ptr = false;
 
-    static auto dynamic_type(const Class& obj) -> type_id {
-        return Policy::dynamic_type(obj);
-    }
-
     template<typename Other>
     static auto cast(const virtual_ptr<Class, Policy>& ptr)
         -> virtual_ptr<Other, Policy> {
@@ -296,8 +292,8 @@ class virtual_ptr_impl<Class, Policy, false> {
   public:
     using traits = virtual_ptr_traits<Class, Policy>;
     using element_type = typename traits::element_type;
-    static constexpr bool is_indirect =
-        Policy::template has_facet<policies::indirect_extern_vptr>;
+    static constexpr bool use_indirect_vptrs =
+        Policy::template has_facet<policies::indirect_vptr>;
 
     template<class Other>
     virtual_ptr_impl(Other& other)
@@ -349,7 +345,7 @@ class virtual_ptr_impl<Class, Policy, false> {
     friend struct virtual_ptr_traits;
 
   protected:
-    std::conditional_t<is_indirect, const vptr_type&, vptr_type> vp;
+    std::conditional_t<use_indirect_vptrs, const vptr_type&, vptr_type> vp;
     Class* obj;
 };
 
@@ -366,10 +362,10 @@ class virtual_ptr_impl<Class, Policy, true> {
     friend struct virtual_traits;
 
   protected:
-    static constexpr bool is_indirect =
-        Policy::template has_facet<policies::indirect_extern_vptr>;
+    static constexpr bool use_indirect_vptrs =
+        Policy::template has_facet<policies::indirect_vptr>;
 
-    std::conditional_t<is_indirect, const vptr_type&, vptr_type> vp;
+    std::conditional_t<use_indirect_vptrs, const vptr_type&, vptr_type> vp;
     Class obj;
 
   public:
@@ -469,10 +465,11 @@ class virtual_ptr : public detail::virtual_ptr_impl<Class, Policy> {
         if constexpr (Policy::template has_facet<runtime_checks>) {
             // check that dynamic type == static type
             auto static_type = Policy::template static_type<other_type>();
-            auto dynamic_type = other_traits::dynamic_type(obj);
+            auto dynamic_type =
+                Policy::dynamic_type(virtual_traits<Other, Policy>::rarg(obj));
 
             if (dynamic_type != static_type) {
-                method_table_error error;
+                type_mismatch_error error;
                 error.type = dynamic_type;
                 Policy::error(error);
                 abort();
@@ -557,6 +554,26 @@ struct virtual_traits<const virtual_ptr<Class, Policy>&, Policy> {
     template<typename Derived>
     static decltype(auto) cast(virtual_ptr<Class, Policy>&& ptr) {
         return std::move(ptr).template cast<typename Derived::element_type>();
+    }
+};
+
+// =============================================================================
+// set_vptr
+
+template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
+struct set_vptr {
+    set_vptr() {
+        if constexpr (Policy::template has_facet<policies::indirect_vptr>) {
+            reinterpret_cast<Class*>(this)->boost_openmethod_vptr =
+                &Policy::template static_vptr<Class>;
+        } else {
+            reinterpret_cast<Class*>(this)->boost_openmethod_vptr =
+                Policy::template static_vptr<Class>;
+        }
+    }
+
+    ~set_vptr() {
+        reinterpret_cast<Class*>(this)->boost_openmethod_vptr = nullptr;
     }
 };
 
@@ -648,8 +665,8 @@ class method<Name(Parameters...), ReturnType, Policy>
     using VirtualParameters =
         typename detail::virtual_types<DeclaredParameters>;
     using Signature = auto(Parameters...) -> ReturnType;
-    using FunctionPointer = auto(*)(detail::remove_virtual<Parameters>...)
-                                -> ReturnType;
+    using FunctionPointer = auto (*)(detail::remove_virtual<Parameters>...)
+        -> ReturnType;
     static constexpr auto Arity = boost::mp11::mp_count_if<
         detail::types<Parameters...>, detail::is_virtual>::value;
 

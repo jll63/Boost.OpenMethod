@@ -13,13 +13,15 @@ namespace boost {
 namespace openmethod {
 namespace policies {
 
-template<class Policy, class Base = extern_vptr>
-class vptr_vector : Base {
-    static_assert(std::is_base_of_v<extern_vptr, Base>);
-    static constexpr bool is_indirect =
-        std::is_base_of_v<indirect_extern_vptr, Base>;
+template<class Policy, typename UseIndirectVptrs = void>
+class vptr_vector : extern_vptr {
+    static_assert(
+        std::is_same_v<UseIndirectVptrs, indirect_vptr> ||
+        std::is_same_v<UseIndirectVptrs, void>);
+    static constexpr bool use_indirect_vptrs =
+        std::is_same_v<UseIndirectVptrs, indirect_vptr>;
     using element_type =
-        std::conditional_t<is_indirect, const vptr_type*, vptr_type>;
+        std::conditional_t<use_indirect_vptrs, const vptr_type*, vptr_type>;
     static std::vector<element_type> vptrs;
 
   public:
@@ -57,7 +59,7 @@ class vptr_vector : Base {
                     index = Policy::hash_type_id(index);
                 }
 
-                if constexpr (is_indirect) {
+                if constexpr (use_indirect_vptrs) {
                     vptrs[index] = &iter->vptr();
                 } else {
                     vptrs[index] = iter->vptr();
@@ -74,7 +76,7 @@ class vptr_vector : Base {
             index = Policy::hash_type_id(index);
         }
 
-        if constexpr (is_indirect) {
+        if constexpr (use_indirect_vptrs) {
             return *vptrs[index];
         } else {
             return vptrs[index];
@@ -82,9 +84,9 @@ class vptr_vector : Base {
     }
 };
 
-template<class Policy, class Base>
-std::vector<typename vptr_vector<Policy, Base>::element_type>
-    vptr_vector<Policy, Base>::vptrs;
+template<class Policy, typename UseIndirectVptrs>
+std::vector<typename vptr_vector<Policy, UseIndirectVptrs>::element_type>
+    vptr_vector<Policy, UseIndirectVptrs>::vptrs;
 
 } // namespace policies
 } // namespace openmethod

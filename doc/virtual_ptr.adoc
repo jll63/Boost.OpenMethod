@@ -11,31 +11,38 @@
 ```c++
 namespace boost::openmethod {
 
+// Using a C++20 concept in doc for clarity. The actual code uses SFINAE.
+template<class Class, class Policy>
+concept IsSmartPtr = requires {
+    // 'Class' is considered a smart pointer if its virtual_traits contain a
+    // 'rebind' template that has a 'element_type' type member.
+    typename virtual_traits<Class, Policy>::template rebind<void>::element_type;
+};
+
 template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
 class virtual_ptr {
   public:
-    using traits = virtual_ptr_traits<Class, Policy>;
-    using element_type = typename traits::Class;
-    static constexpr bool is_smart_ptr =
-        virtual_ptr_traits<Class, Policy>::is_smart_ptr;
+    static constexpr bool is_smart_ptr = IsSmartPtr<Class, Policy>;
+    using element_type = Çlass; // if !is_smart_ptr
+    using element_type = Class::element_type; // if is_smart_ptr
 
-    // following require is_smart_ptr == false:
+    // if 'Çlass' is not a smart pointer
     template<class Other>
-    virtual_ptr(Other& other);
+    virtual_ptr(Other& other) requires(!is_smart_ptr);
     template<class Other>
-    virtual_ptr(virtual_ptr<Other, Policy>& other);
+    virtual_ptr(virtual_ptr<Other, Policy>& other) requires(!is_smart_ptr);
 
-    // following require is_smart_ptr == true:
+    // if 'Çlass' is a smart pointer
     template<class Other>
     virtual_ptr_impl(const Other& other)
-        requires(virtual_ptr_traits<Other, Policy>::is_smart_ptr)
+        requires(is_smart_ptr && IsSmartPtr<Other>);
     template<class Other>
-    virtual_ptr_impl(Other&& other)
-        requires(virtual_ptr_traits<Other, Policy>::is_smart_ptr)
+    virtual_ptr_impl(const Other& other)
+        requires(is_smart_ptr && IsSmartPtr<Other>);
     template<class Other>
     virtual_ptr(virtual_ptr<Other, Policy>&& other);
 
-    // following is available in both cases
+    // available in both cases
     template<class Other>
     virtual_ptr(const virtual_ptr<Other, Policy>& other);
 
@@ -79,36 +86,29 @@ bool operator!=(
 `virtual_ptr` is a fat pointer that combines a pointer to an object and a
 pointer to its v-table.
 
-`Class` must be a class registered in `Policy`; or a smart pointer to such a
-class, in which case template class `virtual_ptr_traits` must be specialized for
-`Class`. Specializations for `std::unique_ptr` and `std::shared_ptr` are
-provided; see the documentation of `virtual_ptr_traits` for more information.
+`Class` must be a class registered in `Policy`, or a smart pointer to such a
+class, in which case `virtual_traits` must be specialized for `Class`, and it
+must provide a `rebind` member template. Specializations for `std::unique_ptr`
+and `std::shared_ptr` are provided; see the documentation of `virtual_traits`
+for more information.
 
 ### Members
-
-#### traits
-
-```c++
-using traits = virtual_ptr_traits<Class, Policy>;
-```
-
-The traits class for the `virtual_ptr`.
-
-#### element_type
-
-```c++
-using element_type = typename traits::element_type;
-```
-
-The class of the object pointed to. It must be registered in `Policy`.
 
 #### is_smart_ptr
 
 ```c++
-static constexpr bool is_smart_ptr = traits::is_smart_ptr
+static constexpr bool is_smart_ptr = IsSmartPtr<Class, Policy>;
 ```
 
 `true` if the pointer to the object is a smart pointer.
+
+#### element_type
+
+```c++
+using element_type = /* Çlass or Class::element_type */;
+```
+
+The class of the object pointed to. It must be registered in `Policy`.
 
 #### constructors
 

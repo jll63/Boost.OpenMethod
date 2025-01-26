@@ -105,7 +105,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 
 // just swap
 inline virtual_shared_ptr<const matrix>
-times(const shared_ptr<const matrix>& a, double b) {
+times(virtual_shared_ptr<const matrix> a, double b) {
     return times(b, a);
 }
 

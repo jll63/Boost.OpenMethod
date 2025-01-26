@@ -66,6 +66,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_ptr_ctors, Policy, test_policies) {
     static_assert(std::is_same_v<
                   decltype(std::declval<virtual_ptr<Animal, Policy>>().get()),
                   Animal*>);
+    static_assert(!virtual_ptr<Animal, Policy>::is_smart_ptr);
+    static_assert(!virtual_ptr<const Animal, Policy>::is_smart_ptr);
     static_assert(
         std::is_same_v<
             decltype(*std::declval<virtual_ptr<Animal, Policy>>()), Animal&>);
@@ -107,6 +109,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_ptr_ctors, Policy, test_policies) {
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_shared_ptr_ctors, Policy, test_policies) {
     {
+        static_assert(virtual_shared_ptr<Animal, Policy>::is_smart_ptr);
+        static_assert(virtual_shared_ptr<const Animal, Policy>::is_smart_ptr);
         static_assert(std::is_same_v<
                       typename virtual_shared_ptr<Animal, Policy>::element_type,
                       Animal>);
@@ -196,6 +200,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_shared_ptr_ctors, Policy, test_policies) {
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_unique_ptr_ctors, Policy, test_policies) {
+    static_assert(virtual_unique_ptr<Animal, Policy>::is_smart_ptr);
+    static_assert(virtual_unique_ptr<const Animal, Policy>::is_smart_ptr);
+
     init_test<Policy>();
 
     {

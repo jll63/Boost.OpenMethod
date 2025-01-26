@@ -20,7 +20,6 @@ include::method_override.adoc[]
 include::virtual_.adoc[]
 include::virtual_traits.adoc[]
 include::virtual_ptr.adoc[]
-include::virtual_ptr_traits.adoc[]
 include::set_vptr.adoc[]
 
 include::abstract_policy.adoc[]

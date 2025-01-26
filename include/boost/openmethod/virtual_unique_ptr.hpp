@@ -15,39 +15,17 @@ struct virtual_traits<std::unique_ptr<Class>, Policy> {
         return *arg;
     }
 
-    template<typename Other>
-    static decltype(auto)
-    cast(virtual_ptr<std::unique_ptr<Class>, Policy> ptr) {
-        if constexpr (detail::requires_dynamic_cast<Class&, Other&>) {
-            return virtual_ptr<std::unique_ptr<Other>, Policy>(
-                std::unique_ptr<Other>(
-                    &dynamic_cast<Other&>(*ptr.obj.release())),
-                ptr.vp);
-        } else {
-            return virtual_ptr<std::unique_ptr<Other>, Policy>(
-                std::unique_ptr<Other>(static_cast<Other*>(ptr.obj.release())),
-                ptr.vp);
-        }
-    }
-};
-
-template<class Class, class Policy>
-struct virtual_ptr_traits<std::unique_ptr<Class>, Policy> {
-    static bool constexpr is_smart_ptr = true;
-    using element_type = Class;
+    template<class Other>
+    using rebind = std::unique_ptr<Other>;
 
     template<typename Other>
-    static decltype(auto)
-    cast(virtual_ptr<std::unique_ptr<Class>, Policy> ptr) {
+    static auto cast(std::unique_ptr<Class>&& ptr) {
         if constexpr (detail::requires_dynamic_cast<Class&, Other&>) {
-            return virtual_ptr<std::unique_ptr<Other>, Policy>(
-                std::unique_ptr<Other>(
-                    &dynamic_cast<Other&>(*ptr.obj.release())),
-                ptr.vp);
+            return Other(
+                &dynamic_cast<typename Other::element_type&>(*ptr.release()));
         } else {
-            return virtual_ptr<std::unique_ptr<Other>, Policy>(
-                std::unique_ptr<Other>(static_cast<Other*>(ptr.obj.release())),
-                ptr.vp);
+            return Other(
+                &static_cast<typename Other::element_type&>(*ptr.release()));
         }
     }
 };

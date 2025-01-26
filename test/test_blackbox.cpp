@@ -206,6 +206,40 @@ BOOST_AUTO_TEST_CASE(cast_args_shared_ptr_by_ref) {
 
 } // namespace TEST_NS
 
+namespace TEST_NS {
+
+// -----------------------------------------------------------------------------
+// pass virtual args by unique_ptr
+
+using policy = test_policy_<__COUNTER__>;
+using namespace animals;
+
+BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, policy);
+
+BOOST_OPENMETHOD(
+    name, (virtual_<std::unique_ptr<Animal>>), std::string, policy);
+
+BOOST_OPENMETHOD_OVERRIDE(name, (std::unique_ptr<Cat> cat), std::string) {
+    return cat->owner + "'s cat " + cat->name;
+}
+
+BOOST_OPENMETHOD_OVERRIDE(name, (std::unique_ptr<Dog> dog), std::string) {
+    return dog->owner + "'s dog " + dog->name;
+}
+
+BOOST_AUTO_TEST_CASE(cast_args_unique_ptr) {
+    initialize<policy>();
+
+    auto spot = std::make_unique<Dog>("Spot");
+    BOOST_TEST(name(std::move(spot)) == "Bill's dog Spot");
+    BOOST_TEST(spot.get() == nullptr);
+
+    auto felix = std::make_unique<Cat>("Felix");
+    BOOST_TEST(name(std::move(felix)) == "Bill's cat Felix");
+    BOOST_TEST(felix.get() == nullptr);
+}
+} // namespace TEST_NS
+
 namespace matrices {
 
 using policy = test_policy_<__COUNTER__>;

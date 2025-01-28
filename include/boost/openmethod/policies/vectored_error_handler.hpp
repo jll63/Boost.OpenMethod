@@ -65,7 +65,8 @@ class vectored_error_handler : public virtual error_handler {
                 Policy::error_stream << "unknown class ";
                 Policy::type_name(error->type, Policy::error_stream);
                 Policy::error_stream << "\n";
-            } else if (auto error = std::get_if<type_mismatch_error>(&error_v)) {
+            } else if (
+                auto error = std::get_if<type_mismatch_error>(&error_v)) {
                 Policy::error_stream << "invalid method table for ";
                 Policy::type_name(error->type, Policy::error_stream);
                 Policy::error_stream << "\n";

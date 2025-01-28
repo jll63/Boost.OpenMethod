@@ -99,7 +99,7 @@ template<class Policy, class... Facets>
 struct basic_policy : virtual abstract_policy,
                       virtual domain<Policy>,
                       virtual Facets... {
-    using facets = detail::types<Facets...>;
+    using facets = mp11::mp_list<Facets...>;
 
     template<class Facet>
     static constexpr bool has_facet = std::is_base_of_v<Facet, basic_policy>;

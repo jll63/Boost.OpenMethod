@@ -16,6 +16,7 @@
 
 #include "test_util.hpp"
 
+using boost::mp11::mp_list;
 using std::cout;
 using namespace boost::openmethod;
 using namespace boost::openmethod::detail;
@@ -34,15 +35,15 @@ struct f : base {};
 
 static_assert(
     std::is_same_v<
-        virtual_types<types<
+        virtual_types<mp_list<
             virtual_<std::shared_ptr<a>>, b, virtual_<std::shared_ptr<c>>>>,
-        types<std::shared_ptr<a>, std::shared_ptr<c>>>);
+        mp_list<std::shared_ptr<a>, std::shared_ptr<c>>>);
 
 static_assert(std::is_same_v<
               overrider_virtual_types<
-                  types<virtual_<a&>, b, virtual_<c&>>, types<d&, e, f&>,
+                  mp_list<virtual_<a&>, b, virtual_<c&>>, mp_list<d&, e, f&>,
                   default_policy>,
-              types<d, f>>);
+              mp_list<d, f>>);
 
 static_assert(
     std::is_same_v<virtual_type<std::shared_ptr<a>, default_policy>, a>);
@@ -57,24 +58,25 @@ static_assert(std::is_same_v<
 
 static_assert(std::is_same_v<
               overrider_virtual_types<
-                  types<virtual_ptr<a>, b, virtual_ptr<c>>,
-                  types<virtual_ptr<d>, e, virtual_ptr<f>>, default_policy>,
-              types<d, f>>);
-
-static_assert(std::is_same_v<
-              overrider_virtual_types<
-                  types<const virtual_ptr<base>&, b, const virtual_ptr<base>&>,
-                  types<const virtual_ptr<d>&, e, const virtual_ptr<f>&>,
-                  default_policy>,
-              types<d, f>>);
+                  mp_list<virtual_ptr<a>, b, virtual_ptr<c>>,
+                  mp_list<virtual_ptr<d>, e, virtual_ptr<f>>, default_policy>,
+              mp_list<d, f>>);
 
 static_assert(
     std::is_same_v<
         overrider_virtual_types<
-            types<
+            mp_list<const virtual_ptr<base>&, b, const virtual_ptr<base>&>,
+            mp_list<const virtual_ptr<d>&, e, const virtual_ptr<f>&>,
+            default_policy>,
+        mp_list<d, f>>);
+
+static_assert(
+    std::is_same_v<
+        overrider_virtual_types<
+            mp_list<
                 virtual_<std::shared_ptr<a>>, b, virtual_<std::shared_ptr<c>>>,
-            types<std::shared_ptr<d>, e, std::shared_ptr<f>>, default_policy>,
-        types<d, f>>);
+            mp_list<std::shared_ptr<d>, e, std::shared_ptr<f>>, default_policy>,
+        mp_list<d, f>>);
 
 namespace using_polymorphic_classes {
 

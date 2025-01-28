@@ -32,7 +32,7 @@ template<class TypeList, class Policy>
 struct type_id_list;
 
 template<typename... T, class Policy>
-struct type_id_list<types<T...>, Policy> {
+struct type_id_list<mp11::mp_list<T...>, Policy> {
     // If using deferred 'static_type', add an extra element in 'value',
     // default-initialized to zero, indicating the ids need to be resolved. Set
     // to 1 after this is done.
@@ -44,17 +44,17 @@ struct type_id_list<types<T...>, Policy> {
 };
 
 template<typename... T, class Policy>
-type_id type_id_list<types<T...>, Policy>::value[values] = {
+type_id type_id_list<mp11::mp_list<T...>, Policy>::value[values] = {
     collect_static_type_id<Policy, T>()...};
 
 template<typename... T, class Policy>
-type_id* type_id_list<types<T...>, Policy>::begin = value;
+type_id* type_id_list<mp11::mp_list<T...>, Policy>::begin = value;
 
 template<typename... T, class Policy>
-type_id* type_id_list<types<T...>, Policy>::end = value + sizeof...(T);
+type_id* type_id_list<mp11::mp_list<T...>, Policy>::end = value + sizeof...(T);
 
 template<class Policy>
-struct type_id_list<types<>, Policy> {
+struct type_id_list<mp11::mp_list<>, Policy> {
     static constexpr type_id* const begin = nullptr;
     static constexpr auto end = begin;
 };
@@ -63,11 +63,12 @@ template<class...>
 struct class_declaration_aux;
 
 template<class Policy, class Class, typename... Bases>
-struct class_declaration_aux<Policy, types<Class, Bases...>> : class_info {
+struct class_declaration_aux<Policy, mp11::mp_list<Class, Bases...>>
+    : class_info {
     class_declaration_aux() {
         this->type = collect_static_type_id<Policy, Class>();
-        this->first_base = type_id_list<types<Bases...>, Policy>::begin;
-        this->last_base = type_id_list<types<Bases...>, Policy>::end;
+        this->first_base = type_id_list<mp11::mp_list<Bases...>, Policy>::begin;
+        this->last_base = type_id_list<mp11::mp_list<Bases...>, Policy>::end;
         Policy::classes.push_back(*this);
         this->is_abstract = std::is_abstract_v<Class>;
         this->static_vptr = &Policy::template static_vptr<Class>;
@@ -85,27 +86,29 @@ struct class_declaration_aux<Policy, types<Class, Bases...>> : class_info {
 // base. The direct and indirect bases are all included. The runtime will
 // extract the direct proper bases.
 template<typename... Cs>
-using inheritance_map = types<boost::mp11::mp_push_front<
+using inheritance_map = mp11::mp_list<boost::mp11::mp_push_front<
     boost::mp11::mp_filter_q<
-        boost::mp11::mp_bind_back<std::is_base_of, Cs>, types<Cs...>>,
+        boost::mp11::mp_bind_back<std::is_base_of, Cs>, mp11::mp_list<Cs...>>,
     Cs>...>;
 
 template<class Policy, class... Classes>
 struct use_classes_aux;
 
 template<class Policy, class... Classes>
-struct use_classes_aux<Policy, types<Classes...>> {
+struct use_classes_aux<Policy, mp11::mp_list<Classes...>> {
     using type = boost::mp11::mp_apply<
         std::tuple,
         boost::mp11::mp_transform_q<
             boost::mp11::mp_bind_front<class_declaration_aux, Policy>,
-            boost::mp11::mp_apply<inheritance_map, types<Classes...>>>>;
+            boost::mp11::mp_apply<inheritance_map, mp11::mp_list<Classes...>>>>;
 };
 
 template<class Policy, class... Classes, class... MoreClassLists>
-struct use_classes_aux<Policy, types<types<Classes...>, MoreClassLists...>>
+struct use_classes_aux<
+    Policy, mp11::mp_list<mp11::mp_list<Classes...>, MoreClassLists...>>
     : use_classes_aux<
-          Policy, boost::mp11::mp_append<types<Classes...>, MoreClassLists...>>
+          Policy,
+          boost::mp11::mp_append<mp11::mp_list<Classes...>, MoreClassLists...>>
 
 {};
 
@@ -113,7 +116,7 @@ template<typename T>
 struct is_policy_fn : std::is_base_of<policies::abstract_policy, T> {};
 
 template<typename... T>
-struct is_policy_fn<types<T...>> : std::false_type {};
+struct is_policy_fn<mp11::mp_list<T...>> : std::false_type {};
 
 // =============================================================================
 // optimal_cast
@@ -238,12 +241,12 @@ struct virtual_traits<T*, Policy> {
 template<class... Classes>
 using use_classes = typename detail::use_classes_aux<
     boost::mp11::mp_at<
-        detail::types<Classes..., BOOST_OPENMETHOD_DEFAULT_POLICY>,
+        mp11::mp_list<Classes..., BOOST_OPENMETHOD_DEFAULT_POLICY>,
         boost::mp11::mp_find_if<
-            detail::types<Classes..., BOOST_OPENMETHOD_DEFAULT_POLICY>,
+            mp11::mp_list<Classes..., BOOST_OPENMETHOD_DEFAULT_POLICY>,
             detail::is_policy_fn>>,
     boost::mp11::mp_remove_if<
-        detail::types<Classes...>, detail::is_policy_fn>>::type;
+        mp11::mp_list<Classes...>, detail::is_policy_fn>>::type;
 
 // =============================================================================
 // virtual_ptr
@@ -673,7 +676,7 @@ class method<Name(Parameters...), ReturnType, Policy>
     : public detail::method_info {
     // Aliases used in implementation only. Everything extracted from template
     // arguments is capitalized like the arguments themselves.
-    using DeclaredParameters = detail::types<Parameters...>;
+    using DeclaredParameters = mp11::mp_list<Parameters...>;
     using CallParameters =
         boost::mp11::mp_transform<detail::remove_virtual, DeclaredParameters>;
     using VirtualParameters =
@@ -682,7 +685,7 @@ class method<Name(Parameters...), ReturnType, Policy>
     using FunctionPointer = auto (*)(detail::remove_virtual<Parameters>...)
         -> ReturnType;
     static constexpr auto Arity = boost::mp11::mp_count_if<
-        detail::types<Parameters...>, detail::is_virtual>::value;
+        mp11::mp_list<Parameters...>, detail::is_virtual>::value;
 
     // sanity checks
     static_assert(Arity > 0, "method must have at least one virtual argument");
@@ -761,7 +764,7 @@ class method<Name(Parameters...), ReturnType, Policy>
         static auto fn(detail::remove_virtual<Parameters>... arg) -> ReturnType;
         using OverriderParameterTypeIds = detail::type_id_list<
             detail::overrider_virtual_types<
-                DeclaredParameters, detail::types<OverriderParameters...>,
+                DeclaredParameters, mp11::mp_list<OverriderParameters...>,
                 Policy>,
             Policy>;
     };
@@ -886,9 +889,10 @@ BOOST_FORCEINLINE
     std::uintptr_t pf;
 
     if constexpr (Arity == 1) {
-        pf = resolve_uni<types<Parameters...>, ArgType...>(args...);
+        pf = resolve_uni<mp11::mp_list<Parameters...>, ArgType...>(args...);
     } else {
-        pf = resolve_multi_first<types<Parameters...>, ArgType...>(args...);
+        pf = resolve_multi_first<mp11::mp_list<Parameters...>, ArgType...>(
+            args...);
     }
 
     return reinterpret_cast<FunctionPointer>(pf);

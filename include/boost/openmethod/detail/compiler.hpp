@@ -34,20 +34,22 @@ struct aggregate_reports;
 
 template<class... Reports, class Facet, class... MoreFacets>
 struct aggregate_reports<
-    types<Reports...>, types<Facet, MoreFacets...>,
+    mp11::mp_list<Reports...>, mp11::mp_list<Facet, MoreFacets...>,
     std::void_t<typename Facet::report>> {
     using type = typename aggregate_reports<
-        types<Reports..., typename Facet::report>, types<MoreFacets...>>::type;
+        mp11::mp_list<Reports..., typename Facet::report>,
+        mp11::mp_list<MoreFacets...>>::type;
 };
 
 template<class... Reports, class Facet, class... MoreFacets, typename Void>
-struct aggregate_reports<types<Reports...>, types<Facet, MoreFacets...>, Void> {
+struct aggregate_reports<
+    mp11::mp_list<Reports...>, mp11::mp_list<Facet, MoreFacets...>, Void> {
     using type = typename aggregate_reports<
-        types<Reports...>, types<MoreFacets...>>::type;
+        mp11::mp_list<Reports...>, mp11::mp_list<MoreFacets...>>::type;
 };
 
 template<class... Reports, typename Void>
-struct aggregate_reports<types<Reports...>, types<>, Void> {
+struct aggregate_reports<mp11::mp_list<Reports...>, mp11::mp_list<>, Void> {
     struct type : Reports... {};
 };
 
@@ -228,7 +230,7 @@ struct compiler : detail::generic_compiler {
     using type_index_type = decltype(Policy::type_index(0));
 
     typename detail::aggregate_reports<
-        detail::types<report>, typename Policy::facets>::type report;
+        mp11::mp_list<report>, typename Policy::facets>::type report;
 
     std::unordered_map<type_index_type, class_*> class_map;
 
@@ -273,7 +275,7 @@ struct compiler : detail::generic_compiler {
     using indent = typename detail::trace_type<Policy>::indent;
 };
 
-compiler()->compiler<default_policy>;
+compiler() -> compiler<default_policy>;
 
 template<class Policy>
 void compiler<Policy>::install_global_tables() {

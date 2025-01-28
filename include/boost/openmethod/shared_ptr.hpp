@@ -37,7 +37,8 @@ struct virtual_traits<const std::shared_ptr<Class>&, Policy> {
         return *arg;
     }
 
-    template<class Other> using rebind = std::shared_ptr<Other>;
+    template<class Other>
+    using rebind = std::shared_ptr<Other>;
 
     template<class Other>
     static void check_cast() {
@@ -76,7 +77,8 @@ struct virtual_traits<std::shared_ptr<Class>, Policy> {
         return *arg;
     }
 
-    template<class Other> using rebind = std::shared_ptr<Other>;
+    template<class Other>
+    using rebind = std::shared_ptr<Other>;
 
     template<class Other>
     static void check_cast() {

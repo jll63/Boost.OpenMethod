@@ -634,7 +634,7 @@ namespace test_comma_in_return_type {
 using policy = test_policy_<__COUNTER__>;
 
 struct Test {
-    virtual ~Test(){};
+    virtual ~Test() {};
 };
 
 BOOST_OPENMETHOD_CLASSES(Test, policy);

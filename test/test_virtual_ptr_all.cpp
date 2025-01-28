@@ -15,7 +15,6 @@
 #include <boost/utility/identity_type.hpp>
 
 using namespace boost::openmethod;
-using boost::mp11::mp_list;
 
 struct Player {
     virtual ~Player() {
@@ -48,7 +47,8 @@ template<int N>
 struct indirect_test_policy : test_policy_<N> {};
 
 template<int N>
-using policy_types = types<test_policy_<N>, indirect_test_policy<N>>;
+using policy_types =
+    boost::mp11::mp_list<test_policy_<N>, indirect_test_policy<N>>;
 
 struct BOOST_OPENMETHOD_NAME(poke);
 struct BOOST_OPENMETHOD_NAME(fight);
@@ -64,8 +64,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
     using poke = method<
         BOOST_OPENMETHOD_NAME(poke)(virtual_ptr<Player, Policy>), std::string,
         Policy>;
-    BOOST_OPENMETHOD_REGISTER(typename poke::template override<
-                              poke_bear<virtual_ptr<Player, Policy>>>);
+    BOOST_OPENMETHOD_REGISTER(
+        typename poke::template override<
+            poke_bear<virtual_ptr<Player, Policy>>>);
 
     initialize<Policy>();
 
@@ -122,8 +123,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
     using poke = method<
         BOOST_OPENMETHOD_NAME(poke)(virtual_ptr<Player, Policy>), std::string,
         Policy>;
-    BOOST_OPENMETHOD_REGISTER(typename poke::template override<
-                              poke_bear<virtual_ptr<Player, Policy>>>);
+    BOOST_OPENMETHOD_REGISTER(
+        typename poke::template override<
+            poke_bear<virtual_ptr<Player, Policy>>>);
 
     using fight = method<
         BOOST_OPENMETHOD_NAME(fight)(
@@ -163,8 +165,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
         BOOST_OPENMETHOD_NAME(poke)(virtual_shared_ptr<Player, Policy>),
         std::string, Policy>;
 
-    BOOST_OPENMETHOD_REGISTER(typename poke::template override<
-                              poke_bear<virtual_shared_ptr<Player, Policy>>>);
+    BOOST_OPENMETHOD_REGISTER(
+        typename poke::template override<
+            poke_bear<virtual_shared_ptr<Player, Policy>>>);
 
     using fight = method<
         BOOST_OPENMETHOD_NAME(fight)(
@@ -173,10 +176,11 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
             virtual_shared_ptr<Player, Policy>),
         std::string, Policy>;
 
-    BOOST_OPENMETHOD_REGISTER(typename fight::template override<fight_bear<
-                                  virtual_shared_ptr<Player, Policy>,
-                                  virtual_shared_ptr<Object, Policy>,
-                                  virtual_shared_ptr<Player, Policy>>>);
+    BOOST_OPENMETHOD_REGISTER(
+        typename fight::template override<fight_bear<
+            virtual_shared_ptr<Player, Policy>,
+            virtual_shared_ptr<Object, Policy>,
+            virtual_shared_ptr<Player, Policy>>>);
 
     initialize<Policy>();
 

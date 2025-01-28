@@ -34,7 +34,8 @@ class fast_perfect_hash : type_hash {
     __forceinline
 #endif
 
-    static auto hash_type_id(type_id type) -> type_id {
+        static auto
+        hash_type_id(type_id type) -> type_id {
         auto index = (hash_mult * type) >> hash_shift;
 
         if constexpr (Policy::template has_facet<runtime_checks>) {

@@ -15,6 +15,7 @@
 
 using namespace boost::openmethod;
 using namespace boost::openmethod::detail;
+namespace mp11 = boost::mp11;
 
 // clang-format off
 
@@ -51,9 +52,9 @@ static_assert(
     std::is_same_v<
         boost::mp11::mp_filter<
             is_virtual,
-            types< virtual_<a&>, b, virtual_<c&> >
+            mp11::mp_list< virtual_<a&>, b, virtual_<c&> >
         >,
-        types< virtual_<a&>, virtual_<c&> >
+        mp11::mp_list< virtual_<a&>, virtual_<c&> >
     >);
 
 static_assert(
@@ -72,9 +73,9 @@ static_assert(
     std::is_same_v<
         boost::mp11::mp_transform<
             remove_virtual,
-            types< virtual_<a&>, virtual_<c&> >
+            mp11::mp_list< virtual_<a&>, virtual_<c&> >
         >,
-        types<a&, c&>
+        mp11::mp_list<a&, c&>
     >);
 
 static_assert(
@@ -83,10 +84,10 @@ static_assert(
             boost::mp11::mp_bind_back<virtual_type, default_policy>,
             boost::mp11::mp_transform<
                 remove_virtual,
-                types< virtual_<a&>, virtual_<c&> >
+                mp11::mp_list< virtual_<a&>, virtual_<c&> >
             >
         >,
-        types<a, c>
+        mp11::mp_list<a, c>
     >);
 
 static_assert(
@@ -97,18 +98,18 @@ static_assert(
                 remove_virtual,
                 boost::mp11::mp_filter<
                     is_virtual,
-                    types< virtual_<a&>, b, virtual_<c&> >
+                    mp11::mp_list< virtual_<a&>, b, virtual_<c&> >
                 >
             >
         >,
-        types<a, c>
+        mp11::mp_list<a, c>
     >);
 
 // clang-format on
 
-static_assert(
-    std::is_same_v<
-        virtual_types<types<virtual_<a&>, b, virtual_<c&>>>, types<a&, c&>>);
+static_assert(std::is_same_v<
+              virtual_types<mp11::mp_list<virtual_<a&>, b, virtual_<c&>>>,
+              mp11::mp_list<a&, c&>>);
 
 BOOST_AUTO_TEST_CASE(test_policy) {
     {
@@ -145,8 +146,8 @@ BOOST_AUTO_TEST_CASE(test_policy) {
 
 BOOST_AUTO_TEST_CASE(test_type_id_list) {
     type_id expected[] = {type_id(&typeid(a)), type_id(&typeid(b))};
-    auto iter = type_id_list<types<a&, b&>, default_policy>::begin;
-    auto last = type_id_list<types<a&, b&>, default_policy>::end;
+    auto iter = type_id_list<mp11::mp_list<a&, b&>, default_policy>::begin;
+    auto last = type_id_list<mp11::mp_list<a&, b&>, default_policy>::end;
     BOOST_TEST_REQUIRE(last - iter == 2);
     BOOST_TEST_REQUIRE(*iter++ == type_id(&typeid(a)));
     BOOST_TEST_REQUIRE(*iter++ == type_id(&typeid(b)));
@@ -290,34 +291,40 @@ struct Bulldog : public Dog {};
 struct Cat : public Animal {};
 struct Dolphin : public Animal {};
 
-static_assert(std::is_same_v<
-              inheritance_map<Animal, Dog, Bulldog, Cat, Dolphin>,
-              types<
-                  types<Animal, Animal>, types<Dog, Animal, Dog>,
-                  types<Bulldog, Animal, Dog, Bulldog>, types<Cat, Animal, Cat>,
-                  types<Dolphin, Animal, Dolphin>>>);
+static_assert(
+    std::is_same_v<
+        inheritance_map<Animal, Dog, Bulldog, Cat, Dolphin>,
+        mp11::mp_list<
+            mp11::mp_list<Animal, Animal>, mp11::mp_list<Dog, Animal, Dog>,
+            mp11::mp_list<Bulldog, Animal, Dog, Bulldog>,
+            mp11::mp_list<Cat, Animal, Cat>,
+            mp11::mp_list<Dolphin, Animal, Dolphin>>>);
 
 static_assert(
     std::is_same_v<
         use_classes<Animal, Dog, Bulldog, Cat, Dolphin>,
         std::tuple<
-            class_declaration_aux<default_policy, types<Animal, Animal>>,
-            class_declaration_aux<default_policy, types<Dog, Animal, Dog>>,
             class_declaration_aux<
-                default_policy, types<Bulldog, Animal, Dog, Bulldog>>,
-            class_declaration_aux<default_policy, types<Cat, Animal, Cat>>,
+                default_policy, mp11::mp_list<Animal, Animal>>,
             class_declaration_aux<
-                default_policy, types<Dolphin, Animal, Dolphin>>>>);
+                default_policy, mp11::mp_list<Dog, Animal, Dog>>,
+            class_declaration_aux<
+                default_policy, mp11::mp_list<Bulldog, Animal, Dog, Bulldog>>,
+            class_declaration_aux<
+                default_policy, mp11::mp_list<Cat, Animal, Cat>>,
+            class_declaration_aux<
+                default_policy, mp11::mp_list<Dolphin, Animal, Dolphin>>>>);
 
 struct my_policy : policies::abstract_policy {};
 
-static_assert(std::is_same_v<
-              use_classes<Animal, Dog>,
-              use_classes_aux<default_policy, types<Animal, Dog>>::type>);
+static_assert(
+    std::is_same_v<
+        use_classes<Animal, Dog>,
+        use_classes_aux<default_policy, mp11::mp_list<Animal, Dog>>::type>);
 
 static_assert(std::is_same_v<
               use_classes<Animal, Dog, my_policy, default_policy>,
-              use_classes_aux<my_policy, types<Animal, Dog>>::type>);
+              use_classes_aux<my_policy, mp11::mp_list<Animal, Dog>>::type>);
 
 } // namespace test_use_classes
 
@@ -339,9 +346,9 @@ struct policy1 : basic_policy<policy1, std_rtti> {};
 struct policy2 : policy1::fork<policy2> {};
 struct policy3 : policy1::fork<policy3>::replace<std_rtti, alt_rtti> {};
 
-static_assert(std::is_same_v<policy2::facets, types<std_rtti>>);
+static_assert(std::is_same_v<policy2::facets, mp11::mp_list<std_rtti>>);
 
-static_assert(std::is_same_v<policy3::facets, types<alt_rtti>>);
+static_assert(std::is_same_v<policy3::facets, mp11::mp_list<alt_rtti>>);
 
 } // namespace facets
 

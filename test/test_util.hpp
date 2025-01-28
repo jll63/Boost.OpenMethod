@@ -1,6 +1,8 @@
 #ifndef BOOST_OPENMETHOD_TEST_HELPERS_HPP
 #define BOOST_OPENMETHOD_TEST_HELPERS_HPP
 
+#include <iostream>
+
 #include <boost/openmethod/core.hpp>
 #include <boost/openmethod/compiler.hpp>
 
@@ -15,5 +17,18 @@ struct test_policy_ :
 };
 
 #define TEST_NS BOOST_PP_CAT(test, __COUNTER__)
+
+struct capture_cout {
+    capture_cout(std::streambuf* new_buffer)
+        : old(std::cout.rdbuf(new_buffer)) {
+    }
+
+    ~capture_cout() {
+        std::cout.rdbuf(old);
+    }
+
+  private:
+    std::streambuf* old;
+};
 
 #endif

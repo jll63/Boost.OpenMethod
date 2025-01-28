@@ -577,23 +577,57 @@ struct virtual_traits<const virtual_ptr<Class, Policy>&, Policy> {
 // =============================================================================
 // set_vptr
 
-template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
-struct set_vptr {
-    set_vptr() {
-        if constexpr (Policy::template has_facet<policies::indirect_vptr>) {
-            reinterpret_cast<Class*>(this)->boost_openmethod_vptr =
-                &Policy::template static_vptr<Class>;
-        } else {
-            reinterpret_cast<Class*>(this)->boost_openmethod_vptr =
-                Policy::template static_vptr<Class>;
-        }
-    }
+namespace detail {
 
-    ~set_vptr() {
-        reinterpret_cast<Class*>(this)->boost_openmethod_vptr = nullptr;
+template<class Class, class Bases, class Policy>
+struct set_vptr_aux;
+
+template<class Class, class Policy>
+struct set_vptr_aux<Class, mp11::mp_list<>, Policy> {
+    std::conditional_t<
+        Policy::template has_facet<policies::indirect_vptr>, const vptr_type*,
+        vptr_type>
+        boost_openmethod_vptr;
+
+    void boost_openmethod_set_vptr(decltype(boost_openmethod_vptr) vptr) {
+        reinterpret_cast<Class*>(this)->boost_openmethod_vptr = vptr;
     }
 };
 
+template<class Class, class Base, class... MoreBases, class Policy>
+struct set_vptr_aux<Class, mp11::mp_list<Base, MoreBases...>, Policy> {
+    void boost_openmethod_set_vptr(decltype(Base->boost_openmethod_vptr) vptr) {
+        reinterpret_cast<Base*>(this)->boost_openmethod_set_vptr(vptr);
+        (reinterpret_cast<MoreBases*>(this)->boost_openmethod_set_vptr(vptr),
+         ...);
+    }
+
+    set_vptr_aux() {
+        if constexpr (Policy::template has_facet<policies::indirect_vptr>) {
+            boost_openmethod_set_vptr(&Policy::template static_vptr<Class>);
+        } else {
+            boost_openmethod_set_vptr(Policy::template static_vptr<Class>);
+        }
+    }
+
+    ~set_vptr_aux() {
+        if constexpr (Policy::template has_facet<policies::indirect_vptr>) {
+        } else {
+            Base::boost_openmethod_set_vptr(
+                &Policy::template static_vptr<Base>);
+            (MoreBases::boost_openmethod_set_vptr(
+                 &Policy::template static_vptr<MoreBases>),
+             ...);
+        }
+    }
+};
+
+} // namespace detail
+
+template<class Class, class... Base>
+struct set_vptr : std:conditional_t<, ,> {
+};
+// Policy = BOOST_OPENMETHOD_DEFAULT_POLICY
 // =============================================================================
 // Method
 

@@ -175,12 +175,11 @@ struct indirect_policy : policy::add<policies::indirect_vptr> {};
 struct Nothing {};
 
 struct Animal : set_vptr<Animal, policy> {
-    vptr_type boost_openmethod_vptr;
 };
 
 BOOST_OPENMETHOD(poke, (virtual_<Animal&>), void, policy);
 
-struct Cat : Animal, set_vptr<Cat, policy> {};
+struct Cat : Animal, set_vptr<Cat, Animal> {};
 
 struct Indirect : set_vptr<Indirect, indirect_policy> {
     const vptr_type* boost_openmethod_vptr;
@@ -320,11 +319,11 @@ struct my_policy : policies::abstract_policy {};
 static_assert(
     std::is_same_v<
         use_classes<Animal, Dog>,
-        use_classes_aux<default_policy, mp11::mp_list<Animal, Dog>>::type>);
+        use_classes_aux<default_policy, mp11::mp_list<Animal, Dog>>>);
 
 static_assert(std::is_same_v<
-              use_classes<Animal, Dog, my_policy, default_policy>,
-              use_classes_aux<my_policy, mp11::mp_list<Animal, Dog>>::type>);
+              use_classes<Animal, Dog, my_policy>,
+              use_classes_aux<my_policy, mp11::mp_list<Animal, Dog>>>);
 
 } // namespace test_use_classes
 

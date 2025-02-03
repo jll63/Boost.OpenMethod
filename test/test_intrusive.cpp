@@ -36,9 +36,7 @@ struct Pet : bom::set_vptr<Pet> {
     std::string name;
 };
 
-struct DomesticCat : Cat, Pet, bom::set_vptr<DomesticCat, Cat, Pet> {
-    //using Animal::boost_openmethod_vptr;
-};
+struct DomesticCat : Cat, Pet, bom::set_vptr<DomesticCat, Cat, Pet> {};
 
 BOOST_OPENMETHOD_CLASSES(Animal, Pet, Cat, DomesticCat);
 
@@ -52,6 +50,17 @@ BOOST_OPENMETHOD_OVERRIDE(describe, (const Pet& pet, std::ostream& os), void) {
 BOOST_OPENMETHOD_OVERRIDE(
     describe, (const DomesticCat& pet, std::ostream& os), void) {
     os << "I am " << pet.name << " the cat\n";
+}
+
+// Check that we pick one of the vptrs in presence of MI, dodging ambiguity
+// issues.
+BOOST_OPENMETHOD(
+    cat_influencer, (bom::virtual_<const DomesticCat&> cat, std::ostream& os),
+    void);
+
+BOOST_OPENMETHOD_OVERRIDE(
+    cat_influencer, (const DomesticCat& cat, std::ostream& os), void) {
+    os << "Follow " << cat.name << " the cat on YouTube\n";
 }
 
 BOOST_AUTO_TEST_CASE(intrusive_mode) {
@@ -68,6 +77,17 @@ BOOST_AUTO_TEST_CASE(intrusive_mode) {
             describe(cat, std::cout);
         }
 
-        BOOST_CHECK_EQUAL(output.str(), "I am Felix the cat\n");
+        BOOST_CHECK(output.is_equal("I am Felix the cat\n"));
+    }
+
+    {
+        boost::test_tools::output_test_stream output;
+
+        {
+            capture_cout capture(output.rdbuf());
+            cat_influencer(cat, std::cout);
+        }
+
+        BOOST_CHECK(output.is_equal("Follow Felix the cat on YouTube\n"));
     }
 }

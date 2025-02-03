@@ -579,6 +579,83 @@ struct virtual_traits<const virtual_ptr<Class, Policy>&, Policy> {
 
 namespace detail {
 
+template<class... Classes>
+using get_policy = std::conditional_t<
+    sizeof...(Classes) == 0, BOOST_OPENMETHOD_DEFAULT_POLICY,
+    std::conditional_t<
+        std::is_base_of_v<
+            policies::abstract_policy,
+            mp11::mp_back<mp11::mp_list<Classes...>>>,
+        mp11::mp_back<mp11::mp_list<Classes...>>,
+        BOOST_OPENMETHOD_DEFAULT_POLICY>>;
+
+template<class... Classes>
+using remove_policy = std::conditional_t<
+    sizeof...(Classes) == 0, mp11::mp_list<>,
+    std::conditional_t<
+        std::is_base_of_v<
+            policies::abstract_policy,
+            mp11::mp_back<mp11::mp_list<Classes...>>>,
+        mp11::mp_pop_back<mp11::mp_list<Classes...>>,
+        mp11::mp_list<Classes...>>>;
+
+template<typename...>
+struct extract_policy;
+
+template<>
+struct extract_policy<> {
+    using policy = BOOST_OPENMETHOD_DEFAULT_POLICY;
+    using others = mp11::mp_list<>;
+};
+
+template<typename Type>
+struct extract_policy<Type> {
+    using policy = std::conditional_t<
+        std::is_base_of_v<policies::abstract_policy, Type>, Type,
+        BOOST_OPENMETHOD_DEFAULT_POLICY>;
+    using others = std::conditional_t<
+        std::is_base_of_v<policies::abstract_policy, Type>, mp11::mp_list<>,
+        mp11::mp_list<Type>>;
+};
+
+template<typename Type1, typename Type2, typename... MoreTypes>
+struct extract_policy<Type1, Type2, MoreTypes...> {
+    using policy = typename extract_policy<Type2, MoreTypes...>::policy;
+    using others = mp11::mp_push_front<
+        typename extract_policy<Type2, MoreTypes...>::others, Type1>;
+};
+
+// template<>
+// struct extract_policy<> {
+//     using policy = BOOST_OPENMETHOD_DEFAULT_POLICY;
+//     using others = mp11::mp_list<>;
+// };
+
+// template<typename Type, typename... MoreTypes>
+// struct extract_policy<Type, MoreTypes...> {
+//     using policy = std::conditional_t<
+//         sizeof...(MoreTypes) == 0,
+//         std::conditional_t<
+//             std::is_base_of_v<
+//                 policies::abstract_policy, Type>, Type, BOOST_OPENMETHOD_DEFAULT_POLICY
+//         std::conditional_t<
+//             std::is_base_of_v<
+//                 policies::abstract_policy,
+//                 mp11::mp_back<mp11::mp_list<Type, MoreTypes...>>>,
+//             mp11::mp_back<mp11::mp_list<Type, MoreTypes...>>,
+//             BOOST_OPENMETHOD_DEFAULT_POLICY>>;
+
+//     template<class... Classes>
+//     using remove_policy = std::conditional_t<
+//         sizeof...(Classes) == 0, mp11::mp_list<>,
+//         std::conditional_t<
+//             std::is_base_of_v<
+//                 policies::abstract_policy,
+//                 mp11::mp_back<mp11::mp_list<Type, MoreTypes...>>>,
+//             mp11::mp_pop_back<mp11::mp_list<Type, MoreTypes...>>,
+//             mp11::mp_list<Type, MoreTypes...>>>;
+// };
+
 template<class Class, class Bases, class Policy>
 struct set_vptr_aux;
 
@@ -588,46 +665,48 @@ struct set_vptr_aux<Class, mp11::mp_list<>, Policy> {
         Policy::template has_facet<policies::indirect_vptr>, const vptr_type*,
         vptr_type>
         boost_openmethod_vptr;
-
-    void boost_openmethod_set_vptr(decltype(boost_openmethod_vptr) vptr) {
-        reinterpret_cast<Class*>(this)->boost_openmethod_vptr = vptr;
-    }
 };
 
-template<class Class, class Base, class... MoreBases, class Policy>
-struct set_vptr_aux<Class, mp11::mp_list<Base, MoreBases...>, Policy> {
-    void boost_openmethod_set_vptr(decltype(Base->boost_openmethod_vptr) vptr) {
-        reinterpret_cast<Base*>(this)->boost_openmethod_set_vptr(vptr);
-        (reinterpret_cast<MoreBases*>(this)->boost_openmethod_set_vptr(vptr),
-         ...);
-    }
+template<class Class, class... Bases, class Policy>
+struct set_vptr_aux<Class, mp11::mp_list<Bases...>, Policy> {};
 
-    set_vptr_aux() {
-        if constexpr (Policy::template has_facet<policies::indirect_vptr>) {
-            boost_openmethod_set_vptr(&Policy::template static_vptr<Class>);
-        } else {
-            boost_openmethod_set_vptr(Policy::template static_vptr<Class>);
-        }
-    }
+template<class Class, class Vptr>
+void ctor_set_vptr(Class* obj, Vptr vptr) {
+    using bases = decltype(boost_openmethod_bases(std::declval<Class*>()));
 
-    ~set_vptr_aux() {
-        if constexpr (Policy::template has_facet<policies::indirect_vptr>) {
-        } else {
-            Base::boost_openmethod_set_vptr(
-                &Policy::template static_vptr<Base>);
-            (MoreBases::boost_openmethod_set_vptr(
-                 &Policy::template static_vptr<MoreBases>),
-             ...);
-        }
+    if constexpr (mp11::mp_size<bases>::value == 0) {
+        obj->boost_openmethod_vptr = vptr;
+    } else {
+        mp11::mp_for_each<bases>([&](auto base) {
+            ctor_set_vptr(static_cast<decltype(base)*>(obj), vptr);
+        });
     }
-};
+}
 
 } // namespace detail
 
-template<class Class, class... Base>
-struct set_vptr : std:conditional_t<, ,> {
+template<class Class, typename... Classes>
+struct set_vptr
+    : detail::set_vptr_aux<
+          Class, typename detail::extract_policy<Classes...>::others,
+          typename detail::extract_policy<Classes...>::policy> {
+
+    friend typename detail::extract_policy<Classes...>::others
+    boost_openmethod_bases(Class*);
+
+    set_vptr() {
+        using policy = typename detail::extract_policy<Classes...>::policy;
+        if constexpr (policy::template has_facet<policies::indirect_vptr>) {
+            detail::ctor_set_vptr(
+                static_cast<Class*>(this),
+                &policy::template static_vptr<Class>);
+        } else {
+            detail::ctor_set_vptr(
+                static_cast<Class*>(this), policy::template static_vptr<Class>);
+        }
+    }
 };
-// Policy = BOOST_OPENMETHOD_DEFAULT_POLICY
+
 // =============================================================================
 // Method
 
@@ -716,8 +795,8 @@ class method<Name(Parameters...), ReturnType, Policy>
     using VirtualParameters =
         typename detail::virtual_types<DeclaredParameters>;
     using Signature = auto(Parameters...) -> ReturnType;
-    using FunctionPointer = auto (*)(detail::remove_virtual<Parameters>...)
-        -> ReturnType;
+    using FunctionPointer = auto(*)(detail::remove_virtual<Parameters>...)
+                                -> ReturnType;
     static constexpr auto Arity = boost::mp11::mp_count_if<
         mp11::mp_list<Parameters...>, detail::is_virtual>::value;
 

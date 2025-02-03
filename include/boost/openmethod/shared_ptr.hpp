@@ -33,7 +33,7 @@ template<class Class, class Policy>
 struct virtual_traits<const std::shared_ptr<Class>&, Policy> {
     using virtual_type = std::remove_cv_t<Class>;
 
-    static auto rarg(const std::shared_ptr<Class>& arg) -> const Class& {
+    static auto peek(const std::shared_ptr<Class>& arg) -> const Class& {
         return *arg;
     }
 
@@ -73,7 +73,7 @@ template<typename Class, class Policy>
 struct virtual_traits<std::shared_ptr<Class>, Policy> {
     using virtual_type = std::remove_cv_t<Class>;
 
-    static auto rarg(const std::shared_ptr<Class>& arg) -> const Class& {
+    static auto peek(const std::shared_ptr<Class>& arg) -> const Class& {
         return *arg;
     }
 

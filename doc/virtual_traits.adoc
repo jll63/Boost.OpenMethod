@@ -16,7 +16,7 @@ struct virtual_traits {
 template<..., class Policy>
 struct virtual_traits<..., Policy> {
     using virtual_type = ...;
-    static auto rarg(const T& arg) -> ...;
+    static auto peek(const T& arg) -> ...;
     template<typename Derived> static auto cast(T& obj) -> ...;
 };
 ```
@@ -48,16 +48,16 @@ For example, `virtual_type` in the following specializations are all `T`:
 * `virtual_traits<virtual_<virtual_ptr<T, Policy>>, Policy>`
 * `virtual_traits<virtual_<const virtual_ptr<std::shared_ptr<T>>&>, Policy>`
 
-#### rarg
+#### peek
 
 ```c++
-static auto rarg(T arg) -> ...;
+static auto peek(T arg) -> ...;
 ```
 
 Returns a value for the purpose of obtaining a v-table pointer for `arg`. This
 is guaranteed to be a read-only operation.
 
-For example, `rarg` returns a `const T&` for a `T&`, `const T&`, `T&&`,
+For example, `peek` returns a `const T&` for a `T&`, `const T&`, `T&&`,
 `std::shared_ptr<T>`; and a `const virtual_ptr<Class, Policy>&` for
 `virtual_ptr<Class, Policy>`.
 

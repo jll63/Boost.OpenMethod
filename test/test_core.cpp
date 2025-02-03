@@ -174,8 +174,7 @@ struct indirect_policy : policy::add<policies::indirect_vptr> {};
 
 struct Nothing {};
 
-struct Animal : set_vptr<Animal, policy> {
-};
+struct Animal : set_vptr<Animal, policy> {};
 
 BOOST_OPENMETHOD(poke, (virtual_<Animal&>), void, policy);
 

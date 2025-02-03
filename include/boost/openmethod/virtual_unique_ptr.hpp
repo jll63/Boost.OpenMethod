@@ -11,7 +11,7 @@ template<class Class, class Policy>
 struct virtual_traits<std::unique_ptr<Class>, Policy> {
     using virtual_type = std::remove_cv_t<Class>;
 
-    static auto rarg(const std::unique_ptr<Class>& arg) -> const Class& {
+    static auto peek(const std::unique_ptr<Class>& arg) -> const Class& {
         return *arg;
     }
 

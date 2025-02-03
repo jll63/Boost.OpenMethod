@@ -91,6 +91,9 @@ using inheritance_map = mp11::mp_list<boost::mp11::mp_push_front<
         boost::mp11::mp_bind_back<std::is_base_of, Cs>, mp11::mp_list<Cs...>>,
     Cs>...>;
 
+// =============================================================================
+// Policy helpers
+
 template<typename T>
 constexpr bool is_policy = std::is_base_of_v<policies::abstract_policy, T>;
 
@@ -174,7 +177,7 @@ using virtual_types = boost::mp11::mp_transform<
 
 template<typename T, class Policy>
 struct parameter_traits {
-    static auto rarg(const T& arg) {
+    static auto peek(const T& arg) {
         return nullptr;
     }
 
@@ -209,7 +212,7 @@ template<typename T, class Policy>
 struct virtual_traits<T&, Policy> {
     using virtual_type = std::remove_cv_t<T>;
 
-    static auto rarg(const T& arg) -> const T& {
+    static auto peek(const T& arg) -> const T& {
         return arg;
     }
 
@@ -223,7 +226,7 @@ template<typename T, class Policy>
 struct virtual_traits<T&&, Policy> {
     using virtual_type = T;
 
-    static auto rarg(const T& arg) -> const T& {
+    static auto peek(const T& arg) -> const T& {
         return arg;
     }
 
@@ -486,7 +489,7 @@ class virtual_ptr : public detail::virtual_ptr_impl<Class, Policy> {
         if constexpr (Policy::template has_facet<policies::runtime_checks>) {
             // check that dynamic type == static type
             auto static_type = Policy::template static_type<other_class>();
-            auto dynamic_type = Policy::dynamic_type(other_traits::rarg(obj));
+            auto dynamic_type = Policy::dynamic_type(other_traits::peek(obj));
 
             if (dynamic_type != static_type) {
                 type_mismatch_error error;
@@ -539,7 +542,7 @@ template<class Class, class Policy>
 struct virtual_traits<virtual_ptr<Class, Policy>, Policy> {
     using virtual_type = typename virtual_ptr<Class, Policy>::element_type;
 
-    static auto rarg(const virtual_ptr<Class, Policy>& ptr)
+    static auto peek(const virtual_ptr<Class, Policy>& ptr)
         -> const virtual_ptr<Class, Policy>& {
         return ptr;
     }
@@ -559,7 +562,7 @@ template<class Class, class Policy>
 struct virtual_traits<const virtual_ptr<Class, Policy>&, Policy> {
     using virtual_type = typename virtual_ptr<Class, Policy>::element_type;
 
-    static auto rarg(const virtual_ptr<Class, Policy>& ptr)
+    static auto peek(const virtual_ptr<Class, Policy>& ptr)
         -> const virtual_ptr<Class, Policy>& {
         return ptr;
     }
@@ -943,7 +946,7 @@ BOOST_FORCEINLINE auto
 method<Name(Parameters...), ReturnType, Policy>::operator()(
     detail::remove_virtual<Parameters>... args) const -> ReturnType {
     using namespace detail;
-    auto pf = resolve(parameter_traits<Parameters, Policy>::rarg(args)...);
+    auto pf = resolve(parameter_traits<Parameters, Policy>::peek(args)...);
 
     return pf(std::forward<remove_virtual<Parameters>>(args)...);
 }
@@ -1140,7 +1143,7 @@ method<Name(Parameters...), ReturnType, Policy>::not_implemented_handler(
         auto ti_iter = types;
         (...,
          (*ti_iter++ = Policy::dynamic_type(
-              detail::parameter_traits<Parameters, Policy>::rarg(args))));
+              detail::parameter_traits<Parameters, Policy>::peek(args))));
         std::copy_n(
             types,
             (std::min)(sizeof...(args), not_implemented_error::max_types),

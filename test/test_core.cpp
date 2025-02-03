@@ -314,17 +314,6 @@ static_assert(
             class_declaration_aux<
                 default_policy, mp11::mp_list<Dolphin, Animal, Dolphin>>>>);
 
-struct my_policy : policies::abstract_policy {};
-
-static_assert(
-    std::is_same_v<
-        use_classes<Animal, Dog>,
-        use_classes_aux<default_policy, mp11::mp_list<Animal, Dog>>>);
-
-static_assert(std::is_same_v<
-              use_classes<Animal, Dog, my_policy>,
-              use_classes_aux<my_policy, mp11::mp_list<Animal, Dog>>>);
-
 } // namespace test_use_classes
 
 namespace facets {

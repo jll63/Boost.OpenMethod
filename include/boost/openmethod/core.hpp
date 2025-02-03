@@ -91,27 +91,6 @@ using inheritance_map = mp11::mp_list<boost::mp11::mp_push_front<
         boost::mp11::mp_bind_back<std::is_base_of, Cs>, mp11::mp_list<Cs...>>,
     Cs>...>;
 
-template<class Policy, class... Classes>
-struct use_classes_aux;
-
-template<class Policy, class... Classes>
-struct use_classes_aux<Policy, mp11::mp_list<Classes...>> {
-    using type = boost::mp11::mp_apply<
-        std::tuple,
-        boost::mp11::mp_transform_q<
-            boost::mp11::mp_bind_front<class_declaration_aux, Policy>,
-            boost::mp11::mp_apply<inheritance_map, mp11::mp_list<Classes...>>>>;
-};
-
-template<class Policy, class... Classes, class... MoreClassLists>
-struct use_classes_aux<
-    Policy, mp11::mp_list<mp11::mp_list<Classes...>, MoreClassLists...>>
-    : use_classes_aux<
-          Policy,
-          boost::mp11::mp_append<mp11::mp_list<Classes...>, MoreClassLists...>>
-
-{};
-
 template<typename T>
 constexpr bool is_policy = std::is_base_of_v<policies::abstract_policy, T>;
 
@@ -120,6 +99,31 @@ struct is_policy_fn : std::is_base_of<policies::abstract_policy, T> {};
 
 template<typename... T>
 struct is_policy_fn<mp11::mp_list<T...>> : std::false_type {};
+
+template<typename...>
+struct extract_policy;
+
+template<>
+struct extract_policy<> {
+    using policy = BOOST_OPENMETHOD_DEFAULT_POLICY;
+    using others = mp11::mp_list<>;
+};
+
+template<typename Type>
+struct extract_policy<Type> {
+    using policy = std::conditional_t<
+        is_policy<Type>, Type, BOOST_OPENMETHOD_DEFAULT_POLICY>;
+    using others = std::conditional_t<
+        is_policy<Type>, mp11::mp_list<>, mp11::mp_list<Type>>;
+};
+
+template<typename Type1, typename Type2, typename... MoreTypes>
+struct extract_policy<Type1, Type2, MoreTypes...> {
+    static_assert(!is_policy<Type1>, "policy must be the last in the list");
+    using policy = typename extract_policy<Type2, MoreTypes...>::policy;
+    using others = mp11::mp_push_front<
+        typename extract_policy<Type2, MoreTypes...>::others, Type1>;
+};
 
 // =============================================================================
 // optimal_cast
@@ -242,14 +246,15 @@ struct virtual_traits<T*, Policy> {
 };
 
 template<class... Classes>
-using use_classes = typename detail::use_classes_aux<
-    boost::mp11::mp_at<
-        mp11::mp_list<Classes..., BOOST_OPENMETHOD_DEFAULT_POLICY>,
-        boost::mp11::mp_find_if<
-            mp11::mp_list<Classes..., BOOST_OPENMETHOD_DEFAULT_POLICY>,
-            detail::is_policy_fn>>,
-    boost::mp11::mp_remove_if<
-        mp11::mp_list<Classes...>, detail::is_policy_fn>>::type;
+using use_classes = boost::mp11::mp_apply<
+    std::tuple,
+    boost::mp11::mp_transform_q<
+        boost::mp11::mp_bind_front<
+            detail::class_declaration_aux,
+            typename detail::extract_policy<Classes...>::policy>,
+        boost::mp11::mp_apply<
+            detail::inheritance_map,
+            typename detail::extract_policy<Classes...>::others>>>;
 
 // =============================================================================
 // virtual_ptr

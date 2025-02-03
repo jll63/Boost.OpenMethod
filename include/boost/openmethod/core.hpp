@@ -94,12 +94,6 @@ using inheritance_map = mp11::mp_list<boost::mp11::mp_push_front<
 template<typename T>
 constexpr bool is_policy = std::is_base_of_v<policies::abstract_policy, T>;
 
-template<typename T>
-struct is_policy_fn : std::is_base_of<policies::abstract_policy, T> {};
-
-template<typename... T>
-struct is_policy_fn<mp11::mp_list<T...>> : std::false_type {};
-
 template<typename...>
 struct extract_policy;
 

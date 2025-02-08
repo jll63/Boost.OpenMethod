@@ -243,15 +243,22 @@ struct virtual_traits<T*, Policy> {
 };
 
 template<class... Classes>
-using use_classes = boost::mp11::mp_apply<
-    std::tuple,
-    boost::mp11::mp_transform_q<
-        boost::mp11::mp_bind_front<
-            detail::class_declaration_aux,
-            typename detail::extract_policy<Classes...>::policy>,
-        boost::mp11::mp_apply<
-            detail::inheritance_map,
-            typename detail::extract_policy<Classes...>::others>>>;
+struct use_classes {
+    using tuple_type = boost::mp11::mp_apply<
+        std::tuple,
+        boost::mp11::mp_transform_q<
+            boost::mp11::mp_bind_front<
+                detail::class_declaration_aux,
+                typename detail::extract_policy<Classes...>::policy>,
+            boost::mp11::mp_apply<
+                detail::inheritance_map,
+                typename detail::extract_policy<Classes...>::others>>>;
+    tuple_type tuple;
+    static use_classes instance;
+};
+
+template<class... Classes>
+use_classes<Classes...> use_classes<Classes...>::instance;
 
 // =============================================================================
 // virtual_ptr
@@ -463,9 +470,6 @@ class virtual_ptr_impl<
 
 } // namespace detail
 
-template<class Policy, class Class>
-inline auto final_virtual_ptr(Class&& obj);
-
 template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
 class virtual_ptr : public detail::virtual_ptr_impl<Class, Policy> {
     using impl = detail::virtual_ptr_impl<Class, Policy>;
@@ -584,8 +588,21 @@ struct virtual_traits<const virtual_ptr<Class, Policy>&, Policy> {
 
 namespace detail {
 
+void boost_openmethod_policy(...);
+
+template<class Class>
+using set_vptr_policy =
+    decltype(boost_openmethod_policy(std::declval<Class*>()));
+
 template<class Class, class Policy>
 struct set_vptr_root {
+
+    static_assert(is_policy<Policy>);
+
+    set_vptr_root() {
+        (void)&use_classes<Class, Policy>::instance;
+    }
+
     std::conditional_t<
         Policy::template has_facet<policies::indirect_vptr>, const vptr_type*,
         vptr_type>
@@ -593,6 +610,14 @@ struct set_vptr_root {
 
     friend auto boost_openmethod_policy(Class*) -> Policy;
     friend auto boost_openmethod_bases(Class*) -> mp11::mp_list<>;
+
+    friend auto boost_openmethod_vptr(const Class& obj) -> vptr_type {
+        if constexpr (Policy::template has_facet<policies::indirect_vptr>) {
+            return *obj.boost_openmethod_vptr;
+        } else {
+            return obj.boost_openmethod_vptr;
+        }
+    }
 };
 
 struct set_vptr_derived {};
@@ -614,7 +639,6 @@ struct set_vptr_aux2<Class, Policy, true> : set_vptr_root<Class, Policy> {
 
 template<class Class, class Base>
 struct set_vptr_aux2<Class, Base, false> : set_vptr_derived {
-
     friend auto boost_openmethod_bases(Class*) -> mp11::mp_list<Base>;
 };
 
@@ -629,11 +653,19 @@ struct set_vptr_aux<Class, Base1, Base2, MoreBases...> : set_vptr_derived {
             (!is_policy<MoreBases> && ...),
         "policy can be specified only for root classes");
 
-    friend auto boost_openmethod_policy(Class*)
-        -> decltype(boost_openmethod_policy(std::declval<Base1*>()));
+    set_vptr_aux() {
+        (void)&use_classes<
+            Class, Base1, Base2, MoreBases...,
+            set_vptr_policy<Base1>>::instance;
+    }
 
+    friend auto boost_openmethod_policy(Class*) -> set_vptr_policy<Base1>;
     friend auto boost_openmethod_bases(Class*)
         -> mp11::mp_list<Base1, Base2, MoreBases...>;
+
+    friend auto boost_openmethod_vptr(const Class& obj) -> vptr_type {
+        return boost_openmethod_vptr(static_cast<const Base1&>(obj));
+    }
 };
 
 template<class Class, class Vptr>
@@ -735,6 +767,15 @@ struct has_vptr : std::false_type {};
 
 template<class Class>
 struct has_vptr<Class, std::void_t<decltype(Class::boost_openmethod_vptr)>>
+    : std::true_type {};
+
+template<class Class, typename = void>
+struct has_vptr_fn : std::false_type {};
+
+template<class Class>
+struct has_vptr_fn<
+    Class,
+    std::void_t<decltype(boost_openmethod_vptr(std::declval<const Class&>()))>>
     : std::true_type {};
 
 } // namespace detail
@@ -982,6 +1023,8 @@ method<Name(Parameters...), ReturnType, Policy>::vptr(const ArgType& arg) const
         return arg.vptr();
         // No need to check the method pointer: this was done when the
         // virtual_ptr was created.
+    } else if constexpr (detail::has_vptr_fn<ArgType>::value) {
+        return boost_openmethod_vptr(arg);
     } else if constexpr (detail::has_vptr<ArgType>::value) {
         if constexpr (std::is_same_v<
                           decltype(arg.boost_openmethod_vptr),

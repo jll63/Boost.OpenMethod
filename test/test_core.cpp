@@ -111,6 +111,11 @@ static_assert(std::is_same_v<
               virtual_types<mp11::mp_list<virtual_<a&>, b, virtual_<c&>>>,
               mp11::mp_list<a&, c&>>);
 
+static_assert(detail::is_policy<default_policy>);
+
+struct not_a_policy {};
+static_assert(!detail::is_policy<not_a_policy>);
+
 BOOST_AUTO_TEST_CASE(test_policy) {
     {
         // test is_policy_compatible
@@ -166,48 +171,6 @@ struct Animal {
 BOOST_OPENMETHOD(poke, (virtual_<Animal&>), std::tuple<int, int>);
 
 } // namespace test_macros
-
-namespace intrusive_vptr {
-
-struct policy : default_policy::fork<policy> {};
-struct indirect_policy : policy::add<policies::indirect_vptr> {};
-
-struct Nothing {};
-
-struct Animal : set_vptr<Animal, policy> {};
-
-BOOST_OPENMETHOD(poke, (virtual_<Animal&>), void, policy);
-
-struct Cat : Animal, set_vptr<Cat, Animal> {};
-
-struct Indirect : set_vptr<Indirect, indirect_policy> {
-    const vptr_type* boost_openmethod_vptr;
-};
-
-BOOST_OPENMETHOD(whatever, (virtual_<Indirect&>), void, indirect_policy);
-// instantiate the method
-BOOST_OPENMETHOD_OVERRIDE(whatever, (Indirect&), void) {
-}
-
-static_assert(!detail::has_vptr<Nothing>::value);
-static_assert(detail::has_vptr<Animal>::value);
-
-BOOST_OPENMETHOD_CLASSES(Animal, Cat, Indirect, policy);
-
-BOOST_AUTO_TEST_CASE(core_intrusive_vptr) {
-    initialize<policy>();
-
-    Animal animal;
-    BOOST_TEST(animal.boost_openmethod_vptr != nullptr);
-    BOOST_TEST(animal.boost_openmethod_vptr == policy::static_vptr<Animal>);
-    Cat cat;
-    BOOST_TEST(cat.boost_openmethod_vptr == policy::static_vptr<Cat>);
-    Indirect i;
-    BOOST_TEST(
-        i.boost_openmethod_vptr == &indirect_policy::static_vptr<Indirect>);
-}
-
-} // namespace intrusive_vptr
 
 namespace casts {
 
@@ -300,7 +263,7 @@ static_assert(
 
 static_assert(
     std::is_same_v<
-        use_classes<Animal, Dog, Bulldog, Cat, Dolphin>,
+        use_classes<Animal, Dog, Bulldog, Cat, Dolphin>::tuple_type,
         std::tuple<
             class_declaration_aux<
                 default_policy, mp11::mp_list<Animal, Animal>>,
@@ -325,9 +288,6 @@ struct alt_rtti {};
 
 static_assert(
     std::is_same_v<rebind_facet<key2, domain<key1>>::type, domain<key2>>);
-
-// boost::openmethod::policies::basic_policy<facets::key2, boost::openmethod::policies::std_rtti>,
-// boost::openmethod::policies::basic_policy<boost::openmethod::policies::domain<facets::key2>, boost::openmethod::policies::std_rtti>
 
 struct policy1 : basic_policy<policy1, std_rtti> {};
 struct policy2 : policy1::fork<policy2> {};

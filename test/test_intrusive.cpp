@@ -6,27 +6,23 @@
 #include <iostream>
 #include <string>
 
+#include <boost/openmethod/policies.hpp>
+
+namespace bom = boost::openmethod;
+struct test_policy : bom::default_policy::remove<bom::policies::extern_vptr> {};
+#define BOOST_OPENMETHOD_DEFAULT_POLICY test_policy
+
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/compiler.hpp>
 
-#include "test_util.hpp"
-
 #define BOOST_TEST_MODULE instrusive
 #include <boost/test/included/unit_test.hpp>
-
 #include <boost/test/output_test_stream.hpp>
 
-// static_assert(
-//     std::is_same_v<decltype(bases((Animal*)0)), boost::mp11::mp_list<>>);
-
-// static_assert(std::is_same_v<
-//               decltype(bases((Cat*)0)), boost::mp11::mp_list<Animal>>);
-
-// static_assert(std::is_same_v<
-//               decltype(bases((DomesticCat*)0)),
-//               boost::mp11::mp_list<Cat, Pet>>);
+#include "test_util.hpp"
 
 namespace bom = boost::openmethod;
+using bom::virtual_;
 
 struct Animal : bom::set_vptr<Animal> {};
 
@@ -36,12 +32,16 @@ struct Pet : bom::set_vptr<Pet> {
     std::string name;
 };
 
-struct DomesticCat : Cat, Pet, bom::set_vptr<DomesticCat, Cat, Pet> {};
+struct DomesticCat : Cat, Pet, bom::set_vptr<DomesticCat, Cat, Pet> {
+};
 
-BOOST_OPENMETHOD_CLASSES(Animal, Pet, Cat, DomesticCat);
+struct Nothing {};
+
+static_assert(!bom::detail::has_vptr<Nothing>::value);
+static_assert(bom::detail::has_vptr<Animal>::value);
 
 BOOST_OPENMETHOD(
-    describe, (bom::virtual_<const Pet&> pet, std::ostream& os), void);
+    describe, (virtual_<const Pet&> pet, std::ostream& os), void);
 
 BOOST_OPENMETHOD_OVERRIDE(describe, (const Pet& pet, std::ostream& os), void) {
     os << "I am a pet\n";
@@ -55,7 +55,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 // Check that we pick one of the vptrs in presence of MI, dodging ambiguity
 // issues.
 BOOST_OPENMETHOD(
-    cat_influencer, (bom::virtual_<const DomesticCat&> cat, std::ostream& os),
+    cat_influencer, (virtual_<const DomesticCat&> cat, std::ostream& os),
     void);
 
 BOOST_OPENMETHOD_OVERRIDE(
@@ -68,13 +68,14 @@ BOOST_AUTO_TEST_CASE(intrusive_mode) {
 
     DomesticCat cat;
     cat.name = "Felix";
+    Pet& pet = cat;
 
     {
         boost::test_tools::output_test_stream output;
 
         {
             capture_cout capture(output.rdbuf());
-            describe(cat, std::cout);
+            describe(pet, std::cout);
         }
 
         BOOST_CHECK(output.is_equal("I am Felix the cat\n"));
@@ -90,4 +91,21 @@ BOOST_AUTO_TEST_CASE(intrusive_mode) {
 
         BOOST_CHECK(output.is_equal("Follow Felix the cat on YouTube\n"));
     }
+}
+
+struct indirect_policy : test_policy::add<bom::policies::indirect_vptr> {};
+
+struct Indirect : bom::set_vptr<Indirect, indirect_policy> {
+};
+
+BOOST_OPENMETHOD(whatever, (virtual_<Indirect&>), void, indirect_policy);
+
+BOOST_OPENMETHOD_OVERRIDE(whatever, (Indirect&), void) {
+}
+
+BOOST_AUTO_TEST_CASE(core_intrusive_vptr) {
+    bom::initialize<indirect_policy>();
+    Indirect i;
+    BOOST_TEST(
+        i.boost_openmethod_vptr == &indirect_policy::static_vptr<Indirect>);
 }

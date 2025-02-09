@@ -8,8 +8,10 @@ Defined in <boost/openmethod/core.hpp>.
 ```c++
 namespace boost::openmethod {
 
-template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
-struct set_vptr {
+template<
+    class Class, class... Bases, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY
+>
+class set_vptr {
     set_vptr();
     ~set_vptr();
 };
@@ -19,11 +21,18 @@ struct set_vptr {
 
 ### Description
 
-`set_vptr` is a CRTP class template that sets the `boost_openmethod_vptr` of
-`Class` objects according to the static `Class` type.
+`set_vptr` is a CRTP class template that manages a vptr in a class hierarchy.
 
-`Class` must contain a `boost_openmethod_vptr` member of the appropriate type
-(`vptr_type` or `const vptr_type*`).
+If `Class` has no `Bases`, `set_vptr` adds a `boost_openmethod_vptr` private
+member to `Class`. In either case, it sets the vptr to the v-table of `Class`
+from `Policy`. It also creates a `boost_openmethod_vptr` friend function that
+takes a a `const Class&` and returns the embedded vptr.
+
+If `Class` has has more than one base, the `boost_openmethod_vptr` friend
+function is also created, to prevent ambiguities. It returns one of the embedded
+vptrs (it doesn't matter which one, as they all have the same value).
+
+As part of its implementation, `set_vptr` may also declare one or two free functions (`boost_openmethod_policy` and `boost_openmethod_bases`).
 
 ### Members
 

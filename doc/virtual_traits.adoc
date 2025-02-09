@@ -14,15 +14,15 @@ struct virtual_traits;
 template<typename T, class Policy>
 struct virtual_traits<T, Policy> {
     using virtual_type = ...;
-    static const virtual_type& peek(const T& arg);
+    static auto peek(const T& arg) -> const ...&;
     template<typename Derived> static decltype(auto) cast(T& obj);
 };
 ```
 
 ### Description
 
-`virtual_traits` is used by `method` to handle formal parameters, and by
-`method::fn` to handle arguments.
+`virtual_traits` is used by `method` and `virtual_ptr` to handle formal
+parameters and arguments.
 
 ### Members
 
@@ -32,30 +32,25 @@ struct virtual_traits<T, Policy> {
 using virtual_type = ...;
 ```
 
-Extracts the class to use for overrider selection from type of the formal
-parameter. If that type is _not_ decorated with `virtual_`, `virtual_type` is
-`void`, none of the other members are required, and the parameter does not
-participate in overrider selection.
+The class to consider in method selection. It must be registered in Policy.
 
 For example, `virtual_type` in the following specializations are all `T`:
 
-* `virtual_traits<virtual_<T&>, Policy>`
-* `virtual_traits<virtual_<const std::shared_ptr<T>&>, Policy>`
-* `virtual_traits<virtual_<virtual_ptr<T, Policy>>, Policy>`
-* `virtual_traits<virtual_<const virtual_ptr<std::shared_ptr<T>>&>, Policy>`
+* `virtual_traits<T&, Policy>`
+* `virtual_traits<const std::shared_ptr<T>&, Policy>`
+* `virtual_traits<const virtual_ptr<std::shared_ptr<T>&, Policy>`
 
 #### peek
 
 ```c++
-static const virtual_type& peek(T arg);
+static auto peek(T arg) -> const ...&;
 ```
 
-Returns a value for the purpose of obtaining a v-table pointer for `arg`. This
-is guaranteed to be a read-only operation.
+Returns a value for the purpose of obtaining a v-table pointer for `arg`.
 
-For example, `peek` returns a `const T&` for a `T&`, `const T&`, `T&&`,
-`std::shared_ptr<T>`; and a `const virtual_ptr<Class, Policy>&` for
-`virtual_ptr<Class, Policy>`.
+For example, `peek` returns a `const T&` for a `T&`, a `const T&`, a `T&&`, and
+a `std::shared_ptr<T>`; and a `const virtual_ptr<Class, Policy>&` for a
+`const virtual_ptr<Class, Policy>&`.
 
 
 #### cast
@@ -68,7 +63,7 @@ static decltype(auto) cast(T& obj);
 Casts argument `obj` to the type expected by an overrider.
 
 For example, if a method takes a `virtual_<Animal&>`, an overrider for `Cat&`
-will use `virtual_traits` to cast a `Animal&` to a `Cat&`.
+uses `virtual_traits` to cast a `Animal&` to a `Cat&`.
 
 ### Specializations
 

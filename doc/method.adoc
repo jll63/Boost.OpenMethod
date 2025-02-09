@@ -111,19 +111,19 @@ resolution, with extra rules to handle ambiguities. It proceeds as follows:
    is not specified, but it is the same across calls with the same arguments
    types.
 
-The dispatch mechanism determines the v-table for each virtual argument (`arg`)
-as follows:
+For each virtual argument `arg`, the dispatch mechanism calls
+`virtual_traits::peek(arg)` and deduces the v-table pointer from the `result`,
+using the first of the following methods that applies:
 
-1. Call `virtual_traits::peek(arg)`. The result is the _resolver_ _argument_, or
-   `peek.`
+1. If `result` is a `virtual_ptr`, get the pointer to the v-table from it.
 
-2. If `peek` is a `virtual_ptr`, it contains the pointer to the v-table.
+2. If `boost_openmethod_vptr(result)` can be evaluated, call it.
 
-3. If `peek` has a public `boost_openmethod_vptr` member variable, it is
-   a pointer to the v-table, or a pointer to a pointer to the v-table, depending
-   on the `Policy`.
+3. If `peek` has a public `boost_openmethod_vptr` member variable, it is assumed
+   to contain a pointer to the v-table, or a pointer to a pointer to the
+   v-table, depending on the `Policy`.
 
-4. Otherwise, call `Policy::dynamic_vptr(peek)`.
+4. Call `Policy::dynamic_vptr(result)`.
 
 ### Members
 

@@ -589,24 +589,67 @@ struct virtual_traits<const virtual_ptr<Class, Policy>&, Policy> {
 namespace detail {
 
 void boost_openmethod_policy(...);
+void boost_openmethod_bases(...);
 
 template<class Class>
 using set_vptr_policy =
     decltype(boost_openmethod_policy(std::declval<Class*>()));
 
+template<class>
+struct update_vptr_bases;
+
+template<class To, class Class>
+void update_vptr(Class* obj);
+
+template<class... Bases>
+struct update_vptr_bases<mp11::mp_list<Bases...>> {
+    template<class To, class Class>
+    static void fn(Class* obj) {
+        (update_vptr<To>(static_cast<Bases*>(obj)), ...);
+    }
+};
+
+template<class To, class Class>
+void update_vptr(Class* obj) {
+    using policy = set_vptr_policy<Class>;
+    using bases = decltype(boost_openmethod_bases(obj));
+
+    if constexpr (mp11::mp_size<bases>::value == 0) {
+        if constexpr (policy::template has_facet<policies::indirect_vptr>) {
+            obj->boost_openmethod_vptr = &policy::template static_vptr<To>;
+        } else {
+            obj->boost_openmethod_vptr = policy::template static_vptr<To>;
+        }
+    } else {
+        update_vptr_bases<bases>::template fn<To, Class>(obj);
+    }
+}
+
+struct set_vptr_derived {};
+
+template<class, class, bool>
+struct set_vptr_aux2;
+
 template<class Class, class Policy>
-struct set_vptr_root {
+struct set_vptr_aux2<Class, Policy, true> {
 
     static_assert(is_policy<Policy>);
 
-    set_vptr_root() {
+    friend void update_vptr(Class*);
+
+    set_vptr_aux2() {
         (void)&use_classes<Class, Policy>::instance;
+        detail::update_vptr<Class>(static_cast<Class*>(this));
+    }
+
+    ~set_vptr_aux2() {
+        boost_openmethod_vptr = nullptr;
     }
 
     std::conditional_t<
         Policy::template has_facet<policies::indirect_vptr>, const vptr_type*,
         vptr_type>
-        boost_openmethod_vptr;
+        boost_openmethod_vptr = nullptr;
 
     friend auto boost_openmethod_policy(Class*) -> Policy;
     friend auto boost_openmethod_bases(Class*) -> mp11::mp_list<>;
@@ -618,85 +661,85 @@ struct set_vptr_root {
             return obj.boost_openmethod_vptr;
         }
     }
-};
 
-struct set_vptr_derived {};
-
-template<class, class...>
-struct set_vptr_aux;
-
-template<class Class>
-struct set_vptr_aux<Class>
-    : set_vptr_root<Class, BOOST_OPENMETHOD_DEFAULT_POLICY> {};
-
-template<class, class, bool>
-struct set_vptr_aux2;
-
-template<class Class, class Policy>
-struct set_vptr_aux2<Class, Policy, true> : set_vptr_root<Class, Policy> {
     friend auto boost_openmethod_policy(Class*) -> Policy;
 };
 
 template<class Class, class Base>
 struct set_vptr_aux2<Class, Base, false> : set_vptr_derived {
+    set_vptr_aux2() {
+        (void)&use_classes<Class, Base, set_vptr_policy<Class>>::instance;
+        detail::update_vptr<Class>(static_cast<Class*>(this));
+    }
+
+    ~set_vptr_aux2() {
+        detail::update_vptr<Base>(
+            static_cast<Base*>(static_cast<Class*>(this)));
+    }
+
     friend auto boost_openmethod_bases(Class*) -> mp11::mp_list<Base>;
 };
 
+} // namespace detail
+
+template<typename...>
+struct set_vptr;
+
+template<class Class>
+struct set_vptr<Class>
+    : detail::set_vptr_aux2<Class, BOOST_OPENMETHOD_DEFAULT_POLICY, true> {};
+
 template<class Class, class Other>
-struct set_vptr_aux<Class, Other>
-    : set_vptr_aux2<Class, Other, is_policy<Other>> {};
+struct set_vptr<Class, Other>
+    : detail::set_vptr_aux2<Class, Other, detail::is_policy<Other>> {};
 
 template<class Class, class Base1, class Base2, class... MoreBases>
-struct set_vptr_aux<Class, Base1, Base2, MoreBases...> : set_vptr_derived {
+class set_vptr<Class, Base1, Base2, MoreBases...> : detail::set_vptr_derived {
+
     static_assert(
-        !is_policy<Base1> && !is_policy<Base2> &&
-            (!is_policy<MoreBases> && ...),
+        !detail::is_policy<Base1> && !detail::is_policy<Base2> &&
+            (!detail::is_policy<MoreBases> && ...),
         "policy can be specified only for root classes");
 
-    set_vptr_aux() {
+  protected:
+    set_vptr() {
         (void)&use_classes<
             Class, Base1, Base2, MoreBases...,
-            set_vptr_policy<Base1>>::instance;
+            detail::set_vptr_policy<Base1>>::instance;
+        detail::update_vptr<Class>(static_cast<Class*>(this));
     }
 
-    friend auto boost_openmethod_policy(Class*) -> set_vptr_policy<Base1>;
+    ~set_vptr() {
+        auto obj = static_cast<Class*>(this);
+        detail::update_vptr<Base1>(static_cast<Base1*>(obj));
+        detail::update_vptr<Base2>(static_cast<Base2*>(obj));
+        (detail::update_vptr<MoreBases>(static_cast<Base2*>(obj)), ...);
+    }
+
+    // ~set_vptr() {
+    //     using policy =
+    //         decltype(boost_openmethod_policy(std::declval<Class*>()));
+
+    //     if constexpr (policy::template has_facet<policies::indirect_vptr>) {
+    //         (detail::update_vptr(
+    //              static_cast<Bases*>(this),
+    //              &policy::template static_vptr<Class>),
+    //          ...);
+    //     } else {
+    //         (detail::update_vptr(
+    //              static_cast<Bases*>(this),
+    //              policy::template static_vptr<Class>),
+    //          ...);
+    //     }
+    // }
+
+    friend auto boost_openmethod_policy(Class*)
+        -> detail::set_vptr_policy<Base1>;
     friend auto boost_openmethod_bases(Class*)
         -> mp11::mp_list<Base1, Base2, MoreBases...>;
 
     friend auto boost_openmethod_vptr(const Class& obj) -> vptr_type {
         return boost_openmethod_vptr(static_cast<const Base1&>(obj));
-    }
-};
-
-template<class Class, class Vptr>
-void ctor_set_vptr(Class* obj, Vptr vptr) {
-    using bases = decltype(boost_openmethod_bases(std::declval<Class*>()));
-
-    if constexpr (mp11::mp_size<bases>::value == 0) {
-        obj->boost_openmethod_vptr = vptr;
-    } else {
-        mp11::mp_for_each<bases>([&](auto base) {
-            ctor_set_vptr(static_cast<decltype(base)*>(obj), vptr);
-        });
-    }
-}
-
-} // namespace detail
-
-template<class Class, typename... Others>
-struct set_vptr : detail::set_vptr_aux<Class, Others...> {
-    set_vptr() {
-        using policy =
-            decltype(boost_openmethod_policy(std::declval<Class*>()));
-
-        if constexpr (policy::template has_facet<policies::indirect_vptr>) {
-            detail::ctor_set_vptr(
-                static_cast<Class*>(this),
-                &policy::template static_vptr<Class>);
-        } else {
-            detail::ctor_set_vptr(
-                static_cast<Class*>(this), policy::template static_vptr<Class>);
-        }
     }
 };
 

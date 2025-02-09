@@ -24,15 +24,25 @@ struct test_policy : bom::default_policy::remove<bom::policies::extern_vptr> {};
 namespace bom = boost::openmethod;
 using bom::virtual_;
 
-struct Animal : bom::set_vptr<Animal> {};
+struct Animal : bom::set_vptr<Animal> {
+    Animal();
+    ~Animal();
+};
 
-struct Cat : Animal, bom::set_vptr<Cat, Animal> {};
+struct Cat : Animal, bom::set_vptr<Cat, Animal> {
+    Cat();
+    ~Cat();
+};
 
 struct Pet : bom::set_vptr<Pet> {
+    Pet();
+    ~Pet();
     std::string name;
 };
 
 struct DomesticCat : Cat, Pet, bom::set_vptr<DomesticCat, Cat, Pet> {
+    DomesticCat();
+    ~DomesticCat();
 };
 
 struct Nothing {};
@@ -41,7 +51,51 @@ static_assert(!bom::detail::has_vptr<Nothing>::value);
 static_assert(bom::detail::has_vptr<Animal>::value);
 
 BOOST_OPENMETHOD(
-    describe, (virtual_<const Pet&> pet, std::ostream& os), void);
+    speak, (virtual_<const Animal&> animal, std::ostream& os), void);
+BOOST_OPENMETHOD(describe, (virtual_<const Pet&> pet, std::ostream& os), void);
+
+Animal::Animal() {
+    speak(*this, std::cout);
+}
+
+Animal::~Animal() {
+    speak(*this, std::cout);
+}
+
+Cat::Cat() {
+    speak(*this, std::cout);
+}
+
+Cat::~Cat() {
+    speak(*this, std::cout);
+}
+
+Pet::Pet() {
+    describe(*this, std::cout);
+}
+
+Pet::~Pet() {
+    describe(*this, std::cout);
+}
+
+DomesticCat::DomesticCat() {
+    name = "Felix";
+    describe(*this, std::cout);
+}
+
+DomesticCat::~DomesticCat() {
+    name = "Felix";
+    describe(*this, std::cout);
+}
+
+BOOST_OPENMETHOD_OVERRIDE(
+    speak, (const Animal& animal, std::ostream& os), void) {
+    os << "???\n";
+}
+
+BOOST_OPENMETHOD_OVERRIDE(speak, (const Cat& animal, std::ostream& os), void) {
+    os << "meow\n";
+}
 
 BOOST_OPENMETHOD_OVERRIDE(describe, (const Pet& pet, std::ostream& os), void) {
     os << "I am a pet\n";
@@ -55,8 +109,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 // Check that we pick one of the vptrs in presence of MI, dodging ambiguity
 // issues.
 BOOST_OPENMETHOD(
-    cat_influencer, (virtual_<const DomesticCat&> cat, std::ostream& os),
-    void);
+    cat_influencer, (virtual_<const DomesticCat&> cat, std::ostream& os), void);
 
 BOOST_OPENMETHOD_OVERRIDE(
     cat_influencer, (const DomesticCat& cat, std::ostream& os), void) {
@@ -66,16 +119,28 @@ BOOST_OPENMETHOD_OVERRIDE(
 BOOST_AUTO_TEST_CASE(intrusive_mode) {
     bom::initialize();
 
-    DomesticCat cat;
-    cat.name = "Felix";
-    Pet& pet = cat;
+    std::unique_ptr<DomesticCat> cat;
+
+    {
+        boost::test_tools::output_test_stream output;
+        {
+            capture_cout capture(output.rdbuf());
+            cat = std::make_unique<DomesticCat>();
+        }
+
+        BOOST_CHECK(output.is_equal(
+            "???\n"
+            "meow\n"
+            "I am a pet\n"
+            "I am Felix the cat\n"));
+    }
 
     {
         boost::test_tools::output_test_stream output;
 
         {
             capture_cout capture(output.rdbuf());
-            describe(pet, std::cout);
+            describe(*cat, std::cout);
         }
 
         BOOST_CHECK(output.is_equal("I am Felix the cat\n"));
@@ -86,17 +151,30 @@ BOOST_AUTO_TEST_CASE(intrusive_mode) {
 
         {
             capture_cout capture(output.rdbuf());
-            cat_influencer(cat, std::cout);
+            cat_influencer(*cat, std::cout);
         }
 
         BOOST_CHECK(output.is_equal("Follow Felix the cat on YouTube\n"));
+    }
+
+    {
+        boost::test_tools::output_test_stream output;
+        {
+            capture_cout capture(output.rdbuf());
+            cat.reset();
+        }
+
+        BOOST_CHECK(output.is_equal(
+            "I am Felix the cat\n"
+            "I am a pet\n"
+            "meow\n"
+            "???\n"));
     }
 }
 
 struct indirect_policy : test_policy::add<bom::policies::indirect_vptr> {};
 
-struct Indirect : bom::set_vptr<Indirect, indirect_policy> {
-};
+struct Indirect : bom::set_vptr<Indirect, indirect_policy> {};
 
 BOOST_OPENMETHOD(whatever, (virtual_<Indirect&>), void, indirect_policy);
 

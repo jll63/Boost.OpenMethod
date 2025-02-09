@@ -2,7 +2,6 @@
 #define BOOST_OPENMETHOD_HPP
 
 #include <boost/openmethod/core.hpp>
-#include <boost/openmethod/shared_ptr.hpp>
 #include <boost/openmethod/virtual_shared_ptr.hpp>
 #include <boost/openmethod/virtual_unique_ptr.hpp>
 #include <boost/openmethod/macros.hpp>

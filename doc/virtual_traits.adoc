@@ -9,15 +9,13 @@ Defined in <boost/openmethod/core.hpp>.
 namespace boost::openmethod {
 
 template<typename T, class Policy>
-struct virtual_traits {
-    using virtual_type = void;
-};
+struct virtual_traits;
 
-template<..., class Policy>
-struct virtual_traits<..., Policy> {
+template<typename T, class Policy>
+struct virtual_traits<T, Policy> {
     using virtual_type = ...;
-    static auto peek(const T& arg) -> ...;
-    template<typename Derived> static auto cast(T& obj) -> ...;
+    static const virtual_type& peek(const T& arg);
+    template<typename Derived> static decltype(auto) cast(T& obj);
 };
 ```
 
@@ -25,8 +23,6 @@ struct virtual_traits<..., Policy> {
 
 `virtual_traits` is used by `method` to handle formal parameters, and by
 `method::fn` to handle arguments.
-
-`method` requires a specialization of `virtual_traits` for `T` and the `Policy`
 
 ### Members
 
@@ -51,7 +47,7 @@ For example, `virtual_type` in the following specializations are all `T`:
 #### peek
 
 ```c++
-static auto peek(T arg) -> ...;
+static const virtual_type& peek(T arg);
 ```
 
 Returns a value for the purpose of obtaining a v-table pointer for `arg`. This
@@ -66,7 +62,7 @@ For example, `peek` returns a `const T&` for a `T&`, `const T&`, `T&&`,
 
 ```c++
 template<typename Derived>
-static auto cast(T& obj) -> ...;
+static decltype(auto) cast(T& obj);
 ```
 
 Casts argument `obj` to the type expected by an overrider.
@@ -80,10 +76,11 @@ Specializations are provided for:
 
 * `T&`
 * `T&&`
-* `std::shared_ptr<T>`: defined in <boost/openmethod/shared_ptr.hpp>
-* `const std::shared_ptr<T>&`: defined in <boost/openmethod/shared_ptr.hpp>
 * `virtual_ptr<T, Policy>`
 * `const virtual_ptr<T, Policy>&`
+* `std::shared_ptr<T>`: defined in <boost/openmethod/virtual_shared_ptr.hpp>
+* `const std::shared_ptr<T>&`: defined in <boost/openmethod/virtual_shared_ptr.hpp>
 * `virtual_ptr<std::shared_ptr<T>>`: defined in <boost/openmethod/virtual_shared_ptr.hpp>
 * `const virtual_ptr<std::shared_ptr<T>>&`: defined in <boost/openmethod/virtual_shared_ptr.hpp>
+* `std::unique_ptr<T>`: defined in <boost/openmethod/virtual_unique_ptr.hpp>
 * `virtual_ptr<std::unique_ptr<T>>`: defined in <boost/openmethod/virtual_unique_ptr.hpp>

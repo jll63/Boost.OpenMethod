@@ -8,12 +8,21 @@ Defined in <boost/openmethod/core.hpp>.
 ```c++
 namespace boost::openmethod {
 
-template<
-    class Class, class... Bases, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY
->
+template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
 class set_vptr {
+  protected:
     set_vptr();
     ~set_vptr();
+    friend auto boost_openmethod_vptr(const Class& obj) -> vptr_type;
+};
+
+template<class Class, class Base, class... MoreBases>
+class set_vptr {
+  protected:
+    set_vptr();
+    ~set_vptr();
+    friend auto boost_openmethod_vptr(const Class& obj) -> vptr_type;
+        // requires(sizeof(MoreBases...) > 0)
 };
 
 } // namespace boost::openmethod
@@ -21,7 +30,8 @@ class set_vptr {
 
 ### Description
 
-`set_vptr` is a CRTP class template that manages a vptr in a class hierarchy.
+`set_vptr` is a CRTP class template that embeds and manages a vptr across a
+class hierarchy.
 
 If `Class` has no `Bases`, `set_vptr` adds a `boost_openmethod_vptr` private
 member to `Class`. In either case, it sets the vptr to the v-table of `Class`
@@ -29,10 +39,13 @@ from `Policy`. It also creates a `boost_openmethod_vptr` friend function that
 takes a a `const Class&` and returns the embedded vptr.
 
 If `Class` has has more than one base, the `boost_openmethod_vptr` friend
-function is also created, to prevent ambiguities. It returns one of the embedded
-vptrs (it doesn't matter which one, as they all have the same value).
+function is also created. It returns one of the embedded vptrs (it doesn't
+matter which one, as they all have the same value). This is to resolve
+ambiguities
 
-As part of its implementation, `set_vptr` may also declare one or two free functions (`boost_openmethod_policy` and `boost_openmethod_bases`).
+As part of its implementation, `set_vptr` may also declare one or two free
+functions (`boost_openmethod_policy` and `boost_openmethod_bases`) at certain
+levels of the hierarchy.
 
 ### Members
 
@@ -42,9 +55,9 @@ As part of its implementation, `set_vptr` may also declare one or two free funct
 set_vptr();
 ```
 
-Casts `this` to `Class` and sets its `boost_openmethod_vptr` to the value of
-`Policy::static_vptr<Class>`, or to its address if `Policy` contains
-`indirect_vptr`.
+Sets the vptr to the v-table for Class, obtained from `Policy`. If `Policy`
+contains `indirect_vptr`, an additional level of indirection is added, thus
+preserving the validity of the pointer across calls to `initialize`.
 
 
 #### destructor
@@ -53,6 +66,12 @@ Casts `this` to `Class` and sets its `boost_openmethod_vptr` to the value of
 ~set_vptr();
 ```
 
-Casts `this` to `Class` and sets its `boost_openmethod_vptr` to `nullptr`. As a
-consequence, intrusive vptrs do not support passing an object being destroyed as
-an argument to a method.
+For each `Base`, sets the vptr to the v-table for that base.
+
+#### Free Functions
+
+```c++
+auto boost_openmethod_vptr(const Class& obj) -> vptr_type;
+```
+
+Returns the vptr embedded in `obj`.

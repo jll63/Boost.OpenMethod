@@ -721,7 +721,6 @@ class set_vptr<Class, Base1, Base2, MoreBases...> : detail::set_vptr_derived {
         -> detail::set_vptr_policy<Base1>;
     friend auto boost_openmethod_bases(Class*)
         -> mp11::mp_list<Base1, Base2, MoreBases...>;
-
     friend auto boost_openmethod_vptr(const Class& obj) -> vptr_type {
         return boost_openmethod_vptr(static_cast<const Base1&>(obj));
     }

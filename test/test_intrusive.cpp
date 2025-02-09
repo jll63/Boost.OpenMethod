@@ -45,11 +45,6 @@ struct DomesticCat : Cat, Pet, bom::set_vptr<DomesticCat, Cat, Pet> {
     ~DomesticCat();
 };
 
-struct Nothing {};
-
-static_assert(!bom::detail::has_vptr<Nothing>::value);
-static_assert(bom::detail::has_vptr<Animal>::value);
-
 BOOST_OPENMETHOD(
     speak, (virtual_<const Animal&> animal, std::ostream& os), void);
 BOOST_OPENMETHOD(describe, (virtual_<const Pet&> pet, std::ostream& os), void);
@@ -174,7 +169,9 @@ BOOST_AUTO_TEST_CASE(intrusive_mode) {
 
 struct indirect_policy : test_policy::add<bom::policies::indirect_vptr> {};
 
-struct Indirect : bom::set_vptr<Indirect, indirect_policy> {};
+struct Indirect : bom::set_vptr<Indirect, indirect_policy> {
+    using bom::set_vptr<Indirect, indirect_policy>::boost_openmethod_vptr;
+};
 
 BOOST_OPENMETHOD(whatever, (virtual_<Indirect&>), void, indirect_policy);
 

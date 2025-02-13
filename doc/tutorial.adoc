@@ -223,51 +223,69 @@ argument is between 30% and 50% slower than calling the equivalent virtual
 function, with an empty body and no other arguments.
 
 However, `call_poke` does two things: it constructs a `virtual_ptr<Animal>` from
-a `Animal&`; and it calls the method. A call via a `virtual_ptr`:
+a `Animal&`; and it calls the method. The construction of the `virtual_ptr` is
+the costly part, as it involves a hash table lookup. Once that price is paid,
+the `virtual_ptr` can be used multiple times. It is passed to the overrider,
+which can further method calls through it. It can be stored in variables in
+place of straight pointers.
+
+Let's look at another example: an AST for an arithmetic calculator:
 
 [source,c++]
 ----
-include::{examplesdir}/hello_world.cpp[tag=call_poke_via_virtual_ptr]
+include::{examplesdir}/ast.cpp[tag=ast]
 ----
 
-...compiles to only three instructions:
+The `Negate` overrider is compiles to:
 
 [source,asm]
 ----
-mov	rax, qword ptr [slots_strides]
-mov	rax, qword ptr [rdx + 8*rax]
-jmp	rax
+mov	rdi,    qword ptr [rsi + 8]
+mov	rsi,    qword ptr [rsi + 16]
+
+mov	rax,    qword ptr [rip + value::slots_strides]
+call	    qword ptr [rdi + 8*rax]
+
+neg	        eax
+pop	        rcx
 ----
 
-These are essentially the last three instructions of the previous assembler
-listing. According to llvm-mca, they take one cycle - the same as a native
-virtual function call.
+The first two instructions read the `virtual_ptr` from `this` - placing its
+content in registers `rdi` and `rsi`.
 
-`virtual_ptr`{empty}s are passed through method calls, making it possible for
-the overrider's body to make further method calls without the need to
-reconstruct a `virtual_ptr`. They can be stored as object members in place of
-straight pointers. And they can be combined with smart pointers like
-`std::shared_ptr` and `std::unique_ptr`.
+The next two instructions are the method call proper. Only two instructions.
+According to llvm-mca, they take one cycle - the same as a native virtual
+function call.
 
-Finally, if we know the exact type of an object - for example, because we just
-instantiated it - we can use the "final" constructs to reduce the cost of
-building a `virtual_ptr` to just one instruction. For example:
+When we create the `Plus` and `Negate` nodes, we call the conversion
+constructors of `virtual_ptr<Node>`, which occur the cost of hash table lookups.
+However, in this example, we know the exact types of the objects. In that case,
+we can use `final_virtual_ptr` to construct the `virtual_ptr` using a single
+instruction. For example:
 
 [source,c++]
 ----
-include::{examplesdir}/hello_world.cpp[tag=call_poke_via_final_virtual_ptr]
+include::{examplesdir}/ast.cpp[tag=final,indent=0]
 ----
 
 ...compiles to:
 
-[source,asm]
-----
-mov	rdx, qword ptr [rip + static_vptr<Cat>]
-mov	rax, qword ptr [rip + slots_strides]
-mov	rax, qword ptr [rdx + 8*rax]
-jmp	rax
-----
+```asm
+;; construct Literal
+lea	rax, [rip + vtable for Literal+16]
+mov	qword ptr [rsp], rax
+mov	dword ptr [rsp+8], 1
 
+;; construct Negate
+mov	rax, qword ptr [rip+static_vptr<Literal>] ; address of openmethod v-table
+lea	rcx, [rip+vtable for Negate+16]           ; address of native v-table
+mov	qword ptr [rsp+16], rcx                   ; set native v-table
+mov	qword ptr [rsp+24], rax                   ; set openmethod v-table
+mov	rax, rsp                                  ; address of 'one'
+mov	qword ptr [rsp+32], rax                   ; set vptr object pointer to 'one'
+```
+
+`final_virtual_ptr` does not require its argument to have a polymorphic type.
 
 ## Core API
 

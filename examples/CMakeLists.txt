@@ -13,6 +13,10 @@ add_executable(virtual_func virtual_func.cpp)
 target_link_libraries(virtual_func Boost::openmethod)
 add_test(NAME virtual_func COMMAND virtual_func)
 
+add_executable(ast ast.cpp)
+target_link_libraries(ast Boost::openmethod)
+add_test(NAME ast COMMAND ast)
+
 add_executable(hello_world hello_world.cpp)
 target_link_libraries(hello_world Boost::openmethod)
 add_test(NAME hello_world COMMAND hello_world)

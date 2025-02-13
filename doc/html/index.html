@@ -1279,47 +1279,104 @@ function, with an empty body and no other arguments.</p>
 </div>
 <div class="paragraph">
 <p>However, <code>call_poke</code> does two things: it constructs a <code>virtual_ptr&lt;Animal&gt;</code> from
-a <code>Animal&amp;</code>; and it calls the method. A call via a <code>virtual_ptr</code>:</p>
+a <code>Animal&amp;</code>; and it calls the method. The construction of the <code>virtual_ptr</code> is
+the costly part, as it involves a hash table lookup. Once that price is paid,
+the <code>virtual_ptr</code> can be used multiple times. It is passed to the overrider,
+which can further method calls through it. It can be stored in variables in
+place of straight pointers.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s look at another example: an AST for an arithmetic calculator:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="kt">void</span> <span class="nf">call_poke_via_virtual_ptr</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">poke</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="n">a</span><span class="p">);</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">Node</span> <span class="p">{</span>
+    <span class="k">virtual</span> <span class="o">~</span><span class="n">Node</span><span class="p">()</span> <span class="p">{}</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="nc">Literal</span> <span class="o">:</span> <span class="n">Node</span> <span class="p">{</span>
+    <span class="k">explicit</span> <span class="n">Literal</span><span class="p">(</span><span class="kt">int</span> <span class="n">value</span><span class="p">)</span> <span class="o">:</span> <span class="n">value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="p">{}</span>
+
+    <span class="kt">int</span> <span class="n">value</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="nc">Plus</span> <span class="o">:</span> <span class="n">Node</span> <span class="p">{</span>
+    <span class="n">Plus</span><span class="p">(</span><span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span> <span class="n">left</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span> <span class="n">right</span><span class="p">)</span>
+        <span class="o">:</span> <span class="n">left</span><span class="p">(</span><span class="n">left</span><span class="p">),</span> <span class="n">right</span><span class="p">(</span><span class="n">right</span><span class="p">)</span> <span class="p">{}</span>
+
+    <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="nc">Negate</span> <span class="o">:</span> <span class="n">Node</span> <span class="p">{</span>
+    <span class="k">explicit</span> <span class="n">Negate</span><span class="p">(</span><span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span> <span class="n">node</span><span class="p">)</span> <span class="o">:</span> <span class="n">child</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="p">{}</span>
+
+    <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span> <span class="n">child</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="n">BOOST_OPENMETHOD</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="p">),</span> <span class="kt">int</span><span class="p">);</span>
+
+<span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Literal</span><span class="o">&gt;</span> <span class="n">node</span><span class="p">),</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">value</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Plus</span><span class="o">&gt;</span> <span class="n">node</span><span class="p">),</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">value</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">left</span><span class="p">)</span> <span class="o">+</span> <span class="n">value</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">right</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Negate</span><span class="o">&gt;</span> <span class="n">node</span><span class="p">),</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">value</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">child</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">BOOST_OPENMETHOD_CLASSES</span><span class="p">(</span><span class="n">Node</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Plus</span><span class="p">,</span> <span class="n">Negate</span><span class="p">);</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">initialize</span><span class="p">();</span>
+
+    <span class="n">Literal</span> <span class="n">one</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">two</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">Plus</span> <span class="n">sum</span><span class="p">(</span><span class="n">one</span><span class="p">,</span> <span class="n">two</span><span class="p">);</span>
+    <span class="n">Negate</span> <span class="n">neg</span><span class="p">(</span><span class="n">sum</span><span class="p">);</span>
+
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">value</span><span class="p">(</span><span class="n">neg</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span> <span class="c1">// -3</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>&#8230;&#8203;compiles to only three instructions:</p>
+<p>The <code>Negate</code> overrider is compiles to:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="asm">mov	rax, qword ptr [slots_strides]
-mov	rax, qword ptr [rdx + 8*rax]
-jmp	rax</code></pre>
+<pre class="rouge highlight"><code data-lang="asm">mov	rdi,    qword ptr [rsi + 8]
+mov	rsi,    qword ptr [rsi + 16]
+
+mov	rax,    qword ptr [rip + value::slots_strides]
+call	    qword ptr [rdi + 8*rax]
+
+neg	        eax
+pop	        rcx</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>These are essentially the last three instructions of the previous assembler
-listing. According to llvm-mca, they take one cycle - the same as a native
-virtual function call.</p>
+<p>The first two instructions read the <code>virtual_ptr</code> from <code>this</code> - placing its
+content in registers <code>rdi</code> and <code>rsi</code>.</p>
 </div>
 <div class="paragraph">
-<p><code>virtual_ptr</code>s are passed through method calls, making it possible for
-the overrider&#8217;s body to make further method calls without the need to
-reconstruct a <code>virtual_ptr</code>. They can be stored as object members in place of
-straight pointers. And they can be combined with smart pointers like
-<code>std::shared_ptr</code> and <code>std::unique_ptr</code>.</p>
+<p>The next two instructions are the method call proper. Only two instructions.
+According to llvm-mca, they take one cycle - the same as a native virtual
+function call.</p>
 </div>
 <div class="paragraph">
-<p>Finally, if we know the exact type of an object - for example, because we just
-instantiated it - we can use the "final" constructs to reduce the cost of
-building a <code>virtual_ptr</code> to just one instruction. For example:</p>
+<p>When we create the <code>Plus</code> and <code>Negate</code> nodes, we call the conversion
+constructors of <code>virtual_ptr&lt;Node&gt;</code>, which occur the cost of hash table lookups.
+However, in this example, we know the exact types of the objects. In that case,
+we can use <code>final_virtual_ptr</code> to construct the <code>virtual_ptr</code> using a single
+instruction. For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="kt">void</span> <span class="nf">call_poke_via_final_virtual_ptr</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Cat</span><span class="o">&amp;</span> <span class="n">cat</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">poke</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">final_virtual_ptr</span><span class="p">(</span><span class="n">cat</span><span class="p">));</span>
-<span class="p">}</span></code></pre>
+<pre class="rouge highlight"><code data-lang="c++"><span class="n">Literal</span> <span class="nf">one</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">Negate</span> <span class="nf">neg</span><span class="p">(</span><span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">final_virtual_ptr</span><span class="p">(</span><span class="n">one</span><span class="p">));</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1327,11 +1384,22 @@ building a <code>virtual_ptr</code> to just one instruction. For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="asm">mov	rdx, qword ptr [rip + static_vptr&lt;Cat&gt;]
-mov	rax, qword ptr [rip + slots_strides]
-mov	rax, qword ptr [rdx + 8*rax]
-jmp	rax</code></pre>
+<pre class="rouge highlight"><code data-lang="asm">;; construct Literal
+lea	rax, [rip + vtable for Literal+16]
+mov	qword ptr [rsp], rax
+mov	dword ptr [rsp+8], 1
+
+;; construct Negate
+mov	rax, qword ptr [rip+static_vptr&lt;Literal&gt;] ; address of openmethod v-table
+lea	rcx, [rip+vtable for Negate+16]           ; address of native v-table
+mov	qword ptr [rsp+16], rcx                   ; set native v-table
+mov	qword ptr [rsp+24], rax                   ; set openmethod v-table
+mov	rax, rsp                                  ; address of 'one'
+mov	qword ptr [rsp+32], rax                   ; set vptr object pointer to 'one'</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p><code>final_virtual_ptr</code> does not require its argument to have a polymorphic type.</p>
 </div>
 </div>
 <div class="sect2">
@@ -2489,12 +2557,8 @@ using the first of the following methods that applies:</p>
 <p>If <code>result</code> is a <code>virtual_ptr</code>, get the pointer to the v-table from it.</p>
 </li>
 <li>
-<p>If <code>boost_openmethod_vptr(result)</code> can be evaluated, call it.</p>
-</li>
-<li>
-<p>If <code>peek</code> has a public <code>boost_openmethod_vptr</code> member variable, it is assumed
-to contain a pointer to the v-table, or a pointer to a pointer to the
-v-table, depending on the <code>Policy</code>.</p>
+<p>If a function named <code>boost_openmethod_vptr</code> that takes <code>result</code> and returns a
+<code>vptr_type</code> exists, call it.</p>
 </li>
 <li>
 <p>Call <code>Policy::dynamic_vptr(result)</code>.</p>

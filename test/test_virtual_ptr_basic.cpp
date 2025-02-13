@@ -98,6 +98,8 @@ BOOST_OPENMETHOD_OVERRIDE(
     os << "bark";
 }
 
+static_assert(sizeof(virtual_ptr<Animal>) == 2 * sizeof(void*));
+
 BOOST_AUTO_TEST_CASE(test_virtual_ptr_by_ref) {
     boost::openmethod::initialize();
 

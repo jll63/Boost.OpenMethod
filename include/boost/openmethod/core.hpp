@@ -788,21 +788,11 @@ template<class Policy, typename Type, class OtherPolicy>
 struct is_policy_compatible<Policy, const virtual_ptr<Type, OtherPolicy>&>
     : std::is_same<Policy, OtherPolicy> {};
 
-template<class Class, typename = void>
-struct has_vptr : std::false_type {};
+void boost_openmethod_vptr(...);
 
 template<class Class>
-struct has_vptr<Class, std::void_t<decltype(Class::boost_openmethod_vptr)>>
-    : std::true_type {};
-
-template<class Class, typename = void>
-struct has_vptr_fn : std::false_type {};
-
-template<class Class>
-struct has_vptr_fn<
-    Class,
-    std::void_t<decltype(boost_openmethod_vptr(std::declval<const Class&>()))>>
-    : std::true_type {};
+constexpr bool has_vptr_fn = std::is_same_v<
+    decltype(boost_openmethod_vptr(std::declval<const Class&>())), vptr_type>;
 
 } // namespace detail
 
@@ -1047,18 +1037,8 @@ method<Name(Parameters...), ReturnType, Policy>::vptr(const ArgType& arg) const
     -> vptr_type {
     if constexpr (detail::is_virtual_ptr<ArgType>) {
         return arg.vptr();
-        // No need to check the method pointer: this was done when the
-        // virtual_ptr was created.
-    } else if constexpr (detail::has_vptr_fn<ArgType>::value) {
+    } else if constexpr (detail::has_vptr_fn<ArgType>) {
         return boost_openmethod_vptr(arg);
-    } else if constexpr (detail::has_vptr<ArgType>::value) {
-        if constexpr (std::is_same_v<
-                          decltype(arg.boost_openmethod_vptr),
-                          const vptr_type*>) {
-            return *arg.boost_openmethod_vptr;
-        } else {
-            return arg.boost_openmethod_vptr;
-        }
     } else {
         return Policy::dynamic_vptr(arg);
     }

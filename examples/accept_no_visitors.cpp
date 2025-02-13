@@ -10,8 +10,8 @@
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/compiler.hpp>
 
-using boost::openmethod::make_virtual_shared;
-using boost::openmethod::virtual_shared_ptr;
+using boost::openmethod::make_shared_virtual;
+using boost::openmethod::shared_virtual_ptr;
 
 using std::cout;
 using std::string;
@@ -23,22 +23,22 @@ struct Node {
 
 struct Plus : Node {
     Plus(
-        virtual_shared_ptr<const Node> left,
-        virtual_shared_ptr<const Node> right)
+        shared_virtual_ptr<const Node> left,
+        shared_virtual_ptr<const Node> right)
         : left(left), right(right) {
     }
 
-    virtual_shared_ptr<const Node> left, right;
+    shared_virtual_ptr<const Node> left, right;
 };
 
 struct Times : Node {
     Times(
-        virtual_shared_ptr<const Node> left,
-        virtual_shared_ptr<const Node> right)
+        shared_virtual_ptr<const Node> left,
+        shared_virtual_ptr<const Node> right)
         : left(left), right(right) {
     }
 
-    virtual_shared_ptr<const Node> left, right;
+    shared_virtual_ptr<const Node> left, right;
 };
 
 struct Integer : Node {
@@ -108,10 +108,10 @@ BOOST_OPENMETHOD_OVERRIDE(as_lisp, (virtual_ptr<const Integer> expr), string) {
 int main() {
     boost::openmethod::initialize();
 
-    virtual_shared_ptr<Node> expr = make_virtual_shared<Times>(
-        make_virtual_shared<Integer>(2),
-        make_virtual_shared<Plus>(
-            make_virtual_shared<Integer>(3), make_virtual_shared<Integer>(4)));
+    shared_virtual_ptr<Node> expr = make_shared_virtual<Times>(
+        make_shared_virtual<Integer>(2),
+        make_shared_virtual<Plus>(
+            make_shared_virtual<Integer>(3), make_shared_virtual<Integer>(4)));
 
     cout << as_forth(expr) << " = " << as_lisp(expr) << " = " << value(expr)
          << "\n";

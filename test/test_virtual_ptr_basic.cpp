@@ -143,7 +143,7 @@ BOOST_AUTO_TEST_CASE(test_virtual_shared_by_value) {
 
     {
         boost::test_tools::output_test_stream os;
-        virtual_shared_ptr<Animal> animal = make_virtual_shared<Dog>();
+        shared_virtual_ptr<Animal> animal = make_shared_virtual<Dog>();
         poke(animal, os);
         BOOST_CHECK(os.is_equal("bark"));
     }
@@ -154,10 +154,10 @@ BOOST_AUTO_TEST_CASE(test_virtual_shared_by_value) {
 namespace BOOST_OPENMETHOD_GENSYM {
 
 BOOST_OPENMETHOD(
-    poke, (const virtual_shared_ptr<Animal>&, std::ostream&), void);
+    poke, (const shared_virtual_ptr<Animal>&, std::ostream&), void);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    poke, (const virtual_shared_ptr<Dog>&, std::ostream& os), void) {
+    poke, (const shared_virtual_ptr<Dog>&, std::ostream& os), void) {
     os << "bark";
 }
 
@@ -166,7 +166,7 @@ BOOST_AUTO_TEST_CASE(test_virtual_shared_by_const_reference) {
 
     {
         boost::test_tools::output_test_stream os;
-        virtual_shared_ptr<Animal> animal = make_virtual_shared<Dog>();
+        shared_virtual_ptr<Animal> animal = make_shared_virtual<Dog>();
         poke(animal, os);
         BOOST_CHECK(os.is_equal("bark"));
     }
@@ -176,10 +176,10 @@ BOOST_AUTO_TEST_CASE(test_virtual_shared_by_const_reference) {
 
 namespace BOOST_OPENMETHOD_GENSYM {
 
-BOOST_OPENMETHOD(poke, (virtual_unique_ptr<Animal>, std::ostream&), void);
+BOOST_OPENMETHOD(poke, (unique_virtual_ptr<Animal>, std::ostream&), void);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    poke, (virtual_unique_ptr<Dog>, std::ostream& os), void) {
+    poke, (unique_virtual_ptr<Dog>, std::ostream& os), void) {
     os << "bark";
 }
 
@@ -188,7 +188,7 @@ BOOST_AUTO_TEST_CASE(test_virtual_unique) {
 
     {
         boost::test_tools::output_test_stream os;
-        poke(make_virtual_unique<Dog>(), os);
+        poke(make_unique_virtual<Dog>(), os);
         BOOST_CHECK(os.is_equal("bark"));
     }
 }

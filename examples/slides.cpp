@@ -127,7 +127,7 @@ struct Init {
 }
 
 #include <boost/openmethod.hpp>
-#include <boost/openmethod/virtual_unique_ptr.hpp>
+#include <boost/openmethod/unique_virtual_ptr.hpp>
 #include <boost/openmethod/compiler.hpp>
 
 namespace openmethods {
@@ -191,7 +191,7 @@ auto make_final_node_ptr(const Plus& node) {
 
 }
 
-namespace virtual_unique_ptr_demo {
+namespace unique_virtual_ptr_demo {
 
 using namespace boost::openmethod;
 
@@ -209,15 +209,15 @@ struct Number : Node {
 };
 
 struct Plus : Node {
-  Plus(virtual_unique_ptr<Node>&& left, virtual_unique_ptr<Node>&& right)
+  Plus(unique_virtual_ptr<Node>&& left, unique_virtual_ptr<Node>&& right)
     : left(std::move(left)), right(std::move(right)) { }
-  virtual_unique_ptr<Node> left, right;
+  unique_virtual_ptr<Node> left, right;
 };
 
 struct Times : Node {
-  Times(virtual_unique_ptr<Node>&& left, virtual_unique_ptr<Node>&& right)
+  Times(unique_virtual_ptr<Node>&& left, unique_virtual_ptr<Node>&& right)
     : left(std::move(left)), right(std::move(right)) { }
-  virtual_unique_ptr<Node> left, right;
+  unique_virtual_ptr<Node> left, right;
 };
 
 BOOST_OPENMETHOD_CLASSES(Node, Number, Plus, Times);
@@ -301,13 +301,13 @@ int main() {
   }
 
   {
-    using boost::openmethod::make_virtual_unique;
-    using namespace virtual_unique_ptr_demo;
+    using boost::openmethod::make_unique_virtual;
+    using namespace unique_virtual_ptr_demo;
 
-    auto expr = make_virtual_unique<Times>(
-      make_virtual_unique<Number>(2),
-      make_virtual_unique<Plus>(
-        make_virtual_unique<Number>(3), make_virtual_unique<Number>(4)
+    auto expr = make_unique_virtual<Times>(
+      make_unique_virtual<Number>(2),
+      make_unique_virtual<Plus>(
+        make_unique_virtual<Number>(3), make_unique_virtual<Number>(4)
       ));
 
     cout << to_rpn(expr) << " = " << value(expr) << "\n";

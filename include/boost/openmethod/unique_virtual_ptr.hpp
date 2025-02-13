@@ -1,5 +1,5 @@
-#ifndef BOOST_OPENMETHOD_VIRTUAL_UNIQUE_PTR_HPP
-#define BOOST_OPENMETHOD_VIRTUAL_UNIQUE_PTR_HPP
+#ifndef BOOST_OPENMETHOD_UNIQUE_VIRTUAL_PTR_HPP
+#define BOOST_OPENMETHOD_UNIQUE_VIRTUAL_PTR_HPP
 
 #include <boost/openmethod/core.hpp>
 #include <memory>
@@ -31,12 +31,12 @@ struct virtual_traits<std::unique_ptr<Class>, Policy> {
 };
 
 template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
-using virtual_unique_ptr = virtual_ptr<std::unique_ptr<Class>, Policy>;
+using unique_virtual_ptr = virtual_ptr<std::unique_ptr<Class>, Policy>;
 
 template<
     class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY, typename... T>
-inline auto make_virtual_unique(T&&... args) {
-    return virtual_unique_ptr<Class, Policy>::final(
+inline auto make_unique_virtual(T&&... args) {
+    return unique_virtual_ptr<Class, Policy>::final(
         std::make_unique<Class>(std::forward<T>(args)...));
 }
 

@@ -6,7 +6,7 @@
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/compiler.hpp>
 #include <boost/openmethod/templates.hpp>
-#include <boost/openmethod/virtual_shared_ptr.hpp>
+#include <boost/openmethod/shared_virtual_ptr.hpp>
 
 #include "test_util.hpp"
 
@@ -153,7 +153,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
 
 } // namespace test_virtual_ptr_dispatch
 
-namespace test_virtual_shared_ptr_dispatch {
+namespace test_shared_virtual_ptr_dispatch {
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(
     test_virtual_ptr_dispatch, Policy, policy_types<__COUNTER__>) {
@@ -162,35 +162,35 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
         use_classes<Player, Warrior, Object, Axe, Bear, Policy>);
 
     using poke = method<
-        BOOST_OPENMETHOD_NAME(poke)(virtual_shared_ptr<Player, Policy>),
+        BOOST_OPENMETHOD_NAME(poke)(shared_virtual_ptr<Player, Policy>),
         std::string, Policy>;
 
     BOOST_OPENMETHOD_REGISTER(
         typename poke::template override<
-            poke_bear<virtual_shared_ptr<Player, Policy>>>);
+            poke_bear<shared_virtual_ptr<Player, Policy>>>);
 
     using fight = method<
         BOOST_OPENMETHOD_NAME(fight)(
-            virtual_shared_ptr<Player, Policy>,
-            virtual_shared_ptr<Object, Policy>,
-            virtual_shared_ptr<Player, Policy>),
+            shared_virtual_ptr<Player, Policy>,
+            shared_virtual_ptr<Object, Policy>,
+            shared_virtual_ptr<Player, Policy>),
         std::string, Policy>;
 
     BOOST_OPENMETHOD_REGISTER(
         typename fight::template override<fight_bear<
-            virtual_shared_ptr<Player, Policy>,
-            virtual_shared_ptr<Object, Policy>,
-            virtual_shared_ptr<Player, Policy>>>);
+            shared_virtual_ptr<Player, Policy>,
+            shared_virtual_ptr<Object, Policy>,
+            shared_virtual_ptr<Player, Policy>>>);
 
     initialize<Policy>();
 
-    auto bear = make_virtual_shared<Bear, Policy>();
-    auto warrior = make_virtual_shared<Warrior, Policy>();
-    auto axe = make_virtual_shared<Axe, Policy>();
+    auto bear = make_shared_virtual<Bear, Policy>();
+    auto warrior = make_shared_virtual<Warrior, Policy>();
+    auto axe = make_shared_virtual<Axe, Policy>();
 
     BOOST_TEST(poke::fn(bear) == "growl");
 
     BOOST_TEST(fight::fn(warrior, axe, bear) == "kill bear");
 }
 
-} // namespace test_virtual_shared_ptr_dispatch
+} // namespace test_shared_virtual_ptr_dispatch

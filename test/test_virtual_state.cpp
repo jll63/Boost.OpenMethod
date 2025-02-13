@@ -107,30 +107,30 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_ptr_ctors, Policy, test_policies) {
     }
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_shared_ptr_ctors, Policy, test_policies) {
+BOOST_AUTO_TEST_CASE_TEMPLATE(shared_virtual_ptr_ctors, Policy, test_policies) {
     {
-        static_assert(virtual_shared_ptr<Animal, Policy>::is_smart_ptr);
-        static_assert(virtual_shared_ptr<const Animal, Policy>::is_smart_ptr);
+        static_assert(shared_virtual_ptr<Animal, Policy>::is_smart_ptr);
+        static_assert(shared_virtual_ptr<const Animal, Policy>::is_smart_ptr);
         static_assert(std::is_same_v<
-                      typename virtual_shared_ptr<Animal, Policy>::element_type,
+                      typename shared_virtual_ptr<Animal, Policy>::element_type,
                       Animal>);
         static_assert(
             std::is_same_v<
-                decltype(std::declval<virtual_shared_ptr<Animal, Policy>>()
+                decltype(std::declval<shared_virtual_ptr<Animal, Policy>>()
                              .get()),
                 Animal*>);
         static_assert(
             std::is_same_v<
-                decltype(*std::declval<virtual_shared_ptr<Animal, Policy>>()),
+                decltype(*std::declval<shared_virtual_ptr<Animal, Policy>>()),
                 Animal&>);
         static_assert(
             std::is_same_v<
-                decltype(std::declval<virtual_shared_ptr<Animal, Policy>>()
+                decltype(std::declval<shared_virtual_ptr<Animal, Policy>>()
                              .pointer()),
                 const std::shared_ptr<Animal>&>);
         static_assert(
             std::is_same_v<
-                decltype(*std::declval<virtual_shared_ptr<Animal, Policy>>()),
+                decltype(*std::declval<shared_virtual_ptr<Animal, Policy>>()),
                 Animal&>);
 
         init_test<Policy>();
@@ -138,78 +138,78 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_shared_ptr_ctors, Policy, test_policies) {
         auto dog = std::make_shared<Dog>();
 
         {
-            virtual_shared_ptr<Dog, Policy> ptr(dog);
+            shared_virtual_ptr<Dog, Policy> ptr(dog);
             BOOST_TEST((ptr.get() == dog.get()));
             BOOST_TEST(ptr.pointer() == dog);
             BOOST_TEST(ptr.vptr() == Policy::template static_vptr<Dog>);
 
-            virtual_shared_ptr<Dog, Policy> copy(ptr);
+            shared_virtual_ptr<Dog, Policy> copy(ptr);
             BOOST_TEST((copy.get() == dog.get()));
             BOOST_TEST(copy.pointer() == dog);
             BOOST_TEST(copy.vptr() == Policy::template static_vptr<Dog>);
 
-            virtual_shared_ptr<Animal, Policy> base(ptr);
+            shared_virtual_ptr<Animal, Policy> base(ptr);
             BOOST_TEST((base.get() == dog.get()));
 
-            virtual_shared_ptr<Dog, Policy> downcast =
+            shared_virtual_ptr<Dog, Policy> downcast =
                 base.template cast<Dog>();
             BOOST_TEST((downcast.get() == dog.get()));
             BOOST_TEST(base.vptr() == Policy::template static_vptr<Dog>);
 
-            virtual_shared_ptr<const Dog, Policy> const_copy(ptr);
-            virtual_shared_ptr<const Animal, Policy> base_const_copy(ptr);
+            shared_virtual_ptr<const Dog, Policy> const_copy(ptr);
+            shared_virtual_ptr<const Animal, Policy> base_const_copy(ptr);
 
-            virtual_shared_ptr<Animal, Policy> move_ptr(std::move(ptr));
+            shared_virtual_ptr<Animal, Policy> move_ptr(std::move(ptr));
             BOOST_TEST(ptr.pointer().get() == nullptr);
             BOOST_TEST(move_ptr.pointer().get() == dog.get());
         }
 
         {
-            virtual_shared_ptr<Dog, Policy> ptr(std::make_shared<Dog>());
+            shared_virtual_ptr<Dog, Policy> ptr(std::make_shared<Dog>());
             virtual_ptr<Dog, Policy> dumb_vptr(ptr);
         }
 
         {
-            virtual_shared_ptr<Dog, Policy> ptr(dog);
-            virtual_shared_ptr<const Animal, Policy> move_const_ptr(
+            shared_virtual_ptr<Dog, Policy> ptr(dog);
+            shared_virtual_ptr<const Animal, Policy> move_const_ptr(
                 std::move(ptr));
             BOOST_TEST(ptr.pointer().get() == nullptr);
             BOOST_TEST(move_const_ptr.pointer().get() == dog.get());
         }
 
         {
-            virtual_shared_ptr<Animal, Policy> ptr(dog);
+            shared_virtual_ptr<Animal, Policy> ptr(dog);
         }
 
         {
             // should not compile:
-            // virtual_unique_ptr<Dog, Policy> unique_dog(dog);
+            // unique_virtual_ptr<Dog, Policy> unique_dog(dog);
         }
     }
 
     {
         auto dog = std::make_shared<const Dog>();
 
-        virtual_shared_ptr<const Dog, Policy> ptr(dog);
+        shared_virtual_ptr<const Dog, Policy> ptr(dog);
         BOOST_TEST(ptr.pointer().get() == dog.get());
         BOOST_TEST(ptr.vptr() == Policy::template static_vptr<Dog>);
 
-        virtual_shared_ptr<const Dog, Policy> copy(ptr);
-        virtual_shared_ptr<const Animal, Policy> base(ptr);
+        shared_virtual_ptr<const Dog, Policy> copy(ptr);
+        shared_virtual_ptr<const Animal, Policy> base(ptr);
     }
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_unique_ptr_ctors, Policy, test_policies) {
-    static_assert(virtual_unique_ptr<Animal, Policy>::is_smart_ptr);
-    static_assert(virtual_unique_ptr<const Animal, Policy>::is_smart_ptr);
+BOOST_AUTO_TEST_CASE_TEMPLATE(unique_virtual_ptr_ctors, Policy, test_policies) {
+    static_assert(unique_virtual_ptr<Animal, Policy>::is_smart_ptr);
+    static_assert(unique_virtual_ptr<const Animal, Policy>::is_smart_ptr);
 
     init_test<Policy>();
 
     {
-        // a virtual_unique_ptr can be created from a std::unique_ptr
+        // a unique_virtual_ptr can be created from a std::unique_ptr
         std::unique_ptr<Dog> is_smart_ptr = std::make_unique<Dog>();
         auto dumb_ptr = is_smart_ptr.get();
-        virtual_unique_ptr<Dog, Policy> virtual_smart_ptr(
+        unique_virtual_ptr<Dog, Policy> virtual_smart_ptr(
             std::move(is_smart_ptr));
 
         // and ownership is transferred
@@ -218,8 +218,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_unique_ptr_ctors, Policy, test_policies) {
     }
 
     {
-        // a virtual_ptr can be constructed from a virtual_unique_ptr
-        auto virtual_smart_ptr = make_virtual_unique<Dog, Policy>();
+        // a virtual_ptr can be constructed from a unique_virtual_ptr
+        auto virtual_smart_ptr = make_unique_virtual<Dog, Policy>();
         auto dumb_ptr = virtual_smart_ptr.get();
         virtual_ptr<Dog, Policy> virtual_dumb_ptr = virtual_smart_ptr;
         BOOST_TEST(virtual_dumb_ptr.get() == dumb_ptr);
@@ -228,21 +228,21 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_unique_ptr_ctors, Policy, test_policies) {
     }
 
     {
-        // virtual_unique_ptr can be moved
-        auto unique = make_virtual_unique<Dog, Policy>();
+        // unique_virtual_ptr can be moved
+        auto unique = make_unique_virtual<Dog, Policy>();
         Dog* dumb_ptr = unique.get();
-        virtual_unique_ptr<Dog, Policy> unique_moved = std::move(unique);
+        unique_virtual_ptr<Dog, Policy> unique_moved = std::move(unique);
         BOOST_TEST(unique.get() == nullptr);
         BOOST_TEST(unique_moved.get() == dumb_ptr);
-        virtual_shared_ptr<Dog, Policy> shared_moved = std::move(unique_moved);
+        shared_virtual_ptr<Dog, Policy> shared_moved = std::move(unique_moved);
         BOOST_TEST(unique_moved.get() == nullptr);
         BOOST_TEST(shared_moved.get() == dumb_ptr);
     }
 
     {
-        virtual_unique_ptr<Animal, Policy> base(std::make_unique<Dog>());
+        unique_virtual_ptr<Animal, Policy> base(std::make_unique<Dog>());
         auto p = base.get();
-        virtual_unique_ptr<Dog, Policy> downcast =
+        unique_virtual_ptr<Dog, Policy> downcast =
             std::move(base).template cast<Dog>();
         BOOST_TEST((downcast.get() == p));
         BOOST_TEST((base.get() == nullptr));

@@ -354,6 +354,24 @@ class virtual_ptr_impl {
     Class* obj;
 };
 
+// SFINAE helper: defined only if Class and Other are both smart pointers of the
+// same kind and that a Other* can be converted to a Class* (this takes
+// inheritance and constness into account).
+template<
+    class Class, class Other, class Policy,
+    class Rebind = typename virtual_traits<Class, Policy>::template rebind<
+        typename Other::element_type>,
+    class IsConvertible = typename std::is_convertible<
+        typename Other::element_type*,
+        typename Class::element_type*>::type>
+struct enable_if_compatible_smart_ptr;
+
+template<class Class, class Other, class Policy>
+struct enable_if_compatible_smart_ptr<
+    Class, Other, Policy, Other, std::true_type> {
+    using type = void; // it doesn't matter which type, it's just for SFNIAE.
+};
+
 template<class Class, class Policy>
 class virtual_ptr_impl<
     Class, Policy,
@@ -381,31 +399,40 @@ class virtual_ptr_impl<
 
     template<
         class Other,
-        typename = typename virtual_traits<Other, Policy>::template rebind<
-            element_type>>
+        typename =
+            typename enable_if_compatible_smart_ptr<Class, Other, Policy>::type>
     virtual_ptr_impl(const Other& other)
         : obj(other), vp(Policy::dynamic_vptr(*other)) {
     }
 
     template<
         class Other,
-        typename = typename virtual_traits<Other, Policy>::template rebind<
-            element_type>>
+        typename =
+            typename enable_if_compatible_smart_ptr<Class, Other, Policy>::type>
     virtual_ptr_impl(Other&& other)
         : obj(std::move(other)), vp(Policy::dynamic_vptr(*other)) {
     }
 
-    template<class Other>
+    template<
+        class Other,
+        typename =
+            typename enable_if_compatible_smart_ptr<Class, Other, Policy>::type>
     virtual_ptr_impl(virtual_ptr<Other, Policy>& other)
         : obj(other.obj), vp(other.vp) {
     }
 
-    template<class Other>
+    template<
+        class Other,
+        typename =
+            typename enable_if_compatible_smart_ptr<Class, Other, Policy>::type>
     virtual_ptr_impl(const virtual_ptr<Other, Policy>& other)
         : obj(other.obj), vp(other.vp) {
     }
 
-    template<class Other>
+    template<
+        class Other,
+        typename =
+            typename enable_if_compatible_smart_ptr<Class, Other, Policy>::type>
     virtual_ptr_impl(virtual_ptr<Other, Policy>&& other)
         : obj(std::move(other.obj)), vp(other.vp) {
     }

@@ -14,6 +14,8 @@
 #include <boost/preprocessor/variadic/to_seq.hpp>
 
 #include <boost/openmethod.hpp>
+#include <boost/openmethod/shared_ptr.hpp>
+#include <boost/openmethod/unique_ptr.hpp>
 #include <boost/openmethod/compiler.hpp>
 
 #include "test_util.hpp"

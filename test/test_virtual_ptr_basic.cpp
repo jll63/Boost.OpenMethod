@@ -4,6 +4,8 @@
 // or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #include <boost/openmethod.hpp>
+#include <boost/openmethod/shared_ptr.hpp>
+#include <boost/openmethod/unique_ptr.hpp>
 #include <boost/openmethod/compiler.hpp>
 
 #include <iostream>

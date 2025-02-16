@@ -28,14 +28,14 @@ struct Literal : Node {
 };
 
 struct Plus : Node {
-    Plus(virtual_ptr<Node> left, virtual_ptr<Node> right)
-        : left(left), right(right) {}
+    Plus(unique_virtual_ptr<Node> left, unique_virtual_ptr<Node> right)
+        : left(std::move(left)), right(std::move(right)) {}
 
     unique_virtual_ptr<Node> left, right;
 };
 
 struct Negate : Node {
-    Negate(virtual_ptr<Node> node) : child(node) {}
+    Negate(unique_virtual_ptr<Node> node) : child(std::move(node)) {}
 
     unique_virtual_ptr<Node> child;
 };
@@ -67,12 +67,5 @@ int main() {
     std::cout << value(*expr) << "\n"; // -3
 
     return 0;
-}
-// end::ast[]
-
-// tag::ast[]
-
-int negate(virtual_ptr<Node> node) {
-    return -value(node);
 }
 // end::ast[]

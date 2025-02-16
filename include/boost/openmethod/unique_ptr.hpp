@@ -1,5 +1,5 @@
-#ifndef BOOST_OPENMETHOD_UNIQUE_VIRTUAL_PTR_HPP
-#define BOOST_OPENMETHOD_UNIQUE_VIRTUAL_PTR_HPP
+#ifndef BOOST_OPENMETHOD_UNIQUE_PTR_HPP
+#define BOOST_OPENMETHOD_UNIQUE_PTR_HPP
 
 #include <boost/openmethod/core.hpp>
 #include <memory>

@@ -127,7 +127,7 @@ struct Init {
 }
 
 #include <boost/openmethod.hpp>
-#include <boost/openmethod/unique_virtual_ptr.hpp>
+#include <boost/openmethod/unique_ptr.hpp>
 #include <boost/openmethod/compiler.hpp>
 
 namespace openmethods {

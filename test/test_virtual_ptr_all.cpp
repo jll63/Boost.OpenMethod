@@ -6,7 +6,7 @@
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/compiler.hpp>
 #include <boost/openmethod/templates.hpp>
-#include <boost/openmethod/shared_virtual_ptr.hpp>
+#include <boost/openmethod/shared_ptr.hpp>
 
 #include "test_util.hpp"
 

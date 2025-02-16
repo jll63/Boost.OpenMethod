@@ -2,9 +2,9 @@
 
 ### <boost/openmethod/core.hpp>
 
-### <boost/openmethod/shared_virtual_ptr.hpp>
+### <boost/openmethod/shared_ptr.hpp>
 
-### <boost/openmethod/unique_virtual_ptr.hpp>
+### <boost/openmethod/unique_ptr.hpp>
 
 ### <boost/openmethod/compiler.hpp>
 

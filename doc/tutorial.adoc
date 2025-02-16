@@ -236,7 +236,7 @@ Let's look at another example: an AST for an arithmetic calculator:
 include::{examplesdir}/ast.cpp[tag=ast]
 ----
 
-The `Negate` overrider is compiles to:
+The `Negate` overrider compiles to:
 
 [source,asm]
 ----
@@ -286,6 +286,23 @@ mov	qword ptr [rsp+32], rax                   ; set vptr object pointer to 'one'
 ```
 
 `final_virtual_ptr` does not require its argument to have a polymorphic type.
+
+## Smart Pointers
+
+`virtual_ptr` can also be used in combined with smart pointers.
+`virtual_ptr<std::shared_ptr<Class>>` (aliased to `shared_virtual_ptr<Class>`)
+and `virtual_ptr<std::unique_ptr<Class>>` (aliased to
+`unique_virtual_ptr<Class>`) deliver the convenience of automatic memory
+management with the speed of `virtual_ptr`. Convenience functions `make_shared_virtual`
+
+For example:
+
+
+[source,c++]
+----
+include::{examplesdir}/ast_unique_ptr.cpp[tag=final,indent=0]
+----
+
 
 ## Core API
 

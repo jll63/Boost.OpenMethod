@@ -73,9 +73,9 @@ Specializations are provided for:
 * `T&&`
 * `virtual_ptr<T, Policy>`
 * `const virtual_ptr<T, Policy>&`
-* `std::shared_ptr<T>`: defined in <boost/openmethod/shared_virtual_ptr.hpp>
-* `const std::shared_ptr<T>&`: defined in <boost/openmethod/shared_virtual_ptr.hpp>
-* `virtual_ptr<std::shared_ptr<T>>`: defined in <boost/openmethod/shared_virtual_ptr.hpp>
-* `const virtual_ptr<std::shared_ptr<T>>&`: defined in <boost/openmethod/shared_virtual_ptr.hpp>
-* `std::unique_ptr<T>`: defined in <boost/openmethod/unique_virtual_ptr.hpp>
-* `virtual_ptr<std::unique_ptr<T>>`: defined in <boost/openmethod/unique_virtual_ptr.hpp>
+* `std::shared_ptr<T>`: defined in <boost/openmethod/shared_ptr.hpp>
+* `const std::shared_ptr<T>&`: defined in <boost/openmethod/shared_ptr.hpp>
+* `virtual_ptr<std::shared_ptr<T>>`: defined in <boost/openmethod/shared_ptr.hpp>
+* `const virtual_ptr<std::shared_ptr<T>>&`: defined in <boost/openmethod/shared_ptr.hpp>
+* `std::unique_ptr<T>`: defined in <boost/openmethod/unique_ptr.hpp>
+* `virtual_ptr<std::unique_ptr<T>>`: defined in <boost/openmethod/unique_ptr.hpp>

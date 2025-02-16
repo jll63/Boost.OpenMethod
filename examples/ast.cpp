@@ -5,13 +5,12 @@
 
 // clang-format off
 
+// tag::ast[]
+
 #include <iostream>
-#include <string>
 
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/compiler.hpp>
-
-// tag::ast[]
 
 struct Node {
     virtual ~Node() {}

@@ -5,13 +5,17 @@
 
 // clang-format off
 
+// tag::ast[]
+
 #include <iostream>
 #include <memory>
 
 #include <boost/openmethod.hpp>
+#include <boost/openmethod/unique_ptr.hpp>
 #include <boost/openmethod/compiler.hpp>
 
-// tag::ast[]
+using boost::openmethod::unique_virtual_ptr;
+using boost::openmethod::make_unique_virtual;
 
 struct Node {
     virtual ~Node() {}
@@ -27,13 +31,13 @@ struct Plus : Node {
     Plus(virtual_ptr<Node> left, virtual_ptr<Node> right)
         : left(left), right(right) {}
 
-    virtual_ptr<Node> left, right;
+    unique_virtual_ptr<Node> left, right;
 };
 
 struct Negate : Node {
     Negate(virtual_ptr<Node> node) : child(node) {}
 
-    virtual_ptr<Node> child;
+    unique_virtual_ptr<Node> child;
 };
 
 BOOST_OPENMETHOD(value, (virtual_ptr<Node>), int);
@@ -55,11 +59,12 @@ BOOST_OPENMETHOD_CLASSES(Node, Literal, Plus, Negate);
 int main() {
     boost::openmethod::initialize();
 
-    auto one = std::make_unique<Literal>(1), two = std::make_unique<Literal>(2);
-    auto sum = std::make_unique<Plus>(*one, *two);
-    auto neg = std::make_unique<Negate>(*sum);
+    auto expr = make_unique_virtual<Negate>(
+        make_unique_virtual<Plus>(
+            make_unique_virtual<Literal>(1),
+            make_unique_virtual<Literal>(2)));
 
-    std::cout << value(*neg) << "\n"; // -3
+    std::cout << value(*expr) << "\n"; // -3
 
     return 0;
 }

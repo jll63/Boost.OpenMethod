@@ -17,6 +17,10 @@ add_executable(ast ast.cpp)
 target_link_libraries(ast Boost::openmethod)
 add_test(NAME ast COMMAND ast)
 
+add_executable(ast_unique_ptr ast_unique_ptr.cpp)
+target_link_libraries(ast_unique_ptr Boost::openmethod)
+add_test(NAME ast_unique_ptr COMMAND ast_unique_ptr)
+
 add_executable(hello_world hello_world.cpp)
 target_link_libraries(hello_world Boost::openmethod)
 add_test(NAME hello_world COMMAND hello_world)

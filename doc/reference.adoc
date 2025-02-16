@@ -18,6 +18,7 @@ include::BOOST_OPENMETHOD_OVERRIDERS.adoc[]
 include::method.adoc[]
 include::method_override.adoc[]
 include::virtual_.adoc[]
+include::virtual_ptr.adoc[]
 include::virtual_traits.adoc[]
 include::set_vptr.adoc[]
 

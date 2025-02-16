@@ -362,8 +362,7 @@ template<
     class Rebind = typename virtual_traits<Class, Policy>::template rebind<
         typename Other::element_type>,
     class IsConvertible = typename std::is_convertible<
-        typename Other::element_type*,
-        typename Class::element_type*>::type>
+        typename Other::element_type*, typename Class::element_type*>::type>
 struct enable_if_compatible_smart_ptr;
 
 template<class Class, class Other, class Policy>

@@ -47,6 +47,10 @@ add_executable(virtual_ptr virtual_ptr.cpp)
 target_link_libraries(virtual_ptr Boost::openmethod)
 add_test(NAME virtual_ptr COMMAND virtual_ptr)
 
+add_executable(virtual_ virtual_.cpp)
+target_link_libraries(virtual_ Boost::openmethod)
+add_test(NAME virtual_ COMMAND virtual_)
+
 add_executable(core_api core_api.cpp)
 target_link_libraries(core_api Boost::openmethod)
 add_test(NAME core_api COMMAND core_api)

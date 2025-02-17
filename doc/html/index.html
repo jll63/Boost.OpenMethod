@@ -570,6 +570,7 @@ pre.rouge .gs {
 <li><a href="#tutorial_friendship">Friendship</a></li>
 <li><a href="#tutorial_performance">Performance</a></li>
 <li><a href="#tutorial_smart_pointers">Smart Pointers</a></li>
+<li><a href="#tutorial_alternatives_to_virtual_ptr">Alternatives to virtual_ptr</a></li>
 <li><a href="#tutorial_core_api">Core API</a></li>
 <li><a href="#tutorial_policies_and_facets">Policies and Facets</a></li>
 <li><a href="#tutorial_error_handling">Error Handling</a></li>
@@ -661,8 +662,8 @@ pre.rouge .gs {
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_synopsis_2">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_2">Description</a></li>
-<li><a href="#virtual_ptr_members_2">Members</a></li>
 <li><a href="#virtual_ptr_specializations">Specializations</a></li>
+<li><a href="#virtual_ptr_members_2">Members</a></li>
 </ul>
 </li>
 <li><a href="#virtual_ptr_set_vptr">set_vptr</a>
@@ -1497,6 +1498,85 @@ pointers:</p>
 
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="tutorial_alternatives_to_virtual_ptr">Alternatives to virtual_ptr</h3>
+<div class="paragraph">
+<p>Virtual arguments can be passed as plain references. In a method declaration,
+parameters with a type decorated with <code>virtual_</code> are are considered in overrider
+selection (along with any <code>virtual_ptr</code> parameters).</p>
+</div>
+<div class="paragraph">
+<p>For example, the <code>poke</code> open-method in the Animals example can be rewritten as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">using</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">virtual_</span><span class="p">;</span>
+
+<span class="n">BOOST_OPENMETHOD</span><span class="p">(</span><span class="n">poke</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&amp;&gt;</span><span class="p">),</span> <span class="kt">void</span><span class="p">);</span>
+
+<span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span><span class="n">poke</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Cat</span><span class="o">&amp;</span> <span class="n">cat</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"hiss</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">BOOST_OPENMETHOD_CLASSES</span><span class="p">(</span><span class="n">Animal</span><span class="p">,</span> <span class="n">Cat</span><span class="p">);</span>
+
+<span class="n">Cat</span> <span class="n">cat</span><span class="p">;</span>
+<span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="n">cat</span><span class="p">);</span> <span class="c1">// hiss</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note that <code>virtual_</code> is not used in the overriders. It is also removed from the
+method&#8217;s signature.</p>
+</div>
+<div class="paragraph">
+<p>By itself, <code>virtual_</code> does not provide any benefits. Passing the virtual
+argument by reference almost compiles to the same code as creating a
+<code>virtual_ptr</code>, using it for one call, then throwing it way. The only difference
+is that the virtual argument is passed as one pointer instead of two.</p>
+</div>
+<div class="paragraph">
+<p>However, we can now customize how the vptr is obtained. When the call mechanism
+sees a virtual argument that is not a <code>virtual_ptr</code>, it looks for a function
+called <code>boost_openmethod_vptr</code>, that takes the argument (by const reference),
+and returns a <code>vptr_type</code>. If one is found, it is used to obtain the vptr. The
+vptr for registered class can be obtained via a variable template
+<code>static_vptr</code>, nested in class <code>default_policy</code> (more on policies below).</p>
+</div>
+<div class="paragraph">
+<p>In the following example, we embed a vptr in the object, just like the vptr for
+native virtual functions:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">class</span> <span class="nc">Animal</span> <span class="p">{</span>
+  <span class="nl">protected:</span>
+    <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">vptr_type</span> <span class="n">vptr</span><span class="p">;</span>
+    <span class="k">friend</span> <span class="k">auto</span> <span class="n">boost_openmethod_vptr</span><span class="p">(</span><span class="k">const</span> <span class="n">Animal</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">a</span><span class="p">.</span><span class="n">vptr</span><span class="p">;</span>
+    <span class="p">}</span>
+
+  <span class="k">public</span><span class="o">:</span>
+    <span class="n">Animal</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">vptr</span> <span class="o">=</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">default_policy</span><span class="o">::</span><span class="n">static_vptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">Cat</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Animal</span> <span class="p">{</span>
+  <span class="nl">public:</span>
+    <span class="n">Cat</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">vptr</span> <span class="o">=</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">default_policy</span><span class="o">::</span><span class="n">static_vptr</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">class</span> <span class="nc">Animal</span> <span class="o">:</span> <span class="k">public</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">set_vptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="p">{};</span>
+
+<span class="k">class</span> <span class="nc">Cat</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Animal</span><span class="p">,</span> <span class="k">public</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">set_vptr</span><span class="o">&lt;</span><span class="n">Cat</span><span class="p">,</span> <span class="n">Animal</span><span class="o">&gt;</span> <span class="p">{};</span></code></pre>
 </div>
 </div>
 </div>
@@ -2956,24 +3036,20 @@ from <code>virtual_traits&lt;Class, Policy&gt;</code>: if it has a member templa
 <h5 id="virtual_ptr_constructors">constructors</h5>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span> <span class="n">virtual_ptr</span><span class="p">(</span><span class="n">Other</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">);</span>        <b class="conum">(1)</b>
-<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span> <span class="n">virtual_ptr</span><span class="p">(</span><span class="k">const</span> <span class="n">Other</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">);</span>  <b class="conum">(2)</b>
-<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span> <span class="n">virtual_ptr</span><span class="p">(</span><span class="n">Other</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">);</span>       <b class="conum">(3)</b></code></pre>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span> <span class="n">virtual_ptr</span><span class="p">(</span><span class="n">Other</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">);</span>        <span class="c1">// 1</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span> <span class="n">virtual_ptr</span><span class="p">(</span><span class="k">const</span> <span class="n">Other</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">);</span>  <span class="c1">// 2</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span> <span class="n">virtual_ptr</span><span class="p">(</span><span class="n">Other</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">);</span>       <span class="c1">// 3</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>&lt;1&gt;, &lt;2&gt; If <code>virtual_ptr</code> uses a plain pointer, <code>other</code> must be a lvalue
+<p>(1), (2) If <code>virtual_ptr</code> uses a plain pointer, <code>other</code> must be a lvalue
 reference to an object of a registered class, or to a <code>virtual_ptr</code> (plain or
 smart). If <code>virtual_ptr</code> uses a smart pointer, <code>other</code> must be a reference to a smart
 pointer, or a smart <code>virtual_ptr</code>.</p>
 </div>
-<div class="colist arabic">
-<ol>
-<li>
-<p>Smart <code>virtual_ptr</code> only. Constructs a <code>virtual_ptr</code> from a smart pointer or
+<div class="paragraph">
+<p>(3) Smart <code>virtual_ptr</code> only. Constructs a <code>virtual_ptr</code> from a smart pointer or
 a smart <code>virtual_ptr</code>. The (smart) object pointer is moved from <code>other</code>.</p>
-</li>
-</ol>
 </div>
 <div class="paragraph">
 <p>If <code>other</code> is also a <code>virtual_ptr</code>, the v-table pointer is copied from it.
@@ -3179,14 +3255,15 @@ the class, which needs not be polymorphic.</p>
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span> <span class="p">{</span>
 
-<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Policy</span><span class="p">&gt;</span>
-<span class="k">struct</span> <span class="nc">virtual_traits</span><span class="p">;</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span><span class="p">,</span> <span class="k">class</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">virtual_traits</span><span class="p">;</span> <span class="c1">// not defined</span>
 
-<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Policy</span><span class="p">&gt;</span>
-<span class="k">struct</span> <span class="nc">virtual_traits</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Class</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Policy</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">virtual_traits</span><span class="o">&lt;</span><span class="p">...,</span> <span class="n">Policy</span><span class="o">&gt;</span> <span class="p">{</span>
     <span class="k">using</span> <span class="n">virtual_type</span> <span class="o">=</span> <span class="p">...;</span>
     <span class="k">static</span> <span class="k">auto</span> <span class="n">peek</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">arg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">const</span> <span class="p">...</span><span class="o">&amp;</span><span class="p">;</span>
-    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Derived</span><span class="p">&gt;</span> <span class="k">static</span> <span class="k">decltype</span><span class="p">(</span><span class="k">auto</span><span class="p">)</span> <span class="n">cast</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;</span> <span class="n">obj</span><span class="p">);</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Derived</span><span class="p">&gt;</span> <span class="k">static</span> <span class="k">auto</span> <span class="n">cast</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;</span> <span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">...;</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span> <span class="k">using</span> <span class="n">rebind</span> <span class="o">=</span> <span class="p">...;</span> <span class="c1">// for smart virtual pointers</span>
 <span class="p">};</span></code></pre>
 </div>
 </div>
@@ -3194,8 +3271,39 @@ the class, which needs not be polymorphic.</p>
 <div class="sect3">
 <h4 id="virtual_ptr_description_2">Description</h4>
 <div class="paragraph">
-<p><code>virtual_traits</code> is used by <code>method</code> and <code>virtual_ptr</code> to handle formal
-parameters and arguments.</p>
+<p>Specializations of <code>virtual_traits</code> provide an interface for <code>method</code> and
+<code>virtual_ptr</code> to manipulate virtual arguments.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_specializations">Specializations</h4>
+<div class="paragraph">
+<p>Specializations are provided for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>virtual_ptr&lt;T, Policy&gt;</code></p>
+</li>
+<li>
+<p><code>const virtual_ptr&lt;T, Policy&gt;&amp;</code></p>
+</li>
+<li>
+<p><code>T&amp;</code></p>
+</li>
+<li>
+<p><code>T&amp;&amp;</code></p>
+</li>
+<li>
+<p><code>std::shared_ptr&lt;T&gt;</code>: defined in &lt;boost/openmethod/shared_ptr.hpp&gt;</p>
+</li>
+<li>
+<p><code>const std::shared_ptr&lt;T&gt;&amp;</code>: defined in &lt;boost/openmethod/shared_ptr.hpp&gt;</p>
+</li>
+<li>
+<p><code>std::unique_ptr&lt;T&gt;</code>: defined in &lt;boost/openmethod/unique_ptr.hpp&gt;</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect3">
@@ -3211,18 +3319,18 @@ parameters and arguments.</p>
 <p>The class to consider in method selection. It must be registered in Policy.</p>
 </div>
 <div class="paragraph">
-<p>For example, <code>virtual_type</code> in the following specializations are all <code>T</code>:</p>
+<p>For example, <code>virtual_type</code> in the following specializations are all <code>Class</code>:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>virtual_traits&lt;T&amp;, Policy&gt;</code></p>
+<p><code>virtual_traits&lt;Class&amp;, Policy&gt;</code></p>
 </li>
 <li>
-<p><code>virtual_traits&lt;const std::shared_ptr&lt;T&gt;&amp;, Policy&gt;</code></p>
+<p><code>virtual_traits&lt;const std::shared_ptr&lt;Class&gt;&amp;, Policy&gt;</code></p>
 </li>
 <li>
-<p><code>virtual_traits&lt;const virtual_ptr&lt;std::shared_ptr&lt;T&gt;&amp;, Policy&gt;</code></p>
+<p><code>virtual_traits&lt;const virtual_ptr&lt;std::shared_ptr&lt;Class&gt;&amp;, Policy&gt;</code></p>
 </li>
 </ul>
 </div>
@@ -3259,45 +3367,18 @@ a <code>std::shared_ptr&lt;T&gt;</code>; and a <code>const virtual_ptr&lt;Class,
 uses <code>virtual_traits</code> to cast a <code>Animal&amp;</code> to a <code>Cat&amp;</code>.</p>
 </div>
 </div>
+<div class="sect4">
+<h5 id="virtual_ptr_rebind">rebind</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span> <span class="k">using</span> <span class="n">rebind</span> <span class="o">=</span> <span class="p">...;</span></code></pre>
 </div>
-<div class="sect3">
-<h4 id="virtual_ptr_specializations">Specializations</h4>
+</div>
 <div class="paragraph">
-<p>Specializations are provided for:</p>
+<p>For smart pointers only. Rebinds the smart pointer to a different type. For
+example, <code>virtual_traits&lt;std::shared_ptr&lt;T&gt;, Policy&gt;::rebind&lt;U&gt;</code> is
+<code>std::shared_ptr&lt;U&gt;</code>.</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>T&amp;</code></p>
-</li>
-<li>
-<p><code>T&amp;&amp;</code></p>
-</li>
-<li>
-<p><code>virtual_ptr&lt;T, Policy&gt;</code></p>
-</li>
-<li>
-<p><code>const virtual_ptr&lt;T, Policy&gt;&amp;</code></p>
-</li>
-<li>
-<p><code>std::shared_ptr&lt;T&gt;</code>: defined in &lt;boost/openmethod/shared_ptr.hpp&gt;</p>
-</li>
-<li>
-<p><code>const std::shared_ptr&lt;T&gt;&amp;</code>: defined in &lt;boost/openmethod/shared_ptr.hpp&gt;</p>
-</li>
-<li>
-<p><code>virtual_ptr&lt;std::shared_ptr&lt;T&gt;&gt;</code>: defined in &lt;boost/openmethod/shared_ptr.hpp&gt;</p>
-</li>
-<li>
-<p><code>const virtual_ptr&lt;std::shared_ptr&lt;T&gt;&gt;&amp;</code>: defined in &lt;boost/openmethod/shared_ptr.hpp&gt;</p>
-</li>
-<li>
-<p><code>std::unique_ptr&lt;T&gt;</code>: defined in &lt;boost/openmethod/unique_ptr.hpp&gt;</p>
-</li>
-<li>
-<p><code>virtual_ptr&lt;std::unique_ptr&lt;T&gt;&gt;</code>: defined in &lt;boost/openmethod/unique_ptr.hpp&gt;</p>
-</li>
-</ul>
 </div>
 </div>
 </div>
@@ -3326,7 +3407,7 @@ uses <code>virtual_traits</code> to cast a <code>Animal&amp;</code> to a <code>C
     <span class="n">set_vptr</span><span class="p">();</span>
     <span class="o">~</span><span class="n">set_vptr</span><span class="p">();</span>
     <span class="k">friend</span> <span class="k">auto</span> <span class="n">boost_openmethod_vptr</span><span class="p">(</span><span class="k">const</span> <span class="n">Class</span><span class="o">&amp;</span> <span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">vptr_type</span><span class="p">;</span>
-        <span class="c1">// requires(sizeof(MoreBases...) &gt; 0)</span>
+        <span class="c1">// if sizeof(MoreBases...) &gt; 0</span>
 <span class="p">};</span>
 
 <span class="p">}</span> <span class="c1">// namespace boost::openmethod</span></code></pre>

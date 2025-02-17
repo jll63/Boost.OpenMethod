@@ -127,17 +127,17 @@ The class of the object pointed to.
 
 [source,c++]
 ----
-template<class Other> virtual_ptr(Other& other);        <1>
-template<class Other> virtual_ptr(const Other& other);  <2>
-template<class Other> virtual_ptr(Other&& other);       <3>
+template<class Other> virtual_ptr(Other& other);        // 1
+template<class Other> virtual_ptr(const Other& other);  // 2
+template<class Other> virtual_ptr(Other&& other);       // 3
 ----
 
-<1>, <2> If `virtual_ptr` uses a plain pointer, `other` must be a lvalue
+(1), (2) If `virtual_ptr` uses a plain pointer, `other` must be a lvalue
 reference to an object of a registered class, or to a `virtual_ptr` (plain or
 smart). If `virtual_ptr` uses a smart pointer, `other` must be a reference to a smart
 pointer, or a smart `virtual_ptr`.
 
-<3> Smart `virtual_ptr` only. Constructs a `virtual_ptr` from a smart pointer or
+(3) Smart `virtual_ptr` only. Constructs a `virtual_ptr` from a smart pointer or
 a smart `virtual_ptr`. The (smart) object pointer is moved from `other`.
 
 If `other` is also a `virtual_ptr`, the v-table pointer is copied from it.

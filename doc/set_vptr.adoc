@@ -22,7 +22,7 @@ class set_vptr {
     set_vptr();
     ~set_vptr();
     friend auto boost_openmethod_vptr(const Class& obj) -> vptr_type;
-        // requires(sizeof(MoreBases...) > 0)
+        // if sizeof(MoreBases...) > 0
 };
 
 } // namespace boost::openmethod

@@ -345,9 +345,13 @@ native virtual functions:
 include::{examplesdir}/virtual_.cpp[tag=virtual_intrusive,indent=0]
 ----
 
+
+
+This can be automated with the `with_vptr` CRTP class:
+
 [source,c++]
 ----
-include::{examplesdir}/virtual_.cpp[tag=set_vptr,indent=0]
+include::{examplesdir}/virtual_.cpp[tag=with_vptr,indent=0]
 ----
 
 

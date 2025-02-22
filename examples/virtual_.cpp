@@ -8,7 +8,9 @@
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/compiler.hpp>
 
-// xxclang-format off
+using boost::openmethod::virtual_;
+
+// clang-format off
 
 namespace just_virtual {
 
@@ -69,15 +71,13 @@ BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, Cat& cat), void) {
 BOOST_OPENMETHOD_CLASSES(Animal, Cat);
 } // namespace virtual_intrusive
 
-namespace set_vptr {
+namespace with_vptr {
 
-// tag::set_vptr[]
+// tag::with_vptr[]
 
-class Animal : public boost::openmethod::set_vptr<Animal> {};
+class Animal : public boost::openmethod::with_vptr<Animal> {};
 
-class Cat : public Animal, public boost::openmethod::set_vptr<Cat, Animal> {};
-
-// end::set_vptr[]
+class Cat : public Animal, public boost::openmethod::with_vptr<Cat, Animal> {};
 
 using boost::openmethod::virtual_;
 
@@ -87,8 +87,9 @@ BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, Cat& cat), void) {
     os << "hiss\n";
 }
 
-BOOST_OPENMETHOD_CLASSES(Animal, Cat);
-} // namespace set_vptr
+// end::with_vptr[]
+
+} // namespace with_vptr
 
 int main() {
     boost::openmethod::initialize();
@@ -108,7 +109,7 @@ int main() {
     }
 
     {
-        using namespace set_vptr;
+        using namespace with_vptr;
         Cat cat;
         poke(std::cout, cat); // hiss
     }

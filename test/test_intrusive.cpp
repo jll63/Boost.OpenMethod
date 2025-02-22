@@ -24,23 +24,23 @@ struct test_policy : bom::default_policy::remove<bom::policies::extern_vptr> {};
 namespace bom = boost::openmethod;
 using bom::virtual_;
 
-struct Animal : bom::set_vptr<Animal> {
+struct Animal : bom::with_vptr<Animal> {
     Animal();
     ~Animal();
 };
 
-struct Cat : Animal, bom::set_vptr<Cat, Animal> {
+struct Cat : Animal, bom::with_vptr<Cat, Animal> {
     Cat();
     ~Cat();
 };
 
-struct Pet : bom::set_vptr<Pet> {
+struct Pet : bom::with_vptr<Pet> {
     Pet();
     ~Pet();
     std::string name;
 };
 
-struct DomesticCat : Cat, Pet, bom::set_vptr<DomesticCat, Cat, Pet> {
+struct DomesticCat : Cat, Pet, bom::with_vptr<DomesticCat, Cat, Pet> {
     DomesticCat();
     ~DomesticCat();
 };
@@ -169,8 +169,8 @@ BOOST_AUTO_TEST_CASE(intrusive_mode) {
 
 struct indirect_policy : test_policy::add<bom::policies::indirect_vptr> {};
 
-struct Indirect : bom::set_vptr<Indirect, indirect_policy> {
-    using bom::set_vptr<Indirect, indirect_policy>::boost_openmethod_vptr;
+struct Indirect : bom::with_vptr<Indirect, indirect_policy> {
+    using bom::with_vptr<Indirect, indirect_policy>::boost_openmethod_vptr;
 };
 
 BOOST_OPENMETHOD(whatever, (virtual_<Indirect&>), void, indirect_policy);

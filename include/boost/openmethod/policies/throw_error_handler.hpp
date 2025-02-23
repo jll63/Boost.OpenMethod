@@ -9,19 +9,15 @@
 
 #include <boost/openmethod/policies/basic_policy.hpp>
 
-namespace boost {
-namespace openmethod {
-namespace policies {
+namespace boost::openmethod::policies {
 
-struct throw_error_handler : virtual error_handler {
+struct throw_error_handler : error_handler {
     template<class Error>
     [[noreturn]] static auto error(const Error& error) -> void {
         throw error;
     }
 };
 
-} // namespace policies
-} // namespace openmethod
-} // namespace boost
+} // namespace boost::openmethod::policies
 
 #endif

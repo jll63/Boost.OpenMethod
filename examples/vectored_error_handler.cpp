@@ -3,7 +3,9 @@
 // See accompanying file LICENSE_1_0.txt
 // or copy at http://www.boost.org/LICENSE_1_0.txt)
 
+// tag::example[]
 #include <iostream>
+#include <variant>
 
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/compiler.hpp>
@@ -28,9 +30,12 @@ int main() {
     namespace bom = boost::openmethod;
     bom::initialize();
 
-    bom::default_policy::set_error_handler([](const auto& openmethod_error) {
-        std::visit([](auto&& arg) { throw arg; }, openmethod_error);
-    });
+    bom::default_policy::set_error_handler(
+        [](const bom::default_policy::error_variant& error) {
+            if (std::holds_alternative<bom::not_implemented_error>(error)) {
+                throw std::runtime_error("not implemented");
+            }
+        });
 
     Cat felix;
     Dog hector, snoopy;
@@ -39,11 +44,11 @@ int main() {
     for (auto animal : animals) {
         try {
             trick(std::cout, *animal);
-        } catch (bom::not_implemented_error) {
-            std::cerr << boost::core::demangle(typeid(*animal).name())
-                      << "s don't perform tricks\n";
+        } catch (std::runtime_error& error) {
+            std::cerr << error.what() << "\n";
         }
     }
 
     return 0;
 }
+// end::example[]

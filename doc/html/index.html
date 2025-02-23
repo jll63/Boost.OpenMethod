@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.16">
+<meta name="generator" content="Asciidoctor 2.0.20">
 <meta name="author" content="Jean-Louis Leroy">
 <title>OpenMethod: an emulation of N2216</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
@@ -85,10 +85,10 @@ code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;
 ul,ol,dl{line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
 ul,ol{margin-left:1.5em}
 ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0}
-ul.square li ul,ul.circle li ul,ul.disc li ul{list-style:inherit}
-ul.square{list-style-type:square}
 ul.circle{list-style-type:circle}
 ul.disc{list-style-type:disc}
+ul.square{list-style-type:square}
+ul.circle ul:not([class]),ul.disc ul:not([class]),ul.square ul:not([class]){list-style:inherit}
 ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
 dl dt{margin-bottom:.3125em;font-weight:bold}
 dl dd{margin-bottom:1.25em}
@@ -194,7 +194,8 @@ body.toc2.toc-right{padding-left:0;padding-right:20em}}
 #content h1>a.link:hover,h2>a.link:hover,h3>a.link:hover,#toctitle>a.link:hover,.sidebarblock>.content>.title>a.link:hover,h4>a.link:hover,h5>a.link:hover,h6>a.link:hover{color:#a53221}
 details,.audioblock,.imageblock,.literalblock,.listingblock,.stemblock,.videoblock{margin-bottom:1.25em}
 details{margin-left:1.25rem}
-details>summary{cursor:pointer;display:block;position:relative;line-height:1.6;margin-bottom:.625rem;-webkit-tap-highlight-color:transparent}
+details>summary{cursor:pointer;display:block;position:relative;line-height:1.6;margin-bottom:.625rem;outline:none;-webkit-tap-highlight-color:transparent}
+details>summary::-webkit-details-marker{display:none}
 details>summary::before{content:"";border:solid transparent;border-left:solid;border-width:.3em 0 .3em .5em;position:absolute;top:.5em;left:-1.25rem;transform:translateX(15%)}
 details[open]>summary::before{border:solid transparent;border-top:solid;border-width:.5em .3em 0;transform:translateY(15%)}
 details>summary::after{content:"";width:1.25rem;height:1em;position:absolute;top:.3em;left:-1.25rem}
@@ -208,13 +209,10 @@ table.tableblock.fit-content>caption.title{white-space:nowrap;width:0}
 .admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #dddddf;color:rgba(0,0,0,.6);word-wrap:anywhere}
 .admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
 .exampleblock>.content{border:1px solid #e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;border-radius:4px}
-.exampleblock>.content>:first-child{margin-top:0}
-.exampleblock>.content>:last-child{margin-bottom:0}
 .sidebarblock{border:1px solid #dbdbd6;margin-bottom:1.25em;padding:1.25em;background:#f3f3f2;border-radius:4px}
-.sidebarblock>:first-child{margin-top:0}
-.sidebarblock>:last-child{margin-bottom:0}
 .sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
-.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content>:first-child,.sidebarblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child,.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
 .literalblock pre,.listingblock>.content>pre{border-radius:4px;overflow-x:auto;padding:1em;font-size:.8125em}
 @media screen and (min-width:768px){.literalblock pre,.listingblock>.content>pre{font-size:.90625em}}
 @media screen and (min-width:1280px){.literalblock pre,.listingblock>.content>pre{font-size:1em}}
@@ -236,9 +234,8 @@ pre.prettyprint li:not(:first-child) code[data-lang]::before{display:none}
 table.linenotable{border-collapse:separate;border:0;margin-bottom:0;background:none}
 table.linenotable td[class]{color:inherit;vertical-align:top;padding:0;line-height:inherit;white-space:normal}
 table.linenotable td.code{padding-left:.75em}
-table.linenotable td.linenos{border-right:1px solid;opacity:.35;padding-right:.5em}
-pre.pygments .lineno{border-right:1px solid;opacity:.35;display:inline-block;margin-right:.75em}
-pre.pygments .lineno::before{content:"";margin-right:-.125em}
+table.linenotable td.linenos,pre.pygments .linenos{border-right:1px solid;opacity:.35;padding-right:.5em;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+pre.pygments span.linenos{display:inline-block;margin-right:.75em}
 .quoteblock{margin:0 1em 1.25em 1.5em;display:table}
 .quoteblock:not(.excerpt)>.title{margin-left:-1.5em;margin-bottom:.75em}
 .quoteblock blockquote,.quoteblock p{color:rgba(0,0,0,.85);font-size:1.15rem;line-height:1.75;word-spacing:.1em;letter-spacing:0;font-style:italic;text-align:justify}
@@ -275,7 +272,7 @@ table.frame-none>colgroup+*>:first-child>*,table.frame-sides>colgroup+*>:first-c
 table.frame-none>:last-child>:last-child>*,table.frame-sides>:last-child>:last-child>*{border-bottom-width:0}
 table.frame-none>*>tr>:first-child,table.frame-ends>*>tr>:first-child{border-left-width:0}
 table.frame-none>*>tr>:last-child,table.frame-ends>*>tr>:last-child{border-right-width:0}
-table.stripes-all tr,table.stripes-odd tr:nth-of-type(odd),table.stripes-even tr:nth-of-type(even),table.stripes-hover tr:hover{background:#f8f8f7}
+table.stripes-all>*>tr,table.stripes-odd>*>tr:nth-of-type(odd),table.stripes-even>*>tr:nth-of-type(even),table.stripes-hover>*>tr:hover{background:#f8f8f7}
 th.halign-left,td.halign-left{text-align:left}
 th.halign-right,td.halign-right{text-align:right}
 th.halign-center,td.halign-center{text-align:center}
@@ -291,10 +288,11 @@ ol{margin-left:1.75em}
 ul li ol{margin-left:1.5em}
 dl dd{margin-left:1.125em}
 dl dd:last-child,dl dd:last-child>:last-child{margin-bottom:0}
-ol>li p,ul>li p,ul dd,ol dd,.olist .olist,.ulist .ulist,.ulist .olist,.olist .ulist{margin-bottom:.625em}
+li p,ul dd,ol dd,.olist .olist,.ulist .ulist,.ulist .olist,.olist .ulist{margin-bottom:.625em}
 ul.checklist,ul.none,ol.none,ul.no-bullet,ol.no-bullet,ol.unnumbered,ul.unstyled,ol.unstyled{list-style-type:none}
 ul.no-bullet,ol.no-bullet,ol.unnumbered{margin-left:.625em}
 ul.unstyled,ol.unstyled{margin-left:0}
+li>p:empty:only-child::before{content:"";display:inline-block}
 ul.checklist>li>p:first-child{margin-left:-1em}
 ul.checklist>li>p:first-child>.fa-square-o:first-child,ul.checklist>li>p:first-child>.fa-check-square-o:first-child{width:1.25em;font-size:.8em;position:relative;bottom:.125em}
 ul.checklist>li>p:first-child>input[type=checkbox]:first-child{margin-right:.25em}
@@ -337,8 +335,6 @@ sup.footnote a:active,sup.footnoteref a:active{text-decoration:underline}
 #footnotes .footnote a:first-of-type{font-weight:bold;text-decoration:none;margin-left:-1.05em}
 #footnotes .footnote:last-of-type{margin-bottom:0}
 #content #footnotes{margin-top:-.625em;margin-bottom:0;padding:.75em 0}
-.gist .file-data>table{border:0;background:#fff;width:100%;margin-bottom:0}
-.gist .file-data>table td.line-data{width:99%}
 div.unbreakable{page-break-inside:avoid}
 .big{font-size:larger}
 .small{font-size:smaller}
@@ -395,7 +391,7 @@ b.conum *{color:inherit!important}
 dt,th.tableblock,td.content,div.footnote{text-rendering:optimizeLegibility}
 h1,h2,p,td.content,span.alt,summary{letter-spacing:-.01em}
 p strong,td.content strong,div.footnote strong{letter-spacing:-.005em}
-p,blockquote,dt,td.content,span.alt,summary{font-size:1.0625rem}
+p,blockquote,dt,td.content,td.hdlist1,span.alt,summary{font-size:1.0625rem}
 p{margin-bottom:1.25rem}
 .sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
 .exampleblock>.content{background:#fffef7;border-color:#e0e0dc;box-shadow:0 1px 4px #e0e0dc}
@@ -637,14 +633,13 @@ pre.rouge .gs {
 <li><a href="#ref_synopsis_8">Synopsis</a></li>
 <li><a href="#ref_description_9">Description</a></li>
 <li><a href="#ref_members">Members</a></li>
-<li><a href="#ref_members_2">Members</a></li>
 </ul>
 </li>
 <li><a href="#method_override">method::override</a>
 <ul class="sectlevel3">
 <li><a href="#ref_synopsis_9">Synopsis</a></li>
 <li><a href="#ref_description_10">Description</a></li>
-<li><a href="#ref_members_3">Members</a></li>
+<li><a href="#ref_members_2">Members</a></li>
 </ul>
 </li>
 <li><a href="#ref_virtual">virtual_</a>
@@ -1517,7 +1512,13 @@ selection (along with any <code>virtual_ptr</code> parameters).</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">using</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">virtual_</span><span class="p">;</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">Animal</span> <span class="p">{</span>
+    <span class="k">virtual</span> <span class="o">~</span><span class="n">Animal</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="nc">Cat</span> <span class="o">:</span> <span class="n">Animal</span> <span class="p">{};</span>
+
+<span class="k">using</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">virtual_</span><span class="p">;</span>
 
 <span class="n">BOOST_OPENMETHOD</span><span class="p">(</span><span class="n">poke</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&amp;&gt;</span><span class="p">),</span> <span class="kt">void</span><span class="p">);</span>
 
@@ -1527,8 +1528,12 @@ selection (along with any <code>virtual_ptr</code> parameters).</p>
 
 <span class="n">BOOST_OPENMETHOD_CLASSES</span><span class="p">(</span><span class="n">Animal</span><span class="p">,</span> <span class="n">Cat</span><span class="p">);</span>
 
-<span class="n">Cat</span> <span class="n">cat</span><span class="p">;</span>
-<span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="n">cat</span><span class="p">);</span> <span class="c1">// hiss</span></code></pre>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">initialize</span><span class="p">();</span>
+
+    <span class="n">Cat</span> <span class="n">cat</span><span class="p">;</span>
+    <span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="n">cat</span><span class="p">);</span> <span class="c1">// hiss</span>
+<span class="p">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1573,26 +1578,71 @@ native virtual functions:</p>
     <span class="n">Cat</span><span class="p">()</span> <span class="p">{</span>
         <span class="n">vptr</span> <span class="o">=</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">default_policy</span><span class="o">::</span><span class="n">static_vptr</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span><span class="p">;</span>
     <span class="p">}</span>
-<span class="p">};</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This can be automated with the <code>with_vptr</code> CRTP class:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">class</span> <span class="nc">Animal</span> <span class="o">:</span> <span class="k">public</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">with_vptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="p">{};</span>
-
-<span class="k">class</span> <span class="nc">Cat</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Animal</span><span class="p">,</span> <span class="k">public</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">with_vptr</span><span class="o">&lt;</span><span class="n">Cat</span><span class="p">,</span> <span class="n">Animal</span><span class="o">&gt;</span> <span class="p">{};</span>
-
-<span class="k">using</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">virtual_</span><span class="p">;</span>
+<span class="p">};</span>
 
 <span class="n">BOOST_OPENMETHOD</span><span class="p">(</span><span class="n">poke</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&amp;&gt;</span><span class="p">),</span> <span class="kt">void</span><span class="p">);</span>
 
 <span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span><span class="n">poke</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Cat</span><span class="o">&amp;</span> <span class="n">cat</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"hiss</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">BOOST_OPENMETHOD_CLASSES</span><span class="p">(</span><span class="n">Animal</span><span class="p">,</span> <span class="n">Cat</span><span class="p">);</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">initialize</span><span class="p">();</span>
+
+    <span class="n">Cat</span> <span class="n">cat</span><span class="p">;</span>
+    <span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="n">cat</span><span class="p">);</span> <span class="c1">// hiss</span>
 <span class="p">}</span></code></pre>
 </div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+With this approach, classes need not be polymorphic. A virtual
+destructor might be needed for correct destruction of objects, but it is not
+required by the library.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The <code>with_vptr</code> CRTP class automates the creation and management of embedded
+vptrs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">class</span> <span class="nc">Animal</span> <span class="o">:</span> <span class="k">public</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">with_vptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">Cat</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Animal</span><span class="p">,</span> <span class="k">public</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">with_vptr</span><span class="o">&lt;</span><span class="n">Cat</span><span class="p">,</span> <span class="n">Animal</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="p">};</span>
+
+<span class="n">BOOST_OPENMETHOD</span><span class="p">(</span><span class="n">poke</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&amp;&gt;</span><span class="p">),</span> <span class="kt">void</span><span class="p">);</span>
+
+<span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span><span class="n">poke</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Cat</span><span class="o">&amp;</span> <span class="n">cat</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"hiss</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">initialize</span><span class="p">();</span>
+
+    <span class="n">Cat</span> <span class="n">cat</span><span class="p">;</span>
+    <span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="n">cat</span><span class="p">);</span> <span class="c1">// hiss</span>
+<span class="p">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If <code>with_vptr</code> is passed only the class being defined, it adds a vptr to it, and
+defines a <code>boost_openmethod_vptr</code> friend function. If more classes are passed,
+they must be the direct bases of the class potentially involved in open-method
+calls. Its constructor and destructor set the vptr to point to the v-table for
+the class. <code>with_vptr</code> also takes care of registering the classes, so this time
+the call to <code>BOOST_OPENMETHOD_CLASSES</code> is not needed.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1651,7 +1701,7 @@ styles.
 </table>
 </div>
 <div class="paragraph">
-<p>The method can be called via the nested function object <code>fn</code>:</p>
+<p>We call the method via the nested function object <code>fn</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1850,7 +1900,7 @@ facets and stock implementations.</p>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">trace_output</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">basic_trace_output</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">make <code>initialize</code> print information about dispatch table construction to  <code>stderr</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">enable <code>initialize</code> to print information about dispatch table construction to  <code>stderr</code></p></td>
 </tr>
 </tbody>
 </table>
@@ -1888,21 +1938,32 @@ has no effect. See below for examples.</p>
 the policy contains an <code>error_handler</code> facet, its <code>error</code> template member
 function is called with an object identifying the error. The <code>release</code> and
 <code>debug</code> policies implement the error facet with <code>vectored_error_handler</code>, which
-wraps the error object in a variant, and calls a <code>std::function</code> which can be
-set by the user. The function can throw an exception to prevent program
-termination. The default value for the function prints a description of the
-error to <code>stderr</code> in the <code>debug</code> policy, and does nothing in the <code>release.</code></p>
-</div>
-<div class="paragraph">
-<p>Error handling can be customized by setting the function:</p>
+wraps the error object in a variant, and calls a handler via a <code>std::function</code>.
+By default, it prints a description of the error to <code>stderr</code> in the <code>debug</code>
+policy, and does nothing in the <code>release</code> policy. The handler can be set with
+<code>set_error_handler</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_CLASSES</span><span class="p">(</span><span class="n">Animal</span><span class="p">,</span> <span class="n">Cat</span><span class="p">,</span> <span class="n">Dog</span><span class="p">);</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;variant&gt;</span><span class="cp">
+</span>
+<span class="cp">#include</span> <span class="cpf">&lt;boost/openmethod.hpp&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;boost/openmethod/compiler.hpp&gt;</span><span class="cp">
+</span>
+<span class="k">struct</span> <span class="nc">Animal</span> <span class="p">{</span>
+    <span class="k">virtual</span> <span class="o">~</span><span class="n">Animal</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+<span class="p">};</span>
 
-<span class="n">BOOST_OPENMETHOD</span><span class="p">(</span><span class="n">trick</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&amp;&gt;</span><span class="p">),</span> <span class="kt">void</span><span class="p">);</span>
+<span class="k">struct</span> <span class="nc">Cat</span> <span class="o">:</span> <span class="n">Animal</span> <span class="p">{};</span>
+<span class="k">struct</span> <span class="nc">Dog</span> <span class="o">:</span> <span class="n">Animal</span> <span class="p">{};</span>
 
-<span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span><span class="n">trick</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Dog</span><span class="o">&amp;</span> <span class="n">dog</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+<span class="n">BOOST_OPENMETHOD_CLASSES</span><span class="p">(</span><span class="n">Animal</span><span class="p">,</span> <span class="n">Cat</span><span class="p">,</span> <span class="n">Dog</span><span class="p">);</span>
+
+<span class="n">BOOST_OPENMETHOD</span><span class="p">(</span><span class="n">trick</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span><span class="p">),</span> <span class="kt">void</span><span class="p">);</span>
+
+<span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span>
+    <span class="n">trick</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Dog</span><span class="o">&gt;</span> <span class="n">dog</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"spin</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
 <span class="p">}</span>
 
@@ -1910,9 +1971,12 @@ error to <code>stderr</code> in the <code>debug</code> policy, and does nothing 
     <span class="k">namespace</span> <span class="n">bom</span> <span class="o">=</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="p">;</span>
     <span class="n">bom</span><span class="o">::</span><span class="n">initialize</span><span class="p">();</span>
 
-    <span class="n">bom</span><span class="o">::</span><span class="n">default_policy</span><span class="o">::</span><span class="n">set_error_handler</span><span class="p">([](</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="n">error</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">visit</span><span class="p">([](</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">arg</span><span class="p">)</span> <span class="p">{</span> <span class="k">throw</span> <span class="n">arg</span><span class="p">;</span> <span class="p">},</span> <span class="n">error</span><span class="p">);</span>
-    <span class="p">});</span>
+    <span class="n">bom</span><span class="o">::</span><span class="n">default_policy</span><span class="o">::</span><span class="n">set_error_handler</span><span class="p">(</span>
+        <span class="p">[](</span><span class="k">const</span> <span class="n">bom</span><span class="o">::</span><span class="n">default_policy</span><span class="o">::</span><span class="n">error_variant</span><span class="o">&amp;</span> <span class="n">error</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">holds_alternative</span><span class="o">&lt;</span><span class="n">bom</span><span class="o">::</span><span class="n">not_implemented_error</span><span class="o">&gt;</span><span class="p">(</span><span class="n">error</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="n">std</span><span class="o">::</span><span class="n">runtime_error</span><span class="p">(</span><span class="s">"not implemented"</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
 
     <span class="n">Cat</span> <span class="n">felix</span><span class="p">;</span>
     <span class="n">Dog</span> <span class="n">hector</span><span class="p">,</span> <span class="n">snoopy</span><span class="p">;</span>
@@ -1921,9 +1985,8 @@ error to <code>stderr</code> in the <code>debug</code> policy, and does nothing 
     <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">animal</span> <span class="o">:</span> <span class="n">animals</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">try</span> <span class="p">{</span>
             <span class="n">trick</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">animal</span><span class="p">);</span>
-        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">bom</span><span class="o">::</span><span class="n">not_implemented_error</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">std</span><span class="o">::</span><span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="n">boost</span><span class="o">::</span><span class="n">core</span><span class="o">::</span><span class="n">demangle</span><span class="p">(</span><span class="k">typeid</span><span class="p">(</span><span class="o">*</span><span class="n">animal</span><span class="p">).</span><span class="n">name</span><span class="p">())</span>
-                      <span class="o">&lt;&lt;</span> <span class="s">"s don't perform tricks</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">runtime_error</span><span class="o">&amp;</span> <span class="n">error</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="n">error</span><span class="p">.</span><span class="n">what</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
         <span class="p">}</span>
     <span class="p">}</span>
 
@@ -1939,28 +2002,52 @@ spin</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The same result can be achieved by creating a policy that uses the <code>throw_error</code>
-facet implementaion.</p>
+<p>We can also replace the <code>error_handler</code> with our own. For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">bom</span> <span class="o">=</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="p">;</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span>
+<span class="cp">#include</span> <span class="cpf">&lt;boost/openmethod/policies.hpp&gt;</span><span class="cp">
+</span>
+<span class="k">struct</span> <span class="nc">Animal</span> <span class="p">{</span>
+    <span class="k">virtual</span> <span class="o">~</span><span class="n">Animal</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="nc">Cat</span> <span class="o">:</span> <span class="n">Animal</span> <span class="p">{};</span>
+<span class="k">struct</span> <span class="nc">Dog</span> <span class="o">:</span> <span class="n">Animal</span> <span class="p">{};</span>
+
+<span class="k">namespace</span> <span class="n">bom</span> <span class="o">=</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="p">;</span>
+
+<span class="k">struct</span> <span class="nc">throw_if_not_implemented</span> <span class="o">:</span> <span class="n">bom</span><span class="o">::</span><span class="n">policies</span><span class="o">::</span><span class="n">error_handler</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="k">auto</span> <span class="n">error</span><span class="p">(</span><span class="k">const</span> <span class="n">bom</span><span class="o">::</span><span class="n">openmethod_error</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span> <span class="p">{</span>
+    <span class="p">}</span>
+
+    <span class="k">static</span> <span class="k">auto</span> <span class="n">error</span><span class="p">(</span><span class="k">const</span> <span class="n">bom</span><span class="o">::</span><span class="n">not_implemented_error</span><span class="o">&amp;</span> <span class="n">err</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="n">err</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
 
 <span class="k">struct</span> <span class="nc">throwing_policy</span>
     <span class="o">:</span> <span class="n">bom</span><span class="o">::</span><span class="n">default_policy</span><span class="o">::</span><span class="n">fork</span><span class="o">&lt;</span><span class="n">throwing_policy</span><span class="o">&gt;::</span><span class="n">replace</span><span class="o">&lt;</span>
-          <span class="n">bom</span><span class="o">::</span><span class="n">policies</span><span class="o">::</span><span class="n">error_handler</span><span class="p">,</span> <span class="n">bom</span><span class="o">::</span><span class="n">policies</span><span class="o">::</span><span class="n">throw_error</span><span class="o">&gt;</span> <span class="p">{};</span>
+          <span class="n">bom</span><span class="o">::</span><span class="n">policies</span><span class="o">::</span><span class="n">error_handler</span><span class="p">,</span> <span class="n">throw_if_not_implemented</span><span class="o">&gt;</span> <span class="p">{};</span>
 
-<span class="n">BOOST_OPENMETHOD_CLASSES</span><span class="p">(</span><span class="n">Animal</span><span class="p">,</span> <span class="n">Cat</span><span class="p">,</span> <span class="n">Dog</span><span class="p">,</span> <span class="n">throwing_policy</span><span class="p">);</span>
+<span class="cp">#define BOOST_OPENMETHOD_DEFAULT_POLICY throwing_policy
+</span>
+<span class="cp">#include</span> <span class="cpf">&lt;boost/openmethod.hpp&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;boost/openmethod/compiler.hpp&gt;</span><span class="cp">
+</span>
+<span class="n">BOOST_OPENMETHOD_CLASSES</span><span class="p">(</span><span class="n">Animal</span><span class="p">,</span> <span class="n">Cat</span><span class="p">,</span> <span class="n">Dog</span><span class="p">);</span>
 
-<span class="n">BOOST_OPENMETHOD</span><span class="p">(</span>
-    <span class="n">trick</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&amp;&gt;</span><span class="p">),</span> <span class="kt">void</span><span class="p">,</span> <span class="n">throwing_policy</span><span class="p">);</span>
+<span class="n">BOOST_OPENMETHOD</span><span class="p">(</span><span class="n">trick</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span><span class="p">),</span> <span class="kt">void</span><span class="p">);</span>
 
-<span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span><span class="n">trick</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Dog</span><span class="o">&amp;</span> <span class="n">dog</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+<span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span>
+    <span class="n">trick</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Dog</span><span class="o">&gt;</span> <span class="n">dog</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"spin</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">bom</span><span class="o">::</span><span class="n">initialize</span><span class="o">&lt;</span><span class="n">throwing_policy</span><span class="o">&gt;</span><span class="p">();</span>
+    <span class="n">bom</span><span class="o">::</span><span class="n">initialize</span><span class="p">();</span>
 
     <span class="n">Cat</span> <span class="n">felix</span><span class="p">;</span>
     <span class="n">Dog</span> <span class="n">hector</span><span class="p">,</span> <span class="n">snoopy</span><span class="p">;</span>
@@ -1970,13 +2057,36 @@ facet implementaion.</p>
         <span class="k">try</span> <span class="p">{</span>
             <span class="n">trick</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">animal</span><span class="p">);</span>
         <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">bom</span><span class="o">::</span><span class="n">not_implemented_error</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">std</span><span class="o">::</span><span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="n">boost</span><span class="o">::</span><span class="n">core</span><span class="o">::</span><span class="n">demangle</span><span class="p">(</span><span class="k">typeid</span><span class="p">(</span><span class="o">*</span><span class="n">animal</span><span class="p">).</span><span class="n">name</span><span class="p">())</span>
-                      <span class="o">&lt;&lt;</span> <span class="s">"s don't perform tricks</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">"not implemented</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
         <span class="p">}</span>
     <span class="p">}</span>
 
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="console"><span class="go">spin
+Cats don't perform tricks
+spin</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Stock facet <code>throw_error_handler</code> does this for all the exception types:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">policies</span> <span class="p">{</span>
+
+<span class="k">struct</span> <span class="nc">throw_error_handler</span> <span class="o">:</span> <span class="n">error_handler</span> <span class="p">{</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Error</span><span class="p">&gt;</span>
+    <span class="p">[[</span><span class="n">noreturn</span><span class="p">]]</span> <span class="k">static</span> <span class="k">auto</span> <span class="n">error</span><span class="p">(</span><span class="k">const</span> <span class="n">Error</span><span class="o">&amp;</span> <span class="n">error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="n">error</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="p">}</span> <span class="c1">// namespace boost::openmethod::policies</span></code></pre>
 </div>
 </div>
 </div>
@@ -2089,10 +2199,7 @@ define the custom RTTI facet. We must <em>not</em> include
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="cp">#include</span> <span class="cpf">&lt;boost/openmethod/policies/basic_policy.hpp&gt;</span><span class="cp">
-#include</span> <span class="cpf">&lt;boost/openmethod/policies/vptr_vector.hpp&gt;</span><span class="cp">
-</span>
-<span class="k">namespace</span> <span class="n">bom</span> <span class="o">=</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="p">;</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">bom</span> <span class="o">=</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="p">;</span>
 
 <span class="k">struct</span> <span class="nc">custom_rtti</span> <span class="o">:</span> <span class="n">bom</span><span class="o">::</span><span class="n">policies</span><span class="o">::</span><span class="n">rtti</span> <span class="p">{</span>
     <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
@@ -2116,38 +2223,42 @@ define the custom RTTI facet. We must <em>not</em> include
 </div>
 </div>
 <div class="paragraph">
-<p>This facet is quite minimal. It would not produce good error or trace messages,
-so we will not keep the related facets. It does not support virtual inheritance.</p>
+<p>This facet is quite minimal. It does not support virtual inheritance. It would
+not produce good error or trace messages, because types would be represented by
+their integer ids.</p>
 </div>
 <div class="paragraph">
-<p>This time we will create a policy from scratch. For that we use the
-<code>basic_policy</code> CRTP template:</p>
+<p>This time we create a policy from scratch. For that we use the <code>basic_policy</code>
+CRTP template:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">custom_policy</span>
-    <span class="o">:</span> <span class="n">bom</span><span class="o">::</span><span class="n">policies</span><span class="o">::</span><span class="n">basic_policy</span><span class="o">&lt;</span>
-          <span class="n">custom_policy</span><span class="p">,</span> <span class="n">custom_rtti</span><span class="p">,</span>
-          <span class="n">bom</span><span class="o">::</span><span class="n">policies</span><span class="o">::</span><span class="n">vptr_vector</span><span class="o">&lt;</span><span class="n">custom_policy</span><span class="o">&gt;&gt;</span> <span class="p">{};</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">custom_policy</span> <span class="o">:</span> <span class="n">bom</span><span class="o">::</span><span class="n">policies</span><span class="o">::</span><span class="n">basic_policy</span><span class="o">&lt;</span>
+                           <span class="n">custom_policy</span><span class="p">,</span> <span class="n">custom_rtti</span><span class="p">,</span>
+                           <span class="n">bom</span><span class="o">::</span><span class="n">policies</span><span class="o">::</span><span class="n">vptr_vector</span><span class="o">&lt;</span><span class="n">custom_policy</span><span class="o">&gt;&gt;</span> <span class="p">{};</span>
 
 <span class="cp">#define BOOST_OPENMETHOD_DEFAULT_POLICY custom_policy</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Now we can include the other headers:</p>
+<p>Now we can include the "core" header and write the example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="cp">#include</span> <span class="cpf">&lt;boost/openmethod.hpp&gt;</span><span class="cp">
+<pre class="rouge highlight"><code data-lang="c++"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span>
+<span class="cp">#include</span> <span class="cpf">&lt;boost/openmethod.hpp&gt;</span><span class="cp">
 #include</span> <span class="cpf">&lt;boost/openmethod/compiler.hpp&gt;</span><span class="cp">
 </span>
-<span class="n">BOOST_OPENMETHOD</span><span class="p">(</span><span class="n">poke</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&amp;&gt;</span><span class="p">),</span> <span class="kt">void</span><span class="p">);</span>
+<span class="n">BOOST_OPENMETHOD</span><span class="p">(</span><span class="n">poke</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span><span class="p">),</span> <span class="kt">void</span><span class="p">);</span>
 
-<span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span><span class="n">poke</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Cat</span><span class="o">&amp;</span> <span class="n">cat</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+<span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span>
+    <span class="n">poke</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">cat</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"hiss"</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span><span class="n">poke</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">Dog</span><span class="o">&amp;</span> <span class="n">dog</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+<span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span>
+    <span class="n">poke</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Dog</span><span class="o">&gt;</span> <span class="n">dog</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"bark"</span><span class="p">;</span>
 <span class="p">}</span>
 
@@ -2240,7 +2351,6 @@ reading the type information until <code>initialize</code> is called.</p>
 <span class="p">};</span>
 
 <span class="n">custom_type_info</span> <span class="n">Cat</span><span class="o">::</span><span class="n">type_info</span><span class="p">;</span>
-
 <span class="c1">// ditto for Dog</span></code></pre>
 </div>
 </div>
@@ -2252,6 +2362,7 @@ reading the type information until <code>initialize</code> is called.</p>
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">custom_rtti</span> <span class="o">:</span> <span class="n">bom</span><span class="o">::</span><span class="n">policies</span><span class="o">::</span><span class="n">rtti</span> <span class="p">{</span>
     <span class="c1">// as before</span>
 
+    <span class="c1">// to support virtual inheritance:</span>
     <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Derived</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">Base</span><span class="p">&gt;</span>
     <span class="k">static</span> <span class="n">Derived</span> <span class="n">dynamic_cast_ref</span><span class="p">(</span><span class="n">Base</span><span class="o">&amp;&amp;</span> <span class="n">obj</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">using</span> <span class="n">base_type</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">remove_reference_t</span><span class="o">&lt;</span><span class="n">Base</span><span class="o">&gt;</span><span class="p">;</span>
@@ -2265,7 +2376,7 @@ reading the type information until <code>initialize</code> is called.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Finally, the policy contains an additional facet:</p>
+<p>Finally, the policy contains an additional facet - <code>deferred_static_rtti</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2275,6 +2386,9 @@ reading the type information until <code>initialize</code> is called.</p>
           <span class="n">bom</span><span class="o">::</span><span class="n">policies</span><span class="o">::</span><span class="n">deferred_static_rtti</span><span class="p">,</span> <span class="c1">// &lt;-- additional facet</span>
           <span class="n">bom</span><span class="o">::</span><span class="n">policies</span><span class="o">::</span><span class="n">vptr_vector</span><span class="o">&lt;</span><span class="n">custom_policy</span><span class="o">&gt;&gt;</span> <span class="p">{};</span></code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>The example is the same as in the previous section.</p>
 </div>
 </div>
 </div>
@@ -2759,9 +2873,6 @@ using the first of the following methods that applies:</p>
 </ol>
 </div>
 </div>
-</div>
-<div class="sect3">
-<h4 id="ref_members_2">Members</h4>
 <div class="sect4">
 <h5 id="ref_fn">fn</h5>
 <div class="listingblock">
@@ -2856,7 +2967,7 @@ or, if it is a polymorphic type, covariant with the method&#8217;s return type.<
 </div>
 </div>
 <div class="sect3">
-<h4 id="ref_members_3">Members</h4>
+<h4 id="ref_members_2">Members</h4>
 <div class="sect4">
 <h5 id="ref_constructor_2">constructor</h5>
 <div class="listingblock">
@@ -2903,8 +3014,9 @@ or, if it is a polymorphic type, covariant with the method&#8217;s return type.<
 <div class="paragraph">
 <p>Marks a formal parameter of a method as virtual. Requires a specialization of
 <code>virtual_traits</code> for <code>T</code> and the <code>Policy</code> of the method. Specializations for
-<code>T&amp;</code>, <code>T&amp;&amp;</code>, <code>std::shared_ptr&lt;T&gt;</code> and <code>const std::shared_ptr&lt;T&gt;&amp;</code> are provided.
-See the documentation of <code>virtual_traits</code> for more information.</p>
+<code>T&amp;</code>, <code>T&amp;&amp;</code>, <code>std::unique_ptr&lt;T&gt;</code>, <code>std::shared_ptr&lt;T&gt;</code> and <code>const
+std::shared_ptr&lt;T&gt;&amp;</code> are provided. See the documentation of <code>virtual_traits</code> for
+more information.</p>
 </div>
 </div>
 </div>
@@ -3279,7 +3391,9 @@ the class, which needs not be polymorphic.</p>
     <span class="k">static</span> <span class="k">auto</span> <span class="n">peek</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">arg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">const</span> <span class="p">...</span><span class="o">&amp;</span><span class="p">;</span>
     <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Derived</span><span class="p">&gt;</span> <span class="k">static</span> <span class="k">auto</span> <span class="n">cast</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;</span> <span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">...;</span>
     <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Other</span><span class="p">&gt;</span> <span class="k">using</span> <span class="n">rebind</span> <span class="o">=</span> <span class="p">...;</span> <span class="c1">// for smart virtual pointers</span>
-<span class="p">};</span></code></pre>
+<span class="p">};</span>
+
+<span class="p">}</span></code></pre>
 </div>
 </div>
 </div>
@@ -3331,7 +3445,7 @@ the class, which needs not be polymorphic.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The class to consider in method selection. It must be registered in Policy.</p>
+<p>The class used for method selection. It must be registered in Policy.</p>
 </div>
 <div class="paragraph">
 <p>For example, <code>virtual_type</code> in the following specializations are all <code>Class</code>:</p>
@@ -3339,13 +3453,16 @@ the class, which needs not be polymorphic.</p>
 <div class="ulist">
 <ul>
 <li>
+<p><code>virtual_traits&lt;virtual_ptr&lt;Class, Policy&gt;&gt;</code></p>
+</li>
+<li>
+<p><code>virtual_traits&lt;const virtual_ptr&lt;std::shared_ptr&lt;Class&gt;&amp;, Policy&gt;</code></p>
+</li>
+<li>
 <p><code>virtual_traits&lt;Class&amp;, Policy&gt;</code></p>
 </li>
 <li>
 <p><code>virtual_traits&lt;const std::shared_ptr&lt;Class&gt;&amp;, Policy&gt;</code></p>
-</li>
-<li>
-<p><code>virtual_traits&lt;const virtual_ptr&lt;std::shared_ptr&lt;Class&gt;&amp;, Policy&gt;</code></p>
 </li>
 </ul>
 </div>
@@ -4545,7 +4662,7 @@ termination by throwing an exception.</p>
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">policies</span> <span class="p">{</span>
 
 <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Policy</span><span class="p">&gt;</span>
-<span class="k">class</span> <span class="nc">vectored_error_handler</span> <span class="o">:</span> <span class="k">public</span> <span class="k">virtual</span> <span class="n">error_handler</span> <span class="p">{</span>
+<span class="k">class</span> <span class="nc">vectored_error_handler</span> <span class="o">:</span> <span class="k">public</span> <span class="n">error_handler</span> <span class="p">{</span>
   <span class="nl">public:</span>
     <span class="k">using</span> <span class="n">error_variant</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span>
         <span class="n">openmethod_error</span><span class="p">,</span> <span class="n">not_implemented_error</span><span class="p">,</span> <span class="n">unknown_class_error</span><span class="p">,</span>
@@ -4609,7 +4726,7 @@ of <code>error</code>.</p>
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">policies</span> <span class="p">{</span>
 
-<span class="k">struct</span> <span class="nc">throw_error_handler</span> <span class="o">:</span> <span class="k">virtual</span> <span class="n">error_handler</span> <span class="p">{</span>
+<span class="k">struct</span> <span class="nc">throw_error_handler</span> <span class="o">:</span> <span class="n">error_handler</span> <span class="p">{</span>
     <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Error</span><span class="p">&gt;</span>
     <span class="p">[[</span><span class="n">noreturn</span><span class="p">]]</span> <span class="k">static</span> <span class="k">auto</span> <span class="n">error</span><span class="p">(</span><span class="k">const</span> <span class="n">Error</span><span class="o">&amp;</span> <span class="n">error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">;</span>
 <span class="p">};</span>
@@ -4901,7 +5018,7 @@ the library uses a lightweight implementation based on the C stream functions.</
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-14 11:04:59 -0400
+Last updated 2024-10-29 08:39:56 -0400
 </div>
 </div>
 </body>

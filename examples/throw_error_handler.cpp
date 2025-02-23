@@ -3,10 +3,10 @@
 // See accompanying file LICENSE_1_0.txt
 // or copy at http://www.boost.org/LICENSE_1_0.txt)
 
+// tag::example[]
 #include <iostream>
 
 #include <boost/openmethod/policies.hpp>
-#include <boost/openmethod/policies/throw_error_handler.hpp>
 
 struct Animal {
     virtual ~Animal() = default;
@@ -17,16 +17,25 @@ struct Dog : Animal {};
 
 namespace bom = boost::openmethod;
 
+struct throw_if_not_implemented : bom::policies::error_handler {
+    static auto error(const bom::openmethod_error&) -> void {
+    }
+
+    static auto error(const bom::not_implemented_error& err) -> void {
+        throw err;
+    }
+};
+
 struct throwing_policy
     : bom::default_policy::fork<throwing_policy>::replace<
-          bom::policies::error_handler, bom::policies::throw_error_handler> {};
+          bom::policies::error_handler, throw_if_not_implemented> {};
 
 #define BOOST_OPENMETHOD_DEFAULT_POLICY throwing_policy
 
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/compiler.hpp>
 
-BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog, throwing_policy);
+BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog);
 
 BOOST_OPENMETHOD(trick, (std::ostream&, virtual_ptr<Animal>), void);
 
@@ -36,7 +45,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 }
 
 int main() {
-    bom::initialize<throwing_policy>();
+    bom::initialize();
 
     Cat felix;
     Dog hector, snoopy;
@@ -46,10 +55,10 @@ int main() {
         try {
             trick(std::cout, *animal);
         } catch (bom::not_implemented_error) {
-            std::cerr << boost::core::demangle(typeid(*animal).name())
-                      << "s don't perform tricks\n";
+            std::cerr << "not implemented\n";
         }
     }
 
     return 0;
 }
+// end::example[]

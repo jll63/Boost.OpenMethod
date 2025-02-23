@@ -122,8 +122,6 @@ using the first of the following methods that applies:
 
 3. Call `Policy::dynamic_vptr(result)`.
 
-### Members
-
 #### fn
 
 ```c++

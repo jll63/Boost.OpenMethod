@@ -3,6 +3,7 @@
 // See accompanying file LICENSE_1_0.txt
 // or copy at http://www.boost.org/LICENSE_1_0.txt)
 
+// tag::classes[]
 struct custom_type_info {
     static unsigned last;
     unsigned id = ++last;
@@ -53,6 +54,7 @@ struct Cat : virtual Animal {
 };
 
 custom_type_info Cat::type_info;
+// end::classes[]
 
 struct Dog : virtual Animal {
     Dog() {
@@ -69,9 +71,6 @@ struct Dog : virtual Animal {
 
     static custom_type_info type_info;
 };
-
-// put Dog's type_info *after* open-method static ctors to test the
-// deferred_static_rtti policy
 
 #include <boost/openmethod/policies/basic_policy.hpp>
 #include <boost/openmethod/policies/vptr_vector.hpp>
@@ -97,6 +96,8 @@ struct custom_rtti : bom::policies::rtti {
         }
     }
 
+    // tag::dynamic_cast_ref[]
+    // to support virtual inheritance:
     template<typename Derived, typename Base>
     static Derived dynamic_cast_ref(Base&& obj) {
         using base_type = std::remove_reference_t<Base>;
@@ -106,6 +107,7 @@ struct custom_rtti : bom::policies::rtti {
             abort(); // not supported
         }
     }
+    // end::dynamic_cast_ref[]
 };
 
 struct custom_policy
@@ -150,3 +152,4 @@ int main() {
 
     return 0;
 }
+// end::example[]

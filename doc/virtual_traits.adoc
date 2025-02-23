@@ -18,6 +18,8 @@ struct virtual_traits<..., Policy> {
     template<typename Derived> static auto cast(T& obj) -> ...;
     template<class Other> using rebind = ...; // for smart virtual pointers
 };
+
+}
 ```
 
 ### Description
@@ -45,13 +47,14 @@ Specializations are provided for:
 using virtual_type = ...;
 ```
 
-The class to consider in method selection. It must be registered in Policy.
+The class used for method selection. It must be registered in Policy.
 
 For example, `virtual_type` in the following specializations are all `Class`:
 
+* `virtual_traits<virtual_ptr<Class, Policy>>`
+* `virtual_traits<const virtual_ptr<std::shared_ptr<Class>&, Policy>`
 * `virtual_traits<Class&, Policy>`
 * `virtual_traits<const std::shared_ptr<Class>&, Policy>`
-* `virtual_traits<const virtual_ptr<std::shared_ptr<Class>&, Policy>`
 
 #### peek
 

@@ -17,7 +17,7 @@ namespace openmethod {
 namespace policies {
 
 template<class Policy>
-class vectored_error_handler : public virtual error_handler {
+class vectored_error_handler : public error_handler {
   public:
     using error_variant = std::variant<
         openmethod_error, not_implemented_error, unknown_class_error,

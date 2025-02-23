@@ -319,7 +319,13 @@ For example, the `poke` open-method in the Animals example can be rewritten as:
 [source,c++]
 ----
 include::{examplesdir}/virtual_.cpp[tag=virtual_parameter,indent=0]
-include::{examplesdir}/virtual_.cpp[tag=call_ref,indent=0]
+
+int main() {
+    boost::openmethod::initialize();
+
+    Cat cat;
+    poke(std::cout, cat); // hiss
+}
 ----
 
 Note that `virtual_` is not used in the overriders. It is also removed from the
@@ -343,16 +349,40 @@ native virtual functions:
 [source,c++]
 ----
 include::{examplesdir}/virtual_.cpp[tag=virtual_intrusive,indent=0]
+
+int main() {
+    boost::openmethod::initialize();
+
+    Cat cat;
+    poke(std::cout, cat); // hiss
+}
 ----
 
+NOTE: With this approach, classes need not be polymorphic. A virtual
+destructor might be needed for correct destruction of objects, but it is not
+required by the library.
 
-
-This can be automated with the `with_vptr` CRTP class:
+The `with_vptr` CRTP class automates the creation and management of embedded
+vptrs.
 
 [source,c++]
 ----
 include::{examplesdir}/virtual_.cpp[tag=with_vptr,indent=0]
+
+int main() {
+    boost::openmethod::initialize();
+
+    Cat cat;
+    poke(std::cout, cat); // hiss
+}
 ----
+
+If `with_vptr` is passed only the class being defined, it adds a vptr to it, and
+defines a `boost_openmethod_vptr` friend function. If more classes are passed,
+they must be the direct bases of the class potentially involved in open-method
+calls. Its constructor and destructor set the vptr to point to the v-table for
+the class. `with_vptr` also takes care of registering the classes, so this time
+the call to `BOOST_OPENMETHOD_CLASSES` is not needed.
 
 
 ## Core API
@@ -392,7 +422,7 @@ NOTE: BOOST_OPENMETHOD and associated macros use `BOOST_OPENMETHOD_NAME` in
 their implementation. This makes it possible to mix the "macro" and "core"
 styles.
 
-The method can be called via the nested function object `fn`:
+We call the method via the nested function object `fn`:
 
 [source,c++]
 ----
@@ -503,7 +533,7 @@ facets and stock implementations.
 
 | trace_output
 | basic_trace_output
-| make `initialize` print information about dispatch table construction to  `stderr`
+| enable `initialize` to print information about dispatch table construction to  `stderr`
 
 |===
 
@@ -537,46 +567,14 @@ When an error is encountered, the program is terminated by a call to `abort`. If
 the policy contains an `error_handler` facet, its `error` template member
 function is called with an object identifying the error. The `release` and
 `debug` policies implement the error facet with `vectored_error_handler`, which
-wraps the error object in a variant, and calls a `std::function` which can be
-set by the user. The function can throw an exception to prevent program
-termination. The default value for the function prints a description of the
-error to `stderr` in the `debug` policy, and does nothing in the `release.`
-
-Error handling can be customized by setting the function:
+wraps the error object in a variant, and calls a handler via a `std::function`.
+By default, it prints a description of the error to `stderr` in the `debug`
+policy, and does nothing in the `release` policy. The handler can be set with
+`set_error_handler`:
 
 [source,c++]
 ----
-BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog);
-
-BOOST_OPENMETHOD(trick, (std::ostream&, virtual_<Animal&>), void);
-
-BOOST_OPENMETHOD_OVERRIDE(trick, (std::ostream & os, Dog& dog), void) {
-    os << "spin\n";
-}
-
-int main() {
-    namespace bom = boost::openmethod;
-    bom::initialize();
-
-    bom::default_policy::set_error_handler([](const auto& error) {
-        std::visit([](auto&& arg) { throw arg; }, error);
-    });
-
-    Cat felix;
-    Dog hector, snoopy;
-    std::vector<Animal*> animals = {&hector, &felix, &snoopy};
-
-    for (auto animal : animals) {
-        try {
-            trick(std::cout, *animal);
-        } catch (bom::not_implemented_error) {
-            std::cerr << boost::core::demangle(typeid(*animal).name())
-                      << "s don't perform tricks\n";
-        }
-    }
-
-    return 0;
-}
+include::{examplesdir}/vectored_error_handler.cpp[tag=example]
 ----
 
 [source,console]
@@ -586,45 +584,35 @@ Cats don't perform tricks
 spin
 ----
 
-The same result can be achieved by creating a policy that uses the `throw_error`
-facet implementaion.
+We can also replace the `error_handler` with our own. For example:
+
 
 [source,c++]
 ----
-namespace bom = boost::openmethod;
-
-struct throwing_policy
-    : bom::default_policy::fork<throwing_policy>::replace<
-          bom::policies::error_handler, bom::policies::throw_error> {};
-
-BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog, throwing_policy);
-
-BOOST_OPENMETHOD(
-    trick, (std::ostream&, virtual_<Animal&>), void, throwing_policy);
-
-BOOST_OPENMETHOD_OVERRIDE(trick, (std::ostream & os, Dog& dog), void) {
-    os << "spin\n";
-}
-
-int main() {
-    bom::initialize<throwing_policy>();
-
-    Cat felix;
-    Dog hector, snoopy;
-    std::vector<Animal*> animals = {&hector, &felix, &snoopy};
-
-    for (auto animal : animals) {
-        try {
-            trick(std::cout, *animal);
-        } catch (bom::not_implemented_error) {
-            std::cerr << boost::core::demangle(typeid(*animal).name())
-                      << "s don't perform tricks\n";
-        }
-    }
-
-    return 0;
-}
+include::{examplesdir}/throw_error_handler.cpp[tag=example]
 ----
+
+[source,console]
+----
+spin
+Cats don't perform tricks
+spin
+----
+
+Stock facet `throw_error_handler` does this for all the exception types:
+
+```c++
+namespace boost::openmethod::policies {
+
+struct throw_error_handler : error_handler {
+    template<class Error>
+    [[noreturn]] static auto error(const Error& error) -> void {
+        throw error;
+    }
+};
+
+} // namespace boost::openmethod::policies
+```
 
 ## Custom RTTI
 
@@ -721,82 +709,26 @@ Here is the facet implementation:
 
 [source,c++]
 ----
-#include <boost/openmethod/policies/basic_policy.hpp>
-#include <boost/openmethod/policies/vptr_vector.hpp>
-
-namespace bom = boost::openmethod;
-
-struct custom_rtti : bom::policies::rtti {
-    template<typename T>
-    static bom::type_id static_type() {
-        if constexpr (std::is_base_of_v<Animal, T>) {
-            return T::static_type;
-        } else {
-            return 0;
-        }
-    }
-
-    template<typename T>
-    static bom::type_id dynamic_type(const T& obj) {
-        if constexpr (std::is_base_of_v<Animal, T>) {
-            return obj.type;
-        } else {
-            return 0;
-        }
-    }
-};
+include::{examplesdir}/custom_rtti.cpp[tag=facet]
 ----
 
-This facet is quite minimal. It would not produce good error or trace messages,
-so we will not keep the related facets. It does not support virtual inheritance.
+This facet is quite minimal. It does not support virtual inheritance. It would
+not produce good error or trace messages, because types would be represented by
+their integer ids.
 
-This time we will create a policy from scratch. For that we use the
-`basic_policy` CRTP template:
+This time we create a policy from scratch. For that we use the `basic_policy`
+CRTP template:
 
 [source,c++]
 ----
-
-struct custom_policy
-    : bom::policies::basic_policy<
-          custom_policy, custom_rtti,
-          bom::policies::vptr_vector<custom_policy>> {};
-
-#define BOOST_OPENMETHOD_DEFAULT_POLICY custom_policy
+include::{examplesdir}/custom_rtti.cpp[tag=policy]
 ----
 
-Now we can include the other headers:
+Now we can include the "core" header and write the example:
 
 [source,c++]
 ----
-#include <boost/openmethod.hpp>
-#include <boost/openmethod/compiler.hpp>
-
-BOOST_OPENMETHOD(poke, (std::ostream&, virtual_<Animal&>), void);
-
-BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, Cat& cat), void) {
-    os << "hiss";
-}
-
-BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, Dog& dog), void) {
-    os << "bark";
-}
-
-BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog);
-
-int main() {
-    boost::openmethod::initialize();
-
-    std::unique_ptr<Animal> a(new Cat);
-    std::unique_ptr<Animal> b(new Dog);
-
-    poke(std::cout, *a); // prints "hiss"
-    std::cout << "\n";
-
-    poke(std::cout, *b); // prints "bark"
-    std::cout << "\n";
-
-    return 0;
-}
+include::{examplesdir}/custom_rtti.cpp[tag=example]
 ----
 
 This programs compiles even if standard RTTI is disabled.
@@ -815,60 +747,9 @@ This time let's support virtual inheritance as well. First the domain classes:
 
 [source,c++]
 ----
-struct custom_type_info {
-    static unsigned last;
-    unsigned id = ++last;
-};
-
-unsigned custom_type_info::last;
-
-struct Animal {
-    Animal() {
-        type = type_info.id;
-    }
-
-    virtual ~Animal() = default;
-
-    virtual void* cast_impl(unsigned target) {
-        if (type_info.id == target) {
-            return this;
-        } else {
-            return nullptr;
-        }
-    }
-
-    template<class Class>
-    Class* cast() {
-        return reinterpret_cast<Class*>(cast_impl(Class::type_info.id));
-    }
-
-    static custom_type_info type_info;
-    unsigned type;
-};
-
-custom_type_info Animal::type_info;
-
-struct Cat : virtual Animal {
-    Cat() {
-        type = type_info.id;
-    }
-
-    virtual void* cast_impl(unsigned target) {
-        if (type_info.id == target) {
-            return this;
-        } else {
-            return Animal::cast_impl(target);
-        }
-    }
-
-    static custom_type_info type_info;
-};
-
-custom_type_info Cat::type_info;
-
+include::{examplesdir}/deferred_custom_rtti.cpp[tag=classes]
 // ditto for Dog
 ----
-
 
 The rtti facet is the same, with one more function:
 
@@ -877,19 +758,11 @@ The rtti facet is the same, with one more function:
 struct custom_rtti : bom::policies::rtti {
     // as before
 
-    template<typename Derived, typename Base>
-    static Derived dynamic_cast_ref(Base&& obj) {
-        using base_type = std::remove_reference_t<Base>;
-        if constexpr (std::is_base_of_v<Animal, base_type>) {
-            return *obj.template cast<std::remove_reference_t<Derived>>();
-        } else {
-            abort(); // not supported
-        }
-    }
+include::{examplesdir}/deferred_custom_rtti.cpp[tag=dynamic_cast_ref]
 };
 ----
 
-Finally, the policy contains an additional facet:
+Finally, the policy contains an additional facet - `deferred_static_rtti`:
 
 [source,c++]
 ----
@@ -899,3 +772,5 @@ struct custom_policy
           bom::policies::deferred_static_rtti, // <-- additional facet
           bom::policies::vptr_vector<custom_policy>> {};
 ----
+
+The example is the same as in the previous section.

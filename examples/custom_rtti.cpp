@@ -30,6 +30,7 @@ struct Dog : Animal {
 #include <boost/openmethod/policies/basic_policy.hpp>
 #include <boost/openmethod/policies/vptr_vector.hpp>
 
+// tag::facet[]
 namespace bom = boost::openmethod;
 
 struct custom_rtti : bom::policies::rtti {
@@ -51,13 +52,17 @@ struct custom_rtti : bom::policies::rtti {
         }
     }
 };
+// end::facet[]
 
+// tag::policy[]
 struct custom_policy : bom::policies::basic_policy<
                            custom_policy, custom_rtti,
                            bom::policies::vptr_vector<custom_policy>> {};
 
 #define BOOST_OPENMETHOD_DEFAULT_POLICY custom_policy
+// end::policy[]
 
+// tag::example[]
 #include <iostream>
 
 #include <boost/openmethod.hpp>
@@ -91,3 +96,4 @@ int main() {
 
     return 0;
 }
+// end::example[]

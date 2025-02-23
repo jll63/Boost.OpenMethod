@@ -14,13 +14,13 @@ using boost::openmethod::virtual_;
 
 namespace just_virtual {
 
+// tag::virtual_parameter[]
 struct Animal {
     virtual ~Animal() = default;
 };
 
 struct Cat : Animal {};
 
-// tag::virtual_parameter[]
 using boost::openmethod::virtual_;
 
 BOOST_OPENMETHOD(poke, (std::ostream&, virtual_<Animal&>), void);
@@ -30,7 +30,6 @@ BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, Cat& cat), void) {
 }
 
 BOOST_OPENMETHOD_CLASSES(Animal, Cat);
-
 // end::virtual_parameter[]
 } // namespace just_virtual
 
@@ -58,10 +57,6 @@ class Cat : public Animal {
     }
 };
 
-// end::virtual_intrusive[]
-
-using boost::openmethod::virtual_;
-
 BOOST_OPENMETHOD(poke, (std::ostream&, virtual_<Animal&>), void);
 
 BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, Cat& cat), void) {
@@ -69,24 +64,24 @@ BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, Cat& cat), void) {
 }
 
 BOOST_OPENMETHOD_CLASSES(Animal, Cat);
+// end::virtual_intrusive[]
 } // namespace virtual_intrusive
 
 namespace with_vptr {
 
 // tag::with_vptr[]
 
-class Animal : public boost::openmethod::with_vptr<Animal> {};
+class Animal : public boost::openmethod::with_vptr<Animal> {
+};
 
-class Cat : public Animal, public boost::openmethod::with_vptr<Cat, Animal> {};
-
-using boost::openmethod::virtual_;
+class Cat : public Animal, public boost::openmethod::with_vptr<Cat, Animal> {
+};
 
 BOOST_OPENMETHOD(poke, (std::ostream&, virtual_<Animal&>), void);
 
 BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, Cat& cat), void) {
     os << "hiss\n";
 }
-
 // end::with_vptr[]
 
 } // namespace with_vptr
@@ -96,10 +91,8 @@ int main() {
 
     {
         using namespace just_virtual;
-        // tag::call_ref[]
         Cat cat;
         poke(std::cout, cat); // hiss
-        // end::call_ref[]
     }
 
     {

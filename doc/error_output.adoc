@@ -23,5 +23,6 @@ struct error_output {};
 
 ```c++
 static RestrictedOutputStream error_stream;
+```
 
 A static variable that satisfies the requirements of `RestrictedOutputStream`.

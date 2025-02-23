@@ -796,20 +796,25 @@ pre.rouge .gs {
 <li><a href="#virtual_ptr_synopsis_21">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_21">Description</a></li>
 <li><a href="#virtual_ptr_requirements_7">Requirements</a></li>
+</ul>
+</li>
+<li><a href="#virtual_ptr_basic_error_output">basic_error_output</a>
+<ul class="sectlevel3">
+<li><a href="#virtual_ptr_synopsis_22">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_22">Description</a></li>
 <li><a href="#virtual_ptr_members_13">Members</a></li>
 </ul>
 </li>
 <li><a href="#virtual_ptr_trace_output">trace_output</a>
 <ul class="sectlevel3">
-<li><a href="#virtual_ptr_synopsis_22">Synopsis</a></li>
+<li><a href="#virtual_ptr_synopsis_23">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_23">Description</a></li>
 <li><a href="#virtual_ptr_requirements_8">Requirements</a></li>
 </ul>
 </li>
 <li><a href="#virtual_ptr_basic_trace_output">basic_trace_output</a>
 <ul class="sectlevel3">
-<li><a href="#virtual_ptr_synopsis_23">Synopsis</a></li>
+<li><a href="#virtual_ptr_synopsis_24">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_24">Description</a></li>
 <li><a href="#virtual_ptr_members_14">Members</a></li>
 </ul>
@@ -4787,18 +4792,25 @@ throws the error as an exception.</p>
 <h5 id="virtual_ptr_error_stream">error_stream</h5>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">static</span> <span class="n">RestrictedOutputStream</span> <span class="n">error_stream</span><span class="p">;</span>
-
-<span class="n">A</span> <span class="k">static</span> <span class="n">variable</span> <span class="n">that</span> <span class="n">satisfies</span> <span class="n">the</span> <span class="n">requirements</span> <span class="n">of</span> <span class="err">`</span><span class="n">RestrictedOutputStream</span><span class="err">`</span><span class="p">.</span>
-
-<span class="cp">## basic_error_output
-</span>
-<span class="cp">### Synopsis
-</span>
-<span class="n">Defined</span> <span class="n">in</span> <span class="o">&lt;</span><span class="n">boost</span><span class="o">/</span><span class="n">openmethod</span><span class="o">/</span><span class="n">policies</span><span class="o">/</span><span class="n">basic_error_output</span><span class="p">.</span><span class="n">hpp</span><span class="o">&gt;</span><span class="p">.</span>
-
-<span class="err">```</span><span class="n">c</span><span class="o">++</span>
-<span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">policies</span> <span class="p">{</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">static</span> <span class="n">RestrictedOutputStream</span> <span class="n">error_stream</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A static variable that satisfies the requirements of <code>RestrictedOutputStream</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="virtual_ptr_basic_error_output">basic_error_output</h3>
+<div class="sect3">
+<h4 id="virtual_ptr_synopsis_22">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/policies/basic_error_output.hpp&gt;.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">policies</span> <span class="p">{</span>
 
 <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Policy</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">Stream</span> <span class="o">=</span> <span class="cm">/*unspecified*/</span><span class="p">&gt;</span>
 <span class="k">struct</span> <span class="nc">basic_error_output</span> <span class="o">:</span> <span class="k">virtual</span> <span class="n">error_output</span> <span class="p">{</span>
@@ -4806,7 +4818,6 @@ throws the error as an exception.</p>
 <span class="p">};</span>
 
 <span class="p">}</span></code></pre>
-</div>
 </div>
 </div>
 </div>
@@ -4837,7 +4848,7 @@ it.</p>
 <div class="sect2">
 <h3 id="virtual_ptr_trace_output">trace_output</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_synopsis_22">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_23">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/basic_policy.hpp&gt;.</p>
 </div>
@@ -4895,7 +4906,7 @@ and patch versions.</p>
 <div class="sect2">
 <h3 id="virtual_ptr_basic_trace_output">basic_trace_output</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_synopsis_23">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_24">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/basic_trace_output.hpp&gt;.</p>
 </div>

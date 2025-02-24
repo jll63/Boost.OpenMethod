@@ -56,7 +56,10 @@ This requirement is optional. `rtti` provides a default implementation that writ
 static auto type_index(type_id type) -> /* unspecified */;
 ```
 
-Returns a unique key for `type`. Required only for RTTI systems that possibly assign more than one `type_id` to a type (like standard RTTI).
+Returns a unique key for `type`. Required only for RTTI systems that assign more
+than one type "identifiers" to a type. For example, standard RTTI allows
+implementations to have multiple instances of `std::type_info` for the same
+type.
 
 #### dynamic_cast_ref
 

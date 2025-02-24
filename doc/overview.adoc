@@ -15,11 +15,10 @@ dispatch.
 
 Open-methods are part of Lisp, Clojure, Julia, Cecil, Dylan, TADS, and other
 languages. Bjarne Stroustrup wanted open-methods in C++ almost from the
-beginning. He writes about it in D&E. Circa 2007, with his PhD students Peter
-Pirkelbauer and Yuriy Solodkyy, they wrote a series of papers and an
-implementation based on the EDG compiler. Their design fit perfectly with othe
-parts of the language. They proposed it for adoption in the standard. It did not
-happen.
+beginning. He writes about it in D&E. Circa 2007, he and his PhD students Peter
+Pirkelbauer and Yuriy Solodkyy wrote a series of papers and an implementation
+based on the EDG compiler. Their design fit perfectly with other parts of the
+language. They proposed it for adoption in the standard. It did not happen.
 
-This library implements the proposal, as closely as possible within the C++17
-standard.
+This library implements the features described in the N2216 paper, with
+some extensions. It requires a C++17 compiler.

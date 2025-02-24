@@ -1,5 +1,5 @@
 
-# OpenMethod: an emulation of N2216
+# Boost.OpenMethod
 Jean-Louis Leroy
 :toc: left
 :toclevels: 3

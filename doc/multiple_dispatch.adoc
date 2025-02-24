@@ -1,0 +1,20 @@
+
+## Multiple Dispatch
+
+A method can have more than one `virtual_ptr` parameter. For example:
+
+[source,c++]
+----
+include::{examplesdir}/hello_world.cpp[tag=multi]
+----
+
+[source,c++]
+----
+include::{examplesdir}/hello_world.cpp[tag=multi_call,indent=0]
+----
+
+The appropriate overrider is selected using the same process similar to overload
+resolution. If there is no single overrider that is more specialized than all
+the others, the return type is used as a tie-breaker, _if_ it is covariant with
+the return type of the base method. If there is still no unique overrider, one
+of the overriders is chosen arbitrarily.

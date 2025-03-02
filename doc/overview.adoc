@@ -42,9 +42,11 @@ given us multi-methods, thereby saving us from the visitor pattern workaround
 This library implements the features described in the N2216 paper, with some
 extensions:
 
-* a mechanism to call the next most specialized overrider
+* a mechanism for calling the next most specialized overrider
+
 * support for smart pointers
-* customization points for RTTI, error handling, and tracing.
+
+* customization points for RTTI, error handling, tracing, smart pointers...
 
 Multiple and virtual inheritance are supported, with the exception of repeated
 inheritance.

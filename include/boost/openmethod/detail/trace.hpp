@@ -1,7 +1,6 @@
 #ifndef BOOST_OPENMETHOD_DETAIL_TRACE_HPP
 #define BOOST_OPENMETHOD_DETAIL_TRACE_HPP
 
-#include <boost/openmethod/detail/types.hpp>
 #include <boost/openmethod/policies/basic_policy.hpp>
 
 #include <boost/dynamic_bitset.hpp>

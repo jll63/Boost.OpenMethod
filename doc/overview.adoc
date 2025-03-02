@@ -15,7 +15,7 @@ dispatch.
 
 Open-methods are native to Lisp, Clojure, Julia, Cecil, Dylan, TADS, and other
 languages. Bjarne Stroustrup wanted open-methods in C++ almost from the
-beginning. He writes this in D&E 13.8:
+beginning. In D&E he writes:
 
 > I repeatedly considered a mechanism for a virtual function call based on more
 than one object, often called multi-methods. I rejected multi-methods with
@@ -25,15 +25,19 @@ C++. Could I have designed and implemented them well enough at the time? Would
 their applications have been important enough to warrant the effort? What other
 work might have been left undone to provide the time to design and implement
 multi-methods? Since about 1985, I have always felt some twinge of regret for
-not providing multi-methods. To wit: The only official talk I ever gave at an
-OOPSLA conference was part of a panel making a statement against language
-bigotry and pointless “religious” language wars [Stroustrup,1990]. I presented
-some bits of CLOS that I particularly liked and emphasized multi-methods
-(Stroustrup, Design and Evolution of C{plus}{plus}, 13.8).
+not providing multi-methods (Stroustrup, 1994, The Design and Evolution of
+C{plus}{plus}, 13.8).
 
 Circa 2007, he and his PhD students Peter Pirkelbauer and Yuriy Solodkyy wrote a
 series of papers and a prototype implementation based on the EDG compiler.
-Unfortunately, open-methods never made it into the standard.
+Unfortunately, open-methods never made it into the standard. Stroustrup bemoans,
+in a more recent paper:
+
+> In retrospect, I don’t think that the object-oriented notation (e.g., x.f(y))
+should ever have been introduced. The traditional mathematical notation f(x,y)
+is sufficient. As a side benefit, the mathematical notation would naturally have
+given us multi-methods, thereby saving us from the visitor pattern workaround
+(Stroustrup, 2020, Thriving in a Crowded and ChangingWorld: C++ 2006–2020).
 
 This library implements the features described in the N2216 paper, with some
 extensions:

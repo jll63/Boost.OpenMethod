@@ -2,7 +2,6 @@
 #define BOOST_OPENMETHOD_DETAIL_TYPES_HPP
 
 #include <cstdint>
-#include <string_view>
 
 #include <boost/openmethod/detail/static_list.hpp>
 

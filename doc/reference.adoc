@@ -15,6 +15,7 @@ include::BOOST_OPENMETHOD_DEFAULT_POLICY.adoc[]
 include::BOOST_OPENMETHOD_NAME.adoc[]
 include::BOOST_OPENMETHOD_OVERRIDERS.adoc[]
 
+include::typedefs.adoc[]
 include::method.adoc[]
 include::method_override.adoc[]
 include::virtual_ptr.adoc[]

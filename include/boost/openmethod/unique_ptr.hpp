@@ -2,6 +2,7 @@
 #define BOOST_OPENMETHOD_UNIQUE_PTR_HPP
 
 #include <boost/openmethod/core.hpp>
+
 #include <memory>
 
 namespace boost {

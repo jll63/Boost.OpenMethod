@@ -4,9 +4,9 @@
 
 ### Synopsis
 
-```c++
-// <boost/openmethod/core.hpp>
+Defined in `<boost/openmethod/core.hpp>`.
 
+```c++
 namespace boost::openmethod {
 
 template<typename T>

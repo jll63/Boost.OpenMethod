@@ -2,7 +2,6 @@
 #define BOOST_OPENMETHOD_CORE_HPP
 
 #include <functional>
-#include <memory>
 
 #include <boost/assert.hpp>
 

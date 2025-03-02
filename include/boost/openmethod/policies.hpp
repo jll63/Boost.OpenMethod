@@ -1,15 +1,10 @@
-// Copyright (c) 2018-2024 Jean-Louis Leroy
+// Copyright (c) 2018-2025 Jean-Louis Leroy
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt
 // or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef BOOST_OPENMETHOD_POLICY_HPP
 #define BOOST_OPENMETHOD_POLICY_HPP
-
-#include <functional>
-#include <memory>
-#include <variant>
-#include <vector>
 
 #include <boost/openmethod/policies/basic_policy.hpp>
 
@@ -20,8 +15,8 @@
 #include <boost/openmethod/policies/fast_perfect_hash.hpp>
 #include <boost/openmethod/policies/vectored_error_handler.hpp>
 
-namespace boost {
-namespace openmethod {
+namespace boost::openmethod {
+
 namespace policies {
 
 struct release : basic_policy<
@@ -32,9 +27,6 @@ struct debug : release::add<
                    runtime_checks, basic_error_output<debug>,
                    basic_trace_output<debug>> {};
 
-static_assert(std::is_base_of_v<trace_output, debug>);
-static_assert(debug::has_facet<trace_output>);
-
 } // namespace policies
 
 #ifdef NDEBUG
@@ -43,7 +35,6 @@ using default_policy = policies::release;
 using default_policy = policies::debug;
 #endif
 
-} // namespace openmethod
-} // namespace boost
+} // namespace boost::openmethod
 
 #endif

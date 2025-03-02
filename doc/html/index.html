@@ -627,17 +627,29 @@ pre.rouge .gs {
 <li><a href="#ref_description_8">Description</a></li>
 </ul>
 </li>
-<li><a href="#ref_method">method</a>
+<li><a href="#ref_type_id">type_id</a>
 <ul class="sectlevel3">
 <li><a href="#ref_synopsis_8">Synopsis</a></li>
 <li><a href="#ref_description_9">Description</a></li>
+</ul>
+</li>
+<li><a href="#ref_vptr_type">vptr_type</a>
+<ul class="sectlevel3">
+<li><a href="#ref_synopsis_9">Synopsis</a></li>
+<li><a href="#ref_description_10">Description</a></li>
+</ul>
+</li>
+<li><a href="#ref_method">method</a>
+<ul class="sectlevel3">
+<li><a href="#ref_synopsis_10">Synopsis</a></li>
+<li><a href="#ref_description_11">Description</a></li>
 <li><a href="#ref_members">Members</a></li>
 </ul>
 </li>
 <li><a href="#method_override">method::override</a>
 <ul class="sectlevel3">
-<li><a href="#ref_synopsis_9">Synopsis</a></li>
-<li><a href="#ref_description_10">Description</a></li>
+<li><a href="#ref_synopsis_11">Synopsis</a></li>
+<li><a href="#ref_description_12">Description</a></li>
 <li><a href="#ref_members_2">Members</a></li>
 </ul>
 </li>
@@ -861,7 +873,7 @@ dispatch.</p>
 <div class="paragraph">
 <p>Open-methods are native to Lisp, Clojure, Julia, Cecil, Dylan, TADS, and other
 languages. Bjarne Stroustrup wanted open-methods in C++ almost from the
-beginning. He writes this in D&amp;E 13.8:</p>
+beginning. In D&amp;E he writes:</p>
 </div>
 <div class="quoteblock">
 <blockquote>
@@ -874,18 +886,27 @@ C++. Could I have designed and implemented them well enough at the time? Would
 their applications have been important enough to warrant the effort? What other
 work might have been left undone to provide the time to design and implement
 multi-methods? Since about 1985, I have always felt some twinge of regret for
-not providing multi-methods. To wit: The only official talk I ever gave at an
-OOPSLA conference was part of a panel making a statement against language
-bigotry and pointless “religious” language wars [Stroustrup,1990]. I presented
-some bits of CLOS that I particularly liked and emphasized multi-methods
-(Stroustrup, Design and Evolution of C&#43;&#43;, 13.8).</p>
+not providing multi-methods (Stroustrup, 1994, The Design and Evolution of
+C&#43;&#43;, 13.8).</p>
 </div>
 </blockquote>
 </div>
 <div class="paragraph">
 <p>Circa 2007, he and his PhD students Peter Pirkelbauer and Yuriy Solodkyy wrote a
 series of papers and a prototype implementation based on the EDG compiler.
-Unfortunately, open-methods never made it into the standard.</p>
+Unfortunately, open-methods never made it into the standard. Stroustrup bemoans,
+in a more recent paper:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>In retrospect, I don’t think that the object-oriented notation (e.g., x.f(y))
+should ever have been introduced. The traditional mathematical notation f(x,y)
+is sufficient. As a side benefit, the mathematical notation would naturally have
+given us multi-methods, thereby saving us from the visitor pattern workaround
+(Stroustrup, 2020, Thriving in a Crowded and ChangingWorld: C++ 2006–2020).</p>
+</div>
+</blockquote>
 </div>
 <div class="paragraph">
 <p>This library implements the features described in the N2216 paper, with some
@@ -2750,9 +2771,58 @@ contains the overriders for all the methods with a given name.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="ref_method">method</h3>
+<h3 id="ref_type_id">type_id</h3>
 <div class="sect3">
 <h4 id="ref_synopsis_8">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in <code>&lt;boost/openmethod/policies/basic_policy.hpp&gt;</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span> <span class="p">{</span>
+
+<span class="k">using</span> <span class="n">type_id</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="kt">uintptr_t</span><span class="p">;</span>
+
+<span class="p">}</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="ref_description_9">Description</h4>
+<div class="paragraph">
+<p><code>type_id</code> is an unsigned integer type used to identify types. It is wide enough
+to contain a pointer.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ref_vptr_type">vptr_type</h3>
+<div class="sect3">
+<h4 id="ref_synopsis_9">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in <code>&lt;boost/openmethod/policies/basic_policy.hpp&gt;</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span> <span class="p">{</span>
+
+<span class="k">using</span> <span class="n">vptr_type</span> <span class="o">=</span> <span class="k">const</span> <span class="cm">/*unspecified*/</span> <span class="o">*</span><span class="p">;</span>
+
+<span class="p">}</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="ref_description_10">Description</h4>
+<div class="paragraph">
+<p><code>vptr_type</code> is the type of a pointer to a v-table.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ref_method">method</h3>
+<div class="sect3">
+<h4 id="ref_synopsis_10">Synopsis</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span> <span class="p">{</span>
@@ -2789,7 +2859,7 @@ contains the overriders for all the methods with a given name.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="ref_description_9">Description</h4>
+<h4 id="ref_description_11">Description</h4>
 <div class="paragraph">
 <p><code>method</code> implements an open-method that takes a parameter list - <code>Parameters</code> -
 and returns a <code>ReturnType</code>. <code>Name</code> can be any type. Its purpose is to make it
@@ -2951,7 +3021,7 @@ overrider that would be called for the same tuple of virtual arguments if
 <div class="sect2">
 <h3 id="method_override">method::override</h3>
 <div class="sect3">
-<h4 id="ref_synopsis_9">Synopsis</h4>
+<h4 id="ref_synopsis_11">Synopsis</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span> <span class="p">{</span>
@@ -2977,7 +3047,7 @@ overrider that would be called for the same tuple of virtual arguments if
 </div>
 </div>
 <div class="sect3">
-<h4 id="ref_description_10">Description</h4>
+<h4 id="ref_description_12">Description</h4>
 <div class="paragraph">
 <p><code>override</code>, instantiated as a static object, add one or more overriders to an
 open-method.</p>
@@ -3619,11 +3689,12 @@ included. Subsequently changing it has no retroactive effect.
 <h3 id="virtual_ptr_virtual">virtual_</h3>
 <div class="sect3">
 <h4 id="virtual_ptr_synopsis_4">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in <code>&lt;boost/openmethod/core.hpp&gt;</code>.</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="c1">// &lt;boost/openmethod/core.hpp&gt;</span>
-
-<span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span> <span class="p">{</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span> <span class="p">{</span>
 
 <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
 <span class="k">struct</span> <span class="nc">virtual_</span><span class="p">;</span>

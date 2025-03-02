@@ -1,5 +1,5 @@
 
-// Copyright (c) 2018-2024 Jean-Louis Leroy
+// Copyright (c) 2018-2025 Jean-Louis Leroy
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt
 // or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -7,9 +7,9 @@
 #ifndef BOOST_OPENMETHOD_POLICY_FAST_PERFECT_HASH_HPP
 #define BOOST_OPENMETHOD_POLICY_FAST_PERFECT_HASH_HPP
 
-#include <random>
-
 #include <boost/openmethod/policies/basic_policy.hpp>
+
+#include <random>
 
 namespace boost {
 namespace openmethod {
@@ -30,12 +30,9 @@ class fast_perfect_hash : type_hash {
     struct report {
         std::size_t first, last;
     };
-#ifdef _MSC_VER
-    __forceinline
-#endif
 
-        static auto
-        hash_type_id(type_id type) -> type_id {
+    BOOST_FORCEINLINE
+    static auto hash_type_id(type_id type) -> type_id {
         auto index = (hash_mult * type) >> hash_shift;
 
         if constexpr (Policy::template has_facet<runtime_checks>) {

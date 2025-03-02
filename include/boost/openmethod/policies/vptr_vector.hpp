@@ -1,5 +1,5 @@
 
-// Copyright (c) 2018-2024 Jean-Louis Leroy
+// Copyright (c) 2018-2025 Jean-Louis Leroy
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt
 // or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -8,6 +8,9 @@
 #define BOOST_OPENMETHOD_POLICY_VPTR_VECTOR_HPP
 
 #include <boost/openmethod/policies/basic_policy.hpp>
+
+#include <variant>
+#include <vector>
 
 namespace boost {
 namespace openmethod {

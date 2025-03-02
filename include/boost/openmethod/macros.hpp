@@ -63,7 +63,7 @@ struct enable_forwarder<
     };
 
 #define BOOST_OPENMETHOD_DETAIL_OVERRIDE(INLINE, OVERRIDERS, NAME, ARGS, ...)  \
-    template<typename...>                                                      \
+    template<typename>                                                      \
     struct OVERRIDERS;                                                         \
     template<>                                                                 \
     struct OVERRIDERS<__VA_ARGS__ ARGS> {                                      \

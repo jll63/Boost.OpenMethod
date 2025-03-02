@@ -14,7 +14,7 @@
 // tag::friend_all[]
 
 namespace pets {
-template<typename...> struct BOOST_OPENMETHOD_OVERRIDERS(poke);
+template<typename> struct BOOST_OPENMETHOD_OVERRIDERS(poke);
 }
 
 namespace core {
@@ -30,7 +30,7 @@ class Animal {
   private:
     std::string name;
 
-    template<typename...> friend class BOOST_OPENMETHOD_OVERRIDERS(pets::poke);
+    template<typename> friend class BOOST_OPENMETHOD_OVERRIDERS(pets::poke);
 };
 
 BOOST_OPENMETHOD(poke, (std::ostream&, virtual_ptr<Animal>), void);
@@ -41,7 +41,7 @@ BOOST_OPENMETHOD(poke, (std::ostream&, virtual_ptr<Animal>), void);
 namespace pets {
 class Cat;
 class Dog;
-template<typename...> struct BOOST_OPENMETHOD_OVERRIDERS(poke);
+template<typename> struct BOOST_OPENMETHOD_OVERRIDERS(poke);
 } // namespace pets
 
 namespace core {

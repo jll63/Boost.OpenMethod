@@ -2,8 +2,8 @@
 # Overview
 
 Open-methods are similar to virtual functions, but they are not required to be
-members of a class. By being simultaneously free _and_ virtual, they provide a
-solution to the Expression Problem:
+members of a class. By being both free and virtual, they provide a solution to
+the Expression Problem:
 
 > Given a set of types, and a set of operations on these types, is it possible
 to add new operations on the existing types, and new types to the existing
@@ -13,12 +13,34 @@ As a bonus, open-methods can take more than one argument into account when
 selecting the appropriate function to call. This solves the problem of multiple
 dispatch.
 
-Open-methods are part of Lisp, Clojure, Julia, Cecil, Dylan, TADS, and other
+Open-methods are native to Lisp, Clojure, Julia, Cecil, Dylan, TADS, and other
 languages. Bjarne Stroustrup wanted open-methods in C++ almost from the
-beginning. He writes about it in D&E. Circa 2007, he and his PhD students Peter
-Pirkelbauer and Yuriy Solodkyy wrote a series of papers and an implementation
-based on the EDG compiler. Their design fit perfectly with other parts of the
-language. They proposed it for adoption in the standard. It did not happen.
+beginning. He writes this in D&E 13.8:
 
-This library implements the features described in the N2216 paper, with
-some extensions. It requires a C++17 compiler.
+> I repeatedly considered a mechanism for a virtual function call based on more
+than one object, often called multi-methods. I rejected multi-methods with
+regret because I liked the idea, but couldn’t find an acceptable form under
+which to accept it. [...] Multi-methods is one of the interesting what-ifs of
+C++. Could I have designed and implemented them well enough at the time? Would
+their applications have been important enough to warrant the effort? What other
+work might have been left undone to provide the time to design and implement
+multi-methods? Since about 1985, I have always felt some twinge of regret for
+not providing multi-methods. To wit: The only official talk I ever gave at an
+OOPSLA conference was part of a panel making a statement against language
+bigotry and pointless “religious” language wars [Stroustrup,1990]. I presented
+some bits of CLOS that I particularly liked and emphasized multi-methods
+(Stroustrup, Design and Evolution of C{plus}{plus}, 13.8).
+
+Circa 2007, he and his PhD students Peter Pirkelbauer and Yuriy Solodkyy wrote a
+series of papers and a prototype implementation based on the EDG compiler.
+Unfortunately, open-methods never made it into the standard.
+
+This library implements the features described in the N2216 paper, with some
+extensions:
+
+* a mechanism to call the next most specialized overrider
+* support for smart pointers
+* customization points for RTTI, error handling, and tracing.
+
+Multiple and virtual inheritance are supported, with the exception of repeated
+inheritance.

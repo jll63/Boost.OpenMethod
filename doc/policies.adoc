@@ -14,9 +14,11 @@ A policy has a collection of _facets_. Facets control how type information is
 obtained, how vptrs are fetched, how errors are handled and printed, etc. Some
 are used in `initialize` and method dispatch; some are used by other facets in
 the same policy as part of their implementation. See the reference for a list of
-facets and stock implementations.
+facets and stock implementations. Policies and facets are placed in the
+`boost::openmethod::policies` namespace. Two policies are provided by the
+library: `release` and `debug`.
 
-`policies::release` contains the following facets:
+`release` contains the following facets:
 
 [cols="1,1,1"]
 |===
@@ -24,11 +26,11 @@ facets and stock implementations.
 
 | rtti
 | std_rtti
-| provide type information for classes and objects
+| provides type information for classes and objects
 
 | vptr
 | vptr_vector
-| store vptrs in a global vector
+| stores vptrs in a global vector
 
 | type_hash
 | fast_perfect_hash
@@ -36,7 +38,7 @@ facets and stock implementations.
 
 | error_handler
 | vectored_error_handler
-| call a `std::function` when an error occurs
+| calls a handler via a `std::function`
 
 |===
 
@@ -47,16 +49,16 @@ facets and stock implementations.
 |facet |implementation |role
 
 | runtime_checks
-|
-| enable runtime checks
+| (itself)
+| enables runtime checks
 
 | error_output
 | basic_error_output
-| print error descriptions to `stderr`
+| prints error descriptions to `stderr`
 
 | trace_output
 | basic_trace_output
-| enable `initialize` to print information about dispatch table construction to  `stderr`
+| enables `initialize` to print information about dispatch table construction to  `stderr`
 
 |===
 
@@ -69,15 +71,19 @@ is a tweak of `policies::release`:
 
 [source,c++]
 ----
+namespace boost::openmethod::policies {
+
 struct debug : release::add<
     runtime_checks, basic_error_output<debug>,
     basic_trace_output<debug>> {};
+
+}
 ----
 
 
-`boost::openmethod::default_policy` is an alias to the `release` or the
-`debug` policy, depending on the value of preprocessor symbols `NDEBUG`. The
-default policy can be overriden by defining the macroprocessor symbol
+`boost::openmethod::default_policy` is an alias to `release` or `debug`,
+depending on the value of preprocessor symbols `NDEBUG`. The default policy can
+be overriden by defining the macroprocessor symbol
 `BOOST_OPENMETHOD_DEFAULT_POLICY` _before_ including
 `<boost/openmethod/core.hpp>`. The value of the symbol is used as a default
 template parameter for `use_classes`, `method`, `virtual_ptr`, and others. Once

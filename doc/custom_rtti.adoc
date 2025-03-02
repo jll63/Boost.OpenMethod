@@ -33,30 +33,31 @@ struct std_rtti : rtti {
 };
 ----
 
-* `static_type` is used by class registration, by `virtual_ptr`'s "final"
+* `static_type` is used by class registration, by `virtual_ptr`{empty}'s "final"
     constructs, and to format error and trace messages. `T` is not restricted to
     the classes that appear as virtual parameters. This function is required.
 
 * `dynamic_type` is used to locate the v-table for an object. This function is
-    required, unless only the `virtual_ptr` "final" constructs are used.
+    usually required. If only the `virtual_ptr` "final" constructs are used, or
+    if `boost_openmethod_vptr` is provided for all the classes in the policy, it
+    can be omitted.
 
 * `type_name` writes a representation of `type` to `stream`. It is used to format
     error and trace messages. `Stream` is a lighweight version of `std::ostream`
     with reduced functionality. It only supports insertion of `const char*`,
     `std::string_view`, pointers and `std::size_t`. This function is optional;
-    if not provided, "type_id(_type_)" is written.
+    if it is not provided, "type_id(_type_)" is used.
 
 * `type_index` returns an object that _uniquely_ identifies a class. Some forms
-    of RTTI (most notably, C++'S `typeid` operator) do not guarantee that the
+    of RTTI (most notably, C++'s `typeid` operator) do not guarantee that the
     type information object for a class is unique within the same program. This
     function is optional; if not provided, `type` is assumed to be unique, and
     used as is.
 
-* `dynamic_cast_ref`casts `obj` to class `D`. `B&&` is either a lvalue reference
+* `dynamic_cast_ref` casts `obj` to class `D`. `B&&` is either a lvalue reference
     (possibly cv-qualified) or a rvalue reference. `D` has the same reference
     category (and cv-qualifier if applicable) as `B`. This function is required
-    only if virtual inheritance is used in the class hierarchies involved with
-    open-methods.
+    only in presence of virtual inheritance.
 
 Consider a custom RTTI implementation:
 

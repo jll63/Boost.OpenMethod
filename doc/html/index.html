@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.20">
 <meta name="author" content="Jean-Louis Leroy">
-<title>OpenMethod: an emulation of N2216</title>
+<title>Boost.OpenMethod</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -554,7 +554,7 @@ pre.rouge .gs {
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
-<h1>OpenMethod: an emulation of N2216</h1>
+<h1>Boost.OpenMethod</h1>
 <div class="details">
 <span id="author" class="author">Jean-Louis Leroy</span><br>
 </div>
@@ -566,7 +566,6 @@ pre.rouge .gs {
 <ul class="sectlevel2">
 <li><a href="#tutorial_hello_world">Hello World</a></li>
 <li><a href="#tutorial_multiple_dispatch">Multiple Dispatch</a></li>
-<li><a href="#tutorial_multiple_inheritance">Multiple Inheritance</a></li>
 <li><a href="#tutorial_friendship">Friendship</a></li>
 <li><a href="#tutorial_performance">Performance</a></li>
 <li><a href="#tutorial_smart_pointers">Smart Pointers</a></li>
@@ -642,12 +641,6 @@ pre.rouge .gs {
 <li><a href="#ref_members_2">Members</a></li>
 </ul>
 </li>
-<li><a href="#ref_virtual">virtual_</a>
-<ul class="sectlevel3">
-<li><a href="#ref_synopsis_10">Synopsis</a></li>
-<li><a href="#ref_description_11">Description</a></li>
-</ul>
-</li>
 <li><a href="#virtual_ptr">virtual_ptr</a>
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_synopsis">Synopsis</a></li>
@@ -665,163 +658,176 @@ pre.rouge .gs {
 <li><a href="#virtual_ptr_members_2">Members</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_with_vptr">with_vptr</a>
+<li><a href="#virtual_ptr_use_classes">use_classes</a>
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_synopsis_3">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_3">Description</a></li>
 <li><a href="#virtual_ptr_members_3">Members</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_abstract_policy">abstract_policy</a>
+<li><a href="#virtual_ptr_virtual">virtual_</a>
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_synopsis_4">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_4">Description</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_domain">domain</a>
+<li><a href="#virtual_ptr_with_vptr">with_vptr</a>
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_synopsis_5">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_5">Description</a></li>
 <li><a href="#virtual_ptr_members_4">Members</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_basic_policy">basic_policy</a>
+<li><a href="#virtual_ptr_abstract_policy">abstract_policy</a>
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_synopsis_6">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_6">Description</a></li>
+</ul>
+</li>
+<li><a href="#virtual_ptr_domain">domain</a>
+<ul class="sectlevel3">
+<li><a href="#virtual_ptr_synopsis_7">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_7">Description</a></li>
 <li><a href="#virtual_ptr_members_5">Members</a></li>
+</ul>
+</li>
+<li><a href="#virtual_ptr_basic_policy">basic_policy</a>
+<ul class="sectlevel3">
+<li><a href="#virtual_ptr_synopsis_8">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_8">Description</a></li>
+<li><a href="#virtual_ptr_members_6">Members</a></li>
 <li><a href="#virtual_ptr_non_members_2">Non-members</a></li>
 </ul>
 </li>
 <li><a href="#virtual_ptr_rtti">rtti</a>
 <ul class="sectlevel3">
-<li><a href="#virtual_ptr_synopsis_7">Synopsis</a></li>
-<li><a href="#virtual_ptr_description_7">Description</a></li>
+<li><a href="#virtual_ptr_synopsis_9">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_9">Description</a></li>
 <li><a href="#virtual_ptr_requirements">Requirements</a></li>
 </ul>
 </li>
 <li><a href="#virtual_ptr_std_rtti">std_rtti</a>
-<ul class="sectlevel3">
-<li><a href="#virtual_ptr_synopsis_8">Synopsis</a></li>
-<li><a href="#virtual_ptr_description_8">Description</a></li>
-<li><a href="#virtual_ptr_members_6">Members</a></li>
-</ul>
-</li>
-<li><a href="#virtual_ptr_deferred_static_rtti">deferred_static_rtti</a>
-<ul class="sectlevel3">
-<li><a href="#virtual_ptr_synopsis_9">Synopsis</a></li>
-<li><a href="#virtual_ptr_description_9">Description</a></li>
-</ul>
-</li>
-<li><a href="#virtual_ptr_minimal_rtti">minimal_rtti</a>
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_synopsis_10">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_10">Description</a></li>
 <li><a href="#virtual_ptr_members_7">Members</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_vptr">vptr</a>
+<li><a href="#virtual_ptr_deferred_static_rtti">deferred_static_rtti</a>
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_synopsis_11">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_11">Description</a></li>
+</ul>
+</li>
+<li><a href="#virtual_ptr_minimal_rtti">minimal_rtti</a>
+<ul class="sectlevel3">
+<li><a href="#virtual_ptr_synopsis_12">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_12">Description</a></li>
+<li><a href="#virtual_ptr_members_8">Members</a></li>
+</ul>
+</li>
+<li><a href="#virtual_ptr_vptr">vptr</a>
+<ul class="sectlevel3">
+<li><a href="#virtual_ptr_synopsis_13">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_13">Description</a></li>
 <li><a href="#virtual_ptr_requirements_2">Requirements</a></li>
 </ul>
 </li>
 <li><a href="#virtual_ptr_extern_vptr">extern_vptr</a>
 <ul class="sectlevel3">
-<li><a href="#virtual_ptr_synopsis_12">Synopsis</a></li>
-<li><a href="#virtual_ptr_description_12">Description</a></li>
+<li><a href="#virtual_ptr_synopsis_14">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_14">Description</a></li>
 <li><a href="#virtual_ptr_requirements_3">Requirements</a></li>
 </ul>
 </li>
 <li><a href="#virtual_ptr_indirect_vptr">indirect_vptr</a>
 <ul class="sectlevel3">
-<li><a href="#virtual_ptr_synopsis_13">Synopsis</a></li>
-<li><a href="#virtual_ptr_description_13">Description</a></li>
+<li><a href="#virtual_ptr_synopsis_15">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_15">Description</a></li>
 <li><a href="#virtual_ptr_requirements_4">Requirements</a></li>
 </ul>
 </li>
 <li><a href="#virtual_ptr_vptr_vector">vptr_vector</a>
 <ul class="sectlevel3">
-<li><a href="#virtual_ptr_synopsis_14">Synopsis</a></li>
-<li><a href="#virtual_ptr_description_14">Description</a></li>
-<li><a href="#virtual_ptr_members_8">Members</a></li>
-</ul>
-</li>
-<li><a href="#virtual_ptr_vptr_map">vptr_map</a>
-<ul class="sectlevel3">
-<li><a href="#virtual_ptr_synopsis_15">Synopsis</a></li>
-<li><a href="#virtual_ptr_description_15">Description</a></li>
+<li><a href="#virtual_ptr_synopsis_16">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_16">Description</a></li>
 <li><a href="#virtual_ptr_members_9">Members</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_type_hash">type_hash</a>
-<ul class="sectlevel3">
-<li><a href="#virtual_ptr_synopsis_16">Synopsis</a></li>
-<li><a href="#virtual_ptr_description_16">Description</a></li>
-<li><a href="#virtual_ptr_requirements_5">Requirements</a></li>
-<li><a href="#virtual_ptr_hash_type_id">hash_type_id</a></li>
-</ul>
-</li>
-<li><a href="#virtual_ptr_fast_perfect_hash">fast_perfect_hash</a>
+<li><a href="#virtual_ptr_vptr_map">vptr_map</a>
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_synopsis_17">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_17">Description</a></li>
 <li><a href="#virtual_ptr_members_10">Members</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_error_handler">error_handler</a>
+<li><a href="#virtual_ptr_type_hash">type_hash</a>
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_synopsis_18">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_18">Description</a></li>
-<li><a href="#virtual_ptr_requirements_6">Requirements</a></li>
+<li><a href="#virtual_ptr_requirements_5">Requirements</a></li>
+<li><a href="#virtual_ptr_hash_type_id">hash_type_id</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_vectored_error_handler">vectored_error_handler</a>
+<li><a href="#virtual_ptr_fast_perfect_hash">fast_perfect_hash</a>
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_synopsis_19">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_19">Description</a></li>
 <li><a href="#virtual_ptr_members_11">Members</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_throw_error_handler">throw_error_handler</a>
+<li><a href="#virtual_ptr_error_handler">error_handler</a>
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_synopsis_20">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_20">Description</a></li>
-<li><a href="#virtual_ptr_members_12">Members</a></li>
+<li><a href="#virtual_ptr_requirements_6">Requirements</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_error_output">error_output</a>
+<li><a href="#virtual_ptr_vectored_error_handler">vectored_error_handler</a>
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_synopsis_21">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_21">Description</a></li>
-<li><a href="#virtual_ptr_requirements_7">Requirements</a></li>
+<li><a href="#virtual_ptr_members_12">Members</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_basic_error_output">basic_error_output</a>
+<li><a href="#virtual_ptr_throw_error_handler">throw_error_handler</a>
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_synopsis_22">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_22">Description</a></li>
 <li><a href="#virtual_ptr_members_13">Members</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_trace_output">trace_output</a>
+<li><a href="#virtual_ptr_error_output">error_output</a>
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_synopsis_23">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_23">Description</a></li>
-<li><a href="#virtual_ptr_requirements_8">Requirements</a></li>
+<li><a href="#virtual_ptr_requirements_7">Requirements</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_basic_trace_output">basic_trace_output</a>
+<li><a href="#virtual_ptr_basic_error_output">basic_error_output</a>
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_synopsis_24">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_24">Description</a></li>
 <li><a href="#virtual_ptr_members_14">Members</a></li>
 </ul>
 </li>
+<li><a href="#virtual_ptr_trace_output">trace_output</a>
+<ul class="sectlevel3">
+<li><a href="#virtual_ptr_synopsis_25">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_25">Description</a></li>
+<li><a href="#virtual_ptr_requirements_8">Requirements</a></li>
+</ul>
+</li>
+<li><a href="#virtual_ptr_basic_trace_output">basic_trace_output</a>
+<ul class="sectlevel3">
+<li><a href="#virtual_ptr_synopsis_26">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_26">Description</a></li>
+<li><a href="#virtual_ptr_members_15">Members</a></li>
+</ul>
+</li>
 <li><a href="#virtual_ptr_restrictedoutputstream">RestrictedOutputStream</a>
 <ul class="sectlevel3">
-<li><a href="#virtual_ptr_description_25">Description</a></li>
+<li><a href="#virtual_ptr_description_27">Description</a></li>
 </ul>
 </li>
 </ul>
@@ -835,8 +841,8 @@ pre.rouge .gs {
 <div class="sectionbody">
 <div class="paragraph">
 <p>Open-methods are similar to virtual functions, but they are not required to be
-members of a class. By being simultaneously free <em>and</em> virtual, they provide a
-solution to the Expression Problem:</p>
+members of a class. By being both free and virtual, they provide a solution to
+the Expression Problem:</p>
 </div>
 <div class="quoteblock">
 <blockquote>
@@ -853,17 +859,54 @@ selecting the appropriate function to call. This solves the problem of multiple
 dispatch.</p>
 </div>
 <div class="paragraph">
-<p>Open-methods are part of Lisp, Clojure, Julia, Cecil, Dylan, TADS, and other
+<p>Open-methods are native to Lisp, Clojure, Julia, Cecil, Dylan, TADS, and other
 languages. Bjarne Stroustrup wanted open-methods in C++ almost from the
-beginning. He writes about it in D&amp;E. Circa 2007, with his PhD students Peter
-Pirkelbauer and Yuriy Solodkyy, they wrote a series of papers and an
-implementation based on the EDG compiler. Their design fit perfectly with othe
-parts of the language. They proposed it for adoption in the standard. It did not
-happen.</p>
+beginning. He writes this in D&amp;E 13.8:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>I repeatedly considered a mechanism for a virtual function call based on more
+than one object, often called multi-methods. I rejected multi-methods with
+regret because I liked the idea, but couldn’t find an acceptable form under
+which to accept it. [&#8230;&#8203;] Multi-methods is one of the interesting what-ifs of
+C++. Could I have designed and implemented them well enough at the time? Would
+their applications have been important enough to warrant the effort? What other
+work might have been left undone to provide the time to design and implement
+multi-methods? Since about 1985, I have always felt some twinge of regret for
+not providing multi-methods. To wit: The only official talk I ever gave at an
+OOPSLA conference was part of a panel making a statement against language
+bigotry and pointless “religious” language wars [Stroustrup,1990]. I presented
+some bits of CLOS that I particularly liked and emphasized multi-methods
+(Stroustrup, Design and Evolution of C&#43;&#43;, 13.8).</p>
+</div>
+</blockquote>
 </div>
 <div class="paragraph">
-<p>This library implements the proposal, as closely as possible within the C++17
-standard.</p>
+<p>Circa 2007, he and his PhD students Peter Pirkelbauer and Yuriy Solodkyy wrote a
+series of papers and a prototype implementation based on the EDG compiler.
+Unfortunately, open-methods never made it into the standard.</p>
+</div>
+<div class="paragraph">
+<p>This library implements the features described in the N2216 paper, with some
+extensions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>a mechanism to call the next most specialized overrider</p>
+</li>
+<li>
+<p>support for smart pointers</p>
+</li>
+<li>
+<p>customization points for RTTI, error handling, and tracing.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Multiple and virtual inheritance are supported, with the exception of repeated
+inheritance.</p>
 </div>
 </div>
 </div>
@@ -932,18 +975,17 @@ functions:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>We are going to rewrite it with open-methods.</p>
+<p>We are going to rewrite this using open-methods.</p>
 </div>
 <div class="paragraph">
-<p>First we remove the virtual functions from the domain classes:</p>
+<p>First we remove the <code>poke</code> virtual functions from the domain classes:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp">
 </span>
 <span class="k">struct</span> <span class="nc">Animal</span> <span class="p">{</span>
-    <span class="n">Animal</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name</span><span class="p">)</span> <span class="o">:</span> <span class="n">name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="p">{</span>
-    <span class="p">}</span>
+    <span class="n">Animal</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name</span><span class="p">)</span> <span class="o">:</span> <span class="n">name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="p">{}</span>
     <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name</span><span class="p">;</span>
     <span class="k">virtual</span> <span class="o">~</span><span class="n">Animal</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
 <span class="p">};</span>
@@ -967,9 +1009,9 @@ advantage of open-methods over virtual functions: they make it possible to
 better organize dependencies.</p>
 </div>
 <div class="paragraph">
-<p>Let&#8217;s define <code>poke</code>. First we need to include the library&#8217;s main header (and
-<code>&lt;iostream&gt;</code>). It defines a few macros, and injects a name - <code>virtual_ptr</code> - in
-the global namespace.</p>
+<p>Let&#8217;s implement <code>poke</code>. First we need to include the library&#8217;s main header. It
+defines a few macros, and injects a name - <code>virtual_ptr</code> - in the global
+namespace.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -985,22 +1027,9 @@ the global namespace.</p>
 <div class="paragraph">
 <p>This defines a free function called <code>poke</code>, which takes two arguments. The first
 is the <code>ostream</code>. The second argument corresponds to the implicit <code>this</code> pointer
-in the virtual function. It is now an explicit argument. Just like for virtual
+in a virtual function. It is now an explicit argument. Just like with virtual
 functions, the exact function to execute is selected on the basis of the
 argument&#8217;s <em>dynamic</em> type.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-open-method signatures consist of types only. They may <strong>not</strong> contain
-parameter names.
-</td>
-</tr>
-</table>
 </div>
 <div class="paragraph">
 <p>Unlike virtual functions, there is no such thing as a pure open-method that
@@ -1029,13 +1058,13 @@ available from looking at just the current translation unit.</p>
 <p><code>Bulldog::poke</code> calls the <code>poke</code> it overrides in its <code>Dog</code> base. The equivalent
 for open-methods is <code>next</code>, a function that is available only inside the body of
 an overrider.  It calls the next most specific overrider, i.e. what would have
-been called if the current override did not exist.</p>
+been called if the overrider did not exist.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span>
     <span class="n">poke</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Bulldog</span><span class="o">&gt;</span> <span class="n">dog</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">next</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="n">dog</span><span class="p">);</span>                              <span class="c1">// call super-method</span>
+    <span class="n">next</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="n">dog</span><span class="p">);</span>                              <span class="c1">// call base overrider</span>
     <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">" and bites back"</span><span class="p">;</span>
 <span class="p">}</span></code></pre>
 </div>
@@ -1051,8 +1080,9 @@ been called if the current override did not exist.</p>
 </div>
 <div class="paragraph">
 <p>Classes can be registered incrementally, as long as all the direct bases of a
-class appear in the same call to <code>BOOST_OPENMETHOD_CLASSES</code>. For example,
-<code>Bulldog</code> can be added in a second call, as long as <code>Dog</code> is listed as well:</p>
+class are listed with it in some call(s) to <code>BOOST_OPENMETHOD_CLASSES</code>. For
+example, <code>Bulldog</code> can be added in a second call, as long as <code>Dog</code> is listed as
+well:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1079,23 +1109,22 @@ It builds the dispatch tables. Typically this is done in <code>main</code>:</p>
 </div>
 </div>
 <div class="paragraph">
-<p><code>poke</code> is called like an ordinary function (which it is). <code>virtual_ptr</code> has a
-conversion constructor that takes a reference to an object, passing it the
-animals by reference. <code>virtual_ptr</code></p>
+<p>We call <code>poke</code> like any ordinary function. We can pass it the animals by
+reference, because <code>virtual_ptr</code> has a conversion constructor for that:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++">    <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="n">a</span><span class="p">(</span><span class="k">new</span> <span class="nf">Cat</span><span class="p">(</span><span class="s">"Felix"</span><span class="p">));</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="n">b</span><span class="p">(</span><span class="k">new</span> <span class="nf">Dog</span><span class="p">(</span><span class="s">"Snoopy"</span><span class="p">));</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="n">c</span><span class="p">(</span><span class="k">new</span> <span class="nf">Bulldog</span><span class="p">(</span><span class="s">"Hector"</span><span class="p">));</span>
+<pre class="rouge highlight"><code data-lang="c++">    <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="n">felix</span><span class="p">(</span><span class="k">new</span> <span class="nf">Cat</span><span class="p">(</span><span class="s">"Felix"</span><span class="p">));</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="n">snoopy</span><span class="p">(</span><span class="k">new</span> <span class="nf">Dog</span><span class="p">(</span><span class="s">"Snoopy"</span><span class="p">));</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="n">hector</span><span class="p">(</span><span class="k">new</span> <span class="nf">Bulldog</span><span class="p">(</span><span class="s">"Hector"</span><span class="p">));</span>
 
-    <span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">);</span> <span class="c1">// Felix hisses</span>
+    <span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">felix</span><span class="p">);</span> <span class="c1">// Felix hisses</span>
     <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">".</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
 
-    <span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">b</span><span class="p">);</span> <span class="c1">// Snoopy barks</span>
+    <span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">snoopy</span><span class="p">);</span> <span class="c1">// Snoopy barks</span>
     <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">".</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
 
-    <span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">c</span><span class="p">);</span> <span class="c1">// Hector barks and bites</span>
+    <span class="n">poke</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">hector</span><span class="p">);</span> <span class="c1">// Hector barks and bites</span>
     <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">".</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span></code></pre>
 </div>
 </div>
@@ -1137,7 +1166,7 @@ future versions of C++.
 <span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span>
     <span class="n">encounter</span><span class="p">,</span>
     <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Dog</span><span class="o">&gt;</span> <span class="n">dog1</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Dog</span><span class="o">&gt;</span> <span class="n">dog2</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"both wag tails"</span><span class="p">;</span>
+    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"Both wag tails"</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span>
@@ -1155,13 +1184,21 @@ future versions of C++.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="n">encounter</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">*</span><span class="n">b</span><span class="p">);</span> <span class="c1">// Felix runs away from Snoopy</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="c1">// cat and dog</span>
+<span class="n">encounter</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">felix</span><span class="p">,</span> <span class="o">*</span><span class="n">snoopy</span><span class="p">);</span> <span class="c1">// Felix runs away from Snoopy</span>
 <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">".</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
 
-<span class="n">encounter</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">);</span> <span class="c1">// Snoopy chases Felix</span>
+<span class="c1">// dog and cat</span>
+<span class="n">encounter</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">snoopy</span><span class="p">,</span> <span class="o">*</span><span class="n">felix</span><span class="p">);</span> <span class="c1">// Snoopy chases Felix</span>
 <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">".</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
 
-<span class="n">encounter</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="o">*</span><span class="n">c</span><span class="p">);</span> <span class="c1">// both wag tails</span>
+<span class="c1">// dog and dog</span>
+<span class="n">encounter</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">snoopy</span><span class="p">,</span> <span class="o">*</span><span class="n">hector</span><span class="p">);</span> <span class="c1">// Both wag tails</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">".</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+
+<span class="c1">// cat and cat</span>
+<span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&gt;</span> <span class="n">tom</span><span class="p">(</span><span class="k">new</span> <span class="nf">Cat</span><span class="p">(</span><span class="s">"Tom"</span><span class="p">));</span>
+<span class="n">encounter</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">,</span> <span class="o">*</span><span class="n">felix</span><span class="p">,</span> <span class="o">*</span><span class="n">tom</span><span class="p">);</span> <span class="c1">// Felix and Tom ignore each other</span>
 <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">".</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span></code></pre>
 </div>
 </div>
@@ -1174,21 +1211,22 @@ of the overriders is chosen arbitrarily.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="tutorial_multiple_inheritance">Multiple Inheritance</h3>
-<div class="paragraph">
-<p>Multiple inheritance is supported, with the exception of repeated inheritance.</p>
-</div>
-<div class="paragraph">
-<p>Virtual inheritance is supported, but it incurs calls to <code>dynamic_cast</code> to cast
-the method&#8217;s arguments to the types required by the overrider.</p>
-</div>
-</div>
-<div class="sect2">
 <h3 id="tutorial_friendship">Friendship</h3>
 <div class="paragraph">
-<p>Overriders are placed in specializations of a template named after the method,
-and declared in the current namespace. Macro <code>BOOST_OPENMETHOD_OVERRIDERS</code>
-returns that name. We can thus grant friendship to all the overriders of <code>poke</code>:</p>
+<p>Overriders are implemented as static functions located in specializations of a
+template named after the method, declared in the same scope. Macro
+<code>BOOST_OPENMETHOD_OVERRIDERS</code> returns that name. The template argument for a
+specialization is the signature of the overrider. For example, the overrider of
+<code>poke</code> for <code>Cat</code> is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_OVERRIDERS</span><span class="p">(</span><span class="n">poke</span><span class="p">)</span><span class="o">&lt;</span>
+    <span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">cat</span><span class="p">)</span><span class="o">&gt;::</span><span class="n">fn</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We can thus grant friendship to all the overriders of <code>poke</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1200,7 +1238,7 @@ returns that name. We can thus grant friendship to all the overriders of <code>p
   <span class="nl">private:</span>
     <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name</span><span class="p">;</span>
 
-    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="o">...</span><span class="p">&gt;</span> <span class="k">friend</span> <span class="k">class</span> <span class="nc">BOOST_OPENMETHOD_OVERRIDERS</span><span class="p">(</span><span class="n">poke</span><span class="p">);</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="p">&gt;</span> <span class="k">friend</span> <span class="k">class</span> <span class="nc">BOOST_OPENMETHOD_OVERRIDERS</span><span class="p">(</span><span class="n">poke</span><span class="p">);</span>
 <span class="p">};</span></code></pre>
 </div>
 </div>
@@ -1209,32 +1247,14 @@ returns that name. We can thus grant friendship to all the overriders of <code>p
 a different signature - are granted friendship.</p>
 </div>
 <div class="paragraph">
-<p>We can also grant friendship to individual overriders. First we declare the
-template:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="o">...</span><span class="p">&gt;</span> <span class="k">struct</span> <span class="nf">BOOST_OPENMETHOD_OVERRIDERS</span><span class="p">(</span><span class="n">poke</span><span class="p">);</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The overriders of <code>poke</code> are specialized on the type of a function corresponding
-to the overrider&#8217;s return type and parameter list. For example, the overrider
-for <code>Cat</code> is a static member function of:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">BOOST_OPENMETHOD_OVERRIDERS</span><span class="p">(</span><span class="n">poke</span><span class="p">)</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">cat</span><span class="p">)</span><span class="o">&gt;</span><span class="p">;</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>We can thus make <code>Animal</code> grant friendship to the <code>Cat</code> and <code>Dog</code>
-specializations:</p>
+<p>We can also grant friendship to individual overriders:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">class</span> <span class="nc">Cat</span><span class="p">;</span>
 <span class="k">class</span> <span class="nc">Dog</span><span class="p">;</span>
+
+<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="p">&gt;</span> <span class="k">struct</span> <span class="nf">BOOST_OPENMETHOD_OVERRIDERS</span><span class="p">(</span><span class="n">poke</span><span class="p">);</span>
 
 <span class="k">class</span> <span class="nc">Animal</span> <span class="p">{</span>
     <span class="c1">// ...</span>
@@ -1250,7 +1270,7 @@ specializations:</p>
 <div class="sect2">
 <h3 id="tutorial_performance">Performance</h3>
 <div class="paragraph">
-<p>Open methods are almost as fast as ordinary virtual member functions when
+<p>Open-methods are almost as fast as ordinary virtual member functions when
 compiled with optimization.</p>
 </div>
 <div class="paragraph">
@@ -1294,11 +1314,11 @@ function, with an empty body and no other arguments.</p>
 </div>
 <div class="paragraph">
 <p>However, <code>call_poke</code> does two things: it constructs a <code>virtual_ptr&lt;Animal&gt;</code> from
-a <code>Animal&amp;</code>; and it calls the method. The construction of the <code>virtual_ptr</code> is
-the costly part, as it involves a hash table lookup. Once that price is paid,
-the <code>virtual_ptr</code> can be used multiple times. It is passed to the overrider,
-which can further method calls through it. It can be stored in variables in
-place of straight pointers.</p>
+an <code>Animal&amp;</code>; and then it calls the method. The construction of the
+<code>virtual_ptr</code> is the costly part, as it involves a hash table lookup. Once that
+price is paid, the <code>virtual_ptr</code> can be used multiple times. It is passed to the
+overrider, which can further method calls through it. It can be stored in
+variables in place of straight pointers.</p>
 </div>
 <div class="paragraph">
 <p>Let&#8217;s look at another example: an AST for an arithmetic calculator:</p>
@@ -1425,7 +1445,7 @@ mov	qword ptr [rsp+32], rax                   ; set vptr object pointer to 'one'
 <div class="sect2">
 <h3 id="tutorial_smart_pointers">Smart Pointers</h3>
 <div class="paragraph">
-<p><code>virtual_ptr</code> can also be used in combined with smart pointers.
+<p><code>virtual_ptr</code> can also be used in combination with smart pointers.
 <code>virtual_ptr&lt;std::shared_ptr&lt;Class&gt;&gt;</code> (aliased to <code>shared_virtual_ptr&lt;Class&gt;</code>)
 and <code>virtual_ptr&lt;std::unique_ptr&lt;Class&gt;&gt;</code> (aliased to
 <code>unique_virtual_ptr&lt;Class&gt;</code>) deliver the convenience of automatic memory
@@ -1509,7 +1529,7 @@ pointers:</p>
 <h3 id="tutorial_alternatives_to_virtual_ptr">Alternatives to virtual_ptr</h3>
 <div class="paragraph">
 <p>Virtual arguments can be passed as plain references. In a method declaration,
-parameters with a type decorated with <code>virtual_</code> are are considered in overrider
+parameters with a type decorated with <code>virtual_</code> are considered in overrider
 selection (along with any <code>virtual_ptr</code> parameters).</p>
 </div>
 <div class="paragraph">
@@ -1552,12 +1572,12 @@ argument by reference almost compiles to the same code as creating a
 is that the virtual argument is passed as one pointer instead of two.</p>
 </div>
 <div class="paragraph">
-<p>However, we can now customize how the vptr is obtained. When the call mechanism
-sees a virtual argument that is not a <code>virtual_ptr</code>, it looks for a function
-called <code>boost_openmethod_vptr</code>, that takes the argument (by const reference),
-and returns a <code>vptr_type</code>. If one is found, it is used to obtain the vptr. The
-vptr for registered class can be obtained via a variable template
-<code>static_vptr</code>, nested in class <code>default_policy</code> (more on policies below).</p>
+<p>However, we can now customize how the vptr is obtained. When the method sees a
+<code>virtual_</code> parameter, it looks for a <code>boost_openmethod_vptr</code> function that takes
+the parameter (by const reference), and returns a <code>vptr_type</code>. If one is found,
+it is called to obtain the vptr. The vptr for a specific registered class can be
+obtained via a variable template <code>static_vptr</code>, nested in class <code>default_policy</code>
+(more on policies below).</p>
 </div>
 <div class="paragraph">
 <p>In the following example, we embed a vptr in the object, just like the vptr for
@@ -1653,11 +1673,13 @@ the call to <code>BOOST_OPENMETHOD_CLASSES</code> is not needed.</p>
 <div class="sect2">
 <h3 id="tutorial_core_api">Core API</h3>
 <div class="paragraph">
-<p>OpenMethod provides a macro-free interface. This is useful in certain
-situations, for example when combining open methods and templates.</p>
+<p>OpenMethod provides a macro-free interface: the core API. This is useful in
+certain situations, for example when combining open-methods and templates.</p>
 </div>
 <div class="paragraph">
-<p>Here is a rewrite of the Animals example.</p>
+<p>Let&#8217;s rewrite the Animals example using the core API. An open-method is
+implemented as an instance of the <code>method</code> template. Its parameters are a
+function signature and a return type:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1670,10 +1692,6 @@ situations, for example when combining open methods and templates.</p>
 <span class="k">using</span> <span class="n">poke</span> <span class="o">=</span> <span class="n">method</span><span class="o">&lt;</span>
     <span class="n">poke_openmethod</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">virtual_</span><span class="o">&lt;</span><span class="n">Animal</span><span class="o">&amp;&gt;</span><span class="p">),</span> <span class="kt">void</span><span class="o">&gt;</span><span class="p">;</span></code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>An open-method is implemented as an instance of the <code>method</code> template. It takes
-a function signature and a return type.</p>
 </div>
 <div class="paragraph">
 <p>The <code>poke_openmethod</code> class acts as the method&#8217;s identifier: it separates it
@@ -1733,14 +1751,14 @@ styles.
 <div class="title">Note</div>
 </td>
 <td class="content">
-<code>override</code> can register more than one overrider.
+<code>override</code> can register multiple overriders.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>In C++26, we can use <code>_</code> instead of inventing an identifier. Otherwise,
-OpenMethod provides a small convenience macro:</p>
+<p>In C++26, we will be able to use <code>_</code> instead of inventing an identifier. In the
+meantime, OpenMethod provides a small convenience macro:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1775,24 +1793,26 @@ OpenMethod provides a small convenience macro:</p>
 <td class="content">
 Since the function uses itself as a template argument in its body, its
 return type cannot be deduced. It must be specified explicitly, either by using
-the old style or a trailing return type.
+the old function declaration style or a trailing return type.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Why not call <code>poke_dog</code> directly? That may be the right thing to do; however,
-keep in mind that, in a real program, a translation unit is not necessarily
-aware of the overriders added elsewhere - especially in presence of dynamic
-loading.</p>
+<p>Why not call <code>poke_dog</code> directly? We could; however, keep in mind that, in a
+real program, a translation unit is not necessarily aware of the overriders
+added elsewhere - especially in presence of dynamic loading.</p>
 </div>
 <div class="paragraph">
-<p><code>use_classes</code></p>
+<p>We register the classes with <code>use_classes</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="n">BOOST_OPENMETHOD_REGISTER</span><span class="p">(</span><span class="n">use_classes</span><span class="o">&lt;</span><span class="n">Animal</span><span class="p">,</span> <span class="n">Cat</span><span class="p">,</span> <span class="n">Dog</span><span class="p">,</span> <span class="n">Bulldog</span><span class="o">&gt;</span><span class="p">);</span></code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Finally, we call the method via the static member of the method class <code>fn</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1834,10 +1854,12 @@ and <code>policies::release</code> in release builds.</p>
 obtained, how vptrs are fetched, how errors are handled and printed, etc. Some
 are used in <code>initialize</code> and method dispatch; some are used by other facets in
 the same policy as part of their implementation. See the reference for a list of
-facets and stock implementations.</p>
+facets and stock implementations. Policies and facets are placed in the
+<code>boost::openmethod::policies</code> namespace. Two policies are provided by the
+library: <code>release</code> and <code>debug</code>.</p>
 </div>
 <div class="paragraph">
-<p><code>policies::release</code> contains the following facets:</p>
+<p><code>release</code> contains the following facets:</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -1856,12 +1878,12 @@ facets and stock implementations.</p>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">rtti</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">std_rtti</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">provide type information for classes and objects</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">provides type information for classes and objects</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">vptr</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">vptr_vector</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">store vptrs in a global vector</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">stores vptrs in a global vector</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">type_hash</p></td>
@@ -1871,7 +1893,7 @@ facets and stock implementations.</p>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">error_handler</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">vectored_error_handler</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">call a <code>std::function</code> when an error occurs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">calls a handler via a <code>std::function</code></p></td>
 </tr>
 </tbody>
 </table>
@@ -1894,18 +1916,18 @@ facets and stock implementations.</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">runtime_checks</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">enable runtime checks</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(itself)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">enables runtime checks</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">error_output</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">basic_error_output</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">print error descriptions to <code>stderr</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">prints error descriptions to <code>stderr</code></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">trace_output</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">basic_trace_output</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">enable <code>initialize</code> to print information about dispatch table construction to  <code>stderr</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">enables <code>initialize</code> to print information about dispatch table construction to  <code>stderr</code></p></td>
 </tr>
 </tbody>
 </table>
@@ -1920,15 +1942,19 @@ is a tweak of <code>policies::release</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">debug</span> <span class="o">:</span> <span class="n">release</span><span class="o">::</span><span class="n">add</span><span class="o">&lt;</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">policies</span> <span class="p">{</span>
+
+<span class="k">struct</span> <span class="nc">debug</span> <span class="o">:</span> <span class="n">release</span><span class="o">::</span><span class="n">add</span><span class="o">&lt;</span>
     <span class="n">runtime_checks</span><span class="p">,</span> <span class="n">basic_error_output</span><span class="o">&lt;</span><span class="n">debug</span><span class="o">&gt;</span><span class="p">,</span>
-    <span class="n">basic_trace_output</span><span class="o">&lt;</span><span class="n">debug</span><span class="o">&gt;&gt;</span> <span class="p">{};</span></code></pre>
+    <span class="n">basic_trace_output</span><span class="o">&lt;</span><span class="n">debug</span><span class="o">&gt;&gt;</span> <span class="p">{};</span>
+
+<span class="p">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p><code>boost::openmethod::default_policy</code> is an alias to the <code>release</code> or the
-<code>debug</code> policy, depending on the value of preprocessor symbols <code>NDEBUG</code>. The
-default policy can be overriden by defining the macroprocessor symbol
+<p><code>boost::openmethod::default_policy</code> is an alias to <code>release</code> or <code>debug</code>,
+depending on the value of preprocessor symbols <code>NDEBUG</code>. The default policy can
+be overriden by defining the macroprocessor symbol
 <code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> <em>before</em> including
 <code>&lt;boost/openmethod/core.hpp&gt;</code>. The value of the symbol is used as a default
 template parameter for <code>use_classes</code>, <code>method</code>, <code>virtual_ptr</code>, and others. Once
@@ -1940,13 +1966,13 @@ has no effect. See below for examples.</p>
 <h3 id="tutorial_error_handling">Error Handling</h3>
 <div class="paragraph">
 <p>When an error is encountered, the program is terminated by a call to <code>abort</code>. If
-the policy contains an <code>error_handler</code> facet, its <code>error</code> template member
-function is called with an object identifying the error. The <code>release</code> and
-<code>debug</code> policies implement the error facet with <code>vectored_error_handler</code>, which
-wraps the error object in a variant, and calls a handler via a <code>std::function</code>.
-By default, it prints a description of the error to <code>stderr</code> in the <code>debug</code>
-policy, and does nothing in the <code>release</code> policy. The handler can be set with
-<code>set_error_handler</code>:</p>
+the policy contains an <code>error_handler</code> facet, it provides an <code>error</code> member
+function (or overloaded functions) to be called with an object identifying the
+error. The <code>release</code> and <code>debug</code> policies implement the error facet with
+<code>vectored_error_handler</code>, which wraps the error object in a variant, and calls a
+handler via a <code>std::function</code>. By default, it prints a description of the error
+to <code>stderr</code> in the <code>debug</code> policy, and does nothing in the <code>release</code> policy. The
+handler can be set with <code>set_error_handler</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1999,15 +2025,18 @@ policy, and does nothing in the <code>release</code> policy. The handler can be 
 <span class="p">}</span></code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Output:</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="console"><span class="go">spin
-Cats don't perform tricks
+not implemented
 spin</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>We can also replace the <code>error_handler</code> with our own. For example:</p>
+<p>We can also replace the <code>error_handler</code> facet with our own. For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2073,7 +2102,7 @@ spin</span></code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="console"><span class="go">spin
-Cats don't perform tricks
+not implemented
 spin</span></code></pre>
 </div>
 </div>
@@ -2133,34 +2162,35 @@ source:</p>
 <div class="ulist">
 <ul>
 <li>
-<p><code>static_type</code> is used by class registration, by <code>virtual_ptr&#8217;s "final"
-constructs, and to format error and trace messages. `T</code> is not restricted to
+<p><code>static_type</code> is used by class registration, by <code>virtual_ptr</code>'s "final"
+constructs, and to format error and trace messages. <code>T</code> is not restricted to
 the classes that appear as virtual parameters. This function is required.</p>
 </li>
 <li>
 <p><code>dynamic_type</code> is used to locate the v-table for an object. This function is
-required, unless only the <code>virtual_ptr</code> "final" constructs are used.</p>
+usually required. If only the <code>virtual_ptr</code> "final" constructs are used, or
+if <code>boost_openmethod_vptr</code> is provided for all the classes in the policy, it
+can be omitted.</p>
 </li>
 <li>
 <p><code>type_name</code> writes a representation of <code>type</code> to <code>stream</code>. It is used to format
 error and trace messages. <code>Stream</code> is a lighweight version of <code>std::ostream</code>
 with reduced functionality. It only supports insertion of <code>const char*</code>,
 <code>std::string_view</code>, pointers and <code>std::size_t</code>. This function is optional;
-if not provided, "type_id(<em>type</em>)" is written.</p>
+if it is not provided, "type_id(<em>type</em>)" is used.</p>
 </li>
 <li>
 <p><code>type_index</code> returns an object that <em>uniquely</em> identifies a class. Some forms
-of RTTI (most notably, C++'S <code>typeid</code> operator) do not guarantee that the
+of RTTI (most notably, C++'s <code>typeid</code> operator) do not guarantee that the
 type information object for a class is unique within the same program. This
 function is optional; if not provided, <code>type</code> is assumed to be unique, and
 used as is.</p>
 </li>
 <li>
-<p><code>dynamic_cast_ref`casts `obj</code> to class <code>D</code>. <code>B&amp;&amp;</code> is either a lvalue reference
+<p><code>dynamic_cast_ref</code> casts <code>obj</code> to class <code>D</code>. <code>B&amp;&amp;</code> is either a lvalue reference
 (possibly cv-qualified) or a rvalue reference. <code>D</code> has the same reference
 category (and cv-qualifier if applicable) as <code>B</code>. This function is required
-only if virtual inheritance is used in the class hierarchies involved with
-open-methods.</p>
+only in presence of virtual inheritance.</p>
 </li>
 </ul>
 </div>
@@ -2630,8 +2660,8 @@ pointer stored in the method&#8217;s <code>next&lt;fn&gt;</code> member variable
 </td>
 <td class="content">
 The default value for <code>POLICY</code> is the value of
-<code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> at the point <code>&lt;boost/openmethod/core.hpp&gt;</code> is
-included. Changing the value of this symbol has no effect after that point.
+<code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> when <code>&lt;boost/openmethod/core.hpp&gt;</code> is
+included. Subsequently changing it has no retroactive effect.
 </td>
 </tr>
 </table>
@@ -2936,6 +2966,15 @@ overrider that would be called for the same tuple of virtual arguments if
 <span class="p">}</span></code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Usage:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="n">method</span><span class="o">&lt;</span><span class="n">Signature</span><span class="p">,</span> <span class="n">ReturnType</span><span class="p">,</span> <span class="n">Policy</span><span class="o">&gt;::</span><span class="k">override</span><span class="o">&lt;</span><span class="n">Functions</span><span class="p">...</span><span class="o">&gt;</span> <span class="n">some_unique_name</span><span class="p">;</span>
+  <span class="c1">// at file scope</span></code></pre>
+</div>
+</div>
 </div>
 <div class="sect3">
 <h4 id="ref_description_10">Description</h4>
@@ -2994,34 +3033,6 @@ or, if it is a polymorphic type, covariant with the method&#8217;s return type.<
 <div class="paragraph">
 <p>Remove <em>Functions</em> from the overriders of <code>method</code>.</p>
 </div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="ref_virtual">virtual_</h3>
-<div class="sect3">
-<h4 id="ref_synopsis_10">Synopsis</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="c1">// &lt;boost/openmethod/core.hpp&gt;</span>
-
-<span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span> <span class="p">{</span>
-
-<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
-<span class="k">struct</span> <span class="nc">virtual_</span><span class="p">;</span>
-
-<span class="p">}</span></code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="ref_description_11">Description</h4>
-<div class="paragraph">
-<p>Marks a formal parameter of a method as virtual. Requires a specialization of
-<code>virtual_traits</code> for <code>T</code> and the <code>Policy</code> of the method. Specializations for
-<code>T&amp;</code>, <code>T&amp;&amp;</code>, <code>std::unique_ptr&lt;T&gt;</code>, <code>std::shared_ptr&lt;T&gt;</code> and <code>const
-std::shared_ptr&lt;T&gt;&amp;</code> are provided. See the documentation of <code>virtual_traits</code> for
-more information.</p>
 </div>
 </div>
 </div>
@@ -3520,9 +3531,122 @@ example, <code>virtual_traits&lt;std::shared_ptr&lt;T&gt;, Policy&gt;::rebind&lt
 </div>
 </div>
 <div class="sect2">
-<h3 id="virtual_ptr_with_vptr">with_vptr</h3>
+<h3 id="virtual_ptr_use_classes">use_classes</h3>
 <div class="sect3">
 <h4 id="virtual_ptr_synopsis_3">Synopsis</h4>
+<div class="paragraph">
+<p>Defined in &lt;boost/openmethod/core.hpp&gt;.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span> <span class="p">{</span>
+
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span><span class="o">...</span> <span class="nc">Classes</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Policy</span> <span class="o">=</span> <span class="n">BOOST_OPENMETHOD_DEFAULT_POLICY</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">use_classes</span> <span class="p">{</span>
+    <span class="n">use_classes</span><span class="p">();</span>
+    <span class="o">~</span><span class="n">use_classes</span><span class="p">();</span>
+<span class="p">};</span>
+
+<span class="p">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Usage:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="n">use_classes</span><span class="o">&lt;</span><span class="n">Classes</span><span class="p">...</span><span class="o">&gt;</span> <span class="n">some_unique_name</span><span class="p">;</span> <span class="c1">// at file scope</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_description_3">Description</h4>
+<div class="paragraph">
+<p><code>use_classes</code>, instantiated as a static object, registers <code>Classes</code> in <code>Policy</code>.</p>
+</div>
+<div class="paragraph">
+<p>Classes potentially involved in a method definition, an overrider, or a method
+call must be registered via <code>use_classes</code>. A class may be registered multiple
+times. A class and its direct bases must be listed together in one or more
+instantiations of <code>use_classes</code>.</p>
+</div>
+<div class="paragraph">
+<p>Virtual and multiple inheritance are supported, as long as they don&#8217;t result in
+a class lattice that contains repeated inheritance.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+The default value for <code>Policy</code> is the value of
+<code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> when <code>&lt;boost/openmethod/core.hpp&gt;</code> is
+included. Subsequently changing it has no retroactive effect.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_members_3">Members</h4>
+<div class="sect4">
+<h5 id="virtual_ptr_constructor">constructor</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="n">use_classes</span><span class="p">();</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Registers <code>Classes</code> and their inheritance relationships in <code>Policy</code>.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="virtual_ptr_destructor">destructor</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="o">~</span><span class="n">use_classes</span><span class="p">();</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Removes <code>Classes</code> and their inheritance relationships from <code>Policy</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="virtual_ptr_virtual">virtual_</h3>
+<div class="sect3">
+<h4 id="virtual_ptr_synopsis_4">Synopsis</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c++"><span class="c1">// &lt;boost/openmethod/core.hpp&gt;</span>
+
+<span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span> <span class="p">{</span>
+
+<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">virtual_</span><span class="p">;</span>
+
+<span class="p">}</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="virtual_ptr_description_4">Description</h4>
+<div class="paragraph">
+<p>Marks a formal parameter of a method as virtual. Requires a specialization of
+<code>virtual_traits</code> for <code>T</code> and the <code>Policy</code> of the method. Specializations for
+<code>T&amp;</code>, <code>T&amp;&amp;</code>, <code>std::unique_ptr&lt;T&gt;</code>, <code>std::shared_ptr&lt;T&gt;</code> and <code>const
+std::shared_ptr&lt;T&gt;&amp;</code> are provided. See the documentation of <code>virtual_traits</code> for
+more information.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="virtual_ptr_with_vptr">with_vptr</h3>
+<div class="sect3">
+<h4 id="virtual_ptr_synopsis_5">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/core.hpp&gt;.</p>
 </div>
@@ -3552,7 +3676,7 @@ example, <code>virtual_traits&lt;std::shared_ptr&lt;T&gt;, Policy&gt;::rebind&lt
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_description_3">Description</h4>
+<h4 id="virtual_ptr_description_5">Description</h4>
 <div class="paragraph">
 <p><code>with_vptr</code> is a CRTP class template that embeds and manages a vptr across a
 class hierarchy.</p>
@@ -3576,9 +3700,9 @@ levels of the hierarchy.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_members_3">Members</h4>
+<h4 id="virtual_ptr_members_4">Members</h4>
 <div class="sect4">
-<h5 id="virtual_ptr_constructor">constructor</h5>
+<h5 id="virtual_ptr_constructor_2">constructor</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="n">with_vptr</span><span class="p">();</span></code></pre>
@@ -3591,7 +3715,7 @@ preserving the validity of the pointer across calls to <code>initialize</code>.<
 </div>
 </div>
 <div class="sect4">
-<h5 id="virtual_ptr_destructor">destructor</h5>
+<h5 id="virtual_ptr_destructor_2">destructor</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="o">~</span><span class="n">with_vptr</span><span class="p">();</span></code></pre>
@@ -3617,7 +3741,7 @@ preserving the validity of the pointer across calls to <code>initialize</code>.<
 <div class="sect2">
 <h3 id="virtual_ptr_abstract_policy">abstract_policy</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_synopsis_4">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_6">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/basic_policy.hpp&gt;.</p>
 </div>
@@ -3632,7 +3756,7 @@ preserving the validity of the pointer across calls to <code>initialize</code>.<
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_description_4">Description</h4>
+<h4 id="virtual_ptr_description_6">Description</h4>
 <div class="paragraph">
 <p><code>abstract_policy</code> is a required base class for a policy. It makes it possible
 for meta-functions such as <code>use_classes</code> to discriminate between user classes
@@ -3643,7 +3767,7 @@ and the (optional) policy class.</p>
 <div class="sect2">
 <h3 id="virtual_ptr_domain">domain</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_synopsis_5">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_7">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/basic_policy.hpp&gt;.</p>
 </div>
@@ -3662,14 +3786,14 @@ and the (optional) policy class.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_description_5">Description</h4>
+<h4 id="virtual_ptr_description_7">Description</h4>
 <div class="paragraph">
 <p><code>domain</code> is a registry of classes and methods registered in a <em>Policy</em>,
 and their dispatch tables.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_members_4">Members</h4>
+<h4 id="virtual_ptr_members_5">Members</h4>
 <div class="sect4">
 <h5 id="virtual_ptr_static_vptr">static_vptr</h5>
 <div class="listingblock">
@@ -3687,7 +3811,7 @@ and their dispatch tables.</p>
 <div class="sect2">
 <h3 id="virtual_ptr_basic_policy">basic_policy</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_synopsis_6">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_8">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/basic_policy.hpp&gt;.</p>
 </div>
@@ -3734,7 +3858,7 @@ and their dispatch tables.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_description_6">Description</h4>
+<h4 id="virtual_ptr_description_8">Description</h4>
 <div class="paragraph">
 <p><code>basic_policy</code> implements a policy, which consists of a a collection of methods,
 classes, dispatch data, and facets, which specify how to obtain a pointer to a
@@ -3749,7 +3873,7 @@ static state.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_members_5">Members</h4>
+<h4 id="virtual_ptr_members_6">Members</h4>
 <div class="sect4">
 <h5 id="virtual_ptr_has_facet">has_facet</h5>
 <div class="listingblock">
@@ -3875,7 +3999,7 @@ same <code>domain</code>.
 <div class="sect2">
 <h3 id="virtual_ptr_rtti">rtti</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_synopsis_7">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_9">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/basic_policy.hpp&gt;.</p>
 </div>
@@ -3890,7 +4014,7 @@ same <code>domain</code>.
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_description_7">Description</h4>
+<h4 id="virtual_ptr_description_9">Description</h4>
 <div class="paragraph">
 <p>The <code>rtti</code> facet provides type information for classes and objects, implements
 downcast in presence of virtual inheritance, and writes descriptions of types to
@@ -3946,7 +4070,10 @@ an <code>ostream</code>-like object.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Returns a unique key for <code>type</code>. Required only for RTTI systems that possibly assign more than one <code>type_id</code> to a type (like standard RTTI).</p>
+<p>Returns a unique key for <code>type</code>. Required only for RTTI systems that assign more
+than one type "identifiers" to a type. For example, standard RTTI allows
+implementations to have multiple instances of <code>std::type_info</code> for the same
+type.</p>
 </div>
 </div>
 <div class="sect4">
@@ -3966,7 +4093,7 @@ an <code>ostream</code>-like object.</p>
 <div class="sect2">
 <h3 id="virtual_ptr_std_rtti">std_rtti</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_synopsis_8">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_10">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/std_rtti.hpp&gt;.</p>
 </div>
@@ -3995,13 +4122,13 @@ an <code>ostream</code>-like object.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_description_8">Description</h4>
+<h4 id="virtual_ptr_description_10">Description</h4>
 <div class="paragraph">
 <p><code>std_rtti</code> is an implementation of the <code>rtti</code> facet that uses standard RTTI.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_members_6">Members</h4>
+<h4 id="virtual_ptr_members_7">Members</h4>
 <div class="sect4">
 <h5 id="virtual_ptr_static_type_2">static_type</h5>
 <div class="listingblock">
@@ -4071,7 +4198,7 @@ instance of <code>std::type_info</code> for each specific type.</p>
 <div class="sect2">
 <h3 id="virtual_ptr_deferred_static_rtti">deferred_static_rtti</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_synopsis_9">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_11">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/basic_policy.hpp&gt;.</p>
 </div>
@@ -4086,7 +4213,7 @@ instance of <code>std::type_info</code> for each specific type.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_description_9">Description</h4>
+<h4 id="virtual_ptr_description_11">Description</h4>
 <div class="paragraph">
 <p><code>deferred_static_rtti</code> is a facet that defers collection of static type ids.</p>
 </div>
@@ -4103,7 +4230,7 @@ initialized. Adding this facet to a policy moves the collection of type ids to
 <div class="sect2">
 <h3 id="virtual_ptr_minimal_rtti">minimal_rtti</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_synopsis_10">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_12">Synopsis</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">minimal_rtti</span> <span class="o">:</span> <span class="k">virtual</span> <span class="n">rtti</span> <span class="p">{</span>
@@ -4114,7 +4241,7 @@ initialized. Adding this facet to a policy moves the collection of type ids to
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_description_10">Description</h4>
+<h4 id="virtual_ptr_description_12">Description</h4>
 <div class="paragraph">
 <p><code>minimal_rtti</code> is an implementation of the <code>rtti</code> facet that only uses static
 type information.</p>
@@ -4130,7 +4257,7 @@ is not supported. Classes are not required to be polymorphic.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_members_7">Members</h4>
+<h4 id="virtual_ptr_members_8">Members</h4>
 <div class="sect4">
 <h5 id="virtual_ptr_static_type_3">static_type</h5>
 <div class="listingblock">
@@ -4148,7 +4275,7 @@ is not supported. Classes are not required to be polymorphic.</p>
 <div class="sect2">
 <h3 id="virtual_ptr_vptr">vptr</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_synopsis_11">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_13">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/basic_policy.hpp&gt;.</p>
 </div>
@@ -4163,7 +4290,7 @@ is not supported. Classes are not required to be polymorphic.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_description_11">Description</h4>
+<h4 id="virtual_ptr_description_13">Description</h4>
 <div class="paragraph">
 <p><code>vptr</code> is a facet that obtains a pointer to the v-table for an object.</p>
 </div>
@@ -4221,7 +4348,7 @@ is required for indirect <code>virtual_ptr</code>s.
 <div class="sect2">
 <h3 id="virtual_ptr_extern_vptr">extern_vptr</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_synopsis_12">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_14">Synopsis</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">extern_vptr</span> <span class="o">:</span> <span class="k">virtual</span> <span class="n">vptr</span> <span class="p">{};</span></code></pre>
@@ -4229,7 +4356,7 @@ is required for indirect <code>virtual_ptr</code>s.
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_description_12">Description</h4>
+<h4 id="virtual_ptr_description_14">Description</h4>
 <div class="paragraph">
 <p><code>extern_vptr</code> is a specialization of <code>vptr</code> that stores vptrs outside of the
 objects.</p>
@@ -4276,7 +4403,7 @@ itself remains the same.</p>
 <div class="sect2">
 <h3 id="virtual_ptr_indirect_vptr">indirect_vptr</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_synopsis_13">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_15">Synopsis</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">struct</span> <span class="nc">indirect_vptr</span> <span class="p">{};</span></code></pre>
@@ -4284,7 +4411,7 @@ itself remains the same.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_description_13">Description</h4>
+<h4 id="virtual_ptr_description_15">Description</h4>
 <div class="paragraph">
 <p><code>indirect_vptr</code> is a facet that makes <code>virtual_ptr</code>s and <code>with_vptr</code> use
 pointers to pointers to v-tables, instead of straight pointers. As a
@@ -4301,7 +4428,7 @@ consequence, they remain valid after a call to <code>initialize</code>.</p>
 <div class="sect2">
 <h3 id="virtual_ptr_vptr_vector">vptr_vector</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_synopsis_14">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_16">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/vptr_vector.hpp&gt;.</p>
 </div>
@@ -4324,7 +4451,7 @@ consequence, they remain valid after a call to <code>initialize</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_description_14">Description</h4>
+<h4 id="virtual_ptr_description_16">Description</h4>
 <div class="paragraph">
 <p><code>vptr_vector</code> is an implementation or <code>external_vptr</code> that keeps the pointers
 to the v-tables in a <code>std::vector</code>. If <code>UseIndirectVptrs</code> is <code>indirect_vptr</code>,
@@ -4335,7 +4462,7 @@ stores pointers to pointers to the v-tables.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_members_8">Members</h4>
+<h4 id="virtual_ptr_members_9">Members</h4>
 <div class="sect4">
 <h5 id="virtual_ptr_register_vptrs_2">register_vptrs</h5>
 <div class="listingblock">
@@ -4375,7 +4502,7 @@ otherwise, uses the <code>type_id</code> as the index.</p>
 <div class="sect2">
 <h3 id="virtual_ptr_vptr_map">vptr_map</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_synopsis_15">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_17">Synopsis</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++"><span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">policies</span> <span class="p">{</span>
@@ -4402,7 +4529,7 @@ otherwise, uses the <code>type_id</code> as the index.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_description_15">Description</h4>
+<h4 id="virtual_ptr_description_17">Description</h4>
 <div class="paragraph">
 <p><code>vptr_map</code> is an implementation of `external_vptr that stores the pointers to
 the v-tables in a map.</p>
@@ -4417,7 +4544,7 @@ the v-tables in a map.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_members_9">Members</h4>
+<h4 id="virtual_ptr_members_10">Members</h4>
 <div class="sect4">
 <h5 id="virtual_ptr_register_vptrs_3">register_vptrs</h5>
 <div class="listingblock">
@@ -4452,7 +4579,7 @@ its <code>error</code> function; then calls <code>abort</code>.</p>
 <div class="sect2">
 <h3 id="virtual_ptr_type_hash">type_hash</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_synopsis_16">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_18">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/basic_policy.hpp&gt;.</p>
 </div>
@@ -4467,7 +4594,7 @@ its <code>error</code> function; then calls <code>abort</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_description_16">Description</h4>
+<h4 id="virtual_ptr_description_18">Description</h4>
 <div class="paragraph">
 <p><code>type_hash</code> is a facet that provides a hash function for a fixed set of
 <code>type_id</code>s.</p>
@@ -4510,7 +4637,7 @@ possible output values of the hash function.</p>
 <div class="sect2">
 <h3 id="virtual_ptr_fast_perfect_hash">fast_perfect_hash</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_synopsis_17">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_19">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/fast_perfect_hash.hpp&gt;.</p>
 </div>
@@ -4527,14 +4654,14 @@ possible output values of the hash function.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_description_17">Description</h4>
+<h4 id="virtual_ptr_description_19">Description</h4>
 <div class="paragraph">
 <p><code>fast_perfect_hash</code> implements a very fast, perfect (but not minimal) hash
 function for <code>type_id</code>s.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_members_10">Members</h4>
+<h4 id="virtual_ptr_members_11">Members</h4>
 <div class="paragraph">
 <p>Find two factors</p>
 </div>
@@ -4582,7 +4709,7 @@ summary of the search.</p>
 <div class="sect2">
 <h3 id="virtual_ptr_error_handler">error_handler</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_synopsis_18">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_20">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/basic_policy.hpp&gt;.</p>
 </div>
@@ -4629,7 +4756,7 @@ summary of the search.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_description_18">Description</h4>
+<h4 id="virtual_ptr_description_20">Description</h4>
 <div class="paragraph">
 <p><code>error_handler</code> is a facet that handles errors.</p>
 </div>
@@ -4658,7 +4785,7 @@ termination by throwing an exception.</p>
 <div class="sect2">
 <h3 id="virtual_ptr_vectored_error_handler">vectored_error_handler</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_synopsis_19">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_21">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/vectored_error_handler.hpp&gt;.</p>
 </div>
@@ -4685,14 +4812,14 @@ termination by throwing an exception.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_description_19">Description</h4>
+<h4 id="virtual_ptr_description_21">Description</h4>
 <div class="paragraph">
 <p><code>vectored_error_handler</code> is an implementation of <code>error_handler</code> that calls a
 <code>std::function</code> to handle the error.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_members_11">Members</h4>
+<h4 id="virtual_ptr_members_12">Members</h4>
 <div class="sect4">
 <h5 id="virtual_ptr_error_2">error</h5>
 <div class="listingblock">
@@ -4723,7 +4850,7 @@ of <code>error</code>.</p>
 <div class="sect2">
 <h3 id="virtual_ptr_throw_error_handler">throw_error_handler</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_synopsis_20">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_22">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/throw_error_handler.hpp&gt;.</p>
 </div>
@@ -4741,14 +4868,14 @@ of <code>error</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_description_20">Description</h4>
+<h4 id="virtual_ptr_description_22">Description</h4>
 <div class="paragraph">
 <p>throw_error_handler is an implementation of the <code>error_handler</code> facet that
 throws the error as an exception.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_members_12">Members</h4>
+<h4 id="virtual_ptr_members_13">Members</h4>
 <div class="sect4">
 <h5 id="virtual_ptr_error_4">error</h5>
 <div class="listingblock">
@@ -4766,7 +4893,7 @@ throws the error as an exception.</p>
 <div class="sect2">
 <h3 id="virtual_ptr_error_output">error_output</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_synopsis_21">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_23">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/basic_policy.hpp&gt;.</p>
 </div>
@@ -4781,7 +4908,7 @@ throws the error as an exception.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_description_21">Description</h4>
+<h4 id="virtual_ptr_description_23">Description</h4>
 <div class="paragraph">
 <p><code>error_output</code> is a facet that provides a stream for writing error messages.</p>
 </div>
@@ -4804,7 +4931,7 @@ throws the error as an exception.</p>
 <div class="sect2">
 <h3 id="virtual_ptr_basic_error_output">basic_error_output</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_synopsis_22">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_24">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/basic_error_output.hpp&gt;.</p>
 </div>
@@ -4822,14 +4949,14 @@ throws the error as an exception.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_description_22">Description</h4>
+<h4 id="virtual_ptr_description_24">Description</h4>
 <div class="paragraph">
 <p><code>basic_error_output</code> is an implementation of <code>error_output</code> that writes error
 messages to a <code>RestrictedOutputStream</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_members_13">Members</h4>
+<h4 id="virtual_ptr_members_14">Members</h4>
 <div class="sect4">
 <h5 id="virtual_ptr_error_stream_2">error_stream</h5>
 <div class="listingblock">
@@ -4848,7 +4975,7 @@ it.</p>
 <div class="sect2">
 <h3 id="virtual_ptr_trace_output">trace_output</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_synopsis_23">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_25">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/basic_policy.hpp&gt;.</p>
 </div>
@@ -4864,7 +4991,7 @@ it.</p>
 <hr>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_description_23">Description</h4>
+<h4 id="virtual_ptr_description_25">Description</h4>
 <div class="paragraph">
 <p><code>trace_output</code> is a facet used to write trace messages.</p>
 </div>
@@ -4906,7 +5033,7 @@ and patch versions.</p>
 <div class="sect2">
 <h3 id="virtual_ptr_basic_trace_output">basic_trace_output</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_synopsis_24">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_26">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/basic_trace_output.hpp&gt;.</p>
 </div>
@@ -4925,14 +5052,14 @@ and patch versions.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_description_24">Description</h4>
+<h4 id="virtual_ptr_description_26">Description</h4>
 <div class="paragraph">
 <p><code>basic_error_output</code> is an implementation of <code>trace_output</code> that writes error
 messages to a <code>RestrictedOutputStream</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_members_14">Members</h4>
+<h4 id="virtual_ptr_members_15">Members</h4>
 <div class="sect4">
 <h5 id="virtual_ptr_trace_enabled_2">trace_enabled</h5>
 <div class="listingblock">
@@ -4962,7 +5089,7 @@ open it.</p>
 <div class="sect2">
 <h3 id="virtual_ptr_restrictedoutputstream">RestrictedOutputStream</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_description_25">Description</h4>
+<h4 id="virtual_ptr_description_27">Description</h4>
 <div class="paragraph">
 <p>RestrictedOutputStream is a concept describing a <code>std::ostream</code>-like class with
 a reduced set of operations.</p>
@@ -5029,7 +5156,7 @@ the library uses a lightweight implementation based on the C stream functions.</
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-29 08:39:56 -0400
+Last updated 2025-02-23 13:14:51 -0500
 </div>
 </div>
 </body>

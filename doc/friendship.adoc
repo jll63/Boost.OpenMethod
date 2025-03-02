@@ -1,9 +1,19 @@
 
 ## Friendship
 
-Overriders are placed in specializations of a template named after the method,
-and declared in the current namespace. Macro `BOOST_OPENMETHOD_OVERRIDERS`
-returns that name. We can thus grant friendship to all the overriders of `poke`:
+Overriders are implemented as static functions located in specializations of a
+template named after the method, declared in the same scope. Macro
+`BOOST_OPENMETHOD_OVERRIDERS` returns that name. The template argument for a
+specialization is the signature of the overrider. For example, the overrider of
+`poke` for `Cat` is:
+
+[source,c++]
+----
+BOOST_OPENMETHOD_OVERRIDERS(poke)<
+    void(std::ostream& os, virtual_ptr<Cat> cat)>::fn;
+----
+
+We can thus grant friendship to all the overriders of `poke`:
 
 [source,c++]
 ----
@@ -13,25 +23,7 @@ include::{examplesdir}/friendship.cpp[tag=friend_all]
 Be aware, though, that the overriders of _any_ method called `poke` - even with
 a different signature - are granted friendship.
 
-We can also grant friendship to individual overriders. First we declare the
-template:
-
-[source,c++]
-----
-include::{examplesdir}/friendship.cpp[tag=forward]
-----
-
-The overriders of `poke` are specialized on the type of a function corresponding
-to the overrider's return type and parameter list. For example, the overrider
-for `Cat` is a static member function of:
-
-[source,c++]
-----
-struct BOOST_OPENMETHOD_OVERRIDERS(poke)<void(std::ostream& os, virtual_ptr<Cat> cat)>;
-----
-
-We can thus make `Animal` grant friendship to the `Cat` and `Dog`
-specializations:
+We can also grant friendship to individual overriders:
 
 [source,c++]
 ----

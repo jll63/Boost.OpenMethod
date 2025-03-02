@@ -17,6 +17,12 @@ struct method<Signature, ReturnType, Policy>::override {
 }
 ```
 
+Usage:
+```c++
+method<Signature, ReturnType, Policy>::override<Functions...> some_unique_name;
+  // at file scope
+```
+
 ### Description
 
 `override`, instantiated as a static object, add one or more overriders to an

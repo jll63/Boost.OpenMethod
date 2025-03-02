@@ -1,7 +1,7 @@
 
 ## Performance
 
-Open methods are almost as fast as ordinary virtual member functions when
+Open-methods are almost as fast as ordinary virtual member functions when
 compiled with optimization.
 
 clang compiles the following code:
@@ -38,11 +38,11 @@ argument is between 30% and 50% slower than calling the equivalent virtual
 function, with an empty body and no other arguments.
 
 However, `call_poke` does two things: it constructs a `virtual_ptr<Animal>` from
-a `Animal&`; and it calls the method. The construction of the `virtual_ptr` is
-the costly part, as it involves a hash table lookup. Once that price is paid,
-the `virtual_ptr` can be used multiple times. It is passed to the overrider,
-which can further method calls through it. It can be stored in variables in
-place of straight pointers.
+an `Animal&`; and then it calls the method. The construction of the
+`virtual_ptr` is the costly part, as it involves a hash table lookup. Once that
+price is paid, the `virtual_ptr` can be used multiple times. It is passed to the
+overrider, which can further method calls through it. It can be stored in
+variables in place of straight pointers.
 
 Let's look at another example: an AST for an arithmetic calculator:
 

@@ -9,9 +9,9 @@ functions:
 include::{examplesdir}/virtual_func.cpp[tag=code]
 ----
 
-We are going to rewrite it with open-methods.
+We are going to rewrite this using open-methods.
 
-First we remove the virtual functions from the domain classes:
+First we remove the `poke` virtual functions from the domain classes:
 
 [source,c++]
 ----
@@ -22,9 +22,9 @@ Note that the Animal classes do not depend on iostreams anymore. This is a major
 advantage of open-methods over virtual functions: they make it possible to
 better organize dependencies.
 
-Let's define `poke`. First we need to include the library's main header (and
-`<iostream>`). It defines a few macros, and injects a name - `virtual_ptr` - in
-the global namespace.
+Let's implement `poke`. First we need to include the library's main header. It
+defines a few macros, and injects a name - `virtual_ptr` - in the global
+namespace.
 
 [source,c++]
 ----
@@ -33,12 +33,9 @@ include::{examplesdir}/hello_world.cpp[tag=method]
 
 This defines a free function called `poke`, which takes two arguments. The first
 is the `ostream`. The second argument corresponds to the implicit `this` pointer
-in the virtual function. It is now an explicit argument. Just like for virtual
+in a virtual function. It is now an explicit argument. Just like with virtual
 functions, the exact function to execute is selected on the basis of the
 argument's _dynamic_ type.
-
-NOTE: open-method signatures consist of types only. They may *not* contain
-parameter names.
 
 Unlike virtual functions, there is no such thing as a pure open-method that
 would make a class abstract. It is not possible to determine if an overrider is
@@ -54,7 +51,7 @@ include::{examplesdir}/hello_world.cpp[tag=overriders]
 `Bulldog::poke` calls the `poke` it overrides in its `Dog` base. The equivalent
 for open-methods is `next`, a function that is available only inside the body of
 an overrider.  It calls the next most specific overrider, i.e. what would have
-been called if the current override did not exist.
+been called if the overrider did not exist.
 
 [source,c++]
 ----
@@ -70,8 +67,9 @@ include::{examplesdir}/hello_world.cpp[tag=classes]
 ----
 
 Classes can be registered incrementally, as long as all the direct bases of a
-class appear in the same call to `BOOST_OPENMETHOD_CLASSES`. For example,
-`Bulldog` can be added in a second call, as long as `Dog` is listed as well:
+class are listed with it in some call(s) to `BOOST_OPENMETHOD_CLASSES`. For
+example, `Bulldog` can be added in a second call, as long as `Dog` is listed as
+well:
 
 [source,c++]
 ----
@@ -90,9 +88,9 @@ It builds the dispatch tables. Typically this is done in `main`:
 include::{examplesdir}/hello_world.cpp[tag=main,indent=0]
 ----
 
-`poke` is called like an ordinary function (which it is). `virtual_ptr` has a
-conversion constructor that takes a reference to an object, passing it the
-animals by reference. `virtual_ptr`
+We call `poke` like any ordinary function. We can pass it the animals by
+reference, because `virtual_ptr` has a conversion constructor for that:
+
 
 [source,c++]
 ----

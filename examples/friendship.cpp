@@ -27,19 +27,17 @@ class Animal {
   private:
     std::string name;
 
-    template<typename...> friend class BOOST_OPENMETHOD_OVERRIDERS(poke);
+    template<typename> friend class BOOST_OPENMETHOD_OVERRIDERS(poke);
 };
 // end::friend_all[]
 
 #else
 
-// tag::forward[]
-template<typename...> struct BOOST_OPENMETHOD_OVERRIDERS(poke);
-// end::forward[]
-
 // tag::friend[]
 class Cat;
 class Dog;
+
+template<typename> struct BOOST_OPENMETHOD_OVERRIDERS(poke);
 
 class Animal {
     // ...

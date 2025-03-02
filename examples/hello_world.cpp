@@ -9,8 +9,7 @@
 #include <string>
 
 struct Animal {
-    Animal(std::string name) : name(name) {
-    }
+    Animal(std::string name) : name(name) {}
     std::string name;
     virtual ~Animal() = default;
 };
@@ -55,7 +54,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 // tag::next[]
 BOOST_OPENMETHOD_OVERRIDE(
     poke, (std::ostream & os, virtual_ptr<Bulldog> dog), void) {
-    next(os, dog);                              // call super-method
+    next(os, dog);                              // call base overrider
     os << " and bites back";
 }
 // end::next[]
@@ -80,7 +79,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 BOOST_OPENMETHOD_OVERRIDE(
     encounter,
     (std::ostream & os, virtual_ptr<Dog> dog1, virtual_ptr<Dog> dog2), void) {
-    os << "both wag tails";
+    os << "Both wag tails";
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
@@ -106,30 +105,39 @@ int main() {
     // end::main[]
 
     // tag::call[]
-    std::unique_ptr<Animal> a(new Cat("Felix"));
-    std::unique_ptr<Animal> b(new Dog("Snoopy"));
-    std::unique_ptr<Animal> c(new Bulldog("Hector"));
+    std::unique_ptr<Animal> felix(new Cat("Felix"));
+    std::unique_ptr<Animal> snoopy(new Dog("Snoopy"));
+    std::unique_ptr<Animal> hector(new Bulldog("Hector"));
 
-    poke(std::cout, *a); // Felix hisses
+    poke(std::cout, *felix); // Felix hisses
     std::cout << ".\n";
 
-    poke(std::cout, *b); // Snoopy barks
+    poke(std::cout, *snoopy); // Snoopy barks
     std::cout << ".\n";
 
-    poke(std::cout, *c); // Hector barks and bites
+    poke(std::cout, *hector); // Hector barks and bites
     std::cout << ".\n";
     // end::call[]
 
     // tag::multi_call[]
-    encounter(std::cout, *a, *b); // Felix runs away from Snoopy
+    // cat and dog
+    encounter(std::cout, *felix, *snoopy); // Felix runs away from Snoopy
     std::cout << ".\n";
 
-    encounter(std::cout, *b, *a); // Snoopy chases Felix
+    // dog and cat
+    encounter(std::cout, *snoopy, *felix); // Snoopy chases Felix
     std::cout << ".\n";
 
-    encounter(std::cout, *b, *c); // both wag tails
+    // dog and dog
+    encounter(std::cout, *snoopy, *hector); // Both wag tails
+    std::cout << ".\n";
+
+    // cat and cat
+    std::unique_ptr<Animal> tom(new Cat("Tom"));
+    encounter(std::cout, *felix, *tom); // Felix and Tom ignore each other
     std::cout << ".\n";
     // end::multi_call[]
+
 
     return 0;
     // tag::main[]

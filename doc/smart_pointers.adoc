@@ -1,7 +1,7 @@
 
 ## Smart Pointers
 
-`virtual_ptr` can also be used in combined with smart pointers.
+`virtual_ptr` can also be used in combination with smart pointers.
 `virtual_ptr<std::shared_ptr<Class>>` (aliased to `shared_virtual_ptr<Class>`)
 and `virtual_ptr<std::unique_ptr<Class>>` (aliased to
 `unique_virtual_ptr<Class>`) deliver the convenience of automatic memory

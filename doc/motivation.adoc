@@ -1,5 +1,5 @@
-[#overview]
-# Overview
+
+# Motivation
 
 Open-methods are similar to virtual functions, but they are not required to be
 members of a class. By being both free and virtual, they provide a solution to
@@ -10,12 +10,17 @@ to add new operations on the existing types, and new types to the existing
 operations, without modifying existing code?
 
 As a bonus, open-methods can take more than one argument into account when
-selecting the appropriate function to call. This solves the problem of multiple
-dispatch.
+selecting the appropriate function to call - aka multiple dispatch. For that
+reason, open-methods are often called multi-methods, but that term is
+misleading, as it suggests that the feature is useful only when multiple
+dispatch is needed. In reality, it has been found that, in large systems written
+in languages that support multi-methods (Lisp, Clojure, Julia, Cecil, Dylan,
+TADS...), [most methods use
+single-dispatch](https://openaccess.wgtn.ac.nz/articles/thesis/Multiple_Dispatch_in_Practice/16959112/1).
+The real benefit is in the solution to the Expression Problem.
 
-Open-methods are native to Lisp, Clojure, Julia, Cecil, Dylan, TADS, and other
-languages. Bjarne Stroustrup wanted open-methods in C++ almost from the
-beginning. In D&E he writes:
+Bjarne Stroustrup wanted open-methods in C++ almost from the beginning. In D&E
+he writes:
 
 > I repeatedly considered a mechanism for a virtual function call based on more
 than one object, often called multi-methods. I rejected multi-methods with

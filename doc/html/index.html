@@ -561,7 +561,7 @@ pre.rouge .gs {
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#overview">Overview</a></li>
+<li><a href="#motivation">Motivation</a></li>
 <li><a href="#tutorial">Tutorial</a>
 <ul class="sectlevel2">
 <li><a href="#tutorial_hello_world">Hello World</a></li>
@@ -849,7 +849,7 @@ pre.rouge .gs {
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="overview">Overview</h2>
+<h2 id="motivation">Motivation</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Open-methods are similar to virtual functions, but they are not required to be
@@ -867,13 +867,18 @@ operations, without modifying existing code?</p>
 </div>
 <div class="paragraph">
 <p>As a bonus, open-methods can take more than one argument into account when
-selecting the appropriate function to call. This solves the problem of multiple
-dispatch.</p>
+selecting the appropriate function to call - aka multiple dispatch. For that
+reason, open-methods are often called multi-methods, but that term is
+misleading, as it suggests that the feature is useful only when multiple
+dispatch is needed. In reality, it has been found that, in large systems written
+in languages that support multi-methods (Lisp, Clojure, Julia, Cecil, Dylan,
+TADS&#8230;&#8203;), [most methods use
+single-dispatch](<a href="https://openaccess.wgtn.ac.nz/articles/thesis/Multiple_Dispatch_in_Practice/16959112/1" class="bare">https://openaccess.wgtn.ac.nz/articles/thesis/Multiple_Dispatch_in_Practice/16959112/1</a>).
+The real benefit is in the solution to the Expression Problem.</p>
 </div>
 <div class="paragraph">
-<p>Open-methods are native to Lisp, Clojure, Julia, Cecil, Dylan, TADS, and other
-languages. Bjarne Stroustrup wanted open-methods in C++ almost from the
-beginning. In D&amp;E he writes:</p>
+<p>Bjarne Stroustrup wanted open-methods in C++ almost from the beginning. In D&amp;E
+he writes:</p>
 </div>
 <div class="quoteblock">
 <blockquote>
@@ -5226,7 +5231,7 @@ the library uses a lightweight implementation based on the C stream functions.</
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-23 13:14:51 -0500
+Last updated 2025-03-02 19:11:33 -0500
 </div>
 </div>
 </body>

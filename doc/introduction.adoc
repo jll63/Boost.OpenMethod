@@ -13,12 +13,14 @@ As a bonus, open-methods can take more than one argument into account when
 selecting the appropriate function to call - aka multiple dispatch. For that
 reason, open-methods are often called multi-methods, but that term is
 misleading, as it suggests that the feature is useful only when multiple
-dispatch is needed. In reality, it has been found that, in large systems written
-in languages that support multi-methods (Lisp, Clojure, Julia, Cecil, Dylan,
-TADS...), [most methods use
-single-dispatch](https://openaccess.wgtn.ac.nz/articles/thesis/Multiple_Dispatch_in_Practice/16959112/1).
-The real benefit is in the solution to the Expression Problem.
+dispatch is needed. In reality,
+https://openaccess.wgtn.ac.nz/articles/thesis/Multiple_Dispatch_in_Practice/16959112/1[it
+has been observed] that, in large systems written in languages that support
+multi-methods, most methods use single-dispatch. The real benefit is in the
+solution to the Expression Problem.
 
+Open-methods were introduced by the Common Lisp Object System, and they are
+native to many languages: Clojure, Julia, Dylan, TADS, Cecil, Diesel, Nice, etc.
 Bjarne Stroustrup wanted open-methods in C++ almost from the beginning. In D&E
 he writes:
 

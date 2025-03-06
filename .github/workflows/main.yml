@@ -6,6 +6,9 @@ env:
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
+   permissions:
+     contents: 'read'
+     id-token: 'write'
   job:
     name: ${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.config }}
     runs-on: ${{ matrix.os }}
@@ -62,8 +65,4 @@ jobs:
         with:
           path: build_outputs_folder/
       - name: Deploy to GitHub Pages
-        permissions:
-          contents: read
-          pages: write
-          id-token: write
         uses: actions/deploy-pages@v4

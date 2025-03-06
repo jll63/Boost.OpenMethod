@@ -55,19 +55,23 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Generate documentation
       - uses: actions/checkout@v4
-      - name: Build doc
         run: |
           sudo apt-get install asciidoctor
           asciidoctor doc/openmethod.adoc -o build_outputs_folder/index.html
       - name: Build flat headers
         run: |
           mkdir -p build_outputs_folder/boost/openmethod
-          python3 dev/flatten.py build_outputs_folder/boost/openmethod/flat.hpp \
+          python3 dev/flatten.py \
+            build_outputs_folder/boost/openmethod.hpp \
             include/boost/openmethod.hpp \
             include/boost/openmethod/unique_ptr.hpp \
             include/boost/openmethod/shared_ptr.hpp \
             include/boost/openmethod/compiler.hpp
+          python3 dev/flatten.py \
+            build_outputs_folder/boost/openmethod/policies.hpp \
+            include/boost/openmethod/policies.hpp
       - name: Upload static files as artifact
         uses: actions/upload-pages-artifact@v3 # or specific "vX.X.X" version tag for this action
         with:

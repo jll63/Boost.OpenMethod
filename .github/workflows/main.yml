@@ -62,6 +62,7 @@ jobs:
           asciidoctor doc/openmethod.adoc -o build_outputs_folder/index.html
       - name: Build flat headers
         run: |
+          mkdir -p build_outputs_folder/boost/openmethod
           python3 dev/flatten.py build_outputs_folder/boost/openmethod/flat.hpp include/boost/openmethod.hpp include/boost/openmethod/compiler.hpp
       - name: Upload static files as artifact
         uses: actions/upload-pages-artifact@v3 # or specific "vX.X.X" version tag for this action

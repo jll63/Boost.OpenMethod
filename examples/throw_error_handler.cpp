@@ -55,7 +55,7 @@ int main() {
         try {
             trick(std::cout, *animal);
         } catch (bom::not_implemented_error) {
-            std::cerr << "not implemented\n";
+            std::cout << "not implemented\n";
         }
     }
 

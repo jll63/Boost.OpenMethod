@@ -12,4 +12,4 @@ You can experiment with the library on Compiler Explorer by including
 `<https://jll63.github.io/Boost.OpenMethod/boost/openmethod.hpp>`. It also
 includes the headers for the compiler, `shared_ptr` and `unique_ptr`. For
 example, here is the last iteration of the [AST
-example](https://godbolt.org/z/e14YE4fKx).
+example using `std::unique_ptr`](https://godbolt.org/z/cPjzfanc8).

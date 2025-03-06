@@ -52,6 +52,7 @@ jobs:
       - name: Build static files
         id: build
         run: |
+          sudo apt-get install asciidoctor
           asciidoctor doc/openmethod.adoc -o build_outputs_folder/index.html
 
       - name: Upload static files as artifact

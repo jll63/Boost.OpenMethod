@@ -26,7 +26,7 @@ using boost::openmethod::virtual_;
 BOOST_OPENMETHOD(poke, (std::ostream&, virtual_<Animal&>), void);
 
 BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, Cat& cat), void) {
-    os << "hiss\n";
+    os << "hiss";
 }
 
 BOOST_OPENMETHOD_CLASSES(Animal, Cat);

@@ -873,11 +873,13 @@ misleading, as it suggests that the feature is useful only when multiple
 dispatch is needed. In reality,
 <a href="https://openaccess.wgtn.ac.nz/articles/thesis/Multiple_Dispatch_in_Practice/16959112/1">it
 has been observed</a> that, in large systems written in languages that support
-multi-methods (Lisp, Clojure, Julia, Cecil, Dylan, TADS&#8230;&#8203;), most methods use
-single-dispatch. The real benefit is in the solution to the Expression Problem.</p>
+multi-methods, most methods use single-dispatch. The real benefit is in the
+solution to the Expression Problem.</p>
 </div>
 <div class="paragraph">
-<p>Bjarne Stroustrup wanted open-methods in C++ almost from the beginning. In D&amp;E
+<p>Open-methods were introduced by the Common Lisp Object System, and they are
+native to many languages: Clojure, Julia, Dylan, TADS, Cecil, Diesel, Nice, etc.
+Bjarne Stroustrup wanted open-methods in C++ almost from the beginning. In D&amp;E
 he writes:</p>
 </div>
 <div class="quoteblock">
@@ -914,7 +916,9 @@ given us multi-methods, thereby saving us from the visitor pattern workaround
 </blockquote>
 </div>
 <div class="paragraph">
-<p>This library implements the features described in the N2216 paper, with some
+<p>This library implements the features described in the
+<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2216.pdf">N2216 paper</a>,
+with some
 extensions:</p>
 </div>
 <div class="ulist">
@@ -1074,8 +1078,7 @@ available from looking at just the current translation unit.</p>
     <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="n">cat</span><span class="o">-&gt;</span><span class="n">name</span> <span class="o">&lt;&lt;</span> <span class="s">" hisses"</span><span class="p">;</span>               <span class="c1">// overrider body</span>
 <span class="p">}</span>
 
-<span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span>
-    <span class="n">poke</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Dog</span><span class="o">&gt;</span> <span class="n">dog</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+<span class="n">BOOST_OPENMETHOD_OVERRIDE</span><span class="p">(</span><span class="n">poke</span><span class="p">,</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="n">virtual_ptr</span><span class="o">&lt;</span><span class="n">Dog</span><span class="o">&gt;</span> <span class="n">dog</span><span class="p">),</span> <span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="n">dog</span><span class="o">-&gt;</span><span class="n">name</span> <span class="o">&lt;&lt;</span> <span class="s">" barks"</span><span class="p">;</span>
 <span class="p">}</span></code></pre>
 </div>
@@ -1125,9 +1128,9 @@ It builds the dispatch tables. Typically this is done in <code>main</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++"><span class="c1">// only needed in the file that calls boost::openmethod::initialize()</span>
-<span class="cp">#include</span> <span class="cpf">&lt;boost/openmethod/compiler.hpp&gt;</span><span class="cp">
-</span>
+<pre class="rouge highlight"><code data-lang="c++"><span class="cp">#include</span> <span class="cpf">&lt;boost/openmethod/compiler.hpp&gt;</span><span class="cp">
+</span>    <span class="c1">// only needed in the file that calls boost::openmethod::initialize()</span>
+
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="n">boost</span><span class="o">::</span><span class="n">openmethod</span><span class="o">::</span><span class="n">initialize</span><span class="p">();</span>
     <span class="c1">// ...</span>

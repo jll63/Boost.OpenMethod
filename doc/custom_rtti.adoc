@@ -121,12 +121,13 @@ This programs compiles even if standard RTTI is disabled.
 
 ## Deferred RTTI
 
-The RTTI system assigns the types id statically. It is more common to allocate
-them using a global counter, manipulated by static constructors. This is a
-problem, because `static_type` is used by class registration. It may read the
-custom type ids _before_ they are have been initialized.
+In the previous example, the RTTI system assigns types id statically. It is more
+common to allocate them using a global counter, manipulated by static
+constructors. This is a problem, because `static_type` is used by class
+registration. It may read the custom type ids _before_ they are have been
+initialized.
 
-The solution is to add the `deferred_static_rtti` to the policy; it defers
+The solution is to add the `deferred_static_rtti` facet to the policy; it defers
 reading the type information until `initialize` is called.
 
 This time let's support virtual inheritance as well. First the domain classes:

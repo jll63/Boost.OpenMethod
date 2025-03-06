@@ -45,8 +45,7 @@ BOOST_OPENMETHOD_OVERRIDE(
     os << cat->name << " hisses";               // overrider body
 }
 
-BOOST_OPENMETHOD_OVERRIDE(
-    poke, (std::ostream & os, virtual_ptr<Dog> dog), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, virtual_ptr<Dog> dog), void) {
     os << dog->name << " barks";
 }
 // end::overriders[]
@@ -96,8 +95,8 @@ BOOST_OPENMETHOD_OVERRIDE(
 // end::multi[]
 
 // tag::main[]
-// only needed in the file that calls boost::openmethod::initialize()
 #include <boost/openmethod/compiler.hpp>
+    // only needed in the file that calls boost::openmethod::initialize()
 
 int main() {
     boost::openmethod::initialize();

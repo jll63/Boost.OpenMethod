@@ -46,7 +46,9 @@ is sufficient. As a side benefit, the mathematical notation would naturally have
 given us multi-methods, thereby saving us from the visitor pattern workaround
 (Stroustrup, 2020, Thriving in a Crowded and ChangingWorld: C++ 2006–2020).
 
-This library implements the features described in the N2216 paper, with some
+This library implements the features described in the
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2216.pdf[N2216 paper],
+with some
 extensions:
 
 * a mechanism for calling the next most specialized overrider

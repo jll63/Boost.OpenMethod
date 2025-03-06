@@ -1,9 +1,9 @@
 
-[#tutorial]
-# Tutorial
+[#tutorials]
+# Tutorials
 :toc:
 :toc-title:
-:idprefix: tutorial_
+:idprefix: tutorials_
 :examplesdir: ../examples
 
 include::hello_world.adoc[]

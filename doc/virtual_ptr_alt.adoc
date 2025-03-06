@@ -3,7 +3,7 @@
 
 Virtual arguments can be passed as plain references. In a method declaration,
 parameters with a type decorated with `virtual_` are considered in overrider
-selection (along with any `virtual_ptr` parameters).
+selection (along with `virtual_ptr` parameters).
 
 For example, the `poke` open-method in the Animals example can be rewritten as:
 
@@ -19,7 +19,7 @@ int main() {
 }
 ----
 
-Note that `virtual_` is not used in the overriders. It is also removed from the
+Note that `virtual_` is not used in the overrider. It is also removed from the
 method's signature.
 
 By itself, `virtual_` does not provide any benefits. Passing the virtual

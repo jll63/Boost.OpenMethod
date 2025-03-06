@@ -40,9 +40,9 @@ function, with an empty body and no other arguments.
 However, `call_poke` does two things: it constructs a `virtual_ptr<Animal>` from
 an `Animal&`; and then it calls the method. The construction of the
 `virtual_ptr` is the costly part, as it involves a hash table lookup. Once that
-price is paid, the `virtual_ptr` can be used multiple times. It is passed to the
-overrider, which can make further method calls through it. It can be stored in
-variables in place of straight pointers.
+price has been paid, the `virtual_ptr` can be used multiple times. It is passed
+to the overrider, which can make further method calls through it. It can be
+stored in variables in place of plain pointers.
 
 Let's look at another example: an AST for an arithmetic calculator:
 

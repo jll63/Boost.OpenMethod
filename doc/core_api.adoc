@@ -53,8 +53,8 @@ include::{examplesdir}/core_api.cpp[tag=poke_cat]
 
 NOTE: `override` can register multiple overriders.
 
-In C++26, we will be able to use `_` instead of inventing an identifier. In the
-meantime, OpenMethod provides a small convenience macro:
+In C++26, we will be able to use `_` instead of inventing a one-time-use
+identifier. In the meantime, OpenMethod provides a small convenience macro:
 
 [source,c++]
 ----

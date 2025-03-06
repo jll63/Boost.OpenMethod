@@ -3,7 +3,7 @@
 
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/compiler.hpp>
-#include <boost/openmethod/detail/compiler.hpp>
+#include <boost/openmethod/compiler.hpp>
 
 #include "test_util.hpp"
 

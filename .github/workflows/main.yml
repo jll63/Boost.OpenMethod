@@ -49,19 +49,20 @@ jobs:
       - name: Test
         run: |
           cmake --build __build__ --config ${{ matrix.config }} --target all -j 16 --
-  build:
-    # Specify runner +  build & upload the static files as an artifact
+  artifacts:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - name: Build static files
-        id: build
+      - name: Build doc
         run: |
           sudo apt-get install asciidoctor
           asciidoctor doc/openmethod.adoc -o build_outputs_folder/index.html
+      - name: Build flat headers
+        run: |
+          python3 dev/flatten.py build_outputs_folder/boost/openmethod/flat.hpp include/boost/openmethod.hpp include/boost/openmethod/compiler.hpp
       - name: Upload static files as artifact
         uses: actions/upload-pages-artifact@v3 # or specific "vX.X.X" version tag for this action
         with:

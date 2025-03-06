@@ -56,7 +56,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Generate documentation
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
         run: |
           sudo apt-get install asciidoctor
           asciidoctor doc/openmethod.adoc -o build_outputs_folder/index.html

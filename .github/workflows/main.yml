@@ -6,9 +6,9 @@ env:
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-   permissions:
-     contents: 'read'
-     id-token: 'write'
+  permissions:
+    contents: 'read'
+    id-token: 'write'
   job:
     name: ${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.config }}
     runs-on: ${{ matrix.os }}

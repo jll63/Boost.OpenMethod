@@ -64,7 +64,7 @@ int main() {
             make_unique_virtual<Literal>(1),
             make_unique_virtual<Literal>(2)));
 
-    std::cout << value(*expr) << "\n"; // -3
+    std::cout << value(expr) << "\n"; // -3
 
     return 0;
 }

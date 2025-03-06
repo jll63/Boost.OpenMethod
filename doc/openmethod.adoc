@@ -1,5 +1,5 @@
 
-# Boost.OpenMethod
+# Boost.OpenMethod XXX
 Jean-Louis Leroy
 :toc: left
 :toclevels: 3

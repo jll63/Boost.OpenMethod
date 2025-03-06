@@ -62,4 +62,8 @@ jobs:
         with:
           path: build_outputs_folder/
       - name: Deploy to GitHub Pages
+        permissions:
+          contents: read
+          pages: write
+          id-token: write
         uses: actions/deploy-pages@v4

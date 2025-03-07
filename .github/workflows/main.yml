@@ -11,7 +11,7 @@ permissions:
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  job:
+  ubuntu:
     name: ubuntu-${{ matrix.compiler }}-${{ matrix.config }}
     runs-on: ubuntu-latest
     strategy:
@@ -48,7 +48,7 @@ jobs:
         run: |
           cd __build__
           ctest
-  job:
+  macos:
     name: macos-${{ matrix.config }}
     runs-on: macos-latest
     strategy:
@@ -67,7 +67,7 @@ jobs:
         run: |
           cd __build__
           ctest
-  job:
+  windows:
     name: windows-${{ matrix.config }}
     runs-on: windows-latest
     strategy:

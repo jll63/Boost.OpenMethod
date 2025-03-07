@@ -29,6 +29,8 @@ jobs:
         if: matrix.compiler == 'clang++'
       - name: Configure
         run: |
+          pwd
+          pwd
           cmake -S . -B build  -DCMAKE_CXX_COMPILER=${{ matrix.compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.config }}
       - name: Build
         run: |

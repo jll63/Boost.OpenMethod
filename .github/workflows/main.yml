@@ -70,7 +70,7 @@ jobs:
           cmake -B build
       - name: Build
         run: |
-          cmake --build build --config ${{ matrix.config }}
+          cmake --build build --config ${{ matrix.config }} --target all
       - name: Test
         run: |
           cd build

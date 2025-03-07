@@ -27,12 +27,10 @@ jobs:
           chmod +x llvm.sh
           sudo ./llvm.sh $1
         if: matrix.compiler == 'clang++'
-      - name: Configure
-        run: cmake -B build -DCMAKE_CXX_COMPILER=${{ matrix.compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.config }}
-      - name: Build
-        run: cmake --build build -j 16
       - name: Test
         run: |
+          cmake -B build -DCMAKE_CXX_COMPILER=${{ matrix.compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.config }}
+          cmake --build build -j 16
           cd build
           ctest
   macos:

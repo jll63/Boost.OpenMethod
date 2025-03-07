@@ -34,7 +34,7 @@ jobs:
       - name: Build
         run: |
           pwd
-          cmake --build __build__ --target all -j 16
+          cmake --build __build__ -j 16
       - name: Test
         run: |
           cd __build__

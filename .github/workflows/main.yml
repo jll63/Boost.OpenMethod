@@ -71,10 +71,10 @@ jobs:
         if: matrix.os == 'windows-latest'
       - name: Configure
         run: |
-          cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.config }}
+          cmake -B build
       - name: Build
         run: |
-          cmake --build build --target all -j 16
+          cmake --config ${{ matrix.config }} --build build --target all -j 16
       - name: Test
         run: |
           cd build

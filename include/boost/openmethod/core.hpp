@@ -655,7 +655,6 @@ struct with_vptr_derived {};
 template<class, class, bool>
 class with_vptr_aux;
 
-
 #pragma GCC diagnostic ignored "-Wnon-template-friend"
 
 template<class Class, class Policy>

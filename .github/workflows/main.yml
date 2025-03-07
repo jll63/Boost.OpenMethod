@@ -30,8 +30,8 @@ jobs:
       - name: Test
         run: |
           {
-            cmake -B build -DCMAKE_CXX_COMPILER=${{ matrix.compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.config }}
-            cmake --build build --target all -j 16
+            cmake -B build -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
+            cmake --config ${{ matrix.config }} --build build --target all -j 16
             cd build
             ctest
           }

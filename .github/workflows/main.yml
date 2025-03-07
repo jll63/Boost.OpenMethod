@@ -29,12 +29,10 @@ jobs:
         if: matrix.compiler == 'clang++'
       - name: Test
         run: |
-          {
-            cmake -B build -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
-            cmake --build build --config ${{ matrix.config }}
-            cd build
-            ctest
-          }
+          cmake -B build -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
+          cmake --build build --config ${{ matrix.config }}
+          cd build
+          ctest
   macos:
     name: macos-${{ matrix.config }}
     runs-on: macos-latest

@@ -72,7 +72,7 @@ jobs:
       - name: Configure
         run: |
           ${{ matrix.pre_configure }}
-          cmake -S . -B __build__ -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=${{ matrix.config }}
+          cmake -S . -B __build__ -DCMAKE_BUILD_TYPE=${{ matrix.config }}
       - name: Build
         run: |
           cmake --build __build__ --target all -j 16

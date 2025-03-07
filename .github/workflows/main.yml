@@ -29,16 +29,16 @@ jobs:
         if: matrix.compiler == 'clang++'
       - name: Configure
         run: |
-          pwd
-          cmake -S . -B build  -DCMAKE_CXX_COMPILER=${{ matrix.compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.config }}
+        pwd
+        cmake -S . -B build  -DCMAKE_CXX_COMPILER=${{ matrix.compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.config }}
       - name: Build
         run: |
-          pwd
-          cmake --build build -j 16
+        pwd
+        cmake --build build -j 16
       - name: Test
         run: |
-          cd build
-          ctest
+        cd build
+        ctest
   macos:
     name: macos-${{ matrix.config }}
     runs-on: macos-latest

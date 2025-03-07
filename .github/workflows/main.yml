@@ -30,14 +30,14 @@ jobs:
       - name: Configure
         run: |
           pwd
-          cmake -S . -B __build__  -DCMAKE_CXX_COMPILER=${{ matrix.compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.config }}
+          cmake -S . -B build  -DCMAKE_CXX_COMPILER=${{ matrix.compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.config }}
       - name: Build
         run: |
           pwd
-          cmake --build __build__ -j 16
+          cmake --build build -j 16
       - name: Test
         run: |
-          cd __build__
+          cd build
           ctest
   macos:
     name: macos-${{ matrix.config }}
@@ -50,13 +50,13 @@ jobs:
       - uses: actions/checkout@v4
       - name: Configure
         run: |
-          cmake -S . -B __build__  -DCMAKE_BUILD_TYPE=${{ matrix.config }}
+          cmake -S . -B build  -DCMAKE_BUILD_TYPE=${{ matrix.config }}
       - name: Build
         run: |
-          cmake --build __build__ --target all -j 16
+          cmake --build build --target all -j 16
       - name: Test
         run: |
-          cd __build__
+          cd build
           ctest
   windows:
     name: windows-${{ matrix.config }}
@@ -71,14 +71,13 @@ jobs:
         if: matrix.os == 'windows-latest'
       - name: Configure
         run: |
-          ${{ matrix.pre_configure }}
-          cmake -S . -B __build__ -DCMAKE_BUILD_TYPE=${{ matrix.config }}
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.config }}
       - name: Build
         run: |
-          cmake --build __build__ --target all -j 16
+          cmake --build build --target all -j 16
       - name: Test
         run: |
-          cd __build__
+          cd build
           ctest
   artifacts:
     runs-on: ubuntu-latest

@@ -45,10 +45,11 @@ jobs:
           cmake -S . -B __build__ ${{ matrix.cmake_generator }} -DCMAKE_CXX_COMPILER=${{ matrix.compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.config }}
       - name: Build
         run: |
-          cmake --build __build__
+          cmake --build __build__ --target all -j 16 --
       - name: Test
         run: |
-          cmake --build __build__ --config ${{ matrix.config }} --target all -j 16 --
+          cd __build__
+          ctest
   artifacts:
     runs-on: ubuntu-latest
     environment:

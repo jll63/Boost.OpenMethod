@@ -244,6 +244,15 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(shared_virtual_ptr_ctors, Policy, test_policies) {
         {
             shared_virtual_ptr<Dog, Policy> ptr(std::make_shared<Dog>());
             virtual_ptr<Dog, Policy> dumb_vptr(ptr);
+            BOOST_TEST(dumb_vptr.get() == ptr.get());
+            BOOST_TEST(dumb_vptr.vptr() == ptr.vptr());
+        }
+
+        {
+            shared_virtual_ptr<Dog, Policy> ptr(std::make_shared<Dog>());
+            virtual_ptr<Dog, Policy> dumb_vptr(ptr);
+            BOOST_TEST(dumb_vptr.get() == ptr.get());
+            BOOST_TEST(dumb_vptr.vptr() == ptr.vptr());
         }
 
         {

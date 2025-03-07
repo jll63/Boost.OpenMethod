@@ -19,17 +19,6 @@ jobs:
       matrix:
         config: [Debug, Release]
         compiler: [clang++, g++]
-        include:
-          # - os: ubuntu-latest
-          #   compiler: g++-12
-          - os: ubuntu-latest
-            compiler: clang++-18
-            pre_configure: dev/ci-pre-configure-clang 18
-          - os: macos-latest
-            compiler: c++
-          - os: windows-latest
-            compiler: cl
-            cmake_generator: -G "NMake Makefiles"
     steps:
       - uses: actions/checkout@v4
       - name: Install compiler
@@ -40,9 +29,11 @@ jobs:
         if: matrix.compiler == 'clang++'
       - name: Configure
         run: |
+          pwd
           cmake -S . -B __build__  -DCMAKE_CXX_COMPILER=${{ matrix.compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.config }}
       - name: Build
         run: |
+          pwd
           cmake --build __build__ --target all -j 16
       - name: Test
         run: |

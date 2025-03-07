@@ -74,7 +74,7 @@ jobs:
           cmake -B build
       - name: Build
         run: |
-          cmake --config ${{ matrix.config }} --build build
+          cmake --build build --config ${{ matrix.config }}
       - name: Test
         run: |
           cd build

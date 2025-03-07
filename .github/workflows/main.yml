@@ -31,7 +31,7 @@ jobs:
         run: |
           {
             cmake -B build -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
-            cmake --config ${{ matrix.config }} --build build
+            cmake --build build --config ${{ matrix.config }}
             cd build
             ctest
           }

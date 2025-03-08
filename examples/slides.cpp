@@ -195,9 +195,9 @@ namespace unique_virtual_ptr_demo {
 
 using namespace boost::openmethod;
 
-class Number;
-class Plus;
-class Times;
+struct Number;
+struct Plus;
+struct Times;
 
 struct Node {
   virtual ~Node() {}

@@ -30,7 +30,7 @@ class Animal {
   private:
     std::string name;
 
-    template<typename> friend class BOOST_OPENMETHOD_OVERRIDERS(pets::poke);
+    template<typename> friend struct BOOST_OPENMETHOD_OVERRIDERS(pets::poke);
 };
 
 BOOST_OPENMETHOD(poke, (std::ostream&, virtual_ptr<Animal>), void);

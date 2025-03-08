@@ -19,7 +19,7 @@ permissions:
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  ubuntu:
+  Ubuntu:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -43,9 +43,10 @@ jobs:
       - name: Test
         run: |
           ctest --test-dir build --rerun-failed --output-on-failure
-  windows:
+  Windows:
     runs-on: windows-latest
     strategy:
+      fail-fast: false
       matrix:
         config: [Debug, Release]
     steps:
@@ -66,9 +67,10 @@ jobs:
       - name: Test
         run: |
           ctest --test-dir build --rerun-failed --output-on-failure -C ${{ matrix.config }}
-  mac:
+  MacOS:
     runs-on: macos-latest
     strategy:
+      fail-fast: false
       matrix:
         config: [Debug, Release]
     steps:

@@ -27,7 +27,7 @@ class Animal {
   private:
     std::string name;
 
-    template<typename> friend class BOOST_OPENMETHOD_OVERRIDERS(poke);
+    template<typename> friend struct BOOST_OPENMETHOD_OVERRIDERS(poke);
 };
 // end::friend_all[]
 

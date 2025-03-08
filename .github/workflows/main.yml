@@ -70,3 +70,27 @@ jobs:
           path: build_outputs_folder/
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
+  windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        config: [Debug, Release]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ilammy/msvc-dev-cmd@v1
+    - name: Install boost
+      uses: MarkusJx/install-boost@v2
+      id: install-boost
+      with:
+        boost_version: 1.87.0
+      - name: Configure
+        run: |
+          mkdir cmake.bld
+          cd cmake.bld
+          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DBUILD_TESTING=1 -DBUILD_EXAMPLES=1 -Bbuild
+      - name: Build
+        run: cmake --build build
+      - name: Test
+        run: |
+          cd build
+          ctest

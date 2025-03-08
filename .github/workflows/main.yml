@@ -21,61 +21,23 @@ jobs:
         compiler: [clang++, g++]
     steps:
       - uses: actions/checkout@v4
-      - name: Install compiler
+      - name: Install clang++
         run: |
           wget https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
           sudo ./llvm.sh $1
         if: matrix.compiler == 'clang++'
+      - name: Install Boost
+        run: sudo apt-get install -y libboost-all-dev
       - name: Configure
-        run: cmake -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_CXX_COMPILER=${{ matrix.compiler }} -DBUILD_TESTING=1 -Bbuild
+        run: cmake -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_CXX_COMPILER=${{ matrix.compiler }} -DBUILD_TESTING=1 -DBUILD_EXAMPLES=1 -Bbuild
       - name: Build
         run: cmake --build build
       - name: Test
         run: |
           cd build
           ctest
-  macos:
-    name: macos-${{ matrix.config }}
-    runs-on: macos-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        config: [Debug, Release]
-    steps:
-      - uses: actions/checkout@v4
-      - name: Configure
-        run: cmake -S . -B build  -DCMAKE_BUILD_TYPE=${{ matrix.config }}
-      - name: Build
-        run: cmake --build build --target all -j 16
-      - name: Test
-        run: |
-          {
-            cd build
-            ctest
-          }
-  windows:
-    name: windows-${{ matrix.config }}
-    runs-on: windows-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        config: [Debug, Release]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ilammy/msvc-dev-cmd@v1.4.1
-        if: matrix.os == 'windows-latest'
-      - name: Configure
-        run: |
-          cmake -B build
-      - name: Build
-        run: |
-          cmake --build build --config ${{ matrix.config }} --target all
-      - name: Test
-        run: |
-          cd build
-          ctest
-  artifacts:
+    artifacts:
     runs-on: ubuntu-latest
     environment:
       name: github-pages

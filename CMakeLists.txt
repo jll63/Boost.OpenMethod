@@ -23,100 +23,16 @@ add_library(Boost::openmethod ALIAS boost_openmethod)
 target_include_directories(boost_openmethod INTERFACE include)
 target_compile_features(boost_openmethod INTERFACE cxx_alias_templates cxx_variadic_templates cxx_decltype)
 
-if(STANDALONE)
-  find_package(Boost REQUIRED)
+find_package(Boost REQUIRED)
+
+if(BUILD_TESTING)
+  message(STATUS "Building tests")
   include(CTest)
   enable_testing()
-  if(BUILD_TESTING)
-    add_subdirectory(test)
-    set_property(TARGET tests PROPERTY EXCLUDE_FROM_ALL FALSE)
-  endif()
+  add_subdirectory(test)
+endif()
 
-  if(BUILD_EXAMPLES)
-    add_subdirectory(examples)
-  endif()
-else()
-  if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-
-    # Fetch support files
-
-    message(STATUS "Fetching BoostFetch.cmake")
-
-    file(DOWNLOAD
-      "https://raw.githubusercontent.com/boostorg/cmake/develop/include/BoostFetch.cmake"
-      "${CMAKE_BINARY_DIR}/fetch_and_include/BoostFetch.cmake"
-    )
-
-    include("${CMAKE_BINARY_DIR}/fetch_and_include/BoostFetch.cmake")
-
-    boost_fetch(boostorg/cmake TAG develop NO_ADD_SUBDIR)
-
-    FetchContent_GetProperties(boostorg_cmake)
-
-    list(APPEND CMAKE_MODULE_PATH ${boostorg_cmake_SOURCE_DIR}/include)
-
-    # Testing (off by default)
-
-    option(BUILD_TESTING "Build the tests." OFF)
-    option(BUILD_EXAMPLES "Build the examples." OFF)
-    include(CTest)
-
-    if(BUILD_TESTING OR BUILD_EXAMPLES)
-      set(BUILD_TESTING OFF) # hide cache variable
-
-      boost_fetch(boostorg/assert TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/config TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/core TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/static_assert TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/throw_exception TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/algorithm TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/bind TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/detail TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/preprocessor TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/type_traits TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/describe TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/mp11 TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/exception TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/smart_ptr TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/tuple TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/array TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/concept_check TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/function TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/iterator TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/mpl TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/range TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/regex TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/unordered TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/fusion TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/optional TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/utility TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/predef TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/container_hash TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/conversion TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/function_types TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/typeof TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/functional TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/io TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/numeric_conversion TAG develop EXCLUDE_FROM_ALL)
-      boost_fetch(boostorg/test TAG develop EXCLUDE_FROM_ALL)
-
-      unset(BUILD_TESTING)
-    endif()
-
-    # Do not use the default BoostInstall versioned layout on Windows when standalone
-    set(BOOST_INSTALL_LAYOUT "system" CACHE STRING "Installation layout (versioned, tagged, or system)")
-
-    include(BoostInstall)
-
-    boost_install(TARGETS boost_openmethod HEADER_DIRECTORY include/)
-  endif()
-
-  if(BUILD_TESTING)
-    add_subdirectory(test)
-    set_property(TARGET tests PROPERTY EXCLUDE_FROM_ALL FALSE)
-  endif()
-
-  if(BUILD_EXAMPLES)
-    add_subdirectory(examples)
-  endif()
+if(BUILD_EXAMPLES)
+message(STATUS "Building examples")
+add_subdirectory(examples)
 endif()

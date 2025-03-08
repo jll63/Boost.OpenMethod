@@ -28,6 +28,11 @@ target_include_directories(boost_openmethod INTERFACE include)
 find_package(Boost COMPONENTS)
 target_link_libraries(boost_openmethod INTERFACE Boost::boost)
 
+if(MSVC)
+  add_compile_definitions(_SCL_SECURE_NO_WARNINGS _CRT_SECURE_NO_WARNINGS)
+  add_compile_options(/EHsc /FAs)
+endif()
+
 if(BUILD_TESTING)
   message(STATUS "Building tests")
   include(CTest)

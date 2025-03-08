@@ -25,7 +25,8 @@ add_library(Boost::openmethod ALIAS boost_openmethod)
 
 target_include_directories(boost_openmethod INTERFACE include)
 
-find_package(Boost REQUIRED)
+find_package(Boost COMPONENTS mp11 test pp dynamic_bitset REQUIRED)
+target_link_libraries(boost_openmethod INTERFACE Boost::mp11 Boost::test Boost::pp Boost::dynamic_bitset)
 
 if(BUILD_TESTING)
   message(STATUS "Building tests")

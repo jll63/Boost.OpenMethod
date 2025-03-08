@@ -102,8 +102,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_ptr_ctors, Policy, test_policies) {
 }
 
 template<
-    template<class Class> class smart_ptr,
-    template<class Class> class other_smart_ptr, class Policy>
+    template<class... Class> class smart_ptr,
+    template<class... Class> class other_smart_ptr, class Policy>
 struct check_smart_ctors {
     // construction
 

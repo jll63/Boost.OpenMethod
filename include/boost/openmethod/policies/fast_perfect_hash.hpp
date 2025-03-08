@@ -145,7 +145,7 @@ void fast_perfect_hash<Policy>::hash_initialize(
 
     hash_search_error error;
     error.attempts = total_attempts;
-    error.buckets = 1ul << M;
+    error.buckets = std::size_t(1) << M;
 
     if constexpr (Policy::template has_facet<error_handler>) {
         Policy::error(error);

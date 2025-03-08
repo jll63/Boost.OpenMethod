@@ -55,7 +55,7 @@ jobs:
         env:
           BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
       - name: Build
-        run: cmake --build build -C ${{ matrix.config }}
+        run: cmake --build build --config ${{ matrix.config }}
       - name: Test
         run: |
           ctest --test-dir build --rerun-failed --output-on-failure -C ${{ matrix.config }}

@@ -5,6 +5,10 @@
 
 cmake_minimum_required(VERSION 3.10)
 
+if(POLICY CMP0167)
+  cmake_policy(SET CMP0167 NEW)
+endif()
+
 project(boost_openmethod VERSION 1.87.0 LANGUAGES CXX)
 
 if(NOT CMAKE_CXX_STANDARD)

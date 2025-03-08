@@ -35,7 +35,7 @@ jobs:
         run: cmake --build build
       - name: Test
         run: |
-          ctest . --rerun-failed --output-on-failure
+          ctest --test-dir build --rerun-failed --output-on-failure
   windows:
     runs-on: windows-latest
     strategy:
@@ -58,7 +58,7 @@ jobs:
         run: cmake --build build
       - name: Test
         run: |
-          ctest . --rerun-failed --output-on-failure -C ${{ matrix.config }}
+          ctest --test-dir build --rerun-failed --output-on-failure -C ${{ matrix.config }}
   mac:
     runs-on: macos-latest
     strategy:
@@ -77,7 +77,7 @@ jobs:
           cmake --build build
       - name: Test
         run: |
-          ctest . --rerun-failed --output-on-failure
+          ctest --test-dir build --rerun-failed --output-on-failure
   artifacts:
     runs-on: ubuntu-latest
     environment:

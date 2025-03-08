@@ -58,11 +58,11 @@ class Animal {
 
 #endif
 
-class Cat : Animal {
+class Cat : public Animal {
     using Animal::Animal;
 };
 
-class Dog : Animal {
+class Dog : public Animal {
     using Animal::Animal;
 };
 

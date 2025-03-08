@@ -20,7 +20,7 @@ template<typename T>
 struct virtual_;
 
 template<class Class, class Policy>
-struct virtual_ptr;
+class virtual_ptr;
 
 template<typename T, class Policy>
 struct virtual_traits;

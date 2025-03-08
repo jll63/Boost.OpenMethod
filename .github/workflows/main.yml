@@ -109,7 +109,6 @@ jobs:
           cmake -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DBUILD_TESTING=1 -DBUILD_EXAMPLES=1 -Bbuild
       - name: Build
         run: |
-          find /opt/homebrew/Cellar/boost/1.87.0
           cmake --build build
       - name: Test
         run: |

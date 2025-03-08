@@ -17,7 +17,7 @@ struct test_policy : bom::default_policy::remove<bom::policies::extern_vptr> {};
 
 #define BOOST_TEST_MODULE instrusive
 #include <boost/test/included/unit_test.hpp>
-#include <boost/test/output_test_stream.hpp>
+#include <boost/test/tools/output_test_stream.hpp>
 
 #include "test_util.hpp"
 

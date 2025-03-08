@@ -1213,6 +1213,11 @@ method<Name(Parameters...), ReturnType, Policy>::resolve_multi_next(
 // -----------------------------------------------------------------------------
 // Error handling
 
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable : WarningCode)
+#endif
+
 template<
     typename Name, typename... Parameters, typename ReturnType, class Policy>
 BOOST_NORETURN auto
@@ -1236,6 +1241,10 @@ method<Name(Parameters...), ReturnType, Policy>::not_implemented_handler(
 
     abort(); // in case user handler "forgets" to abort
 }
+
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 
 // -----------------------------------------------------------------------------
 // thunk

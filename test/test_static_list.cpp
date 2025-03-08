@@ -19,8 +19,6 @@ BOOST_AUTO_TEST_CASE(test_list) {
     static static_list<value> l;
     static value a, b, c, d;
 
-    BOOST_TEST_REQUIRE(false);
-
     BOOST_TEST_REQUIRE(l.begin() == l.end());
     BOOST_TEST_REQUIRE(l.empty());
 

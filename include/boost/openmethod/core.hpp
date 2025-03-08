@@ -1214,8 +1214,8 @@ method<Name(Parameters...), ReturnType, Policy>::resolve_multi_next(
 // Error handling
 
 #ifdef _MSC_VER
-#pragma warning( push )
-#pragma warning( disable : WarningCode)
+#pragma warning(push)
+#pragma warning(disable: 4646)
 #endif
 
 template<
@@ -1243,7 +1243,7 @@ method<Name(Parameters...), ReturnType, Policy>::not_implemented_handler(
 }
 
 #ifdef _MSC_VER
-#pragma warning( pop )
+#pragma warning(pop)
 #endif
 
 // -----------------------------------------------------------------------------

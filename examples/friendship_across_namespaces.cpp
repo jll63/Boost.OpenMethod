@@ -57,9 +57,9 @@ class Animal {
   private:
     std::string name;
 
-    friend class BOOST_OPENMETHOD_OVERRIDERS(pets::poke)<
+    friend struct BOOST_OPENMETHOD_OVERRIDERS(pets::poke)<
         void(std::ostream&, virtual_ptr<pets::Cat>)>;
-    friend class BOOST_OPENMETHOD_OVERRIDERS(pets::poke)<
+    friend struct BOOST_OPENMETHOD_OVERRIDERS(pets::poke)<
         void(std::ostream&, virtual_ptr<pets::Dog>)>;
 };
 

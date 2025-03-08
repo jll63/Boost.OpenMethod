@@ -10,6 +10,11 @@
 #include <boost/openmethod/policies/basic_policy.hpp>
 #include <boost/openmethod/detail/ostdstream.hpp>
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4996)
+#endif
+
 namespace boost {
 namespace openmethod {
 namespace policies {
@@ -32,5 +37,9 @@ bool basic_trace_output<Policy, Stream>::trace_enabled([]() {
 } // namespace policies
 } // namespace openmethod
 } // namespace boost
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 #endif

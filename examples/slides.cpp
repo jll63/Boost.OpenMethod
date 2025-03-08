@@ -11,9 +11,9 @@ using namespace std;
 
 namespace nodes {
 
-class Number;
-class Plus;
-class Times;
+struct Number;
+struct Plus;
+struct Times;
 
 struct Node {
   virtual ~Node() {}

@@ -31,7 +31,6 @@
 #pragma warning(disable: 4646)
 #endif
 
-
 namespace boost::openmethod {
 
 // =============================================================================

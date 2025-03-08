@@ -85,7 +85,7 @@ jobs:
           boost_version: 1.87.0
       - name: Configure
         run: |
-          cmake -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DBUILD_TESTING=1 -DBUILD_EXAMPLES=1 -Bbuild -DBoost_INCLUDE_DIR=${{steps.install-boost.outputs.BOOST_ROOT}}/include -DBoost_LIBRARY_DIRS=${{steps.install-boost.outputs.BOOST_ROOT}}/lib
+          cmake -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DBUILD_TESTING=1 -DBUILD_EXAMPLES=1 -Bbuild -DBoost_INCLUDE_DIR=${{steps.install-boost.outputs.BOOST_ROOT}}\include -DBoost_LIBRARY_DIRS=${{steps.install-boost.outputs.BOOST_ROOT}}\lib
       - name: Build
         run: cmake --build build
       - name: Test

@@ -39,8 +39,8 @@ BOOST_OPENMETHOD(poke, (std::ostream&, virtual_ptr<Animal>), void);
 
 // tag::friend[]
 namespace pets {
-class Cat;
-class Dog;
+struct Cat;
+struct Dog;
 template<typename> struct BOOST_OPENMETHOD_OVERRIDERS(poke);
 } // namespace pets
 

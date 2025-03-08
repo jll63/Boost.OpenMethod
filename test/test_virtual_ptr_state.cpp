@@ -202,10 +202,10 @@ struct check_smart_ctors {
             Animal&>);
 };
 
-template class check_smart_ctors<
+template struct check_smart_ctors<
     std::shared_ptr, std::unique_ptr, direct_vector_policy>;
 
-template class check_smart_ctors<
+template struct check_smart_ctors<
     std::unique_ptr, std::shared_ptr, direct_vector_policy>;
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(shared_virtual_ptr_ctors, Policy, test_policies) {

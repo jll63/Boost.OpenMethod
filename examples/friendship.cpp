@@ -58,11 +58,11 @@ class Animal {
 
 #endif
 
-struct Cat : Animal {
+class Cat : Animal {
     using Animal::Animal;
 };
 
-struct Dog : Animal {
+class Dog : Animal {
     using Animal::Animal;
 };
 

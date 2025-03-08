@@ -655,8 +655,7 @@ struct with_vptr_derived {};
 template<class, class, bool>
 class with_vptr_aux;
 
-#ifdef __GNUC__
-#pragma GCC diagnostic push
+#if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic ignored "-Wnon-template-friend"
 #endif
 
@@ -710,10 +709,6 @@ class with_vptr_aux<Class, Base, false> : with_vptr_derived {
 
     friend auto boost_openmethod_bases(Class*) -> mp11::mp_list<Base>;
 };
-
-#ifdef __GNUC__
-#pragma GCC diagnostic pop
-#endif
 
 } // namespace detail
 

@@ -6,9 +6,19 @@
 #ifndef BOOST_OPENMETHOD_CORE_HPP
 #define BOOST_OPENMETHOD_CORE_HPP
 
-#include <functional>
+#include <stdint.h>
+#include <algorithm>
+#include <cstdlib>
+#include <tuple>
+#include <type_traits>
+#include <utility>
 
 #include <boost/assert.hpp>
+#include <boost/config.hpp>
+#include <boost/mp11/algorithm.hpp>
+#include <boost/mp11/bind.hpp>
+#include <boost/mp11/integral.hpp>
+#include <boost/mp11/list.hpp>
 
 #include <boost/openmethod/policies.hpp>
 

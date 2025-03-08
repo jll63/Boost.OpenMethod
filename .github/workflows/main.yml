@@ -3,7 +3,7 @@
 # See accompanying file LICENSE_1_0.txt
 # or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-# CI is quiite simple at the moment. It will be improved and made more
+# CI is quite simple at the moment. It will be improved and made more
 # comprehensive, probably similar to Boost.Unordered.
 
 name: CI
@@ -20,7 +20,6 @@ on: [push, pull_request, workflow_dispatch]
 
 jobs:
   ubuntu:
-    name: ubuntu-${{ matrix.compiler }}-${{ matrix.config }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

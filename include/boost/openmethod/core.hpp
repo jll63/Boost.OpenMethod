@@ -26,6 +26,12 @@
 #define BOOST_OPENMETHOD_DEFAULT_POLICY ::boost::openmethod::default_policy
 #endif
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4646)
+#endif
+
+
 namespace boost::openmethod {
 
 // =============================================================================
@@ -1223,11 +1229,6 @@ method<Name(Parameters...), ReturnType, Policy>::resolve_multi_next(
 // -----------------------------------------------------------------------------
 // Error handling
 
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable: 4646)
-#endif
-
 template<
     typename Name, typename... Parameters, typename ReturnType, class Policy>
 BOOST_NORETURN auto
@@ -1251,10 +1252,6 @@ method<Name(Parameters...), ReturnType, Policy>::not_implemented_handler(
 
     abort(); // in case user handler "forgets" to abort
 }
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 // -----------------------------------------------------------------------------
 // thunk
@@ -1319,5 +1316,9 @@ method<Name(Parameters...), ReturnType, Policy>::override_impl<
 }
 
 } // namespace boost::openmethod
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 #endif

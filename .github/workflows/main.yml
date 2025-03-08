@@ -85,8 +85,6 @@ jobs:
           boost_version: 1.87.0
       - name: Configure
         run: |
-          mkdir cmake.bld
-          cd cmake.bld
           cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DBUILD_TESTING=1 -DBUILD_EXAMPLES=1 -Bbuild
       - name: Build
         run: cmake --build build

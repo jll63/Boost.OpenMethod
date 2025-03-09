@@ -337,7 +337,7 @@ class virtual_ptr_impl {
     }
 
     template<class Other>
-    virtual_ptr_impl(Other& other, vptr_type vp) : obj(&other), vp(vp) {
+    virtual_ptr_impl(Other& other, const vptr_type& vp) : obj(&other), vp(vp) {
     }
 
     Class* get() const {

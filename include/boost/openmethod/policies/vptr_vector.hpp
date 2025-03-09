@@ -15,13 +15,15 @@ namespace boost {
 namespace openmethod {
 namespace policies {
 
-template<class Policy, typename UseIndirectVptrs = void>
-class vptr_vector : extern_vptr {
+template<class Policy, typename Facet = void>
+class vptr_vector
+    : extern_vptr,
+      std::conditional_t<std::is_same_v<Facet, void>, detail::empty, Facet> {
     static_assert(
-        std::is_same_v<UseIndirectVptrs, indirect_vptr> ||
-        std::is_same_v<UseIndirectVptrs, void>);
+        std::is_same_v<Facet, void> ||
+        std::is_same_v<Facet, indirect_vptr>);
     static constexpr bool use_indirect_vptrs =
-        std::is_same_v<UseIndirectVptrs, indirect_vptr>;
+        std::is_same_v<Facet, indirect_vptr>;
     using element_type =
         std::conditional_t<use_indirect_vptrs, const vptr_type*, vptr_type>;
     static std::vector<element_type> vptrs;

@@ -60,8 +60,7 @@ struct static_stride_error : static_offset_error {};
 
 namespace detail {
 
-template<typename... Types>
-struct types;
+struct empty {};
 
 template<typename Iterator>
 struct range {

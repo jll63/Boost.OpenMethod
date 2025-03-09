@@ -48,8 +48,7 @@ given us multi-methods, thereby saving us from the visitor pattern workaround
 
 This library implements the features described in the
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2216.pdf[N2216 paper],
-with some
-extensions:
+with some extensions:
 
 * a mechanism for calling the next most specialized overrider
 

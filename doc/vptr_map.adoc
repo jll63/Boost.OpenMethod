@@ -8,14 +8,9 @@ namespace boost::openmethod::policies {
 
 ### Synopsis
 
-template<
-    class Policy, bool IndirectVptr,
-    class Map = std::unordered_map<
-        type_id,
-        std::conditional_t<IndirectVptr, const vptr_type*, vptr_type>>>
-class vptr_map : extern_vptr {
-    static Map vptrs;
-
+template<class Policy, class Facet = void, class Map = /* unspecified */>
+class vptr_map : extern_vptr, Facet /* if not void */ {
+  public:
     template<typename ForwardIterator>
     static auto register_vptrs(ForwardIterator first, ForwardIterator last) -> void;
 
@@ -33,9 +28,12 @@ the v-tables in a map.
 
 `Policy` is the policy containing the facet.
 
-`Map` is an `AssociativeContainer`. The `mapped_type` is a pointer to a
-`vptr_type` if `UseIndirectVptrs` is `void`, or a pointer to a `vptr_type` if
-`UseIndirectVptrs` is `indirect_vptr`.
+If `Facet` is specified, it must be either `void` or `indirect_vptr`. `void`
+indicates that straight pointers to v-tables should be stored.
+
+`Map` is an `AssociativeContainer` that maps `type_id`{empty}s to
+`vptr_type`{empty}s if `Facet` is `void`, or pointers `vptr_type`{empty}s if
+`Facet` is `indirect_vptr`.
 
 ### Members
 

@@ -8,7 +8,6 @@
 
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/compiler.hpp>
-#include <boost/openmethod/compiler.hpp>
 
 #include "test_util.hpp"
 
@@ -16,11 +15,10 @@
 #include <boost/test/included/unit_test.hpp>
 
 using namespace boost::openmethod;
-using namespace boost::openmethod::detail;
 
-using class_ = generic_compiler::class_;
-using cc_method = generic_compiler::method;
-using overrider = generic_compiler::overrider;
+using class_ = detail::generic_compiler::class_;
+using cc_method = detail::generic_compiler::method;
+using overrider = detail::generic_compiler::overrider;
 
 std::ostream& operator<<(std::ostream& os, const class_* cls) {
     return os
@@ -149,7 +147,7 @@ BOOST_AUTO_TEST_CASE(test_use_classes) {
 // Test assign_slots.
 
 template<typename Compiler>
-const auto& get_method(const Compiler& comp, const method_info& info) {
+const auto& get_method(const Compiler& comp, const detail::method_info& info) {
     for (const auto& m : comp.methods) {
         if (m.info == &info) {
             return m;

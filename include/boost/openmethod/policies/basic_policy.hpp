@@ -44,10 +44,9 @@ struct rtti {
 struct deferred_static_rtti : virtual rtti {};
 
 struct error_handler {};
-struct indirect_vptr {};
 struct type_hash {};
-struct vptr {};
-struct extern_vptr : vptr {};
+struct extern_vptr {};
+struct indirect_vptr {};
 struct error_output {};
 struct trace_output {};
 struct runtime_checks {};

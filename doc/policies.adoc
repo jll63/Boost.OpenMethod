@@ -22,23 +22,23 @@ library: `release` and `debug`.
 
 [cols="1,1,1"]
 |===
-|facet |implementation |role
+|facet |implementations |role
 
 | rtti
-| std_rtti
+| std_rtti, minimal_rtti
 | provides type information for classes and objects
 
-| vptr
-| vptr_vector
-| stores vptrs in a global vector
+| extern_vptr
+| vptr_vector, vptr_map
+| stores vptrs in an indexed collection
 
 | type_hash
 | fast_perfect_hash
 | hash type id to an index in a vector
 
 | error_handler
-| vectored_error_handler
-| calls a handler via a `std::function`
+| vectored_error_handler, throw_error_handler
+| handles errors
 
 |===
 
@@ -74,12 +74,9 @@ is a tweak of `policies::release`:
 namespace boost::openmethod::policies {
 
 struct debug : release::add<
-    runtime_checks, basic_error_output<debug>,
-    basic_trace_output<debug>> {};
-
+    runtime_checks, basic_error_output<debug>, basic_trace_output<debug>> {};
 }
 ----
-
 
 `boost::openmethod::default_policy` is an alias to `release` or `debug`,
 depending on the value of preprocessor symbols `NDEBUG`. The default policy can

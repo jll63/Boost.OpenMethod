@@ -1,4 +1,3 @@
-
 // Copyright (c) 2018-2025 Jean-Louis Leroy
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt
@@ -16,18 +15,18 @@ namespace openmethod {
 namespace policies {
 
 template<
-    class Policy, typename UseIndirectVptrs = void,
+    class Policy, class Facet = void,
     class Map = std::unordered_map<
         type_id,
         std::conditional_t<
-            std::is_same_v<UseIndirectVptrs, indirect_vptr>, const vptr_type*,
-            vptr_type>>>
-class vptr_map : extern_vptr {
+            std::is_same_v<Facet, indirect_vptr>, const vptr_type*, vptr_type>>>
+class vptr_map
+    : extern_vptr,
+      std::conditional_t<std::is_same_v<Facet, void>, detail::empty, Facet> {
     static_assert(
-        std::is_same_v<UseIndirectVptrs, indirect_vptr> ||
-        std::is_same_v<UseIndirectVptrs, void>);
+        std::is_same_v<Facet, void> || std::is_same_v<Facet, indirect_vptr>);
     static constexpr bool use_indirect_vptrs =
-        std::is_same_v<UseIndirectVptrs, indirect_vptr>;
+        std::is_same_v<Facet, indirect_vptr>;
     static_assert(
         std::is_same_v<typename Map::mapped_type, vptr_type> ||
         std::is_same_v<typename Map::mapped_type, const vptr_type*>);

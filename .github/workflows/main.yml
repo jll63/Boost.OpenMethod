@@ -88,6 +88,7 @@ jobs:
         run: |
           ctest --test-dir build --rerun-failed --output-on-failure
   Artifacts:
+    if: github.ref_name == 'master'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -115,7 +116,7 @@ jobs:
             build_outputs_folder/boost/openmethod/policies.hpp \
             include/boost/openmethod/policies.hpp
       - name: Upload static files as artifact
-        uses: actions/upload-pages-artifact@v3 # or specific "vX.X.X" version tag for this action
+        uses: actions/upload-pages-artifact@v3
         with:
           path: build_outputs_folder/
       - name: Deploy to GitHub Pages

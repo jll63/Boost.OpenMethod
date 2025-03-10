@@ -103,7 +103,8 @@ struct virtual_traits<std::shared_ptr<Class>, Policy> {
 
         check_cast<Other>();
 
-        if constexpr (detail::requires_dynamic_cast<Class*, Other>) {
+        if constexpr (detail::requires_dynamic_cast<
+                          Class*, typename Other::element_type*>) {
             return std::dynamic_pointer_cast<
                 typename shared_ptr_traits<Other>::virtual_type>(obj);
         } else {

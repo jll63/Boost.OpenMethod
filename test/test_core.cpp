@@ -192,15 +192,15 @@ struct Dog : Mammal, Carnivore {
     int d{4};
 };
 
-const void* mammal_this(const Mammal& obj) {
+auto mammal_this(const Mammal& obj) -> const void* {
     return &obj;
 }
 
-const void* carnivore_this(const Carnivore& obj) {
+auto carnivore_this(const Carnivore& obj) -> const void* {
     return &obj;
 }
 
-const void* dog_this(const Dog& obj) {
+auto dog_this(const Dog& obj) -> const void* {
     return &obj;
 }
 

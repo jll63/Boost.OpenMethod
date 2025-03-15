@@ -52,7 +52,7 @@ BOOST_OPENMETHOD_OVERRIDE(
     // handle Spaceship-Spaceship collision
 }
 
-int main() {
+auto main() -> int {
     boost::openmethod::initialize();
 
     Asteroid a1, a2;

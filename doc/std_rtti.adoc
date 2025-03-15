@@ -37,7 +37,7 @@ struct std_rtti : virtual rtti {
 
 ```c++
 template<class Class>
-static type_id static_type();
+static auto static_type() -> type_id;
 ```
 
 Return the address of `Class`'s `type_info`, cast to a `type_id`.
@@ -46,7 +46,7 @@ Return the address of `Class`'s `type_info`, cast to a `type_id`.
 
 ```c++
 template<class Class>
-static type_id dynamic_type(const Class& obj);
+static auto dynamic_type(const Class& obj) -> type_id;
 ```
 
 Return the address of `obj`{empty}'s `type_info`, cast to a `type_id`.
@@ -55,7 +55,7 @@ Return the address of `obj`{empty}'s `type_info`, cast to a `type_id`.
 
 ```c++
 template<typename Stream>
-static void type_name(type_id type, Stream& stream);
+static auto type_name(type_id type, Stream& stream) -> void;
 ```
 
 Write the demangled name of the class identified by `type` to `stream`.
@@ -64,7 +64,7 @@ Execute `stream << reinterpret_cast<const std::type_info*>(type)->name()`.
 #### type_index
 
 ```c++
-static /*unspecified*/ type_index(type_id type);
+static auto type_index(type_id type) -> /*unspecified*/;
 ```
 
 Return `std::type_index(*reinterpret_cast<const std::type_info*>(type))`.
@@ -76,7 +76,7 @@ instance of `std::type_info` for each specific type.
 
 ```c++
 template<typename Derived, typename Base>
-static Derived dynamic_cast_ref(Base&& obj);
+static auto dynamic_cast_ref(Base&& obj) -> Derived;
 ```
 
 Cast `obj` using the `dynamic_cast` operator.

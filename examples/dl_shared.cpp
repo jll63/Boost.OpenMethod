@@ -20,7 +20,7 @@ struct Tiger : Carnivore {};
 
 BOOST_OPENMETHOD_CLASSES(Tiger, Carnivore, dynamic_policy);
 
-extern "C" Tiger* make_tiger() {
+extern "C" auto make_tiger() -> Tiger* {
     return new Tiger;
 }
 

@@ -238,7 +238,7 @@ struct Animal {
     Animal(const char* name, std::size_t type) : name(name), type(type) {
     }
 
-    virtual void* cast_aux(std::size_t type) {
+    virtual auto cast_aux(std::size_t type) -> void* {
         return type == static_type ? this : nullptr;
     }
 
@@ -247,7 +247,7 @@ struct Animal {
 };
 
 template<typename Derived, typename Base>
-Derived custom_dynamic_cast(Base& obj) {
+auto custom_dynamic_cast(Base& obj) -> Derived {
     using derived_type = std::remove_cv_t<std::remove_reference_t<Derived>>;
     return *reinterpret_cast<derived_type*>(
         const_cast<std::remove_cv_t<Base>&>(obj).cast_aux(
@@ -258,7 +258,7 @@ struct Dog : virtual Animal {
     Dog(const char* name, std::size_t type = static_type) : Animal(name, type) {
     }
 
-    void* cast_aux(std::size_t type) override {
+    auto cast_aux(std::size_t type) -> void* override {
         return type == static_type ? this : Animal::cast_aux(type);
     }
 
@@ -269,7 +269,7 @@ struct Cat : virtual Animal {
     Cat(const char* name, std::size_t type = static_type) : Animal(name, type) {
     }
 
-    void* cast_aux(std::size_t type) override {
+    auto cast_aux(std::size_t type) -> void* override {
         return type == static_type ? this : Animal::cast_aux(type);
     }
 
@@ -306,7 +306,7 @@ struct custom_rtti : policies::rtti {
     }
 
     template<typename Derived, typename Base>
-    static Derived dynamic_cast_ref(Base&& obj) {
+    static auto dynamic_cast_ref(Base&& obj) -> Derived {
         return custom_dynamic_cast<Derived>(obj);
     }
 };

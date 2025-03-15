@@ -35,7 +35,7 @@ namespace bom = boost::openmethod;
 
 struct custom_rtti : bom::policies::rtti {
     template<typename T>
-    static bom::type_id static_type() {
+    static auto static_type() -> bom::type_id {
         if constexpr (std::is_base_of_v<Animal, T>) {
             return T::static_type;
         } else {
@@ -44,7 +44,7 @@ struct custom_rtti : bom::policies::rtti {
     }
 
     template<typename T>
-    static bom::type_id dynamic_type(const T& obj) {
+    static auto dynamic_type(const T& obj) -> bom::type_id {
         if constexpr (std::is_base_of_v<Animal, T>) {
             return obj.type;
         } else {
@@ -82,7 +82,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 
 BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog);
 
-int main() {
+auto main() -> int {
     boost::openmethod::initialize();
 
     std::unique_ptr<Animal> a(new Cat);

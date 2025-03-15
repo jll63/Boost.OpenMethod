@@ -119,7 +119,8 @@ using shared_virtual_ptr = virtual_ptr<std::shared_ptr<Class>, Policy>;
 
 template<
     class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY, typename... T>
-inline auto make_shared_virtual(T&&... args) {
+inline auto make_shared_virtual(T&&... args)
+    -> shared_virtual_ptr<Class, Policy> {
     return shared_virtual_ptr<Class, Policy>::final(
         std::make_shared<Class>(std::forward<T>(args)...));
 }

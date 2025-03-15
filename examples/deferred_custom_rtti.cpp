@@ -18,7 +18,7 @@ struct Animal {
 
     virtual ~Animal() = default;
 
-    virtual void* cast_impl(unsigned target) {
+    virtual auto cast_impl(unsigned target) -> void* {
         if (type_info.id == target) {
             return this;
         } else {
@@ -27,7 +27,7 @@ struct Animal {
     }
 
     template<class Class>
-    Class* cast() {
+    auto cast() -> Class* {
         return reinterpret_cast<Class*>(cast_impl(Class::type_info.id));
     }
 
@@ -42,7 +42,7 @@ struct Cat : virtual Animal {
         type = type_info.id;
     }
 
-    virtual void* cast_impl(unsigned target) {
+    virtual auto cast_impl(unsigned target) -> void* {
         if (type_info.id == target) {
             return this;
         } else {
@@ -61,7 +61,7 @@ struct Dog : virtual Animal {
         type = type_info.id;
     }
 
-    virtual void* cast_impl(unsigned target) {
+    virtual auto cast_impl(unsigned target) -> void* {
         if (type_info.id == target) {
             return this;
         } else {
@@ -79,7 +79,7 @@ namespace bom = boost::openmethod;
 
 struct custom_rtti : bom::policies::rtti {
     template<typename T>
-    static bom::type_id static_type() {
+    static auto static_type() -> bom::type_id {
         if constexpr (std::is_base_of_v<Animal, T>) {
             return T::type_info.id;
         } else {
@@ -88,7 +88,7 @@ struct custom_rtti : bom::policies::rtti {
     }
 
     template<typename T>
-    static bom::type_id dynamic_type(const T& obj) {
+    static auto dynamic_type(const T& obj) -> bom::type_id {
         if constexpr (std::is_base_of_v<Animal, T>) {
             return obj.type;
         } else {
@@ -99,7 +99,7 @@ struct custom_rtti : bom::policies::rtti {
     // tag::dynamic_cast_ref[]
     // to support virtual inheritance:
     template<typename Derived, typename Base>
-    static Derived dynamic_cast_ref(Base&& obj) {
+    static auto dynamic_cast_ref(Base&& obj) -> Derived {
         using base_type = std::remove_reference_t<Base>;
         if constexpr (std::is_base_of_v<Animal, base_type>) {
             return *obj.template cast<std::remove_reference_t<Derived>>();
@@ -138,7 +138,7 @@ BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog);
 
 custom_type_info Dog::type_info;
 
-int main() {
+auto main() -> int {
     boost::openmethod::initialize();
 
     std::unique_ptr<Animal> a(new Cat);

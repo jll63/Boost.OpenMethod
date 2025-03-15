@@ -28,7 +28,7 @@
 
 #ifdef _MSC_VER
 #pragma warning(push)
-#pragma warning(disable: 4646)
+#pragma warning(disable : 4646)
 #endif
 
 namespace boost::openmethod {
@@ -340,7 +340,7 @@ class virtual_ptr_impl {
     virtual_ptr_impl(Other& other, const vptr_type& vp) : obj(&other), vp(vp) {
     }
 
-    Class* get() const {
+    auto get() const -> Class* {
         return obj;
     }
 
@@ -357,7 +357,7 @@ class virtual_ptr_impl {
     }
 
     template<class Other>
-    decltype(auto) cast() const {
+    auto cast() const -> decltype(auto) {
         static_assert(
             std::is_base_of_v<Class, Other> || std::is_base_of_v<Other, Class>);
 
@@ -477,7 +477,7 @@ class virtual_ptr_impl<
     }
 
     template<class Other>
-    decltype(auto) cast() & {
+    auto cast() & -> decltype(auto) {
         static_assert(
             std::is_base_of_v<element_type, Other> ||
             std::is_base_of_v<Other, element_type>);
@@ -489,7 +489,7 @@ class virtual_ptr_impl<
     }
 
     template<class Other>
-    decltype(auto) cast() const& {
+    auto cast() const& -> decltype(auto) {
         static_assert(
             std::is_base_of_v<element_type, Other> ||
             std::is_base_of_v<Other, element_type>);
@@ -501,7 +501,7 @@ class virtual_ptr_impl<
     }
 
     template<class Other>
-    decltype(auto) cast() && {
+    auto cast() && -> decltype(auto) {
         static_assert(
             std::is_base_of_v<element_type, Other> ||
             std::is_base_of_v<Other, element_type>);
@@ -574,16 +574,16 @@ inline auto final_virtual_ptr(Class&& obj) {
 }
 
 template<class Left, class Right, class Policy>
-bool operator==(
+auto operator==(
     const virtual_ptr<Left, Policy>& left,
-    const virtual_ptr<Right, Policy>& right) {
+    const virtual_ptr<Right, Policy>& right) -> bool {
     return &*left == &*right;
 }
 
 template<class Left, class Right, class Policy>
-bool operator!=(
+auto operator!=(
     const virtual_ptr<Left, Policy>& left,
-    const virtual_ptr<Right, Policy>& right) {
+    const virtual_ptr<Right, Policy>& right) -> bool {
     return !(left == right);
 }
 
@@ -597,12 +597,12 @@ struct virtual_traits<virtual_ptr<Class, Policy>, Policy> {
     }
 
     template<typename Derived>
-    static decltype(auto) cast(const virtual_ptr<Class, Policy>& ptr) {
+    static auto cast(const virtual_ptr<Class, Policy>& ptr) -> decltype(auto) {
         return ptr.template cast<typename Derived::element_type>();
     }
 
     template<typename Derived>
-    static decltype(auto) cast(virtual_ptr<Class, Policy>&& ptr) {
+    static auto cast(virtual_ptr<Class, Policy>&& ptr) -> decltype(auto) {
         return std::move(ptr).template cast<typename Derived::element_type>();
     }
 };
@@ -617,13 +617,13 @@ struct virtual_traits<const virtual_ptr<Class, Policy>&, Policy> {
     }
 
     template<typename Derived>
-    static decltype(auto) cast(const virtual_ptr<Class, Policy>& ptr) {
+    static auto cast(const virtual_ptr<Class, Policy>& ptr) -> decltype(auto) {
         return ptr.template cast<
             typename std::remove_reference_t<Derived>::element_type>();
     }
 
     template<typename Derived>
-    static decltype(auto) cast(virtual_ptr<Class, Policy>&& ptr) {
+    static auto cast(virtual_ptr<Class, Policy>&& ptr) -> decltype(auto) {
         return std::move(ptr).template cast<typename Derived::element_type>();
     }
 };

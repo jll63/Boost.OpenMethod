@@ -86,7 +86,7 @@ BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, Cat& cat), void) {
 
 } // namespace with_vptr
 
-int main() {
+auto main() -> int {
     boost::openmethod::initialize();
 
     {

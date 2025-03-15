@@ -98,7 +98,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 #include <boost/openmethod/compiler.hpp>
     // only needed in the file that calls boost::openmethod::initialize()
 
-int main() {
+auto main() -> int {
     boost::openmethod::initialize();
     // ...
     // end::main[]

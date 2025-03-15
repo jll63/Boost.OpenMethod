@@ -56,7 +56,7 @@ BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<Negate> node), int) {
 
 BOOST_OPENMETHOD_CLASSES(Node, Literal, Plus, Negate);
 
-int main() {
+auto main() -> int {
     boost::openmethod::initialize();
 
     auto expr = make_unique_virtual<Negate>(

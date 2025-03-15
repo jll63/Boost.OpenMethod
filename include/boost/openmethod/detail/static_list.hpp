@@ -24,7 +24,7 @@ class static_list {
         static_link(const static_link&) = delete;
         static_link() = default;
 
-        T* next() {
+        auto next() -> T* {
             return next_ptr;
         }
 
@@ -106,29 +106,29 @@ class static_list {
         explicit iterator(T* p) : ptr(p) {
         }
 
-        reference operator*() {
+        auto operator*() -> reference {
             return *ptr;
         }
-        pointer operator->() {
+        auto operator->() -> pointer {
             return ptr;
         }
 
-        iterator& operator++() {
+        auto operator++() -> iterator& {
             BOOST_ASSERT(ptr);
             ptr = ptr->next_ptr;
             return *this;
         }
 
-        iterator operator++(int) {
+        auto operator++(int) -> iterator {
             auto tmp = *this;
             ++(*this);
             return tmp;
         }
 
-        friend bool operator==(const iterator& a, const iterator& b) {
+        friend auto operator==(const iterator& a, const iterator& b) -> bool {
             return a.ptr == b.ptr;
         };
-        friend bool operator!=(const iterator& a, const iterator& b) {
+        friend auto operator!=(const iterator& a, const iterator& b) -> bool {
             return a.ptr != b.ptr;
         };
 
@@ -136,11 +136,11 @@ class static_list {
         T* ptr;
     };
 
-    iterator begin() {
+    auto begin() -> iterator {
         return iterator(first);
     }
 
-    iterator end() {
+    auto end() -> iterator {
         return iterator(nullptr);
     }
 
@@ -157,31 +157,31 @@ class static_list {
         explicit const_iterator(T* p) : ptr(p) {
         }
 
-        reference operator*() {
+        auto operator*() -> reference {
             return *ptr;
         }
-        pointer operator->() {
+        auto operator->() -> pointer {
             return ptr;
         }
 
-        const_iterator& operator++() {
+        auto operator++() -> const_iterator& {
             BOOST_ASSERT(ptr);
             ptr = ptr->next_ptr;
             return *this;
         }
 
-        const_iterator operator++(int) {
+        auto operator++(int) -> const_iterator {
             auto tmp = *this;
             ++(*this);
             return tmp;
         }
 
-        friend bool
-        operator==(const const_iterator& a, const const_iterator& b) {
+        friend auto operator==(const const_iterator& a, const const_iterator& b)
+            -> bool {
             return a.ptr == b.ptr;
         };
-        friend bool
-        operator!=(const const_iterator& a, const const_iterator& b) {
+        friend auto operator!=(const const_iterator& a, const const_iterator& b)
+            -> bool {
             return a.ptr != b.ptr;
         };
 
@@ -189,19 +189,19 @@ class static_list {
         T* ptr;
     };
 
-    const_iterator begin() const {
+    auto begin() const -> const_iterator {
         return const_iterator(first);
     }
 
-    const_iterator end() const {
+    auto end() const -> const_iterator {
         return const_iterator(nullptr);
     }
 
-    std::size_t size() const {
+    auto size() const -> std::size_t {
         return std::distance(begin(), end());
     }
 
-    bool empty() const {
+    auto empty() const -> bool {
         return !first;
     }
 

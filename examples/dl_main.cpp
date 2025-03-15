@@ -18,7 +18,8 @@
 
 #include "dl.hpp"
 
-BOOST_OPENMETHOD_CLASSES(Animal, Herbivore, Cow, Wolf, Carnivore, dynamic_policy);
+BOOST_OPENMETHOD_CLASSES(
+    Animal, Herbivore, Cow, Wolf, Carnivore, dynamic_policy);
 
 BOOST_OPENMETHOD_OVERRIDE(
     encounter, (dyn_vptr<Animal>, dyn_vptr<Animal>), std::string) {
@@ -28,7 +29,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 // end::main[]
 
 // tag::before_dlopen[]
-int main() {
+auto main() -> int {
     using namespace boost::openmethod;
 
     initialize<dynamic_policy>();

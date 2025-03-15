@@ -80,7 +80,7 @@ BOOST_OPENMETHOD_OVERRIDE(meet, (virtual_ptr<Cat> cat, virtual_ptr<Dog> dog, std
 #include <memory>
 #include <string>
 
-int main() {
+auto main() -> int {
     // Initialise method dispatch tables.
     boost::openmethod::initialize();
 

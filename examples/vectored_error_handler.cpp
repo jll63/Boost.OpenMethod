@@ -26,7 +26,7 @@ BOOST_OPENMETHOD_OVERRIDE(
     os << "spin\n";
 }
 
-int main() {
+auto main() -> int {
     namespace bom = boost::openmethod;
     bom::initialize();
 

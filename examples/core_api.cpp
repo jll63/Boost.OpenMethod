@@ -77,7 +77,7 @@ BOOST_OPENMETHOD_REGISTER(use_classes<Animal, Cat, Dog, Bulldog>);
 // end::use_classes[]
 
 // tag::main[]
-int main() {
+auto main() -> int {
     boost::openmethod::initialize();
 
     std::unique_ptr<Animal> a(new Cat);

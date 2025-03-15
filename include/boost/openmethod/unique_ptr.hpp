@@ -41,7 +41,8 @@ using unique_virtual_ptr = virtual_ptr<std::unique_ptr<Class>, Policy>;
 
 template<
     class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY, typename... T>
-inline auto make_unique_virtual(T&&... args) {
+inline auto make_unique_virtual(T&&... args)
+    -> unique_virtual_ptr<Class, Policy> {
     return unique_virtual_ptr<Class, Policy>::final(
         std::make_unique<Class>(std::forward<T>(args)...));
 }

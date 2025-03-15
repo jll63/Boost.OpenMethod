@@ -106,7 +106,7 @@ BOOST_OPENMETHOD_OVERRIDE(as_lisp, (virtual_ptr<const Integer> expr), string) {
 
 // -----------------------------------------------------------------------------
 
-int main() {
+auto main() -> int {
     boost::openmethod::initialize();
 
     shared_virtual_ptr<Node> expr = make_shared_virtual<Times>(

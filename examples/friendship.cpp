@@ -84,7 +84,7 @@ BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog);
 
 #include <boost/openmethod/compiler.hpp>
 
-int main() {
+auto main() -> int {
     boost::openmethod::initialize();
 
     std::unique_ptr<Animal> a(new Cat("Felix"));

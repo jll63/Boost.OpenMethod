@@ -37,7 +37,7 @@ void poke_animals(const std::vector<Animal*>& animals, std::ostream& os) {
     }
 }
 
-int main() {
+auto main() -> int {
     boost::openmethod::initialize();
 
     Dog hector{"Hector"}, snoopy{"Snoopy"};

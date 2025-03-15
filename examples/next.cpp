@@ -55,7 +55,7 @@ BOOST_OPENMETHOD_OVERRIDE(
     cout << "Check road tax.\n";
 }
 
-int main() {
+auto main() -> int {
     boost::openmethod::initialize();
 
     const Vehicle& vehicle1 = Car();

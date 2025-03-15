@@ -102,7 +102,7 @@ struct generic_compiler {
         std::vector<vtbl_entry> vtbl;
         vptr_type* static_vptr;
 
-        bool is_base_of(class_* other) const {
+        auto is_base_of(class_* other) const -> bool {
             return std::find(
                        transitive_derived.begin(), transitive_derived.end(),
                        other) != transitive_derived.end();
@@ -174,8 +174,8 @@ struct generic_compiler {
 };
 
 template<class Policy>
-trace_type<Policy>&
-operator<<(trace_type<Policy>& trace, const generic_compiler::class_& cls) {
+auto operator<<(trace_type<Policy>& trace, const generic_compiler::class_& cls)
+    -> trace_type<Policy>& {
     if constexpr (Policy::template has_facet<policies::trace_output>) {
         trace << type_name(cls.type_ids[0]);
     }
@@ -184,9 +184,10 @@ operator<<(trace_type<Policy>& trace, const generic_compiler::class_& cls) {
 }
 
 template<class Policy, template<typename...> class Container, typename... T>
-trace_type<Policy>& operator<<(
+auto operator<<(
     trace_type<Policy>& trace,
-    Container<generic_compiler::class_*, T...>& classes) {
+    Container<generic_compiler::class_*, T...>& classes)
+    -> trace_type<Policy>& {
     if constexpr (Policy::template has_facet<policies::trace_output>) {
         trace << "(";
         const char* sep = "";
@@ -212,7 +213,8 @@ struct spec_name {
 };
 
 template<class Policy>
-trace_type<Policy>& operator<<(trace_type<Policy>& trace, const spec_name& sn) {
+auto operator<<(trace_type<Policy>& trace, const spec_name& sn)
+    -> trace_type<Policy>& {
     if (sn.def == &sn.method.not_implemented) {
         trace << "not implemented";
     } else {
@@ -257,10 +259,11 @@ struct compiler : detail::generic_compiler {
     static void select_dominant_overriders(
         std::vector<overrider*>& dominants, std::size_t& pick,
         std::size_t& remaining);
-    static bool is_more_specific(const overrider* a, const overrider* b);
-    static bool is_base(const overrider* a, const overrider* b);
+    static auto is_more_specific(const overrider* a, const overrider* b)
+        -> bool;
+    static auto is_base(const overrider* a, const overrider* b) -> bool;
 
-    static type_id static_type(type_id type) {
+    static auto static_type(type_id type) -> type_id {
         if constexpr (std::is_base_of_v<
                           policies::deferred_static_rtti, policies::rtti>) {
             return reinterpret_cast<type_id (*)()>(type)();
@@ -1247,8 +1250,8 @@ void compiler<Policy>::select_dominant_overriders(
 }
 
 template<class Policy>
-bool compiler<Policy>::is_more_specific(
-    const overrider* a, const overrider* b) {
+auto compiler<Policy>::is_more_specific(const overrider* a, const overrider* b)
+    -> bool {
     bool result = false;
 
     auto a_iter = a->vp.begin(), a_last = a->vp.end(), b_iter = b->vp.begin();
@@ -1270,7 +1273,7 @@ bool compiler<Policy>::is_more_specific(
 }
 
 template<class Policy>
-bool compiler<Policy>::is_base(const overrider* a, const overrider* b) {
+auto compiler<Policy>::is_base(const overrider* a, const overrider* b) -> bool {
     bool result = false;
 
     auto a_iter = a->vp.begin(), a_last = a->vp.end(), b_iter = b->vp.begin();

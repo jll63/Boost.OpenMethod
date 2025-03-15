@@ -42,7 +42,7 @@ class fast_perfect_hash : type_hash {
     }
 
     template<typename ForwardIterator>
-    static report hash_initialize(ForwardIterator first, ForwardIterator last) {
+    static auto hash_initialize(ForwardIterator first, ForwardIterator last) {
         if constexpr (Policy::template has_facet<runtime_checks>) {
             hash_initialize(first, last, control);
         } else {
@@ -50,7 +50,7 @@ class fast_perfect_hash : type_hash {
             hash_initialize(first, last, buckets);
         }
 
-        return {hash_min, hash_max};
+        return report{hash_min, hash_max};
     }
 
     template<typename ForwardIterator>

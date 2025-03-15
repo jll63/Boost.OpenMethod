@@ -42,7 +42,7 @@ struct Bulldog : Dog {
     }
 };
 
-int main() {
+auto main() -> int {
     std::unique_ptr<Animal> a(new Cat("Felix"));
     std::unique_ptr<Animal> b(new Dog("Snoopy"));
     std::unique_ptr<Animal> c(new Bulldog("Hector"));

@@ -39,7 +39,7 @@ void meet_animals(const std::vector<Animal*>& animals, std::ostream& os) {
     }
 }
 
-int main() {
+auto main() -> int {
     Dog hector{"Hector"}, snoopy{"Snoopy"};
     Cat felix{"Felix"}, sylvester{"Sylvester"};
     std::vector<Animal*> animals = {&hector, &felix, &sylvester, &snoopy};

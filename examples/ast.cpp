@@ -51,7 +51,7 @@ BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<Negate> node), int) {
 
 BOOST_OPENMETHOD_CLASSES(Node, Literal, Plus, Negate);
 
-int main() {
+auto main() -> int {
     boost::openmethod::initialize();
 
     Literal one(1), two(2);
@@ -64,13 +64,13 @@ int main() {
 }
 // end::ast[]
 
-int negate(virtual_ptr<Node> node) {
+auto negate(virtual_ptr<Node> node) -> int {
     return -value(node);
 }
 
 #define main alt_main
 
-int main() {
+auto main() -> int {
 // tag::final[]
     Literal one(1);
     Negate neg(boost::openmethod::final_virtual_ptr(one));

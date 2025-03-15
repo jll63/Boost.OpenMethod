@@ -77,7 +77,7 @@ BOOST_OPENMETHOD_OVERRIDE(
            " (unbelievable, isn't it?)";
 }
 
-int main() {
+auto main() -> int {
     boost::openmethod::initialize();
 
     std::unique_ptr<Character> bob = std::make_unique<Character>(),

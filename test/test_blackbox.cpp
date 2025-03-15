@@ -251,14 +251,14 @@ enum Type { TYPES };
 
 using Types = std::pair<Type, Type>;
 
-std::ostream& operator<<(std::ostream& os, Type t) {
+auto operator<<(std::ostream& os, Type t) -> std::ostream& {
 #define TYPE_TO_STRING(r, data, elem) BOOST_PP_STRINGIZE(elem),
     static const char* names[] = {BOOST_PP_SEQ_FOR_EACH(
         TYPE_TO_STRING, _, BOOST_PP_VARIADIC_TO_SEQ(TYPES))};
     return os << names[t];
 }
 
-std::ostream& operator<<(std::ostream& os, Types o) {
+auto operator<<(std::ostream& os, Types o) -> std::ostream& {
     os << o.first << ", " << o.second;
     return os;
 }
@@ -431,13 +431,13 @@ struct BOOST_OPENMETHOD_NAME(poke);
 using poke =
     method<BOOST_OPENMETHOD_NAME(poke)(virtual_<Animal&>), std::string>;
 
-std::string poke_dog(Dog& dog) {
+auto poke_dog(Dog& dog) -> std::string {
     return "bark";
 }
 
 BOOST_OPENMETHOD_REGISTER(poke::override<poke_dog>);
 
-std::string poke_bulldog(Bulldog& dog) {
+auto poke_bulldog(Bulldog& dog) -> std::string {
     return poke::next<poke_bulldog>(dog) + " and bite back";
 }
 

@@ -42,7 +42,7 @@ void poke_animals(
     }
 }
 
-int main() {
+auto main() -> int {
     boost::openmethod::initialize();
 
     Dog hector{"Hector"}, snoopy{"Snoopy"};

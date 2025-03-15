@@ -46,7 +46,7 @@ BOOST_OPENMETHOD_OVERRIDE(
     os << " and run";
 }
 
-int main() {
+auto main() -> int {
     boost::openmethod::initialize();
 
     std::unique_ptr<Animal> a(new Cat);

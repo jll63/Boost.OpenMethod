@@ -38,7 +38,7 @@ struct trace_type {
 
     std::size_t indentation_level{0};
 
-    trace_type& operator++() {
+    auto operator++() -> trace_type& {
         if constexpr (trace_enabled) {
             if (Policy::trace_enabled) {
                 for (int i = 0; i < indentation_level; ++i) {
@@ -65,7 +65,7 @@ struct trace_type {
 };
 
 template<class Policy, typename T, typename F>
-auto& write_range(trace_type<Policy>& trace, range<T> range, F fn) {
+auto write_range(trace_type<Policy>& trace, range<T> range, F fn) -> auto& {
     if constexpr (trace_type<Policy>::trace_enabled) {
         if (Policy::trace_enabled) {
             trace << "(";
@@ -83,7 +83,7 @@ auto& write_range(trace_type<Policy>& trace, range<T> range, F fn) {
 }
 
 template<class Policy, typename T>
-auto& operator<<(trace_type<Policy>& trace, const T& value) {
+auto operator<<(trace_type<Policy>& trace, const T& value) -> auto& {
     if constexpr (trace_type<Policy>::trace_enabled) {
         if (Policy::trace_enabled) {
             Policy::trace_stream << value;
@@ -93,7 +93,7 @@ auto& operator<<(trace_type<Policy>& trace, const T& value) {
 }
 
 template<class Policy>
-auto& operator<<(trace_type<Policy>& trace, const rflush& rf) {
+auto operator<<(trace_type<Policy>& trace, const rflush& rf) -> auto& {
     if constexpr (trace_type<Policy>::trace_enabled) {
         if (Policy::trace_enabled) {
             auto pad = rf.width;
@@ -120,8 +120,8 @@ auto& operator<<(trace_type<Policy>& trace, const rflush& rf) {
 }
 
 template<class Policy>
-auto& operator<<(
-    trace_type<Policy>& trace, const boost::dynamic_bitset<>& bits) {
+auto operator<<(trace_type<Policy>& trace, const boost::dynamic_bitset<>& bits)
+    -> auto& {
     if constexpr (trace_type<Policy>::trace_enabled) {
         if (Policy::trace_enabled) {
             if (Policy::trace_enabled) {
@@ -138,17 +138,18 @@ auto& operator<<(
 }
 
 template<class Policy>
-auto& operator<<(trace_type<Policy>& trace, const range<type_id*>& tips) {
+auto operator<<(trace_type<Policy>& trace, const range<type_id*>& tips)
+    -> auto& {
     return write_range(trace, tips, [](auto tip) { return type_name(tip); });
 }
 
 template<class Policy, typename T>
-auto& operator<<(trace_type<Policy>& trace, const range<T>& range) {
+auto operator<<(trace_type<Policy>& trace, const range<T>& range) -> auto& {
     return write_range(trace, range, [](auto value) { return value; });
 }
 
 template<class Policy>
-auto& operator<<(trace_type<Policy>& trace, const type_name& manip) {
+auto operator<<(trace_type<Policy>& trace, const type_name& manip) -> auto& {
     if constexpr (Policy::template has_facet<policies::trace_output>) {
         Policy::type_name(manip.type, trace);
     }

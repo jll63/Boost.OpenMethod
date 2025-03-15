@@ -17,8 +17,8 @@ struct Times;
 
 struct Node {
   virtual ~Node() {}
-  virtual int value() const = 0;
-  virtual string to_rpn() const = 0;
+  virtual auto value() const -> int = 0;
+  virtual auto to_rpn() const -> string = 0;
 
   struct Visitor {
     virtual void accept(const Number& expr) = 0;
@@ -31,24 +31,24 @@ struct Node {
 
 struct Number : Node {
   explicit Number(int value) : val(value) { }
-  int value() const override { return val; }
-  string to_rpn() const override { return to_string(val); }
+  auto value() const -> int override { return val; }
+  auto to_rpn() const -> string override { return to_string(val); }
   void visit(Visitor& viz) const override { viz.accept(*this); }
   int val;
 };
 
 struct Plus : Node {
   Plus(const Node& left, const Node& right) : left(left), right(right) { }
-  int value() const override { return left.value() + right.value(); }
-  string to_rpn() const override { return left.to_rpn() + " " + right.to_rpn() + " +"; }
+  auto value() const -> int override { return left.value() + right.value(); }
+  auto to_rpn() const -> string override { return left.to_rpn() + " " + right.to_rpn() + " +"; }
   void visit(Visitor& viz) const override { viz.accept(*this); }
   const Node& left; const Node& right;
 };
 
 struct Times : Node {
   Times(const Node& left, const Node& right) : left(left), right(right) { }
-  int value() const override { return left.value() * right.value(); }
-  string to_rpn() const override { return left.to_rpn() + " " + right.to_rpn() + " &"; }
+  auto value() const -> int override { return left.value() * right.value(); }
+  auto to_rpn() const -> string override { return left.to_rpn() + " " + right.to_rpn() + " &"; }
   void visit(Visitor& viz) const override { viz.accept(*this); }
   const Node& left; const Node& right;
 };
@@ -59,7 +59,7 @@ namespace typeswitch {
 
 using namespace nodes;
 
-string to_rpn(const Node& node) {
+auto to_rpn(const Node& node) -> string {
   if (auto expr = dynamic_cast<const Number*>(&node)) {
     return to_string(expr->value());
   } else if (auto expr = dynamic_cast<const Plus*>(&node)) {
@@ -94,7 +94,7 @@ struct RPNVisitor : Node::Visitor {
   string result;
 };
 
-string to_rpn(const Node& node) {
+auto to_rpn(const Node& node) -> string {
   RPNVisitor viz;
   node.visit(viz);
   return viz.result;
@@ -108,7 +108,7 @@ using namespace nodes;
 
 unordered_map<type_index, string (*)(const Node&)> RPNformatters;
 
-string to_rpn(const Node& node) {
+auto to_rpn(const Node& node) -> string {
   return RPNformatters[typeid(node)](node);
 }
 
@@ -173,7 +173,7 @@ using namespace nodes;
 
 BOOST_OPENMETHOD(value, (virtual_ptr<const Node>), int);
 
-int call_via_vptr(virtual_ptr<const Node> node) {
+auto call_via_vptr(virtual_ptr<const Node> node) -> int {
   return value(node);
 }
 
@@ -262,13 +262,13 @@ use_classes<Node, Number, Plus, Times> use_node_classes;
 struct value_id;
 using value = method<value_id(virtual_ptr<const Node>), int>;
 
-int number_value(virtual_ptr<const Number> node) {
+auto number_value(virtual_ptr<const Number> node) -> int {
   return node->val;
 }
 value::override<number_value> add_number_value;
 
 template<class NodeClass, class Op>
-int binary_op(virtual_ptr<const NodeClass> expr) {
+auto binary_op(virtual_ptr<const NodeClass> expr) -> int {
     return Op()(value::fn(expr->left), value::fn(expr->right));
 }
 
@@ -277,7 +277,7 @@ BOOST_OPENMETHOD_REGISTER(value::override<binary_op<Times, std::multiplies<int>>
 
 }
 
-int main() {
+auto main() -> int {
   boost::openmethod::initialize();
 
   {

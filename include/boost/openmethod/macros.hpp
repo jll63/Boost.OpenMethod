@@ -41,14 +41,14 @@ struct enable_forwarder<
         BOOST_PP_CAT(BOOST_OPENMETHOD_NAME(NAME), _guide)(                     \
             ForwarderParameters && ... args);                                  \
     template<typename... ForwarderParameters>                                  \
-    inline typename ::boost::openmethod::detail::enable_forwarder<             \
-        void,                                                                  \
-        ::boost::openmethod::method<                                           \
-            BOOST_OPENMETHOD_NAME(NAME) ARGS, __VA_ARGS__>,                    \
-        typename ::boost::openmethod::method<                                  \
-            BOOST_OPENMETHOD_NAME(NAME) ARGS, __VA_ARGS__>::return_type,       \
-        ForwarderParameters...>::type                                          \
-    NAME(ForwarderParameters&&... args) {                                      \
+    inline auto NAME(ForwarderParameters&&... args) ->                         \
+        typename ::boost::openmethod::detail::enable_forwarder<                \
+            void,                                                              \
+            ::boost::openmethod::method<                                       \
+                BOOST_OPENMETHOD_NAME(NAME) ARGS, __VA_ARGS__>,                \
+            typename ::boost::openmethod::method<                              \
+                BOOST_OPENMETHOD_NAME(NAME) ARGS, __VA_ARGS__>::return_type,   \
+            ForwarderParameters...>::type {                                    \
         return ::boost::openmethod::                                           \
             method<BOOST_OPENMETHOD_NAME(NAME) ARGS, __VA_ARGS__>::fn(         \
                 std::forward<ForwarderParameters>(args)...);                   \
@@ -63,7 +63,7 @@ struct enable_forwarder<
     };
 
 #define BOOST_OPENMETHOD_DETAIL_OVERRIDE(INLINE, OVERRIDERS, NAME, ARGS, ...)  \
-    template<typename>                                                      \
+    template<typename>                                                         \
     struct OVERRIDERS;                                                         \
     template<>                                                                 \
     struct OVERRIDERS<__VA_ARGS__ ARGS> {                                      \
@@ -75,7 +75,7 @@ struct enable_forwarder<
             return method_type::next<fn> != method_type::fn.not_implemented;   \
         }                                                                      \
         template<typename... Args>                                             \
-        static decltype(auto) next(Args&&... args) {                           \
+        static auto next(Args&&... args) -> decltype(auto) {                   \
             BOOST_ASSERT(has_next());                                          \
             return boost_openmethod_detail_locate_method_aux<                  \
                 void ARGS>::type::next<fn>(std::forward<Args>(args)...);       \

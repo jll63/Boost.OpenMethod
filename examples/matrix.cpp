@@ -22,18 +22,18 @@ using boost::openmethod::shared_virtual_ptr;
 struct matrix {
     virtual ~matrix() {
     }
-    virtual double at(int row, int col) const = 0;
+    virtual auto at(int row, int col) const -> double = 0;
     // ...
 };
 
 struct dense_matrix : matrix {
-    virtual double at(int row, int col) const {
+    virtual auto at(int row, int col) const -> double {
         return 0;
     }
 };
 
 struct diagonal_matrix : matrix {
-    virtual double at(int row, int col) const {
+    virtual auto at(int row, int col) const -> double {
         return 0;
     }
 };
@@ -76,8 +76,8 @@ BOOST_OPENMETHOD_OVERRIDE(
     return make_shared_virtual<diagonal_matrix>();
 }
 
-inline shared_virtual_ptr<const matrix>
-operator*(shared_ptr<const matrix> a, shared_ptr<const matrix> b) {
+inline auto operator*(shared_ptr<const matrix> a, shared_ptr<const matrix> b)
+    -> shared_virtual_ptr<const matrix> {
     return times(a, b);
 }
 
@@ -105,8 +105,8 @@ BOOST_OPENMETHOD_OVERRIDE(
 // matrix * scalar
 
 // just swap
-inline shared_virtual_ptr<const matrix>
-times(shared_virtual_ptr<const matrix> a, double b) {
+inline auto times(shared_virtual_ptr<const matrix> a, double b)
+    -> shared_virtual_ptr<const matrix> {
     return times(b, a);
 }
 
@@ -120,7 +120,7 @@ times(shared_virtual_ptr<const matrix> a, double b) {
         }                                                                      \
     }
 
-int main() {
+auto main() -> int {
     using std::cerr;
     using std::cout;
 

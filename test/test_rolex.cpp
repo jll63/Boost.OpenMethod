@@ -12,11 +12,11 @@ struct Role {
 };
 
 struct Employee : Role {
-    virtual double pay();
+    virtual auto pay() -> double;
 };
 
 struct Manager : Employee {
-    virtual double pay();
+    virtual auto pay() -> double;
 };
 
 struct Founder : Role {};
@@ -77,26 +77,26 @@ BOOST_OPENMETHOD_OVERRIDE(
     return true;
 }
 
-int main() {
+auto main() -> int {
     boost::openmethod::initialize();
 }
 
-double call_pay(Employee& emp) {
+auto call_pay(Employee& emp) -> double {
     return pay(emp);
 }
 
-double Employee::pay() {
+auto Employee::pay() -> double {
     return 3000;
 }
 
-double Manager::pay() {
+auto Manager::pay() -> double {
     return Employee::pay() + 2000;
 }
 
-double call_pay_vfunc(Employee& emp) {
+auto call_pay_vfunc(Employee& emp) -> double {
     return emp.pay();
 }
 
-bool call_approve(const Role& r, const Expense& e, double a) {
+auto call_approve(const Role& r, const Expense& e, double a) -> bool {
     return approve(r, e, a);
 }

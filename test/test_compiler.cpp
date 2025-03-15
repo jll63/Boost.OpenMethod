@@ -20,7 +20,7 @@ using class_ = detail::generic_compiler::class_;
 using cc_method = detail::generic_compiler::method;
 using overrider = detail::generic_compiler::overrider;
 
-std::ostream& operator<<(std::ostream& os, const class_* cls) {
+auto operator<<(std::ostream& os, const class_* cls) -> std::ostream& {
     return os
         << reinterpret_cast<const std::type_info*>(cls->type_ids[0])->name();
 }
@@ -147,7 +147,8 @@ BOOST_AUTO_TEST_CASE(test_use_classes) {
 // Test assign_slots.
 
 template<typename Compiler>
-const auto& get_method(const Compiler& comp, const detail::method_info& info) {
+auto get_method(const Compiler& comp, const detail::method_info& info) -> const
+    auto& {
     for (const auto& m : comp.methods) {
         if (m.info == &info) {
             return m;

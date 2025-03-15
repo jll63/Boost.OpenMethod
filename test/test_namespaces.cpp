@@ -82,7 +82,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 #include <iostream>
 #include <memory>
 
-int main() {
+auto main() -> int {
     boost::openmethod::initialize();
 
     std::unique_ptr<interfaces::Animal> hector =

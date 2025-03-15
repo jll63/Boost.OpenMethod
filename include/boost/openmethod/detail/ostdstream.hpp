@@ -32,7 +32,7 @@ struct ostdstream {
         this->stream = nullptr;
     }
 
-    bool is_on() const {
+    auto is_on() const -> bool {
         return stream != nullptr;
     }
 };
@@ -44,7 +44,7 @@ struct ostderr : ostdstream {
 
 inline ostdstream cerr;
 
-inline ostdstream& operator<<(ostdstream& os, const char* str) {
+inline auto operator<<(ostdstream& os, const char* str) -> ostdstream& {
     if (os.stream) {
         fputs(str, os.stream);
     }
@@ -52,7 +52,8 @@ inline ostdstream& operator<<(ostdstream& os, const char* str) {
     return os;
 }
 
-inline ostdstream& operator<<(ostdstream& os, const std::string_view& view) {
+inline auto operator<<(ostdstream& os, const std::string_view& view)
+    -> ostdstream& {
     if (os.stream) {
         fwrite(view.data(), sizeof(*view.data()), view.length(), os.stream);
     }
@@ -60,7 +61,7 @@ inline ostdstream& operator<<(ostdstream& os, const std::string_view& view) {
     return os;
 }
 
-inline ostdstream& operator<<(ostdstream& os, const void* value) {
+inline auto operator<<(ostdstream& os, const void* value) -> ostdstream& {
     if (os.stream) {
         std::array<char, 20> str;
         auto end = std::to_chars(
@@ -73,7 +74,7 @@ inline ostdstream& operator<<(ostdstream& os, const void* value) {
     return os;
 }
 
-inline ostdstream& operator<<(ostdstream& os, std::size_t value) {
+inline auto operator<<(ostdstream& os, std::size_t value) -> ostdstream& {
     if (os.stream) {
         std::array<char, 20> str;
         auto end =

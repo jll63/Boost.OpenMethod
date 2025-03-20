@@ -12,16 +12,23 @@
 
 namespace boost {
 namespace openmethod {
+
+namespace detail {
+
+template<class Policy>
+std::vector<type_id> fast_perfect_hash_control;
+
+}
+
 namespace policies {
 
 template<class Policy>
-class fast_perfect_hash : type_hash {
+class fast_perfect_hash : public type_hash {
 
     static type_id hash_mult;
     static std::size_t hash_shift;
     static std::size_t hash_min;
     static std::size_t hash_max;
-    static std::vector<type_id> control;
 
     static void check(std::size_t index, type_id type);
 
@@ -44,7 +51,8 @@ class fast_perfect_hash : type_hash {
     template<typename ForwardIterator>
     static auto hash_initialize(ForwardIterator first, ForwardIterator last) {
         if constexpr (Policy::template has_facet<runtime_checks>) {
-            hash_initialize(first, last, control);
+            hash_initialize(
+                first, last, detail::fast_perfect_hash_control<Policy>);
         } else {
             std::vector<type_id> buckets;
             hash_initialize(first, last, buckets);
@@ -57,6 +65,10 @@ class fast_perfect_hash : type_hash {
     static void hash_initialize(
         ForwardIterator first, ForwardIterator last,
         std::vector<type_id>& buckets);
+
+    static auto finalize() -> void {
+        detail::fast_perfect_hash_control<Policy>.clear();
+    }
 };
 
 template<class Policy>
@@ -155,7 +167,8 @@ void fast_perfect_hash<Policy>::hash_initialize(
 
 template<class Policy>
 void fast_perfect_hash<Policy>::check(std::size_t index, type_id type) {
-    if (index < hash_min || index >= hash_max || control[index] != type) {
+    if (index < hash_min || index >= hash_max ||
+        detail::fast_perfect_hash_control<Policy>[index] != type) {
         if constexpr (Policy::template has_facet<error_handler>) {
             unknown_class_error error;
             error.type = type;
@@ -174,8 +187,6 @@ template<class Policy>
 std::size_t fast_perfect_hash<Policy>::hash_min;
 template<class Policy>
 std::size_t fast_perfect_hash<Policy>::hash_max;
-template<class Policy>
-std::vector<type_id> fast_perfect_hash<Policy>::control;
 
 } // namespace policies
 } // namespace openmethod

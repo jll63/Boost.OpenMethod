@@ -8,7 +8,7 @@ Defined in <boost/openmethod/policies/std_rtti.hpp>.
 ```c++
 namespace boost::openmethod::policies {
 
-struct std_rtti : virtual rtti {
+struct std_rtti : rtti {
     template<class Class>
     static auto static_type() -> type_id;
 

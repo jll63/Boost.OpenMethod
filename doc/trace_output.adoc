@@ -8,7 +8,7 @@ Defined in <boost/openmethod/policies/basic_policy.hpp>.
 ```c++
 namespace boost::openmethod::policies {
 
-struct trace_output {};
+struct trace_output : facet {};
 
 }
 ```

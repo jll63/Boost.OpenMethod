@@ -13,6 +13,7 @@ struct test_policy : bom::default_policy::remove<bom::policies::extern_vptr> {};
 #define BOOST_OPENMETHOD_DEFAULT_POLICY test_policy
 
 #include <boost/openmethod.hpp>
+#include <boost/openmethod/with_vptr.hpp>
 #include <boost/openmethod/compiler.hpp>
 
 #define BOOST_TEST_MODULE instrusive

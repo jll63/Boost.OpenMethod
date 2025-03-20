@@ -30,7 +30,12 @@ struct abstract_policy {};
 // -----------------------------------------------------------------------------
 // Facets
 
-struct rtti {
+struct facet {
+    static auto finalize() -> void {
+    }
+};
+
+struct rtti : facet {
     static auto type_index(type_id type) -> type_id {
         return type;
     }
@@ -41,15 +46,14 @@ struct rtti {
     }
 };
 
-struct deferred_static_rtti : virtual rtti {};
-
-struct error_handler {};
-struct type_hash {};
-struct extern_vptr {};
-struct indirect_vptr {};
-struct error_output {};
-struct trace_output {};
-struct runtime_checks {};
+struct deferred_static_rtti : rtti {};
+struct error_handler : facet {};
+struct type_hash : facet {};
+struct extern_vptr : facet {};
+struct indirect_vptr : facet {};
+struct error_output : facet {};
+struct trace_output : facet {};
+struct runtime_checks : facet {};
 
 // -----------------------------------------------------------------------------
 // Facet implementations
@@ -95,9 +99,7 @@ struct rebind_facet<NewPolicy, GenericFacet<OldPolicy, Args...>> {
 };
 
 template<class Policy, class... Facets>
-struct basic_policy : virtual abstract_policy,
-                      virtual domain<Policy>,
-                      virtual Facets... {
+struct basic_policy : abstract_policy, domain<Policy>, Facets... {
     using facets = mp11::mp_list<Facets...>;
 
     template<class Facet>

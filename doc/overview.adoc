@@ -1,0 +1,54 @@
+
+## Overview
+
+### Requirements
+
+OpenMethod requires C++17 or above. It depends on the following Boost libraries:
+
+* Assert
+* Config
+* Core
+* DynamicBitset
+* Mp11
+* Preprocessor
+
+Boost.Test is also required to build and run the unit tests.
+
+### Installation
+
+The library is headers-only. You can install it system-wide, or add the path to
+the `include` directory to your project's include path.
+
+### Namespaces
+
+#### boost::openmethod
+
+The library's main namespace. Contains `method`, `virtual_ptr` and
+`virtual_ptr_traits`, `use_classes`, the `debug` and `release` policies, etc.
+
+#### boost::openmethod::policies
+
+Contains the policy classes and their facets.
+
+### Headers
+
+#### <boost/openmethod/core.hpp>
+
+The library's main header. Contains `method`, `virtual_ptr` and
+`virtual_ptr_traits`, `use_classes`, the `debug` and `release` policies, etc.
+
+#### <boost/openmethod/compiler.hpp>
+
+Defines `intialize` and `finalize`, which are used to register classes and
+
+#### <boost/openmethod/macros.hpp>
+
+#### <boost/openmethod.hpp>
+
+#### <boost/openmethod/policies.hpp>
+
+#### <boost/openmethod/shared_ptr.hpp>
+
+#### <boost/openmethod/unique_.hpp>
+
+#### <boost/openmethod/with_vptr.hpp>

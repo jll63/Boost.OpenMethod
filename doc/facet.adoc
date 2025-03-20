@@ -1,0 +1,31 @@
+
+## facet
+
+### Synopsis
+
+Defined in <boost/openmethod/policies/basic_policy.hpp>.
+
+```c++
+namespace boost::openmethod::policies {
+
+struct facet {
+    static auto finalize() -> void;
+};
+
+} // boost::openmethod::policies
+```
+
+### Description
+
+`facet` is the base class of all facets. It provides an empty `finalize` static
+function which can be overriden (via shadowing) by derived classes.
+
+### Members
+
+#### finalize
+
+```c++
+static auto finalize() -> void;
+```
+
+Does nothing.

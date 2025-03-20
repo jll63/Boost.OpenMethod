@@ -1313,6 +1313,13 @@ auto initialize() -> compiler<Policy> {
     return compiler;
 }
 
+template<class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
+auto finalize() -> void {
+    mp11::mp_for_each<typename Policy::facets>(
+        [](auto facet) { decltype(facet)::finalize(); });
+    Policy::dispatch_data.clear();
+}
+
 } // namespace openmethod
 } // namespace boost
 

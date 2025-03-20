@@ -186,6 +186,7 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a_b1_c) {
     BOOST_OPENMETHOD_REGISTER(use_classes<A, B, test_policy>);
     BOOST_OPENMETHOD_REGISTER(use_classes<A, C, test_policy>);
     ADD_METHOD(B);
+
     auto comp = initialize<test_policy>();
 
     BOOST_TEST_REQUIRE(get_method(comp, m_B).slots.size() == 1);
@@ -193,6 +194,9 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a_b1_c) {
     BOOST_TEST(get_class<A>(comp)->vtbl.size() == 0);
     BOOST_TEST(get_class<B>(comp)->vtbl.size() == 1);
     BOOST_TEST(get_class<C>(comp)->vtbl.size() == 0);
+
+    finalize<test_policy>();
+    BOOST_TEST(test_policy::dispatch_data.empty());
 }
 
 BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_c1) {

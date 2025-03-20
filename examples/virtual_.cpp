@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include <boost/openmethod.hpp>
+#include <boost/openmethod/with_vptr.hpp>
 #include <boost/openmethod/compiler.hpp>
 
 using boost::openmethod::virtual_;
@@ -70,6 +71,8 @@ BOOST_OPENMETHOD_CLASSES(Animal, Cat);
 namespace with_vptr {
 
 // tag::with_vptr[]
+
+#include <boost/openmethod/with_vptr.hpp>
 
 class Animal : public boost::openmethod::with_vptr<Animal> {
 };

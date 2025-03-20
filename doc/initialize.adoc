@@ -1,0 +1,43 @@
+
+## initialize
+
+### Synopsis
+
+Defined in `<boost/openmethod/compiler.hpp>`.
+
+```c++
+namespace boost::openmethod {
+
+template<class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
+auto compiler<Policy>::initialize() -> /*unspecified*/;
+
+}
+```
+
+### Description
+
+Initializes dispatch data for the methods registered in `Policy`. This function
+must be called before any calls to those methods, and after loading or unloading
+a dynamic library that adds classes, methods or overriders to `Policy`.
+
+## finalize
+
+### Synopsis
+
+Defined in `<boost/openmethod/compiler.hpp>`.
+
+```c++
+namespace boost::openmethod {
+
+template<class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
+auto finalize() -> void;
+
+}
+```
+
+### Description
+
+De-allocates the resources allocated by `initialize` for the `Policy`, including
+resources allocated by the facets in `Policy`. Resources are de-allocated in an
+arbitrary order. It is not necessary to call `finalize` between calls to
+`initialize`. It may be required to cooperate with memory leak detection tools.

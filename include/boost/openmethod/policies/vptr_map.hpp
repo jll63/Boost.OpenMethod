@@ -20,9 +20,9 @@ template<
         type_id,
         std::conditional_t<
             std::is_same_v<Facet, indirect_vptr>, const vptr_type*, vptr_type>>>
-class vptr_map
-    : extern_vptr,
-      std::conditional_t<std::is_same_v<Facet, void>, detail::empty, Facet> {
+class vptr_map : public extern_vptr,
+                 public std::conditional_t<
+                     std::is_same_v<Facet, void>, detail::empty, Facet> {
     static_assert(
         std::is_same_v<Facet, void> || std::is_same_v<Facet, indirect_vptr>);
     static constexpr bool use_indirect_vptrs =
@@ -74,6 +74,10 @@ class vptr_map
         } else {
             return iter->second;
         }
+    }
+
+    static auto finalize() -> void {
+        vptrs.clear();
     }
 };
 

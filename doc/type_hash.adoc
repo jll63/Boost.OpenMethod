@@ -8,7 +8,7 @@ Defined in <boost/openmethod/policies/basic_policy.hpp>.
 ```c++
 namespace boost::openmethod::policies {
 
-struct type_hash {};
+struct type_hash : facet {};
 
 } // boost::openmethod::policies
 ```
@@ -32,7 +32,8 @@ Returns the hash of `type`.
 
 ```c++
 template<typename ForwardIterator>
-static auto hash_initialize(ForwardIterator first, ForwardIterator last) -> Report;
+static auto hash_initialize(ForwardIterator first, ForwardIterator last)
+  -> Report;
 ```
 
 Finds a hash function for the `type_id`{empty}s in the range `[first, last)`.

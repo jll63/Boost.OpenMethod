@@ -8,7 +8,7 @@ Defined in <boost/openmethod/policies/basic_policy.hpp>.
 ```c++
 namespace boost::openmethod::policies {
 
-struct extern_vptr : virtual vptr {};
+struct extern_vptr : facet {};
 
 }
 ```
@@ -50,7 +50,7 @@ the same.
 ### Synopsis
 
 ```c++
-struct indirect_vptr {};
+struct indirect_vptr : facet {};
 ```
 
 ### Description

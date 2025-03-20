@@ -4,7 +4,7 @@
 ### Synopsis
 
 ```c++
-struct minimal_rtti : virtual rtti {
+struct minimal_rtti : rtti {
     template<typename Class>
     static auto static_type() -> type_id;
 };

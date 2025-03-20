@@ -9,7 +9,7 @@ Defined in <boost/openmethod/policies/basic_trace_output.hpp>.
 namespace boost::openmethod::policies {
 
 template<class Policy, typename Stream = /*unspecified*/>
-struct basic_trace_output : virtual trace_output {
+struct basic_trace_output : trace_output {
     static bool trace_enabled;
     static Stream trace_stream;
 };

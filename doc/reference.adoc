@@ -4,7 +4,7 @@
 :toc-title:
 :idprefix: ref_
 
-// include::headers.adoc[]
+include::overview.adoc[]
 
 include::BOOST_OPENMETHOD.adoc[]
 include::BOOST_OPENMETHOD_OVERRIDE.adoc[]
@@ -14,6 +14,7 @@ include::BOOST_OPENMETHOD_CLASSES.adoc[]
 include::BOOST_OPENMETHOD_DEFAULT_POLICY.adoc[]
 include::BOOST_OPENMETHOD_NAME.adoc[]
 include::BOOST_OPENMETHOD_OVERRIDERS.adoc[]
+include::initialize.adoc[]
 
 include::typedefs.adoc[]
 include::method.adoc[]
@@ -27,6 +28,7 @@ include::with_vptr.adoc[]
 include::abstract_policy.adoc[]
 include::domain.adoc[]
 include::basic_policy.adoc[]
+include::facet.adoc[]
 include::rtti.adoc[]
 include::std_rtti.adoc[]
 include::deferred_static_rtti.adoc[]

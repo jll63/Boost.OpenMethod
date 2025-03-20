@@ -11,9 +11,7 @@ namespace boost::openmethod {
 namespace policies {
 
 template<class Policy, class... Facets>
-struct basic_policy : virtual abstract_policy,
-                      virtual domain<Policy>,
-                      virtual Facets... {
+struct basic_policy : abstract_policy, domain<Policy>, Facets... {
     template<class Facet>
     static constexpr bool has_facet = /*unspecified*/;
 

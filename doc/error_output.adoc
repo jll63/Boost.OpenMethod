@@ -8,7 +8,7 @@ Defined in <boost/openmethod/policies/basic_policy.hpp>.
 ```c++
 namespace boost::openmethod::policies {
 
-struct error_output {};
+struct error_output : facet {};
 
 } // boost::openmethod::policies
 ```

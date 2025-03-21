@@ -130,6 +130,37 @@ BOOST_AUTO_TEST_CASE(cast_args_rvalue_refs) {
 }
 } // namespace TEST_NS
 
+// -----------------------------------------------------------------------------
+// pass virtual args by pointer
+
+namespace TEST_NS {
+
+using policy = test_policy_<__COUNTER__>;
+using namespace animals;
+
+BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, policy);
+
+BOOST_OPENMETHOD(name, (virtual_<const Animal*>), std::string, policy);
+
+BOOST_OPENMETHOD_OVERRIDE(name, (const Cat* cat), std::string) {
+    return cat->owner + "'s cat " + cat->name;
+}
+
+BOOST_OPENMETHOD_OVERRIDE(name, (const Dog* dog), std::string) {
+    return dog->owner + "'s dog " + dog->name;
+}
+
+BOOST_AUTO_TEST_CASE(cast_args_pointer) {
+    initialize<policy>();
+
+    Dog spot("Spot");
+    BOOST_TEST(name(&spot) == "Bill's dog Spot");
+
+    Cat felix("Felix");
+    BOOST_TEST(name(&felix) == "Bill's cat Felix");
+}
+} // namespace TEST_NS
+
 namespace TEST_NS {
 
 // -----------------------------------------------------------------------------

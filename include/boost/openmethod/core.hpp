@@ -255,10 +255,25 @@ struct virtual_traits<T&&, Policy> {
     }
 };
 
-// For covariant return types.
 template<typename T, class Policy>
 struct virtual_traits<T*, Policy> {
     using virtual_type = std::remove_cv_t<T>;
+
+    static auto peek(T* arg) -> const T& {
+        return *arg;
+    }
+
+    template<typename D>
+    static auto cast(T* ptr) {
+        static_assert(
+            std::is_base_of_v<
+                virtual_type, std::remove_pointer_t<std::remove_cv_t<D>>>);
+        if constexpr (detail::requires_dynamic_cast<T*, D>) {
+            return dynamic_cast<D>(ptr);
+        } else {
+            return static_cast<D>(ptr);
+        }
+    }
 };
 
 template<class... Classes>

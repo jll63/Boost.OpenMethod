@@ -35,6 +35,7 @@ Specializations are provided for:
 * `const virtual_ptr<T, Policy>&`
 * `T&`
 * `T&&`
+* `T*`
 * `std::shared_ptr<T>`: defined in <boost/openmethod/shared_ptr.hpp>
 * `const std::shared_ptr<T>&`: defined in <boost/openmethod/shared_ptr.hpp>
 * `std::unique_ptr<T>`: defined in <boost/openmethod/unique_ptr.hpp>

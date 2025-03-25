@@ -34,7 +34,7 @@ struct Animal {
 
 struct Cat : virtual Animal {};
 
-struct Dog : virtual Animal {};
+struct Dog : Animal {};
 
 template<class Policy>
 void init_test() {
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_ptr_ctors, Policy, test_policies) {
 
         {
             virtual_ptr<Dog, Policy> p(dog);
-            BOOST_TEST(p.vptr() != nullptr);
+            BOOST_TEST(p.get() == &dog);
             BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
             virtual_ptr<Dog, Policy> copy(p);
             virtual_ptr<Animal, Policy> base(p);
@@ -96,7 +96,14 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_ptr_ctors, Policy, test_policies) {
         }
 
         {
-            auto p = virtual_ptr<const Animal, Policy>(dog);
+            virtual_ptr<Animal, Policy> p(dog);
+            BOOST_TEST(p.get() == &dog);
+            BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
+
+            Cat cat;
+            p = cat;
+            BOOST_TEST(p.get() == &cat);
+            BOOST_TEST(p.vptr() == Policy::template static_vptr<Cat>);
         }
     }
 }

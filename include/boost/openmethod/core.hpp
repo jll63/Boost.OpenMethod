@@ -320,6 +320,14 @@ constexpr bool is_virtual_ptr = detail::is_virtual_ptr_aux<T>::value;
 
 template<class Class, class Policy, typename = void>
 class virtual_ptr_impl {
+    static auto vptr_p(const vptr_type& vp) {
+        if constexpr (use_indirect_vptrs) {
+            return &vp;
+        } else {
+            return vp;
+        }
+    }
+
   public:
     using traits = virtual_traits<Class&, Policy>;
     using element_type = Class;
@@ -330,7 +338,7 @@ class virtual_ptr_impl {
 
     template<class Other>
     virtual_ptr_impl(Other& other)
-        : obj(&other), vp(Policy::dynamic_vptr(other)) {
+        : obj(&other), vp(vptr_p(Policy::dynamic_vptr(other))) {
     }
 
     template<class Other>
@@ -355,16 +363,40 @@ class virtual_ptr_impl {
     virtual_ptr_impl(Other& other, const vptr_type& vp) : obj(&other), vp(vp) {
     }
 
+    template<class Other>
+    virtual_ptr_impl& operator=(Other& other) {
+        static_assert(std::is_base_of_v<Class, Other>);
+        obj = &other;
+        vp = vptr_p(Policy::dynamic_vptr(other));
+        return *this;
+    }
+
+    template<class Other>
+    virtual_ptr_impl& operator=(const virtual_ptr<Other, Policy>& other) {
+        static_assert(std::is_base_of_v<Class, Other>);
+        obj = other.get();
+        vp = other.vp;
+        return *this;
+    }
+
+    template<class Other>
+    virtual_ptr_impl& operator=(virtual_ptr<Other, Policy>& other) {
+        static_assert(std::is_base_of_v<Class, Other>);
+        obj = other.get();
+        vp = other.vp;
+        return *this;
+    }
+
     auto get() const -> Class* {
         return obj;
     }
 
     auto operator->() const {
-        return obj;
+        return get();
     }
 
     auto operator*() const -> element_type& {
-        return *obj;
+        return *get();
     }
 
     auto pointer() const -> const Class*& {
@@ -384,7 +416,7 @@ class virtual_ptr_impl {
     friend struct virtual_traits;
 
   protected:
-    std::conditional_t<use_indirect_vptrs, const vptr_type&, vptr_type> vp;
+    std::conditional_t<use_indirect_vptrs, const vptr_type*, vptr_type> vp;
     Class* obj;
 };
 
@@ -410,6 +442,15 @@ class virtual_ptr_impl<
     Class, Policy,
     std::void_t<
         typename virtual_traits<Class, Policy>::template rebind<Class>>> {
+
+    static auto vptr_p(const vptr_type& vp) {
+        if constexpr (use_indirect_vptrs) {
+            return &vp;
+        } else {
+            return vp;
+        }
+    }
+
   public:
     using traits = virtual_traits<Class, Policy>;
     using element_type = typename Class::element_type;
@@ -424,7 +465,7 @@ class virtual_ptr_impl<
     static constexpr bool use_indirect_vptrs =
         Policy::template has_facet<policies::indirect_vptr>;
 
-    std::conditional_t<use_indirect_vptrs, const vptr_type&, vptr_type> vp;
+    std::conditional_t<use_indirect_vptrs, const vptr_type*, vptr_type> vp;
     Class obj;
 
   public:
@@ -435,7 +476,7 @@ class virtual_ptr_impl<
         typename =
             typename enable_if_compatible_smart_ptr<Class, Other, Policy>::type>
     virtual_ptr_impl(const Other& other)
-        : obj(other), vp(Policy::dynamic_vptr(*other)) {
+        : obj(other), vp(vptr_p(Policy::dynamic_vptr(*other))) {
     }
 
     template<
@@ -443,7 +484,7 @@ class virtual_ptr_impl<
         typename =
             typename enable_if_compatible_smart_ptr<Class, Other, Policy>::type>
     virtual_ptr_impl(Other&& other)
-        : obj(std::move(other)), vp(Policy::dynamic_vptr(*other)) {
+        : obj(std::move(other)), vp(vptr_p(Policy::dynamic_vptr(*other))) {
     }
 
     template<
@@ -536,6 +577,7 @@ class virtual_ptr : public detail::virtual_ptr_impl<Class, Policy> {
 
   public:
     using detail::virtual_ptr_impl<Class, Policy>::virtual_ptr_impl;
+    using detail::virtual_ptr_impl<Class, Policy>::operator=;
     using element_type = typename impl::element_type;
 
     template<class, class, typename>
@@ -569,7 +611,11 @@ class virtual_ptr : public detail::virtual_ptr_impl<Class, Policy> {
     }
 
     auto vptr() const {
-        return this->vp;
+        if constexpr (impl::use_indirect_vptrs) {
+            return *this->vp;
+        } else {
+            return this->vp;
+        }
     }
 };
 

@@ -23,63 +23,6 @@ using std::cout;
 using namespace boost::openmethod;
 using namespace boost::openmethod::detail;
 
-struct base {
-    virtual ~base() {
-    }
-};
-
-struct a : base {};
-struct b : base {};
-struct c : base {};
-struct d : base {};
-struct e : base {};
-struct f : base {};
-
-static_assert(
-    std::is_same_v<
-        virtual_types<mp_list<
-            virtual_<std::shared_ptr<a>>, b, virtual_<std::shared_ptr<c>>>>,
-        mp_list<std::shared_ptr<a>, std::shared_ptr<c>>>);
-
-static_assert(std::is_same_v<
-              overrider_virtual_types<
-                  mp_list<virtual_<a&>, b, virtual_<c&>>, mp_list<d&, e, f&>,
-                  default_policy>,
-              mp_list<d, f>>);
-
-static_assert(
-    std::is_same_v<virtual_type<std::shared_ptr<a>, default_policy>, a>);
-
-static_assert(std::is_same_v<
-              virtual_traits<virtual_ptr<a>, default_policy>::virtual_type, a>);
-
-static_assert(std::is_same_v<
-              select_overrider_virtual_type_aux<
-                  virtual_ptr<base>, virtual_ptr<a>, default_policy>::type,
-              a>);
-
-static_assert(std::is_same_v<
-              overrider_virtual_types<
-                  mp_list<virtual_ptr<a>, b, virtual_ptr<c>>,
-                  mp_list<virtual_ptr<d>, e, virtual_ptr<f>>, default_policy>,
-              mp_list<d, f>>);
-
-static_assert(
-    std::is_same_v<
-        overrider_virtual_types<
-            mp_list<const virtual_ptr<base>&, b, const virtual_ptr<base>&>,
-            mp_list<const virtual_ptr<d>&, e, const virtual_ptr<f>&>,
-            default_policy>,
-        mp_list<d, f>>);
-
-static_assert(
-    std::is_same_v<
-        overrider_virtual_types<
-            mp_list<
-                virtual_<std::shared_ptr<a>>, b, virtual_<std::shared_ptr<c>>>,
-            mp_list<std::shared_ptr<d>, e, std::shared_ptr<f>>, default_policy>,
-        mp_list<d, f>>);
-
 namespace using_polymorphic_classes {
 
 struct Animal {

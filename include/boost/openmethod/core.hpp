@@ -318,16 +318,25 @@ struct is_virtual_ptr_aux<const virtual_ptr<Class, Policy>&> : std::true_type {
 template<typename T>
 constexpr bool is_virtual_ptr = detail::is_virtual_ptr_aux<T>::value;
 
+template<bool Indirect>
+inline auto box_vptr(const vptr_type& vp) {
+    if constexpr (Indirect) {
+        return &vp;
+    } else {
+        return vp;
+    }
+}
+
+inline auto unbox_vptr(vptr_type vp) {
+    return vp;
+}
+
+inline auto unbox_vptr(const vptr_type* vpp) {
+    return *vpp;
+}
+
 template<class Class, class Policy, typename = void>
 class virtual_ptr_impl {
-    static auto vptr_p(const vptr_type& vp) {
-        if constexpr (use_indirect_vptrs) {
-            return &vp;
-        } else {
-            return vp;
-        }
-    }
-
   public:
     using traits = virtual_traits<Class&, Policy>;
     using element_type = Class;
@@ -338,7 +347,8 @@ class virtual_ptr_impl {
 
     template<class Other>
     virtual_ptr_impl(Other& other)
-        : obj(&other), vp(vptr_p(Policy::dynamic_vptr(other))) {
+        : obj(&other),
+          vp(box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(other))) {
     }
 
     template<class Other>
@@ -360,14 +370,15 @@ class virtual_ptr_impl {
     }
 
     template<class Other>
-    virtual_ptr_impl(Other& other, const vptr_type& vp) : obj(&other), vp(vp) {
+    virtual_ptr_impl(Other& other, const vptr_type& vp)
+        : obj(&other), vp(box_vptr<use_indirect_vptrs>(vp)) {
     }
 
     template<class Other>
-    virtual_ptr_impl& operator=(Other& other) {
+    virtual_ptr_impl& operator=(Other* other) {
         static_assert(std::is_base_of_v<Class, Other>);
-        obj = &other;
-        vp = vptr_p(Policy::dynamic_vptr(other));
+        obj = other;
+        vp = box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(*other));
         return *this;
     }
 
@@ -409,7 +420,7 @@ class virtual_ptr_impl {
             std::is_base_of_v<Class, Other> || std::is_base_of_v<Other, Class>);
 
         return virtual_ptr<Other, Policy>(
-            traits::template cast<Other&>(*obj), vp);
+            traits::template cast<Other&>(*obj), unbox_vptr(vp));
     }
 
     template<class, class>
@@ -443,14 +454,6 @@ class virtual_ptr_impl<
     std::void_t<
         typename virtual_traits<Class, Policy>::template rebind<Class>>> {
 
-    static auto vptr_p(const vptr_type& vp) {
-        if constexpr (use_indirect_vptrs) {
-            return &vp;
-        } else {
-            return vp;
-        }
-    }
-
   public:
     using traits = virtual_traits<Class, Policy>;
     using element_type = typename Class::element_type;
@@ -476,7 +479,8 @@ class virtual_ptr_impl<
         typename =
             typename enable_if_compatible_smart_ptr<Class, Other, Policy>::type>
     virtual_ptr_impl(const Other& other)
-        : obj(other), vp(vptr_p(Policy::dynamic_vptr(*other))) {
+        : obj(other),
+          vp(box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(*other))) {
     }
 
     template<
@@ -484,7 +488,8 @@ class virtual_ptr_impl<
         typename =
             typename enable_if_compatible_smart_ptr<Class, Other, Policy>::type>
     virtual_ptr_impl(Other&& other)
-        : obj(std::move(other)), vp(vptr_p(Policy::dynamic_vptr(*other))) {
+        : obj(std::move(other)),
+          vp(box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(*other))) {
     }
 
     template<
@@ -528,8 +533,8 @@ class virtual_ptr_impl<
     }
 
     template<typename Arg>
-    virtual_ptr_impl(Arg&& obj, const vptr_type& vp)
-        : obj(std::forward<Arg>(obj)), vp(vp) {
+    virtual_ptr_impl(Arg&& obj, decltype(vp) other_vp)
+        : obj(std::forward<Arg>(obj)), vp(other_vp) {
     }
 
     template<class Other>
@@ -607,15 +612,12 @@ class virtual_ptr : public detail::virtual_ptr_impl<Class, Policy> {
 
         return virtual_ptr(
             std::forward<Other>(obj),
-            Policy::template static_vptr<other_class>);
+            detail::box_vptr<impl::use_indirect_vptrs>(
+                Policy::template static_vptr<other_class>));
     }
 
     auto vptr() const {
-        if constexpr (impl::use_indirect_vptrs) {
-            return *this->vp;
-        } else {
-            return this->vp;
-        }
+        return detail::unbox_vptr(this->vp);
     }
 };
 
@@ -776,8 +778,8 @@ class method<Name(Parameters...), ReturnType, Policy>
     using VirtualParameters =
         typename detail::virtual_types<DeclaredParameters>;
     using Signature = auto(Parameters...) -> ReturnType;
-    using FunctionPointer = auto (*)(detail::remove_virtual<Parameters>...)
-        -> ReturnType;
+    using FunctionPointer = auto(*)(detail::remove_virtual<Parameters>...)
+                                -> ReturnType;
     static constexpr auto Arity = boost::mp11::mp_count_if<
         mp11::mp_list<Parameters...>, detail::is_virtual>::value;
 

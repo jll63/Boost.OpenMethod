@@ -38,7 +38,7 @@ struct Dog : Animal {};
 
 template<class Policy>
 void init_test() {
-    BOOST_OPENMETHOD_REGISTER(use_classes<Animal, Dog, Policy>);
+    BOOST_OPENMETHOD_REGISTER(use_classes<Animal, Cat, Dog, Policy>);
     struct id;
     (void)&method<id(virtual_ptr<Animal, Policy>), void, Policy>::fn;
     boost::openmethod::initialize<Policy>();
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_ptr_ctors, Policy, test_policies) {
             BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
 
             Cat cat;
-            p = cat;
+            p = &cat;
             BOOST_TEST(p.get() == &cat);
             BOOST_TEST(p.vptr() == Policy::template static_vptr<Cat>);
         }

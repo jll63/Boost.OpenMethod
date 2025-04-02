@@ -98,11 +98,6 @@ another `virtual_ptr`. A smart `virtual_ptr` can be constructed from a smart
 pointer or from a smart `virtual_ptr`. Usual conversions - from derived to base,
 and from non-const to const - are allowed.
 
-`virtual_ptr` does not have a default constructor, nor a "null" state. In that
-respect, it behaves more like a reference than a pointer. The only reason why it
-is not called `virtual_ref` is to save the name for the day C++ will support
-smart references.
-
 ### Members
 
 #### is_smart_ptr

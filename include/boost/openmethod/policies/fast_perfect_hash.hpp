@@ -139,14 +139,12 @@ void fast_perfect_hash<Policy>::hash_initialize(
         }
 
         if (found) {
-            ++hash_max;
-
             if constexpr (trace_enabled) {
                 if (Policy::trace_enabled) {
                     Policy::trace_stream << "  found " << hash_mult << " after "
                                          << total_attempts
                                          << " attempts; span = [" << hash_min
-                                         << "," << hash_max << ")\n";
+                                         << ", " << hash_max << "]\n";
                 }
             }
 
@@ -167,7 +165,7 @@ void fast_perfect_hash<Policy>::hash_initialize(
 
 template<class Policy>
 void fast_perfect_hash<Policy>::check(std::size_t index, type_id type) {
-    if (index < hash_min || index >= hash_max ||
+    if (index < hash_min || index > hash_max ||
         detail::fast_perfect_hash_control<Policy>[index] != type) {
         if constexpr (Policy::template has_facet<error_handler>) {
             unknown_class_error error;

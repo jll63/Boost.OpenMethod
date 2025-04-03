@@ -28,8 +28,6 @@ struct Animal {
 
     Animal() = default;
     Animal(const Animal&) = delete;
-
-    int age;
 };
 
 struct Cat : virtual Animal {};
@@ -72,75 +70,96 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(virtual_ptr_ctors, Policy, test_policies) {
     static_assert(
         std::is_same_v<
             decltype(*std::declval<virtual_ptr<Animal, Policy>>()), Animal&>);
-    static_assert(!std::is_constructible_v<virtual_ptr<Animal, Policy>, Dog>);
 
     init_test<Policy>();
 
     {
         Dog dog;
-
-        {
-            virtual_ptr<Dog, Policy> p(dog);
-            BOOST_TEST(p.get() == &dog);
-            BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
-            virtual_ptr<Dog, Policy> copy(p);
-            virtual_ptr<Animal, Policy> base(p);
-            virtual_ptr<const Dog, Policy> const_copy(p);
-            virtual_ptr<const Animal, Policy> const_base_copy(p);
-        }
-
-        {
-            const auto p = virtual_ptr<Dog, Policy>(dog);
-            virtual_ptr<Dog, Policy> const_copy(p);
-            virtual_ptr<Animal, Policy> const_base_copy(p);
-        }
-
-        {
-            virtual_ptr<Animal, Policy> p(dog);
-            BOOST_TEST(p.get() == &dog);
-            BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
-
-            Cat cat;
-            p = &cat;
-            BOOST_TEST(p.get() == &cat);
-            BOOST_TEST(p.vptr() == Policy::template static_vptr<Cat>);
-        }
+        virtual_ptr<Dog, Policy> p(dog);
+        BOOST_TEST(p.get() == &dog);
+        BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
     }
+
+    {
+        Dog dog;
+        virtual_ptr<Dog, Policy> p(dog);
+        virtual_ptr<Dog, Policy> copy(p);
+        BOOST_TEST(copy.get() == &dog);
+        BOOST_TEST(copy.vptr() == Policy::template static_vptr<Dog>);
+    }
+
+    {
+        Dog dog;
+        virtual_ptr<Dog, Policy> p(dog);
+        virtual_ptr<Animal, Policy> base(p);
+        BOOST_TEST(base.get() == &dog);
+        BOOST_TEST(base.vptr() == Policy::template static_vptr<Dog>);
+    }
+
+    {
+        Dog dog;
+        virtual_ptr<Dog, Policy> p(dog);
+        virtual_ptr<const Dog, Policy> const_copy(p);
+        BOOST_TEST(const_copy.get() == &dog);
+        BOOST_TEST(const_copy.vptr() == Policy::template static_vptr<Dog>);
+    }
+
+    {
+        Dog dog;
+        virtual_ptr<Dog, Policy> p(dog);
+        virtual_ptr<const Animal, Policy> const_base_copy(p);
+        BOOST_TEST(const_base_copy.get() == &dog);
+        BOOST_TEST(const_base_copy.vptr() == Policy::template static_vptr<Dog>);
+    }
+
+    {
+        Dog dog;
+        const auto p = virtual_ptr<Dog, Policy>(dog);
+        virtual_ptr<Dog, Policy> const_copy(p);
+        virtual_ptr<Animal, Policy> const_base_copy(p);
+    }
+
+    {
+        Dog dog;
+        virtual_ptr<Animal, Policy> p(dog);
+        Cat cat;
+        p = cat;
+        BOOST_TEST(p.get() == &cat);
+        BOOST_TEST(p.vptr() == Policy::template static_vptr<Cat>);
+    }
+
+    {
+        Dog dog;
+        virtual_ptr<Animal, Policy> p(dog);
+        Cat cat;
+        p = &cat;
+        BOOST_TEST(p.get() == &cat);
+        BOOST_TEST(p.vptr() == Policy::template static_vptr<Cat>);
+    }
+
+    // illegal constructions and assignments
+    static_assert(!std::is_constructible_v<virtual_ptr<Dog, Policy>, Dog>);
+    static_assert(!std::is_constructible_v<virtual_ptr<Dog, Policy>, Dog&&>);
+    static_assert(
+        !std::is_constructible_v<virtual_ptr<Dog, Policy>, const Dog&>);
+    static_assert(!std::is_assignable_v<virtual_ptr<Dog, Policy>, const Dog&>);
+    static_assert(
+        !std::is_constructible_v<virtual_ptr<Dog, Policy>, const Dog*>);
+    static_assert(!std::is_assignable_v<virtual_ptr<Dog, Policy>, const Dog*>);
+    static_assert(!std::is_constructible_v<virtual_ptr<Animal, Policy>, Dog>);
+    static_assert(!std::is_assignable_v<virtual_ptr<Animal, Policy>, Dog>);
 }
 
 template<
     template<class... Class> class smart_ptr,
     template<class... Class> class other_smart_ptr, class Policy>
-struct check_smart_ctors {
-    // construction
-
-    // a virtual_ptr can be constructed from a smart_ptr (same class)
-    static_assert(std::is_constructible_v<
-                  virtual_ptr<smart_ptr<Animal>, Policy>, smart_ptr<Animal>>);
-
-    // a virtual_ptr to const can be constructed from smart_ptr (same class)
-    static_assert(
-        std::is_constructible_v<
-            virtual_ptr<smart_ptr<Animal>, Policy>, const smart_ptr<Animal>&>);
-
-    static_assert(
-        std::is_constructible_v<
-            virtual_ptr<smart_ptr<const Animal>, Policy>, smart_ptr<Animal>>);
-
-    // a virtual_ptr can be constructed from a smart_ptr (derived class)
-    static_assert(std::is_constructible_v<
-                  virtual_ptr<smart_ptr<Animal>, Policy>, smart_ptr<Dog>>);
-
-    // a virtual_ptr to const can be constructed from a smart_ptr (derived class)
-    static_assert(
-        std::is_constructible_v<
-            virtual_ptr<smart_ptr<const Animal>, Policy>, smart_ptr<Dog>>);
+struct check_illegal_smart_ops {
 
     // a virtual_ptr cannot be constructed from a smart_ptr to a different class
     static_assert(!std::is_constructible_v<
                   virtual_ptr<smart_ptr<Cat>, Policy>, smart_ptr<Dog>>);
 
-    // a virtual_ptr cannot be constructed from const  smart_ptr
+    // a virtual_ptr cannot be constructed from const smart_ptr
     static_assert(
         !std::is_constructible_v<
             virtual_ptr<smart_ptr<Animal>, Policy>, smart_ptr<const Animal>>);
@@ -149,10 +168,6 @@ struct check_smart_ctors {
     static_assert(!std::is_constructible_v<
                   virtual_ptr<smart_ptr<Animal>, policies::debug>,
                   virtual_ptr<smart_ptr<Animal>, policies::release>>);
-
-    // move constructible
-    static_assert(
-        std::is_move_constructible_v<virtual_ptr<smart_ptr<Animal>, Policy>>);
 
     // a smart virtual_ptr cannot be constructed from a plain reference or
     // pointer
@@ -165,11 +180,6 @@ struct check_smart_ctors {
     static_assert(!std::is_constructible_v<
                   virtual_ptr<smart_ptr<Animal>, Policy>,
                   virtual_ptr<other_smart_ptr<Animal>, Policy>>);
-
-    // a smart virtual_ptr converts to a plain one
-    static_assert(std::is_constructible_v<
-                  virtual_ptr<Animal, Policy>,
-                  virtual_ptr<smart_ptr<Animal>, Policy>>);
 
     // but not the other way around
     static_assert(!std::is_constructible_v<
@@ -209,28 +219,36 @@ struct check_smart_ctors {
             Animal&>);
 };
 
-template struct check_smart_ctors<
+template struct check_illegal_smart_ops<
     std::shared_ptr, std::unique_ptr, direct_vector_policy>;
 
-template struct check_smart_ctors<
+template struct check_illegal_smart_ops<
     std::unique_ptr, std::shared_ptr, direct_vector_policy>;
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(shared_virtual_ptr_ctors, Policy, test_policies) {
     {
         init_test<Policy>();
 
-        auto dog = std::make_shared<Dog>();
-
         {
+            auto dog = std::make_shared<Dog>();
             shared_virtual_ptr<Dog, Policy> ptr(dog);
             BOOST_TEST((ptr.get() == dog.get()));
             BOOST_TEST(ptr.pointer() == dog);
             BOOST_TEST(ptr.vptr() == Policy::template static_vptr<Dog>);
+        }
 
+        {
+            auto dog = std::make_shared<Dog>();
+            shared_virtual_ptr<Dog, Policy> ptr(dog);
             shared_virtual_ptr<Dog, Policy> copy(ptr);
             BOOST_TEST((copy.get() == dog.get()));
             BOOST_TEST(copy.pointer() == dog);
             BOOST_TEST(copy.vptr() == Policy::template static_vptr<Dog>);
+        }
+
+        {
+            auto dog = std::make_shared<Dog>();
+            shared_virtual_ptr<Dog, Policy> ptr(dog);
 
             shared_virtual_ptr<Animal, Policy> base(ptr);
             BOOST_TEST((base.get() == dog.get()));
@@ -239,6 +257,11 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(shared_virtual_ptr_ctors, Policy, test_policies) {
                 base.template cast<Dog>();
             BOOST_TEST((downcast.get() == dog.get()));
             BOOST_TEST(base.vptr() == Policy::template static_vptr<Dog>);
+        }
+
+        {
+            auto dog = std::make_shared<Dog>();
+            shared_virtual_ptr<Dog, Policy> ptr(dog);
 
             shared_virtual_ptr<const Dog, Policy> const_copy(ptr);
             shared_virtual_ptr<const Animal, Policy> base_const_copy(ptr);
@@ -263,6 +286,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(shared_virtual_ptr_ctors, Policy, test_policies) {
         }
 
         {
+            auto dog = std::make_shared<Dog>();
             shared_virtual_ptr<Dog, Policy> ptr(dog);
             shared_virtual_ptr<const Animal, Policy> move_const_ptr(
                 std::move(ptr));
@@ -271,12 +295,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(shared_virtual_ptr_ctors, Policy, test_policies) {
         }
 
         {
+            auto dog = std::make_shared<Dog>();
             shared_virtual_ptr<Animal, Policy> ptr(dog);
-        }
-
-        {
-            // should not compile:
-            // unique_virtual_ptr<Dog, Policy> unique_dog(dog);
         }
     }
 

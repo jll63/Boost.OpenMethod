@@ -232,7 +232,7 @@ BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<Number> expr), int) {
   return expr->val;
 }
 
-BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<const Times> expr), int) {
+BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<Times> expr), int) {
   return value(expr->left) * value(expr->right);
 }
 

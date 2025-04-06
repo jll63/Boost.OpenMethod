@@ -349,6 +349,8 @@ template<class Other, class Class>
 using enable_if_convertible = typename enable_if_convertible_aux<
     Other, Class, std::is_convertible<Other, Class>::value>::type;
 
+inline vptr_type null_vptr = nullptr;
+
 template<class Class, class Policy, typename = void>
 class virtual_ptr_impl {
   public:
@@ -363,6 +365,10 @@ class virtual_ptr_impl {
     virtual_ptr_impl(Other& other)
         : obj(&other),
           vp(box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(other))) {
+    }
+
+    virtual_ptr_impl()
+        : obj(nullptr), vp(box_vptr<use_indirect_vptrs>(null_vptr)) {
     }
 
     template<class Other, typename = enable_if_convertible<Other*, Class*>>

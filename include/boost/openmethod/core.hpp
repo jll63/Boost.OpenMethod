@@ -335,19 +335,28 @@ inline auto unbox_vptr(const vptr_type* vpp) {
     return *vpp;
 }
 
-// SFINAE helper: defined only if a Other* can be converted to a Class* (this
-// takes inheritance and constness into account).
-template<class Other, class Class, bool IsConvertible>
-struct enable_if_convertible_aux;
 
-template<class Other, class Class>
-struct enable_if_convertible_aux<Other, Class, true> {
-    using type = void; // it doesn't matter which type, it's just for SFNIAE.
+// -----------------------------------------------------------------------------
+// SFINAE helpers
+
+// enable_if_true: SF if Predicate is false.
+template<bool Predicate>
+struct enable_if_true_aux;
+
+template<>
+struct enable_if_true_aux<true> {
+    using type = void; // it doesn't matter which type, it's just for SFINAE.
 };
 
+template<bool Predicate>
+using enable_if_true = typename enable_if_true_aux<Predicate>::type;
+
+// enable_if_convertible: succeeds only if a Other* can be converted to a Class*
+// (this takes inheritance and constness into account).
+
 template<class Other, class Class>
-using enable_if_convertible = typename enable_if_convertible_aux<
-    Other, Class, std::is_convertible<Other, Class>::value>::type;
+using enable_if_convertible =
+    enable_if_true<std::is_convertible_v<Other, Class>>;
 
 inline vptr_type null_vptr = nullptr;
 
@@ -420,15 +429,7 @@ class virtual_ptr_impl {
     }
 
     template<class Other, typename = enable_if_convertible<Other*, Class*>>
-    virtual_ptr_impl& operator=(const virtual_ptr<Other, Policy>& other) {
-        static_assert(std::is_base_of_v<Class, Other>);
-        obj = other.get();
-        vp = other.vp;
-        return *this;
-    }
-
-    template<class Other, typename = enable_if_convertible<Other*, Class*>>
-    virtual_ptr_impl& operator=(virtual_ptr<Other, Policy>& other) {
+    virtual_ptr_impl& operator=(const virtual_ptr_impl<Other, Policy>& other) {
         static_assert(std::is_base_of_v<Class, Other>);
         obj = other.get();
         vp = other.vp;
@@ -468,9 +469,9 @@ class virtual_ptr_impl {
     Class* obj;
 };
 
-// SFINAE helper: defined only if Class and Other are both smart pointers of the
-// same kind and that a Other* can be converted to a Class* (this takes
-// inheritance and constness into account).
+// enable_if_compatible_smart_ptr: defined only if Class and Other are both
+// smart pointers of the same kind and that a Other* can be converted to a
+// Class* (this takes inheritance and constness into account).
 template<
     class Other, class Class, class Policy, class Rebind, bool IsConvertible>
 struct enable_if_compatible_smart_ptr_aux;
@@ -679,11 +680,19 @@ class virtual_ptr : public detail::virtual_ptr_impl<Class, Policy> {
 
   public:
     using detail::virtual_ptr_impl<Class, Policy>::virtual_ptr_impl;
-    using detail::virtual_ptr_impl<Class, Policy>::operator=;
+    //using detail::virtual_ptr_impl<Class, Policy>::operator=;
     using element_type = typename impl::element_type;
 
     template<class, class, typename>
     friend class detail::virtual_ptr_impl;
+
+    template<
+        typename Other,
+        typename = detail::enable_if_true<std::is_assignable_v<impl, Other>>>
+    virtual_ptr& operator=(Other&& other) {
+        impl::operator=(std::forward<Other>(other));
+        return *this;
+    }
 
     template<class Other>
     static auto final(Other&& obj) {

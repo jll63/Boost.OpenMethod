@@ -210,6 +210,23 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(shared_virtual_ptr_value, Policy, test_policies) {
         BOOST_TEST(p.vptr() == nullptr);
     }
 
+    {
+        // virtual_ptr<Dog>(shared_virtual_ptr<Dog>&)
+        auto p = make_shared_virtual<Dog, Policy>();
+        virtual_ptr<Dog, Policy> q(p);
+        BOOST_TEST(q.get() == p.get());
+        BOOST_TEST(q.vptr() == Policy::template static_vptr<Dog>);
+    }
+
+    {
+        // virtual_ptr<Dog> = shared_virtual_ptr<Dog>&
+        const auto p = make_shared_virtual<Dog, Policy>();
+        virtual_ptr<Dog, Policy> q;
+        q = p;
+        BOOST_TEST(q.get() == p.get());
+        BOOST_TEST(q.vptr() == Policy::template static_vptr<Dog>);
+    }
+
     // illegal constructions and assignments
     static_assert(
         !std::is_constructible_v<shared_virtual_ptr<Dog, Policy>, Dog>);

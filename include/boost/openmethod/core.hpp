@@ -374,7 +374,7 @@ class virtual_ptr_impl {
     template<class Other, typename = enable_if_convertible<Other*, Class*>>
     virtual_ptr_impl(Other* other)
         : obj(other),
-          vp(box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(other))) {
+          vp(box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(*other))) {
     }
 
     template<
@@ -477,7 +477,7 @@ struct enable_if_compatible_smart_ptr_aux;
 
 template<class Other, class Class, class Policy>
 struct enable_if_compatible_smart_ptr_aux<Other, Class, Policy, Other, true> {
-    using type = void; // it doesn't matter which type, it's just for SFNIAE.
+    using type = int; // it doesn't matter which type, it's just for SFNIAE.
 };
 
 template<class Other, class Class, class Policy>
@@ -516,6 +516,9 @@ class virtual_ptr_impl<
   public:
     static constexpr bool is_smart_ptr = true;
 
+    virtual_ptr_impl() : vp(box_vptr<use_indirect_vptrs>(null_vptr)) {
+    }
+
     template<
         class Other,
         typename = enable_if_compatible_smart_ptr<Other, Class, Policy>>
@@ -551,6 +554,53 @@ class virtual_ptr_impl<
         typename = enable_if_compatible_smart_ptr<Other, Class, Policy>>
     virtual_ptr_impl(virtual_ptr<Other, Policy>&& other)
         : obj(std::move(other.obj)), vp(other.vp) {
+        other.vp = box_vptr<use_indirect_vptrs>(null_vptr);
+    }
+
+    template<
+        class Other,
+        typename = enable_if_compatible_smart_ptr<Other, Class, Policy>>
+    virtual_ptr_impl& operator=(const Other& other) {
+        obj = other;
+        vp = box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(*other));
+        return *this;
+    }
+
+    template<
+        class Other,
+        typename = enable_if_compatible_smart_ptr<Other, Class, Policy>>
+    virtual_ptr_impl& operator=(Other&& other) {
+        obj = std::move(other);
+        vp = box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(*other));
+        return *this;
+    }
+
+    template<
+        class Other,
+        typename = enable_if_compatible_smart_ptr<Other, Class, Policy>>
+    virtual_ptr_impl& operator=(virtual_ptr<Other, Policy>& other) {
+        obj = other.obj;
+        vp = other.vp;
+        return *this;
+    }
+
+    template<
+        class Other,
+        typename = enable_if_compatible_smart_ptr<Other, Class, Policy>>
+    virtual_ptr_impl& operator=(const virtual_ptr<Other, Policy>& other) {
+        obj = other.obj;
+        vp = other.vp;
+        return *this;
+    }
+
+    template<
+        class Other,
+        typename = enable_if_compatible_smart_ptr<Other, Class, Policy>>
+    virtual_ptr_impl&& operator=(virtual_ptr<Other, Policy>&& other) {
+        obj = std::move(other.obj);
+        vp = other.vp;
+        other.vp = box_vptr<use_indirect_vptrs>(null_vptr);
+        return *this;
     }
 
     auto get() const -> element_type* {

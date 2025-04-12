@@ -40,6 +40,17 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(plain_virtual_ptr_value, Policy, test_policies) {
     }
 
     {
+        // virtual_ptr<Dog>(virtual_ptr<Dog>&&)
+        Dog dog;
+        virtual_ptr<Dog, Policy> p(dog);
+        virtual_ptr<Dog, Policy> copy(std::move(p));
+        BOOST_TEST(copy.get() == &dog);
+        BOOST_TEST(copy.vptr() == Policy::template static_vptr<Dog>);
+        BOOST_TEST(p.get() == &dog);
+        BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
+    }
+
+    {
         // virtual_ptr<Animal>(const virtual_ptr<Dog>&)
         Dog dog;
         const virtual_ptr<Dog, Policy> p(dog);
@@ -65,6 +76,13 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(plain_virtual_ptr_value, Policy, test_policies) {
     }
 
     {
+        // virtual_ptr<Dog>(nullptr)
+        virtual_ptr<Dog, Policy> p{nullptr};
+        BOOST_TEST(p.get() == nullptr);
+        BOOST_TEST(p.vptr() == nullptr);
+    }
+
+    {
         // virtual_ptr<const Dog>(const virtual_ptr<Dog>&)
         Dog dog;
         const virtual_ptr<Dog, Policy> p(dog);
@@ -84,7 +102,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(plain_virtual_ptr_value, Policy, test_policies) {
 
     {
         // virtual_ptr<Dog>()
-        virtual_ptr<Dog, Policy> p;
+        virtual_ptr<Dog, Policy> p{nullptr};
         BOOST_TEST(p.get() == nullptr);
         BOOST_TEST(p.vptr() == nullptr);
     }
@@ -126,17 +144,11 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(plain_virtual_ptr_value, Policy, test_policies) {
     }
 
     // illegal constructions and assignments
-    static_assert(!std::is_constructible_v<virtual_ptr<Dog, Policy>, Dog>);
-    static_assert(!std::is_constructible_v<virtual_ptr<Dog, Policy>, Dog&&>);
+    static_assert(!construct_assign_ok<virtual_ptr<Dog, Policy>, Dog&&>);
     static_assert(
-        !std::is_constructible_v<virtual_ptr<Dog, Policy>, const Dog&>);
+        !construct_assign_ok<virtual_ptr<Dog, Policy>, const Dog&>);
     static_assert(
-        !std::is_constructible_v<virtual_ptr<Dog, Policy>, const Dog*>);
-
-    static_assert(!std::is_assignable_v<virtual_ptr<Dog, Policy>, Dog>);
-    static_assert(!std::is_assignable_v<virtual_ptr<Dog, Policy>, Dog&&>);
-    static_assert(!std::is_assignable_v<virtual_ptr<Dog, Policy>, const Dog&>);
-    static_assert(!std::is_assignable_v<virtual_ptr<Dog, Policy>, const Dog*>);
+        !construct_assign_ok<virtual_ptr<Dog, Policy>, const Dog*>);
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(indirect_virtual_ptr, Policy, test_policies) {

@@ -132,7 +132,21 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(shared_virtual_ptr_value, Policy, test_policies) {
 
     {
         // shared_virtual_ptr<Dog>()
-        shared_virtual_ptr<Dog, Policy> p;
+        shared_virtual_ptr<Dog, Policy> p{nullptr};
+        BOOST_TEST(p.get() == nullptr);
+        BOOST_TEST(p.vptr() == nullptr);
+    }
+
+    {
+        // shared_virtual_ptr<Dog>()
+        shared_virtual_ptr<Dog, Policy> p{std::shared_ptr<Dog>()};
+        BOOST_TEST(p.get() == nullptr);
+        BOOST_TEST(p.vptr() == nullptr);
+    }
+
+    {
+        // shared_virtual_ptr<Dog>()
+        shared_virtual_ptr<Animal, Policy> p{std::shared_ptr<Dog>()};
         BOOST_TEST(p.get() == nullptr);
         BOOST_TEST(p.vptr() == nullptr);
     }
@@ -140,6 +154,15 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(shared_virtual_ptr_value, Policy, test_policies) {
     {
         // shared_virtual_ptr<Dog> = std::shared_ptr<Dog>&
         shared_virtual_ptr<Dog, Policy> p;
+        auto s = std::make_shared<Dog>();
+        p = s;
+        BOOST_TEST(p.get() == s.get());
+        BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
+    }
+
+    {
+        // shared_virtual_ptr<Dog> = std::shared_ptr<Dog>&
+        shared_virtual_ptr<Animal, Policy> p;
         auto s = std::make_shared<Dog>();
         p = s;
         BOOST_TEST(p.get() == s.get());

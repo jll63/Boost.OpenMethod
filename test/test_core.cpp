@@ -61,8 +61,8 @@ static_assert(
 
 static_assert(std::is_same_v<
               overrider_virtual_types<
-                  mp11::mp_list<virtual_<a&>, b, virtual_<c&>>, mp11::mp_list<d&, e, f&>,
-                  default_policy>,
+                  mp11::mp_list<virtual_<a&>, b, virtual_<c&>>,
+                  mp11::mp_list<d&, e, f&>, default_policy>,
               mp11::mp_list<d, f>>);
 
 static_assert(
@@ -76,16 +76,18 @@ static_assert(std::is_same_v<
                   virtual_ptr<base>, virtual_ptr<a>, default_policy>::type,
               a>);
 
-static_assert(std::is_same_v<
-              overrider_virtual_types<
-                  mp11::mp_list<virtual_ptr<a>, b, virtual_ptr<c>>,
-                  mp11::mp_list<virtual_ptr<d>, e, virtual_ptr<f>>, default_policy>,
-              mp11::mp_list<d, f>>);
+static_assert(
+    std::is_same_v<
+        overrider_virtual_types<
+            mp11::mp_list<virtual_ptr<a>, b, virtual_ptr<c>>,
+            mp11::mp_list<virtual_ptr<d>, e, virtual_ptr<f>>, default_policy>,
+        mp11::mp_list<d, f>>);
 
 static_assert(
     std::is_same_v<
         overrider_virtual_types<
-            mp11::mp_list<const virtual_ptr<base>&, b, const virtual_ptr<base>&>,
+            mp11::mp_list<
+                const virtual_ptr<base>&, b, const virtual_ptr<base>&>,
             mp11::mp_list<const virtual_ptr<d>&, e, const virtual_ptr<f>&>,
             default_policy>,
         mp11::mp_list<d, f>>);
@@ -95,7 +97,8 @@ static_assert(
         overrider_virtual_types<
             mp11::mp_list<
                 virtual_<std::shared_ptr<a>>, b, virtual_<std::shared_ptr<c>>>,
-            mp11::mp_list<std::shared_ptr<d>, e, std::shared_ptr<f>>, default_policy>,
+            mp11::mp_list<std::shared_ptr<d>, e, std::shared_ptr<f>>,
+            default_policy>,
         mp11::mp_list<d, f>>);
 
 static_assert(std::is_same_v<

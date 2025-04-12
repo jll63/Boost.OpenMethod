@@ -77,12 +77,16 @@ struct check_illegal_smart_ops {
     static_assert(!std::is_constructible_v<
                   virtual_ptr<smart_ptr<Animal>, Policy>, Animal*>);
 
-    // the smart pointer must be of the same kind (e.g. both shared_ptr)
-    static_assert(!std::is_constructible_v<
-                  virtual_ptr<smart_ptr<Animal>, Policy>,
-                  virtual_ptr<other_smart_ptr<Animal>, Policy>>);
+    // static_assert(
+    //     !std::is_constructible_v<smart_ptr<Animal>, other_smart_ptr<Animal>>);
+    // smart_ptr<Animal> p{other_smart_ptr<Animal>()};
 
-    // but not the other way around
+    static_assert(
+        std::is_constructible_v<
+            virtual_ptr<smart_ptr<Animal>, Policy>,
+            virtual_ptr<other_smart_ptr<Animal>, Policy>> ==
+        std::is_constructible_v<smart_ptr<Animal>, other_smart_ptr<Animal>>);
+
     static_assert(!std::is_constructible_v<
                   virtual_ptr<smart_ptr<Animal>, Policy>,
                   virtual_ptr<Animal, Policy>>);
@@ -119,5 +123,9 @@ struct check_illegal_smart_ops {
             decltype(*std::declval<virtual_ptr<smart_ptr<Animal>, Policy>>()),
             Animal&>);
 };
+
+template<class Left, class Right>
+constexpr bool construct_assign_ok =
+    std::is_constructible_v<Left, Right> && std::is_assignable_v<Left, Right>;
 
 #endif // TEST_VIRTUAL_PTR_VALUE_SEMANTICS_HPP

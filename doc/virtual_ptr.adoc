@@ -135,6 +135,7 @@ virtual_ptr(nullptr_t);                                 // 2
 template<class Other> virtual_ptr(Other& other);        // 3
 template<class Other> virtual_ptr(const Other& other);  // 4
 template<class Other> virtual_ptr(Other&& other);       // 5
+template<class Other> virtual_ptr(Other* other);        // 6
 ----
 
 (1) Default constructor. Sets the v-table pointer to `nullptr`. If `Class` is
@@ -149,6 +150,9 @@ pointer, or a reference to a smart `virtual_ptr`.
 
 (5) Constructs a `virtual_ptr` from a smart pointer or a smart `virtual_ptr`.
 The (smart) object pointer is moved from `other`.
+
+(6) Constructs a `virtual_ptr` from a plain pointer. Available only for plain
+`virtual_ptr`{empty}s.
 
 If `other` is also a `virtual_ptr`, the v-table pointer is copied from it.
 Otherwise, it is deduced from the object. The `Policy` must be the same for both

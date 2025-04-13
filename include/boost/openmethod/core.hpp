@@ -466,14 +466,21 @@ class virtual_ptr_impl {
     Class* obj;
 };
 
-template<class A, class B>
-struct from_same_template_aux : std::false_type {};
+template<class Class, class Other, class Policy, typename = void>
+struct same_smart_ptr_aux : std::false_type {};
 
-template<class A, class B, template<typename...> class T>
-struct from_same_template_aux<T<A>, T<B>> : std::true_type {};
+template<class Class, class Other, class Policy>
+struct same_smart_ptr_aux<
+    Class, Other, Policy,
+    std::void_t<typename virtual_traits<Class, Policy>::template rebind<
+        typename Other::element_type>>>
+    : std::is_same<
+          Other,
+          typename virtual_traits<Class, Policy>::template rebind<
+              typename Other::element_type>> {};
 
-template<class A, class B>
-constexpr bool from_same_template = from_same_template_aux<A, B>::value;
+template<class Class, class Other, class Policy>
+constexpr bool same_smart_ptr = same_smart_ptr_aux<Class, Other, Policy>::value;
 
 template<class Class, class Policy>
 class virtual_ptr_impl<
@@ -514,7 +521,7 @@ class virtual_ptr_impl<
     template<
         class Other,
         typename = std::enable_if_t<
-            from_same_template<Class, Other> &&
+            same_smart_ptr<Class, Other, Policy> &&
             std::is_constructible_v<Class, const Other&>>>
     virtual_ptr_impl(const Other& other)
         : obj(other), vp(box_vptr<use_indirect_vptrs>(
@@ -524,7 +531,7 @@ class virtual_ptr_impl<
     template<
         class Other,
         typename = std::enable_if_t<
-            from_same_template<Class, Other> &&
+            same_smart_ptr<Class, Other, Policy> &&
             std::is_constructible_v<Class, Other&>>>
     virtual_ptr_impl(Other& other)
         : obj(other), vp(box_vptr<use_indirect_vptrs>(
@@ -534,7 +541,7 @@ class virtual_ptr_impl<
     template<
         class Other,
         typename = std::enable_if_t<
-            from_same_template<Class, Other> &&
+            same_smart_ptr<Class, Other, Policy> &&
             std::is_constructible_v<Class, Other&&>>>
     virtual_ptr_impl(Other&& other)
         : obj(std::move(other)),
@@ -545,7 +552,7 @@ class virtual_ptr_impl<
     template<
         class Other,
         typename = std::enable_if_t<
-            from_same_template<Class, Other> &&
+            same_smart_ptr<Class, Other, Policy> &&
             std::is_constructible_v<Class, const Other&>>>
     virtual_ptr_impl(const virtual_ptr<Other, Policy>& other)
         : obj(other.obj), vp(other.vp) {
@@ -554,7 +561,7 @@ class virtual_ptr_impl<
     template<
         class Other,
         typename = std::enable_if_t<
-            from_same_template<Class, Other> &&
+            same_smart_ptr<Class, Other, Policy> &&
             std::is_constructible_v<Class, Other&>>>
     virtual_ptr_impl(virtual_ptr<Other, Policy>& other)
         : obj(other.obj), vp(other.vp) {
@@ -568,7 +575,7 @@ class virtual_ptr_impl<
     template<
         class Other,
         typename = std::enable_if_t<
-            from_same_template<Class, Other> &&
+            same_smart_ptr<Class, Other, Policy> &&
             std::is_constructible_v<Class, Other&&>>>
     virtual_ptr_impl(virtual_ptr<Other, Policy>&& other)
         : obj(std::move(other.obj)), vp(other.vp) {
@@ -584,7 +591,7 @@ class virtual_ptr_impl<
     template<
         class Other,
         typename = std::enable_if_t<
-            from_same_template<Class, Other> &&
+            same_smart_ptr<Class, Other, Policy> &&
             std::is_assignable_v<Class, const Other&>>>
     virtual_ptr_impl& operator=(const Other& other) {
         obj = other;
@@ -595,7 +602,7 @@ class virtual_ptr_impl<
     template<
         class Other,
         typename = std::enable_if_t<
-            from_same_template<Class, Other> &&
+            same_smart_ptr<Class, Other, Policy> &&
             std::is_assignable_v<Class, Other&&>>>
     virtual_ptr_impl& operator=(Other&& other) {
         vp = box_vptr<use_indirect_vptrs>(
@@ -607,7 +614,7 @@ class virtual_ptr_impl<
     template<
         class Other,
         typename = std::enable_if_t<
-            from_same_template<Class, Other> &&
+            same_smart_ptr<Class, Other, Policy> &&
             std::is_assignable_v<Class, Other&>>>
     virtual_ptr_impl& operator=(virtual_ptr<Other, Policy>& other) {
         obj = other.obj;
@@ -618,7 +625,7 @@ class virtual_ptr_impl<
     template<
         class Other,
         typename = std::enable_if_t<
-            from_same_template<Class, Other> &&
+            same_smart_ptr<Class, Other, Policy> &&
             std::is_assignable_v<Class, const Other&>>>
     virtual_ptr_impl& operator=(const virtual_ptr_impl<Other, Policy>& other) {
         obj = other.obj;
@@ -629,7 +636,7 @@ class virtual_ptr_impl<
     template<
         class Other,
         typename = std::enable_if_t<
-            from_same_template<Class, Other> &&
+            same_smart_ptr<Class, Other, Policy> &&
             std::is_assignable_v<Class, Other&&>>>
     virtual_ptr_impl& operator=(virtual_ptr_impl<Other, Policy>&& other) {
         obj = std::move(other.obj);

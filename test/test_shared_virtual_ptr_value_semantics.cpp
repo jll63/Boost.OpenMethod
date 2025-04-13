@@ -12,6 +12,16 @@
 
 #include <memory>
 
+static_assert(detail::same_smart_ptr<
+              std::shared_ptr<Animal>, std::shared_ptr<Dog>, default_policy>);
+
+static_assert(!detail::same_smart_ptr<
+              std::shared_ptr<Animal>, std::unique_ptr<Dog>, default_policy>);
+
+static_assert(!detail::same_smart_ptr<
+              std::shared_ptr<Animal>, virtual_ptr<std::unique_ptr<Dog>>,
+              default_policy>);
+
 BOOST_AUTO_TEST_CASE_TEMPLATE(shared_virtual_ptr_value, Policy, test_policies) {
     static_assert(
         std::is_same_v<

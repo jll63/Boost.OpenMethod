@@ -433,6 +433,12 @@ class virtual_ptr_impl {
         return *this;
     }
 
+    virtual_ptr_impl& operator=(std::nullptr_t) {
+        obj = nullptr;
+        vp = box_vptr<use_indirect_vptrs>(null_vptr);
+        return *this;
+    }
+
     auto get() const -> Class* {
         return obj;
     }

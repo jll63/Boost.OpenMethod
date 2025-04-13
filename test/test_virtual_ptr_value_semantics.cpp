@@ -1,7 +1,7 @@
-// Copyright (c) 2018-2025 Jean-Louis Leroy
+// qright (c) 2018-2025 Jean-Louis Leroy
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt
-// or copy at http://www.boost.org/LICENSE_1_0.txt)
+// or q at http://www.boost.org/LICENSE_1_0.txt)
 
 #define BOOST_TEST_MODULE openmethod
 #include <boost/test/included/unit_test.hpp>
@@ -137,27 +137,27 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(plain_virtual_ptr_value, Policy, test_policies) {
         // virtual_ptr<Dog>(const virtual_ptr<Dog>&)
         Dog snoopy;
         const virtual_ptr<Dog, Policy> p(snoopy);
-        virtual_ptr<Dog, Policy> copy(p);
-        BOOST_TEST(copy.get() == &snoopy);
-        BOOST_TEST(copy.vptr() == Policy::template static_vptr<Dog>);
+        virtual_ptr<Dog, Policy> q(p);
+        BOOST_TEST(q.get() == &snoopy);
+        BOOST_TEST(q.vptr() == Policy::template static_vptr<Dog>);
     }
 
     {
         // virtual_ptr<Dog>(virtual_ptr<Dog>&)
         Dog snoopy;
         virtual_ptr<Dog, Policy> p(snoopy);
-        virtual_ptr<Dog, Policy> copy(p);
-        BOOST_TEST(copy.get() == &snoopy);
-        BOOST_TEST(copy.vptr() == Policy::template static_vptr<Dog>);
+        virtual_ptr<Dog, Policy> q(p);
+        BOOST_TEST(q.get() == &snoopy);
+        BOOST_TEST(q.vptr() == Policy::template static_vptr<Dog>);
     }
 
     {
         // virtual_ptr<Dog>(virtual_ptr<Dog>&&)
         Dog snoopy;
         virtual_ptr<Dog, Policy> p(snoopy);
-        virtual_ptr<Dog, Policy> copy(std::move(p));
-        BOOST_TEST(copy.get() == &snoopy);
-        BOOST_TEST(copy.vptr() == Policy::template static_vptr<Dog>);
+        virtual_ptr<Dog, Policy> q(std::move(p));
+        BOOST_TEST(q.get() == &snoopy);
+        BOOST_TEST(q.vptr() == Policy::template static_vptr<Dog>);
         BOOST_TEST(p.get() == &snoopy);
         BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
     }
@@ -175,18 +175,18 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(plain_virtual_ptr_value, Policy, test_policies) {
         // virtual_ptr<const Dog>(const virtual_ptr<Dog>&)
         Dog snoopy;
         const virtual_ptr<Dog, Policy> p(snoopy);
-        virtual_ptr<const Dog, Policy> const_copy(p);
-        BOOST_TEST(const_copy.get() == &snoopy);
-        BOOST_TEST(const_copy.vptr() == Policy::template static_vptr<Dog>);
+        virtual_ptr<const Dog, Policy> const_q(p);
+        BOOST_TEST(const_q.get() == &snoopy);
+        BOOST_TEST(const_q.vptr() == Policy::template static_vptr<Dog>);
     }
 
     {
         // virtual_ptr<const Animal>(const virtual_ptr<Dog>&)
         Dog snoopy;
         const virtual_ptr<Dog, Policy> p(snoopy);
-        virtual_ptr<const Animal, Policy> const_base_copy(p);
-        BOOST_TEST(const_base_copy.get() == &snoopy);
-        BOOST_TEST(const_base_copy.vptr() == Policy::template static_vptr<Dog>);
+        virtual_ptr<const Animal, Policy> const_base_q(p);
+        BOOST_TEST(const_base_q.get() == &snoopy);
+        BOOST_TEST(const_base_q.vptr() == Policy::template static_vptr<Dog>);
     }
 
     {
@@ -196,8 +196,10 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(plain_virtual_ptr_value, Policy, test_policies) {
         BOOST_TEST(p.vptr() == nullptr);
     }
 
+    // -------------------------------------------------------------------------
+    // assignment
+
     {
-        // virtual_ptr<Dog> = Dog&
         virtual_ptr<Dog, Policy> p;
         Dog snoopy;
         p = snoopy;
@@ -206,7 +208,6 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(plain_virtual_ptr_value, Policy, test_policies) {
     }
 
     {
-        // virtual_ptr<Dog> = Dog*
         virtual_ptr<Dog, Policy> p;
         Dog snoopy;
         p = &snoopy;
@@ -215,7 +216,6 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(plain_virtual_ptr_value, Policy, test_policies) {
     }
 
     {
-        // virtual_ptr<Animal> = Dog&
         virtual_ptr<Animal, Policy> p;
         Dog snoopy;
         p = snoopy;
@@ -224,12 +224,19 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(plain_virtual_ptr_value, Policy, test_policies) {
     }
 
     {
-        // virtual_ptr<Animal> = Dog*
         virtual_ptr<Animal, Policy> p;
         Dog snoopy;
         p = &snoopy;
         BOOST_TEST(p.get() == &snoopy);
         BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
+    }
+
+    {
+        Dog snoopy;
+        virtual_ptr<Animal, Policy> p(snoopy);
+        p = nullptr;
+        BOOST_TEST(p.get() == nullptr);
+        BOOST_TEST(p.vptr() == nullptr);
     }
 
     static_assert(

@@ -77,15 +77,9 @@ struct check_illegal_smart_ops {
     static_assert(!std::is_constructible_v<
                   virtual_ptr<smart_ptr<Animal>, Policy>, Animal*>);
 
-    // static_assert(
-    //     !std::is_constructible_v<smart_ptr<Animal>, other_smart_ptr<Animal>>);
-    // smart_ptr<Animal> p{other_smart_ptr<Animal>()};
-
     static_assert(
-        std::is_constructible_v<
-            virtual_ptr<smart_ptr<Animal>, Policy>,
-            virtual_ptr<other_smart_ptr<Animal>, Policy>> ==
-        std::is_constructible_v<smart_ptr<Animal>, other_smart_ptr<Animal>>);
+        !std::is_constructible_v<smart_ptr<Animal>, const other_smart_ptr<Animal>&>);
+    // smart_ptr<Animal> p{other_smart_ptr<Animal>()};
 
     static_assert(!std::is_constructible_v<
                   virtual_ptr<smart_ptr<Animal>, Policy>,

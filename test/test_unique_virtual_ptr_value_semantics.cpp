@@ -28,10 +28,6 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(unique_virtual_ptr_value, Policy, test_policies) {
                   decltype(*std::declval<unique_virtual_ptr<Animal, Policy>>()),
                   Animal&>);
 
-    static_assert(!detail::is_smart_ptr<std::unique_ptr<Dog>&, Policy>);
-    static_assert(detail::is_smart_ptr<std::unique_ptr<Dog>, Policy>);
-    static_assert(!detail::is_smart_ptr<Dog, Policy>);
-
     {
         // unique_virtual_ptr<Dog>(nullptr)
         unique_virtual_ptr<Dog, Policy> p{nullptr};

@@ -103,7 +103,7 @@ They are provided for `std::unique_ptr` and `std::shared_ptr`.
 A plain `virtual_ptr` can be constructed from a reference, a smart pointer, or
 another `virtual_ptr`. A smart `virtual_ptr` can be constructed from a smart
 pointer or from a smart `virtual_ptr`. Usual conversions - from derived to base,
-and from non-const to const - are allowed.
+and from non-const to const - are supported.
 
 ### Members
 
@@ -149,7 +149,7 @@ smart). For smart `virtual_ptr`{empty}s, `other` must be a reference to a smart
 pointer, or a reference to a smart `virtual_ptr`.
 
 (5) Constructs a `virtual_ptr` from a smart pointer or a smart `virtual_ptr`.
-The (smart) object pointer is moved from `other`.
+The object pointer is moved from `other`.
 
 (6) Constructs a `virtual_ptr` from a plain pointer. Available only for plain
 `virtual_ptr`{empty}s.
@@ -158,6 +158,34 @@ If `other` is also a `virtual_ptr`, the v-table pointer is copied from it.
 Otherwise, it is deduced from the object. The `Policy` must be the same for both
 `virtual_ptr`{empty}s.
 
+
+#### assignment operators
+
+[source,c++]
+----
+virtual_ptr& operator =(nullptr_t);                                 // 1
+template<class Other> virtual_ptr& operator =(Other& other);        // 2
+template<class Other> virtual_ptr& operator =(const Other& other);  // 3
+template<class Other> virtual_ptr& operator =(Other&& other);       // 4
+template<class Other> virtual_ptr& operator =(Other* other);        // 5
+----
+
+(1) Sets both the object and v-table pointers to `nullptr`.
+
+(2), (3) For plain `virtual_ptr`{empty}s, `other` must be either a lvalue
+reference to an object of a registered class, or a `virtual_ptr` (plain or
+smart). For smart `virtual_ptr`{empty}s, `other` must be a reference to a smart
+pointer, or a reference to a smart `virtual_ptr`.
+
+(4) Moves `other` to this `virtual_ptr`. If `other` is a smart pointer or a
+smart virtual pointer, the object pointer is moved from `other`.
+
+(5) Sets the object pointer to `other`. Available only for plain
+`virtual_ptr`{empty}s.
+
+If `other` is also a `virtual_ptr`, the v-table pointer is copied from it.
+Otherwise, it is deduced from the object. The `Policy` must be the same for both
+`virtual_ptr`{empty}s.
 
 #### final
 

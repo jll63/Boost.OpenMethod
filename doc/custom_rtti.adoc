@@ -116,14 +116,15 @@ CRTP template:
 include::{examplesdir}/custom_rtti.cpp[tag=policy]
 ----
 
-Now we can include the "core" header and write the example:
+Next, we include the main header. Because `BOOST_OPENMETHOD_DEFAULT_POLICY` is
+defined, its value is used for the default policy. Then comes the usual example.
 
 [source,c++]
 ----
 include::{examplesdir}/custom_rtti.cpp[tag=example]
 ----
 
-This programs compiles even if standard RTTI is disabled.
+This programs works even if standard RTTI is disabled.
 
 ## Deferred RTTI
 

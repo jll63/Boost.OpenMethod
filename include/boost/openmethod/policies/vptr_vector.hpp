@@ -37,7 +37,7 @@ class vptr_vector : public extern_vptr,
 
         if constexpr (Policy::template has_facet<type_hash>) {
             auto report = Policy::hash_initialize(first, last);
-            size = report.last;
+            size = report.last + 1;
         } else {
             size = 0;
 

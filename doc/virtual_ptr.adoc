@@ -17,9 +17,16 @@ class virtual_ptr {
     static constexpr bool is_smart_ptr = /* see below */;
     using element_type = /* see below */;
 
+    virtual_ptr();
+    virtual_ptr(nullptr_t);
     template<class Other> virtual_ptr(Other& other);
     template<class Other> virtual_ptr(const Other& other);
     template<class Other> virtual_ptr(Other&& other);
+
+    virtual_ptr& operator =(nullptr_t);
+    template<class Other> virtual_ptr& operator =(Other& other);
+    template<class Other> virtual_ptr& operator =(const Other& other);
+    template<class Other> virtual_ptr& operator =(Other&& other);
 
     template<class Other>
     static auto final(Other&& obj);
@@ -96,12 +103,7 @@ They are provided for `std::unique_ptr` and `std::shared_ptr`.
 A plain `virtual_ptr` can be constructed from a reference, a smart pointer, or
 another `virtual_ptr`. A smart `virtual_ptr` can be constructed from a smart
 pointer or from a smart `virtual_ptr`. Usual conversions - from derived to base,
-and from non-const to const - are allowed.
-
-`virtual_ptr` does not have a default constructor, nor a "null" state. In that
-respect, it behaves more like a reference than a pointer. The only reason why it
-is not called `virtual_ref` is to save the name for the day C++ will support
-smart references.
+and from non-const to const - are supported.
 
 ### Members
 
@@ -128,23 +130,62 @@ The class of the object pointed to.
 
 [source,c++]
 ----
-template<class Other> virtual_ptr(Other& other);        // 1
-template<class Other> virtual_ptr(const Other& other);  // 2
-template<class Other> virtual_ptr(Other&& other);       // 3
+virtual_ptr();                                          // 1
+virtual_ptr(nullptr_t);                                 // 2
+template<class Other> virtual_ptr(Other& other);        // 3
+template<class Other> virtual_ptr(const Other& other);  // 4
+template<class Other> virtual_ptr(Other&& other);       // 5
+template<class Other> virtual_ptr(Other* other);        // 6
 ----
 
-(1), (2) If `virtual_ptr` uses a plain pointer, `other` must be a lvalue
-reference to an object of a registered class, or to a `virtual_ptr` (plain or
-smart). If `virtual_ptr` uses a smart pointer, `other` must be a reference to a smart
-pointer, or a smart `virtual_ptr`.
+(1) Default constructor. Sets the v-table pointer to `nullptr`. If `Class` is
+_not_ a smart pointer, the value of object pointer is is undefined.
 
-(3) Smart `virtual_ptr` only. Constructs a `virtual_ptr` from a smart pointer or
-a smart `virtual_ptr`. The (smart) object pointer is moved from `other`.
+(2) Sets both the object and v-table pointers to `nullptr`.
+
+(3), (4) For plain `virtual_ptr`{empty}s, `other` must be either a lvalue
+reference to an object of a registered class, or a `virtual_ptr` (plain or
+smart). For smart `virtual_ptr`{empty}s, `other` must be a reference to a smart
+pointer, or a reference to a smart `virtual_ptr`.
+
+(5) Constructs a `virtual_ptr` from a smart pointer or a smart `virtual_ptr`.
+The object pointer is moved from `other`.
+
+(6) Constructs a `virtual_ptr` from a plain pointer. Available only for plain
+`virtual_ptr`{empty}s.
 
 If `other` is also a `virtual_ptr`, the v-table pointer is copied from it.
 Otherwise, it is deduced from the object. The `Policy` must be the same for both
 `virtual_ptr`{empty}s.
 
+
+#### assignment operators
+
+[source,c++]
+----
+virtual_ptr& operator =(nullptr_t);                                 // 1
+template<class Other> virtual_ptr& operator =(Other& other);        // 2
+template<class Other> virtual_ptr& operator =(const Other& other);  // 3
+template<class Other> virtual_ptr& operator =(Other&& other);       // 4
+template<class Other> virtual_ptr& operator =(Other* other);        // 5
+----
+
+(1) Sets both the object and v-table pointers to `nullptr`.
+
+(2), (3) For plain `virtual_ptr`{empty}s, `other` must be either a lvalue
+reference to an object of a registered class, or a `virtual_ptr` (plain or
+smart). For smart `virtual_ptr`{empty}s, `other` must be a reference to a smart
+pointer, or a reference to a smart `virtual_ptr`.
+
+(4) Moves `other` to this `virtual_ptr`. If `other` is a smart pointer or a
+smart virtual pointer, the object pointer is moved from `other`.
+
+(5) Sets the object pointer to `other`. Available only for plain
+`virtual_ptr`{empty}s.
+
+If `other` is also a `virtual_ptr`, the v-table pointer is copied from it.
+Otherwise, it is deduced from the object. The `Policy` must be the same for both
+`virtual_ptr`{empty}s.
 
 #### final
 

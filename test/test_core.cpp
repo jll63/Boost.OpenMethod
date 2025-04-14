@@ -7,6 +7,7 @@
 #include <type_traits>
 
 #include <boost/openmethod.hpp>
+#include <boost/openmethod/shared_ptr.hpp>
 
 #include "test_util.hpp"
 
@@ -17,12 +18,11 @@ using namespace boost::openmethod;
 using namespace boost::openmethod::detail;
 namespace mp11 = boost::mp11;
 
-// clang-format off
-
 namespace test_virtual {
 
 struct base {
-    virtual ~base() {}
+    virtual ~base() {
+    }
 };
 
 struct a : base {};
@@ -33,62 +33,86 @@ struct e : base {};
 struct f : base {};
 
 static_assert(
-    std::is_same_v<
-        virtual_traits<base&, default_policy>::virtual_type, base>);
+    std::is_same_v<virtual_traits<base&, default_policy>::virtual_type, base>);
+
+static_assert(std::is_same_v<
+              virtual_traits<const base&, default_policy>::virtual_type, base>);
+
+static_assert(
+    std::is_same_v<virtual_traits<base&&, default_policy>::virtual_type, base>);
+
+static_assert(
+    std::is_same_v<virtual_traits<int, default_policy>::virtual_type, void>);
+
+static_assert(std::is_same_v<
+              boost::mp11::mp_filter<
+                  is_virtual, mp11::mp_list<virtual_<a&>, b, virtual_<c&>>>,
+              mp11::mp_list<virtual_<a&>, virtual_<c&>>>);
+
+static_assert(std::is_same_v<remove_virtual<virtual_<a&>>, a&>);
+
+static_assert(std::is_same_v<virtual_type<a&, default_policy>, a>);
 
 static_assert(
     std::is_same_v<
-        virtual_traits<const base&, default_policy>::virtual_type, base>);
+        virtual_types<mp11::mp_list<
+            virtual_<std::shared_ptr<a>>, b, virtual_<std::shared_ptr<c>>>>,
+        mp11::mp_list<std::shared_ptr<a>, std::shared_ptr<c>>>);
+
+static_assert(std::is_same_v<
+              overrider_virtual_types<
+                  mp11::mp_list<virtual_<a&>, b, virtual_<c&>>,
+                  mp11::mp_list<d&, e, f&>, default_policy>,
+              mp11::mp_list<d, f>>);
+
+static_assert(
+    std::is_same_v<virtual_type<std::shared_ptr<a>, default_policy>, a>);
+
+static_assert(std::is_same_v<
+              virtual_traits<virtual_ptr<a>, default_policy>::virtual_type, a>);
+
+static_assert(std::is_same_v<
+              select_overrider_virtual_type_aux<
+                  virtual_ptr<base>, virtual_ptr<a>, default_policy>::type,
+              a>);
 
 static_assert(
     std::is_same_v<
-        virtual_traits<base&&, default_policy>::virtual_type, base>);
+        overrider_virtual_types<
+            mp11::mp_list<virtual_ptr<a>, b, virtual_ptr<c>>,
+            mp11::mp_list<virtual_ptr<d>, e, virtual_ptr<f>>, default_policy>,
+        mp11::mp_list<d, f>>);
 
 static_assert(
     std::is_same_v<
-        virtual_traits<int, default_policy>::virtual_type, void>);
+        overrider_virtual_types<
+            mp11::mp_list<
+                const virtual_ptr<base>&, b, const virtual_ptr<base>&>,
+            mp11::mp_list<const virtual_ptr<d>&, e, const virtual_ptr<f>&>,
+            default_policy>,
+        mp11::mp_list<d, f>>);
 
 static_assert(
     std::is_same_v<
-        boost::mp11::mp_filter<
-            is_virtual,
-            mp11::mp_list< virtual_<a&>, b, virtual_<c&> >
-        >,
-        mp11::mp_list< virtual_<a&>, virtual_<c&> >
-    >);
+        overrider_virtual_types<
+            mp11::mp_list<
+                virtual_<std::shared_ptr<a>>, b, virtual_<std::shared_ptr<c>>>,
+            mp11::mp_list<std::shared_ptr<d>, e, std::shared_ptr<f>>,
+            default_policy>,
+        mp11::mp_list<d, f>>);
 
-static_assert(
-    std::is_same_v<
-        remove_virtual<virtual_<a&>>,
-        a&
-    >);
-
-static_assert(
-    std::is_same_v<
-        virtual_type<a&, default_policy>,
-        a
-    >);
-
-static_assert(
-    std::is_same_v<
-        boost::mp11::mp_transform<
-            remove_virtual,
-            mp11::mp_list< virtual_<a&>, virtual_<c&> >
-        >,
-        mp11::mp_list<a&, c&>
-    >);
+static_assert(std::is_same_v<
+              boost::mp11::mp_transform<
+                  remove_virtual, mp11::mp_list<virtual_<a&>, virtual_<c&>>>,
+              mp11::mp_list<a&, c&>>);
 
 static_assert(
     std::is_same_v<
         boost::mp11::mp_transform_q<
             boost::mp11::mp_bind_back<virtual_type, default_policy>,
             boost::mp11::mp_transform<
-                remove_virtual,
-                mp11::mp_list< virtual_<a&>, virtual_<c&> >
-            >
-        >,
-        mp11::mp_list<a, c>
-    >);
+                remove_virtual, mp11::mp_list<virtual_<a&>, virtual_<c&>>>>,
+        mp11::mp_list<a, c>>);
 
 static_assert(
     std::is_same_v<
@@ -97,13 +121,8 @@ static_assert(
             boost::mp11::mp_transform<
                 remove_virtual,
                 boost::mp11::mp_filter<
-                    is_virtual,
-                    mp11::mp_list< virtual_<a&>, b, virtual_<c&> >
-                >
-            >
-        >,
-        mp11::mp_list<a, c>
-    >);
+                    is_virtual, mp11::mp_list<virtual_<a&>, b, virtual_<c&>>>>>,
+        mp11::mp_list<a, c>>);
 
 // clang-format on
 

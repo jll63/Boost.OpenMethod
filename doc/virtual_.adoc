@@ -19,6 +19,6 @@ struct virtual_;
 
 Marks a formal parameter of a method as virtual. Requires a specialization of
 `virtual_traits` for `T` and the `Policy` of the method. Specializations for
-`T&`, `T&&`, `std::unique_ptr<T>`, `std::shared_ptr<T>` and `const
+`T&`, `T&&`, `T*`, `std::unique_ptr<T>`, `std::shared_ptr<T>` and `const
 std::shared_ptr<T>&` are provided. See the documentation of `virtual_traits` for
 more information.

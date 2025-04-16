@@ -1,0 +1,171 @@
+
+## Headers and Namespaces
+
+Most real-life programs will be organized in multiple files and multiple
+namespaces. OpenMethod interacts with headers and namespaces very naturally,
+unless using-directives are avoided. In that case, there are a few things to be
+aware of.
+
+Let's break the Animals example into headers and namespaces. First we put
+`Animal` in its own header and namespace:
+
+[source,c++]
+----
+include::{examplesdir}/headers_namespaces/animal.hpp[]
+----
+
+`BOOST_OPENMETHOD` can be placed in a header file. It adds several constructs to
+the current namespace:
+
+* It declares (but does not define) a `struct` named after the method.
+
+* It declares (but does not define) a _guide_ function. It is also named after
+the method, and it has the same signature (with the `virtual_` decorators
+stripped). It is used to match methods and overriders. It is never defined and
+it is "called" only in a non-evaluated context.
+
+* It defines an inline function with the same name and signature as the
+method (with the `virtual_` decorators stripped).
+
+Next, let's implement the `Cat` class, in the `felines` namespace:
+
+[source,c++]
+----
+include::{examplesdir}/headers_namespaces/cat.hpp[]
+----
+
+[source,c++]
+----
+include::{examplesdir}/headers_namespaces/cat.cpp[]
+----
+
+`BOOST_OPENMETHOD_CLASSES` should be placed in an implementation file. It can
+also go in a header file, but this wastes space, as multiple copies of the same
+class data will be created. It doesn't matter which namespace the macro is
+called in. It can take be used with any class name in scope, or with qualified
+names.
+
+`BOOST_OPENMETHOD_OVERRIDE` uses the guide function declared by
+`BOOST_OPENMETHOD` to locate a method that can be called with the same arguments
+as the overrider itself. It "calls" the guide function in a non-evaluated
+context, passing it a `std::ostream&` and a `virtual_ptr<Cat>`. The return type
+of the guide function is the method to add the overrider to. Exactly one guide
+function must match. The normal rules of overload resolution apply. In this
+case, the guide function is found via argument dependant lookup (ADL).
+
+The macro adds several constructs to the current namespace:
+
+* It declares (but does not define) a `struct` template with one type parameter,
+named after the method. The template acts like a container for overriders.
+
+* It specializes the template for the signature of the overrider. Inside the
+struct, it defines the `next` and `has_next` members, and a static function
+called `fn`. The block following the macro is the body of the `fn` function.
+
+It follows that `BOOST_OPENMETHOD_OVERRIDE` should be placed in an
+implementation file.
+
+Let's implement the `Dog` class, in the `canines` namespace:
+
+
+[source,c++]
+----
+include::{examplesdir}/headers_namespaces/dog.hpp[]
+----
+
+[source,c++]
+----
+include::{examplesdir}/headers_namespaces/dog.cpp[]
+----
+
+`BOOST_OPENMETHOD_INLINE_OVERRIDE` works like `BOOST_OPENMETHOD_OVERRIDE`, but
+it can be used in a header file, because it defines the `fn` function inline.
+
+
+Let's look at the main program now. It derived `Bullgod` from `Dog` and provides
+an overrider for the new class:
+
+[source,c++]
+----
+include::{examplesdir}/headers_namespaces/main.cpp[]
+----
+
+Again ADL plays a role: it helps the overrider (and `main`) to locate the `poke`
+method.
+
+This example is the "happy scenario", where namespaces are used conservatively.
+
+The `OVERRIDE` macros don't interact well with `using` directives. For example
+this code:
+
+```c++
+using namespace animals;
+using namespace canines;
+using namespace felines;
+
+struct Bulldog : Dog {
+    using Dog::Dog;
+};
+
+BOOST_OPENMETHOD_CLASSES(Dog, Bulldog);
+
+BOOST_OPENMETHOD_OVERRIDE(
+    poke, (std::ostream & os, virtual_ptr<Bulldog> dog), void) {
+    next(os, dog);
+    os << " and bites back";
+}
+```
+
+...will fail to compile, with an error like "reference to
+'poke_boost_openmethod_overriders' is ambiguous". That is because the overrider
+containers exist in both the canides and felides namespaces, with the same name.
+
+Finally, the names passed as first arguments to the BOOST_OPENMETHOD and
+BOOST_OPENMETHOD_OVERRIDE macros must be identifiers. Qualified names are not
+allowed. Consider:
+
+```c++
+using animals::Animal;
+
+namespace app_specific_behavior {
+
+BOOST_OPENMETHOD(
+    meet, (std::ostream&, virtual_ptr<Animal>, virtual_ptr<Animal>), void);
+
+} // namespace app_specific_behavior
+
+BOOST_OPENMETHOD_OVERRIDE(
+    meet, (std::ostream& os, virtual_ptr<Animal>, virtual_ptr<Animal>), void) {
+    os << "ignore";
+}
+```
+
+Here, the guide function cannot be found, even via ADL. We get an error like
+"use of undeclared identifier 'meet_boost_openmethod_guide'". How do we solve
+this? We might be tempted to use a qualified name:
+`app_specific_behavior::meet`:
+
+```c++
+BOOST_OPENMETHOD_OVERRIDE(
+    app_specific_behavior::meet,
+    (std::ostream& os, virtual_ptr<Animal>, virtual_ptr<Animal>), void) {
+    os << "ignore";
+}
+```
+
+But `BOOST_OPENMETHOD_OVERRIDE` also uses the name to derive the overrider
+container's name, using preprocessor token pasting. And the result will be an
+invalid declaration.
+
+All we need to do is to make `BOOST_OPENMETHOD_OVERRIDE` "see" the guide
+function. Its name is produced by macro `BOOST_OPENMETHOD_GUIDE(NAME)`. Thus we
+can use a using-declaration to bring the guide function into the current scope:
+
+```c++
+using app_specific_behavior::BOOST_OPENMETHOD_GUIDE(meet);
+
+BOOST_OPENMETHOD_OVERRIDE(
+    meet, (std::ostream& os, virtual_ptr<Animal>, virtual_ptr<Animal>), void) {
+    os << "ignore";
+}
+```

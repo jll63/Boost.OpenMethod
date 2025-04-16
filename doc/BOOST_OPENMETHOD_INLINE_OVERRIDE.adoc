@@ -17,3 +17,5 @@ BOOST_OPENMETHOD_INLINE_OVERRIDE(NAME, (PARAMETERS...), RETURN_TYPE) {
 
 `BOOST_OPENMETHOD_INLINE_OVERRIDE` performs the same function as
 `BOOST_OPENMETHOD_OVERRIDE`, except that the overrider is defined inline.
+
+NOTE: `NAME` must be an *identifier*. Qualified names are not allowed.

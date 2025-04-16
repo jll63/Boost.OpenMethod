@@ -117,3 +117,5 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
   target_link_libraries(dl_shared Boost::openmethod)
   add_test(NAME dlopen COMMAND dl_main)
 endif()
+
+add_subdirectory(headers_namespaces)

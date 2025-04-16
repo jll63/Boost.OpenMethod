@@ -5,6 +5,9 @@
 
 ```c++
 struct minimal_rtti : rtti {
+    template<class Class>
+    static constexpr bool is_polymorphic = false;
+
     template<typename Class>
     static auto static_type() -> type_id;
 };
@@ -24,6 +27,15 @@ is not supported. Classes are not required to be polymorphic.
 
 ### Members
 
+
+#### is_polymorphic
+
+```c++
+template<class Class>
+static constexpr bool is_polymorphic = false;
+```
+
+This facet does not support polymorphic classes.
 
 #### static_type
 

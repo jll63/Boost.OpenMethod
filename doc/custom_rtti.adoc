@@ -7,6 +7,9 @@ source:
 [source,c++]
 ----
 struct std_rtti : rtti {
+    template<class Class>
+    static constexpr auto is_polymorphic = std::is_polymorphic_v<Class>;
+
     template<typename T>
     static type_id static_type() {
         return reinterpret_cast<type_id>(&typeid(T));
@@ -32,6 +35,9 @@ struct std_rtti : rtti {
     }
 };
 ----
+
+* `is_polymorphic` is used to check if a class is polymorphic. This template is
+  required.
 
 * `static_type` is used by class registration, by `virtual_ptr`{empty}'s "final"
     constructs, and to format error and trace messages. `T` is not restricted to

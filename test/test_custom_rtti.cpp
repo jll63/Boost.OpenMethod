@@ -39,9 +39,12 @@ struct Cat : Animal {
 };
 
 struct custom_rtti : policies::rtti {
+    template<class T>
+    static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
+
     template<typename T>
     static auto static_type() {
-        if constexpr (std::is_base_of_v<Animal, T>) {
+        if constexpr (is_polymorphic<T>) {
             return reinterpret_cast<type_id>(T::static_type);
         } else {
             return 0;
@@ -50,7 +53,7 @@ struct custom_rtti : policies::rtti {
 
     template<typename T>
     static auto dynamic_type(const T& obj) {
-        if constexpr (std::is_base_of_v<Animal, T>) {
+        if constexpr (is_polymorphic<T>) {
             return reinterpret_cast<type_id>(obj.type);
         } else {
             return 0;
@@ -129,9 +132,12 @@ struct Cat : Animal {
 };
 
 struct custom_rtti : policies::rtti {
+    template<class T>
+    static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
+
     template<typename T>
     static auto static_type() {
-        if constexpr (std::is_base_of_v<Animal, T>) {
+        if constexpr (is_polymorphic<T>) {
             return T::static_type;
         } else {
             return 666;
@@ -140,7 +146,7 @@ struct custom_rtti : policies::rtti {
 
     template<typename T>
     static auto dynamic_type(const T& obj) {
-        if constexpr (std::is_base_of_v<Animal, T>) {
+        if constexpr (is_polymorphic<T>) {
             return obj.type;
         } else {
             return 666;
@@ -277,9 +283,12 @@ struct Cat : virtual Animal {
 };
 
 struct custom_rtti : policies::rtti {
+    template<class T>
+    static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
+
     template<typename T>
     static auto static_type() {
-        if constexpr (std::is_base_of_v<Animal, T>) {
+        if constexpr (is_polymorphic<T>) {
             return T::static_type;
         } else {
             return 666;
@@ -288,7 +297,7 @@ struct custom_rtti : policies::rtti {
 
     template<typename T>
     static auto dynamic_type(const T& obj) {
-        if constexpr (std::is_base_of_v<Animal, T>) {
+        if constexpr (is_polymorphic<T>) {
             return obj.type;
         } else {
             return 666;
@@ -418,9 +427,12 @@ struct Cat : Animal {
 std::size_t Cat::static_type = ++Animal::last_type_id;
 
 struct custom_rtti : policies::deferred_static_rtti {
+    template<class T>
+    static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
+
     template<typename T>
     static auto static_type() {
-        if constexpr (std::is_base_of_v<Animal, T>) {
+        if constexpr (is_polymorphic<T>) {
             return T::static_type;
         } else {
             static type_id invalid = 0;
@@ -430,7 +442,7 @@ struct custom_rtti : policies::deferred_static_rtti {
 
     template<typename T>
     static auto dynamic_type(const T& obj) {
-        if constexpr (std::is_base_of_v<Animal, T>) {
+        if constexpr (is_polymorphic<T>) {
             return obj.type;
         } else {
             return 666;

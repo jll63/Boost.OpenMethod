@@ -21,6 +21,9 @@ namespace policies {
 struct std_rtti : virtual rtti {
 #ifndef BOOST_NO_RTTI
     template<class Class>
+    static constexpr bool is_polymorphic = std::is_polymorphic_v<Class>;
+
+    template<class Class>
     static auto static_type() -> type_id {
         auto tip = &typeid(Class);
         return reinterpret_cast<type_id>(tip);

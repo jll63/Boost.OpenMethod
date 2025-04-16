@@ -739,10 +739,16 @@ class virtual_ptr : public detail::virtual_ptr_impl<Class, Policy> {
             std::is_base_of_v<element_type, other_class> ||
             std::is_base_of_v<other_class, element_type>);
 
-        if constexpr (Policy::template has_facet<policies::runtime_checks>) {
+        if constexpr (
+            Policy::template has_facet<policies::runtime_checks> &&
+            Policy::template is_polymorphic<typename impl::traits::virtual_type> &&
+            Policy::template is_polymorphic<other_class>) {
             // check that dynamic type == static type
             auto static_type = Policy::template static_type<other_class>();
-            auto dynamic_type = Policy::dynamic_type(other_traits::peek(obj));
+
+            type_id dynamic_type;
+
+            dynamic_type = Policy::dynamic_type(other_traits::peek(obj));
 
             if (dynamic_type != static_type) {
                 type_mismatch_error error;
@@ -1286,6 +1292,19 @@ method<Name(Parameters...), ReturnType, Policy>::resolve_multi_next(
 // -----------------------------------------------------------------------------
 // Error handling
 
+namespace detail {
+
+template<class Policy, class Class>
+auto error_type_id(const Class& obj) {
+    if constexpr (Policy::template is_polymorphic<Class>) {
+        return Policy::template dynamic_type<Class>(obj);
+    } else {
+        return Policy::template static_type<void>();
+    }
+}
+
+} // namespace detail
+
 template<
     typename Name, typename... Parameters, typename ReturnType, class Policy>
 BOOST_NORETURN auto
@@ -1298,7 +1317,7 @@ method<Name(Parameters...), ReturnType, Policy>::not_implemented_handler(
         type_id types[sizeof...(args)];
         auto ti_iter = types;
         (...,
-         (*ti_iter++ = Policy::dynamic_type(
+         (*ti_iter++ = detail::error_type_id<Policy>(
               detail::parameter_traits<Parameters, Policy>::peek(args))));
         std::copy_n(
             types,

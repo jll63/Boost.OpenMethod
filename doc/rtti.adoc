@@ -21,6 +21,15 @@ an `ostream`-like object.
 
 ### Requirements
 
+#### is_polymorphic
+
+```c++
+template<class Class>
+static constexpr bool is_polymorphic;
+```
+
+`true` if `Class` is polymorphic.
+
 #### static_type
 
 ```c++

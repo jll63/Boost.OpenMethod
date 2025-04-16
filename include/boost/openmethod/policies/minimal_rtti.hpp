@@ -13,6 +13,9 @@ namespace openmethod {
 namespace policies {
 
 struct minimal_rtti : virtual rtti {
+    template<class Class>
+    static constexpr bool is_polymorphic = false;
+
     template<typename T>
     static auto static_type() -> type_id {
         static char id;

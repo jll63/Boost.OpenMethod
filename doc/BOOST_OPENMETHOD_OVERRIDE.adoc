@@ -57,3 +57,5 @@ auto BOOST_OPENMETHOD_OVERRIDERS(NAME)<RETURN_TYPE(PARAMETERS...)>::fn(
 ```
 
 The block following the call to the macro is the body of the function.
+
+NOTE: `NAME` must be an *identifier*. Qualified names are not allowed.

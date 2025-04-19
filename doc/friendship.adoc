@@ -1,9 +1,9 @@
 
 ## Friendship
 
-Overriders are implemented as static functions located in specializations of a
-template named after the method, declared in the same scope. Macro
-`BOOST_OPENMETHOD_OVERRIDERS` returns that name. The template argument for a
+We can use overrider containers to grant friendship to a specific overrider, or
+to all the overriders of a method. The name of the container template is
+returned by `BOOST_OPENMETHOD_OVERRIDERS`. The template argument for a
 specialization is the signature of the overrider. For example, the overrider of
 `poke` for `Cat` is:
 
@@ -20,20 +20,12 @@ We can thus grant friendship to all the overriders of `poke`:
 include::{examplesdir}/friendship.cpp[tag=friend_all]
 ----
 
-Be aware, though, that the overriders of _any_ method called `poke` - even with
-a different signature - are granted friendship.
+Be aware, though, that the overriders of _any_ method called `poke` - with any
+signature - are granted friendship.
 
-We can also grant friendship to individual overriders:
+We can also befriendto individual overriders:
 
 [source,c++]
 ----
 include::{examplesdir}/friendship.cpp[tag=friend]
 ----
-
-// If the overriders exist in a different namespace, we must take into account that
-// the overriders template is declared in the current namespace.
-
-// [source,c++]
-// ----
-// include::{examplesdir}/friendship_across_namespaces.cpp[tag=friend]
-// ----

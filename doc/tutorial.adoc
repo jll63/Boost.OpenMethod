@@ -8,6 +8,7 @@
 
 include::hello_world.adoc[]
 include::multiple_dispatch.adoc[]
+include::headers_namespaces.adoc[]
 include::friendship.adoc[]
 include::performance.adoc[]
 include::smart_pointers.adoc[]

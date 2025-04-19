@@ -15,8 +15,6 @@ BOOST_OPENMETHOD(NAME, (PARAMETERS...), RETURN_TYPE [, POLICY]);
 
 Declares a method.
 
-### Effects
-
 The macro expands to several constructs:
 
 * A `struct` forward declaration that acts as the method's identifier:
@@ -37,6 +35,8 @@ auto BOOST_OPENMETHOD_NAME(NAME)_guide(...)
     -> ::boost::openmethod::method<
         BOOST_OPENMETHOD_NAME(NAME)(PARAMETERS...), RETURN_TYPE [, POLICY]>;
 ```
+
+NOTE: `NAME` must be an *identifier*. Qualified names are not allowed.
 
 NOTE: The default value for `POLICY` is the value of
 `BOOST_OPENMETHOD_DEFAULT_POLICY` at the point `<boost/openmethod/core.hpp>` is

@@ -6,6 +6,7 @@
 #ifndef BOOST_OPENMETHOD_MACROS_HPP
 #define BOOST_OPENMETHOD_MACROS_HPP
 
+#include <boost/openmethod/core.hpp>
 #include <boost/openmethod/macros/name.hpp>
 #include <boost/openmethod/macros/register.hpp>
 

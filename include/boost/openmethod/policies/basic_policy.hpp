@@ -21,6 +21,18 @@ namespace detail {
 using class_catalog = detail::static_list<detail::class_info>;
 using method_catalog = detail::static_list<detail::method_info>;
 
+template<typename Policy, class Facet>
+struct fork_facet {
+    using type = Facet;
+};
+
+template<
+    typename NewPolicy, typename OldPolicy,
+    template<typename...> class GenericFacet, typename... Args>
+struct fork_facet<NewPolicy, GenericFacet<OldPolicy, Args...>> {
+    using type = GenericFacet<NewPolicy, Args...>;
+};
+
 } // namespace detail
 
 namespace policies {
@@ -56,12 +68,6 @@ struct trace_output : facet {};
 struct runtime_checks : facet {};
 
 // -----------------------------------------------------------------------------
-// Facet implementations
-
-struct debug;
-struct release;
-
-// -----------------------------------------------------------------------------
 // domain
 
 template<class Policy>
@@ -86,18 +92,6 @@ vptr_type domain<Policy>::static_vptr;
 template<class Policy>
 std::vector<std::uintptr_t> domain<Policy>::dispatch_data;
 
-template<typename Policy, class Facet>
-struct rebind_facet {
-    using type = Facet;
-};
-
-template<
-    typename NewPolicy, typename OldPolicy,
-    template<typename...> class GenericFacet, typename... Args>
-struct rebind_facet<NewPolicy, GenericFacet<OldPolicy, Args...>> {
-    using type = GenericFacet<NewPolicy, Args...>;
-};
-
 template<class Policy, class... Facets>
 struct basic_policy : abstract_policy, domain<Policy>, Facets... {
     using facets = mp11::mp_list<Facets...>;
@@ -107,7 +101,7 @@ struct basic_policy : abstract_policy, domain<Policy>, Facets... {
 
     template<class NewPolicy>
     using fork = basic_policy<
-        NewPolicy, typename rebind_facet<NewPolicy, Facets>::type...>;
+        NewPolicy, typename detail::fork_facet<NewPolicy, Facets>::type...>;
 
     template<class... MoreFacets>
     using add = basic_policy<Policy, Facets..., MoreFacets...>;

@@ -7,7 +7,6 @@
 #define BOOST_OPENMETHOD_POLICY_HPP
 
 #include <boost/openmethod/policies/basic_policy.hpp>
-
 #include <boost/openmethod/policies/std_rtti.hpp>
 #include <boost/openmethod/policies/vptr_vector.hpp>
 #include <boost/openmethod/policies/basic_error_output.hpp>

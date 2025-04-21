@@ -306,7 +306,7 @@ struct key2;
 struct alt_rtti {};
 
 static_assert(
-    std::is_same_v<rebind_facet<key2, domain<key1>>::type, domain<key2>>);
+    std::is_same_v<fork_facet<key2, domain<key1>>::type, domain<key2>>);
 
 struct policy1 : basic_policy<policy1, std_rtti> {};
 struct policy2 : policy1::fork<policy2> {};

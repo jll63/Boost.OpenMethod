@@ -40,4 +40,5 @@ auto finalize() -> void;
 De-allocates the resources allocated by `initialize` for the `Policy`, including
 resources allocated by the facets in `Policy`. Resources are de-allocated in an
 arbitrary order. It is not necessary to call `finalize` between calls to
-`initialize`. It may be required to cooperate with memory leak detection tools.
+`initialize`. It is provided mainly for the benefit of memory leak detection
+schemes.

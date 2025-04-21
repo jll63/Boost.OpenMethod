@@ -1,0 +1,14 @@
+
+## BOOST_OPENMETHOD_GUIDE
+
+### Synopsis
+
+Defined in <boost/openmethod/macros.hpp>.
+
+```c++
+#define BOOST_OPENMETHOD_GUIDE(NAME) /* unspecified */
+```
+
+### Description
+
+Expands to the name of the guide function used to match overriders to methods.

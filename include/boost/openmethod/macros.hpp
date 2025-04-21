@@ -6,11 +6,9 @@
 #ifndef BOOST_OPENMETHOD_MACROS_HPP
 #define BOOST_OPENMETHOD_MACROS_HPP
 
-#include <boost/openmethod/core.hpp>
-#include <boost/openmethod/macros/name.hpp>
-#include <boost/openmethod/macros/register.hpp>
-
 #include <boost/preprocessor/cat.hpp>
+
+#include <boost/openmethod/core.hpp>
 
 namespace boost::openmethod::detail {
 
@@ -25,6 +23,13 @@ struct enable_forwarder<
 };
 
 } // namespace boost::openmethod::detail
+
+#define BOOST_OPENMETHOD_GENSYM BOOST_PP_CAT(openmethod_gensym_, __COUNTER__)
+
+#define BOOST_OPENMETHOD_REGISTER(...)                                         \
+    static __VA_ARGS__ BOOST_OPENMETHOD_GENSYM
+
+#define BOOST_OPENMETHOD_NAME(NAME) NAME##_boost_openmethod
 
 #define BOOST_OPENMETHOD_OVERRIDERS(NAME)                                      \
     BOOST_PP_CAT(BOOST_OPENMETHOD_NAME(NAME), _overriders)
@@ -66,7 +71,7 @@ struct enable_forwarder<
             decltype(BOOST_OPENMETHOD_GUIDE(NAME)(std::declval<A>()...));      \
     };
 
-#define BOOST_OPENMETHOD_DETAIL_OVERRIDE(INLINE, NAME, ARGS, ...)              \
+#define BOOST_OPENMETHOD_DECLARE_OVERRIDER(NAME, ARGS, ...)                    \
     template<typename>                                                         \
     struct BOOST_OPENMETHOD_OVERRIDERS(NAME);                                  \
     template<>                                                                 \
@@ -90,19 +95,26 @@ struct enable_forwarder<
         return boost_openmethod_detail_locate_method_aux<                      \
             void ARGS>::type::next<fn>(std::forward<Args>(args)...);           \
     }                                                                          \
-    INLINE BOOST_OPENMETHOD_REGISTER(                                          \
+    inline BOOST_OPENMETHOD_REGISTER(                                          \
         BOOST_OPENMETHOD_OVERRIDERS(NAME) < __VA_ARGS__ ARGS >                 \
         ::boost_openmethod_detail_locate_method_aux<void ARGS>::type::         \
             override<                                                          \
-                BOOST_OPENMETHOD_OVERRIDERS(NAME) < __VA_ARGS__ ARGS>::fn >);  \
-    INLINE auto BOOST_OPENMETHOD_OVERRIDERS(NAME)<__VA_ARGS__ ARGS>::fn ARGS   \
+                BOOST_OPENMETHOD_OVERRIDERS(NAME) < __VA_ARGS__ ARGS>::fn >);
+
+#define BOOST_OPENMETHOD_OVERRIDER(NAME, ARGS, ...)                            \
+    BOOST_OPENMETHOD_OVERRIDERS(NAME)<__VA_ARGS__ ARGS>
+
+#define BOOST_OPENMETHOD_DEFINE_OVERRIDER(NAME, ARGS, ...)                     \
+    auto BOOST_OPENMETHOD_OVERRIDER(NAME, ARGS, __VA_ARGS__)::fn ARGS          \
         -> boost::mp11::mp_back<boost::mp11::mp_list<__VA_ARGS__>>
 
 #define BOOST_OPENMETHOD_INLINE_OVERRIDE(NAME, ARGS, ...)                      \
-    BOOST_OPENMETHOD_DETAIL_OVERRIDE(inline, NAME, ARGS, __VA_ARGS__)
+    BOOST_OPENMETHOD_DECLARE_OVERRIDER(NAME, ARGS, __VA_ARGS__)                \
+    inline BOOST_OPENMETHOD_DEFINE_OVERRIDER(NAME, ARGS, __VA_ARGS__)
 
 #define BOOST_OPENMETHOD_OVERRIDE(NAME, ARGS, ...)                             \
-    BOOST_OPENMETHOD_DETAIL_OVERRIDE(, NAME, ARGS, __VA_ARGS__)
+    BOOST_OPENMETHOD_DECLARE_OVERRIDER(NAME, ARGS, __VA_ARGS__)                \
+    BOOST_OPENMETHOD_DEFINE_OVERRIDER(NAME, ARGS, __VA_ARGS__)
 
 #define BOOST_OPENMETHOD_CLASSES(...)                                          \
     BOOST_OPENMETHOD_REGISTER(::boost::openmethod::use_classes<__VA_ARGS__>);

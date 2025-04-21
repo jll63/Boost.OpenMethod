@@ -22,7 +22,7 @@ using namespace boost::openmethod;
 
 // tag::method[]
 
-#include <boost/openmethod/macros/name.hpp>
+#include <boost/openmethod/macros.hpp>
 
 class BOOST_OPENMETHOD_NAME(poke);
 
@@ -39,7 +39,7 @@ static poke::override<poke_cat> override_poke_cat;
 // end::poke_cat[]
 
 // tag::poke_dog[]
-#include <boost/openmethod/macros/register.hpp>
+#include <boost/openmethod/macros.hpp>
 
 auto poke_dog(std::ostream& os, virtual_ptr<Dog> dog) {
     os << "bark";

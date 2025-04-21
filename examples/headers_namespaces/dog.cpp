@@ -7,4 +7,9 @@ namespace canines {
 
 BOOST_OPENMETHOD_CLASSES(animals::Animal, Dog);
 
+BOOST_OPENMETHOD_DEFINE_OVERRIDER(
+    poke, (std::ostream & os, virtual_ptr<Dog> dog), void) {
+    os << dog->name << " barks";
+}
+
 }

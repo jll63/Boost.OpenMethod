@@ -11,6 +11,10 @@ struct Cat : animals::Animal {
     using Animal::Animal;
 };
 
-}
+struct Cheetah : Cat {
+    using Cat::Cat;
+};
+
+} // namespace felines
 
 #endif // FELINES_HPP

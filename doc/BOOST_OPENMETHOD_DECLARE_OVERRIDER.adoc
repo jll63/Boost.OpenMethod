@@ -1,0 +1,52 @@
+
+## BOOST_OPENMETHOD_DECLARE_OVERRIDER
+
+### Synopsis
+
+Defined in <boost/openmethod/macros.hpp>.
+
+```c++
+#define BOOST_OPENMETHOD_DECLARE_OVERRIDER(NAME, (PARAMETERS...), RETURN_TYPE)
+```
+
+### Description
+
+Declares an overrider for a method.
+
+The method is deduced from a call to a method guide function with the
+overrider's arguments.
+
+The macro creates several entities in the current scope.
+
+* A class template that acts as a container for the overriders of the methods
+called `NAME`:
+
+```c++
+template<typename...> BOOST_OPENMETHOD_OVERRIDERS(NAME);
+```
+
+* A specialization of the container template for the overrider:
+
+```c++
+struct BOOST_OPENMETHOD_OVERRIDERS(NAME)<RETURN_TYPE(PARAMETERS...)> {
+    static auto fn(PARAMETERS...) -> RETURN_TYPE;
+    static auto has_next() -> bool;
+    template<typename... Args>
+    static auto next(typename... Args) -> RETURN_TYPE;
+};
+```
+
+where:
+
+* `fn` is the overrider function.
+
+* `has_next()` returns `true` if a less specialized overrider exists.
+
+* `next(Args... args)` calls the next most specialized overrider via the
+pointer stored in the method's `next<fn>` member variable.
+
+`BOOST_OPENMETHOD_DECLARE_OVERRIDER` can be called in a header file, with a
+semicolon after the call. It can be called in a header file, but not multiple
+times in the same translation unit.
+
+NOTE: `NAME` must be an *identifier*. Qualified names are not allowed.

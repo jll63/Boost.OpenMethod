@@ -27,7 +27,8 @@ it is "called" only in a non-evaluated context.
 * It defines an inline function with the same name and signature as the
 method (with the `virtual_` decorators stripped).
 
-Next, let's implement the `Cat` class, in the `felines` namespace:
+Next, let's implement the `Cat` class, and a derived class, `Chhetah`, in the
+`felines` namespace:
 
 [source,c++]
 ----
@@ -40,10 +41,10 @@ include::{examplesdir}/headers_namespaces/cat.cpp[]
 ----
 
 `BOOST_OPENMETHOD_CLASSES` should be placed in an implementation file. It can
-also go in a header file, but this wastes space, as multiple copies of the same
-class data will be created. It doesn't matter which namespace the macro is
-called in. It can take be used with any class name in scope, or with qualified
-names.
+also go in a header file, but this wastes space, as the same registrar will be
+created in every translation unit that includes the header. It doesn't matter
+which namespace the macro is called in. It can take be used with any class name
+in scope, or with qualified names.
 
 `BOOST_OPENMETHOD_OVERRIDE` uses the guide function declared by
 `BOOST_OPENMETHOD` to locate a method that can be called with the same arguments
@@ -63,26 +64,47 @@ struct, it defines the `next` and `has_next` members, and a static function
 called `fn`. The block following the macro is the body of the `fn` function.
 
 It follows that `BOOST_OPENMETHOD_OVERRIDE` should be placed in an
-implementation file.
+implementation file. `BOOST_OPENMETHOD_INLINE_OVERRIDE` works like
+`BOOST_OPENMETHOD_OVERRIDE`, but it defines the `fn` function as inline, so it
+can be used in a header file.
 
-Let's implement the `Dog` class, in the `canines` namespace:
+The overrider for Cats can be accessed in the same translation unit, after it
+has been defined, using the `BOOST_OPENMETHOD_OVERRIDER` macro. It expands to
+the specialization of the overrider container for the overrider's signature. We
+call the static `fn` function to call the overrider.
 
+NOTE: The Cheetah overrider calls the specific overrider for `Cat`, for
+illustration purpose. It is usually better to call `next` instead.
+
+Let's implement the `Dog` class, in the `canines` namespace. This time we want
+the overrider to be accessible in other translation units. We can declare an
+overrider with `BOOST_OPENMETHOD_DECLARE_OVERRIDER`, without actually defining
+the static function `fn` just yet.
 
 [source,c++]
 ----
 include::{examplesdir}/headers_namespaces/dog.hpp[]
 ----
 
+Unlike function declarations, which can occur multiple times in a TU, an
+overrider declaration cannot. For example, this is illegal:
+
+```c++
+BOOST_OPENMETHOD_DECLARE_OVERRIDER(
+    poke, (std::ostream&, virtual_ptr<Dog>), void);
+
+BOOST_OPENMETHOD_DECLARE_OVERRIDER(
+    poke, (std::ostream&, virtual_ptr<Dog>), void);
+```
+
+Now we use `BOOST_OPENMETHOD_DEFINE_OVERRIDER` to define the overrider:
+
 [source,c++]
 ----
 include::{examplesdir}/headers_namespaces/dog.cpp[]
 ----
 
-`BOOST_OPENMETHOD_INLINE_OVERRIDE` works like `BOOST_OPENMETHOD_OVERRIDE`, but
-it can be used in a header file, because it defines the `fn` function inline.
-
-
-Let's look at the main program now. It derived `Bullgod` from `Dog` and provides
+Let's look at the main program now. It derived `Bulldog` from `Dog` and provides
 an overrider for the new class:
 
 [source,c++]
@@ -154,12 +176,12 @@ BOOST_OPENMETHOD_OVERRIDE(
 ```
 
 But `BOOST_OPENMETHOD_OVERRIDE` also uses the name to derive the overrider
-container's name, using preprocessor token pasting. And the result will be an
-invalid declaration.
+container's name, using preprocessor token pasting, resulting in an invalid
+declaration error.
 
-All we need to do is to make `BOOST_OPENMETHOD_OVERRIDE` "see" the guide
-function. Its name is produced by macro `BOOST_OPENMETHOD_GUIDE(NAME)`. Thus we
-can use a using-declaration to bring the guide function into the current scope:
+We need to do is to make `BOOST_OPENMETHOD_OVERRIDE` "see" the guide function.
+Its name is returned by macro `BOOST_OPENMETHOD_GUIDE(NAME)`. We can use a
+using-declaration to bring the guide function into the current scope:
 
 ```c++
 using app_specific_behavior::BOOST_OPENMETHOD_GUIDE(meet);

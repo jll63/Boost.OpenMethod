@@ -14,7 +14,9 @@ BOOST_OPENMETHOD_CLASSES(canines::Dog, Bulldog);
 
 BOOST_OPENMETHOD_OVERRIDE(
     poke, (std::ostream & os, virtual_ptr<Bulldog> dog), void) {
-    next(os, dog);
+    canines::BOOST_OPENMETHOD_OVERRIDER(
+        poke, (std::ostream & os, virtual_ptr<canines::Dog> dog),
+        void)::fn(os, dog);
     os << " and bites back";
 }
 
@@ -22,10 +24,14 @@ auto main() -> int {
     boost::openmethod::initialize();
 
     std::unique_ptr<animals::Animal> felix(new felines::Cat("Felix"));
+    std::unique_ptr<animals::Animal> azaad(new felines::Cheetah("Azaad"));
     std::unique_ptr<animals::Animal> snoopy(new canines::Dog("Snoopy"));
     std::unique_ptr<animals::Animal> hector(new Bulldog("Hector"));
 
     poke(std::cout, *felix); // Felix hisses
+    std::cout << ".\n";
+
+    poke(std::cout, *azaad); // Azaad hisses and runs away
     std::cout << ".\n";
 
     poke(std::cout, *snoopy); // Snoopy barks

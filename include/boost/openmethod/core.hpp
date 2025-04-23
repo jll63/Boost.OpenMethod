@@ -288,11 +288,7 @@ struct use_classes {
                 detail::inheritance_map,
                 typename detail::extract_policy<Classes...>::others>>>;
     tuple_type tuple;
-    static use_classes instance;
 };
-
-template<class... Classes>
-use_classes<Classes...> use_classes<Classes...>::instance;
 
 // =============================================================================
 // virtual_ptr

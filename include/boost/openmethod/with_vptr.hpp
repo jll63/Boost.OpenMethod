@@ -56,6 +56,9 @@ class with_vptr_aux;
 #pragma GCC diagnostic ignored "-Wnon-template-friend"
 #endif
 
+template<class... Classes>
+inline use_classes<Classes...> with_vptr_use_classes;
+
 template<class Class, class Policy>
 class with_vptr_aux<Class, Policy, true> {
   protected:
@@ -65,7 +68,7 @@ class with_vptr_aux<Class, Policy, true> {
     friend auto boost_openmethod_bases(Class*) -> mp11::mp_list<>;
 
     with_vptr_aux() {
-        (void)&use_classes<Class, Policy>::instance;
+        (void)&with_vptr_use_classes<Class, Policy>;
         detail::update_vptr<Class>(static_cast<Class*>(this));
     }
 
@@ -95,7 +98,7 @@ class with_vptr_aux<Class, Base, false> : with_vptr_derived {
     friend void update_vptr(Class*);
 
     with_vptr_aux() {
-        (void)&use_classes<Class, Base, with_vptr_policy<Class>>::instance;
+        (void)&with_vptr_use_classes<Class, Base, with_vptr_policy<Class>>;
         detail::update_vptr<Class>(static_cast<Class*>(this));
     }
 
@@ -130,9 +133,8 @@ class with_vptr<Class, Base1, Base2, MoreBases...> : detail::with_vptr_derived {
 
   protected:
     with_vptr() {
-        (void)&use_classes<
-            Class, Base1, Base2, MoreBases...,
-            detail::with_vptr_policy<Base1>>::instance;
+        (void)&detail::with_vptr_use_classes<
+            Class, Base1, Base2, MoreBases..., detail::with_vptr_policy<Base1>>;
         detail::update_vptr<Class>(static_cast<Class*>(this));
     }
 

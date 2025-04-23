@@ -8,9 +8,7 @@
 
 #include <boost/openmethod/policies/basic_policy.hpp>
 
-namespace boost {
-namespace openmethod {
-namespace policies {
+namespace boost::openmethod::policies {
 
 struct minimal_rtti : virtual rtti {
     template<class Class>
@@ -23,8 +21,6 @@ struct minimal_rtti : virtual rtti {
     }
 };
 
-} // namespace policies
-} // namespace openmethod
-} // namespace boost
+} // namespace boost::openmethod::policies
 
 #endif

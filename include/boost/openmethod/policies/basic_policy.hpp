@@ -14,8 +14,8 @@
 #include <functional>
 #include <variant>
 
-namespace boost {
-namespace openmethod {
+namespace boost::openmethod {
+
 namespace detail {
 
 using class_catalog = detail::static_list<detail::class_info>;
@@ -130,7 +130,6 @@ struct basic_policy : abstract_policy, domain<Policy>, Facets... {
 
 } // namespace policies
 
-} // namespace openmethod
-} // namespace boost
+} // namespace boost::openmethod
 
 #endif

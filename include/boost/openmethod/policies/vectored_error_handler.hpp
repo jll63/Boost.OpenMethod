@@ -11,9 +11,7 @@
 #include <functional>
 #include <variant>
 
-namespace boost {
-namespace openmethod {
-namespace policies {
+namespace boost::openmethod::policies {
 
 template<class Policy>
 class vectored_error_handler : public error_handler {
@@ -83,8 +81,6 @@ typename vectored_error_handler<Policy>::function_type
     vectored_error_handler<Policy>::fn =
         vectored_error_handler<Policy>::default_handler;
 
-} // namespace policies
-} // namespace openmethod
-} // namespace boost
+} // namespace boost::openmethod::policies
 
 #endif

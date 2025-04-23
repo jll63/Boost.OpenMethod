@@ -1,5 +1,5 @@
 #include <iostream>
-#include<boost/openmethod.hpp>
+#include <boost/openmethod.hpp>
 
 #include "dog.hpp"
 
@@ -12,4 +12,4 @@ BOOST_OPENMETHOD_DEFINE_OVERRIDER(
     os << dog->name << " barks";
 }
 
-}
+} // namespace canines

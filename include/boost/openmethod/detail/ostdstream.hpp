@@ -11,8 +11,8 @@
 #include <charconv>
 #include <random>
 
-namespace boost {
-namespace openmethod {
+namespace boost::openmethod {
+
 namespace detail {
 
 // -----------------------------------------------------------------------------
@@ -86,7 +86,7 @@ inline auto operator<<(ostdstream& os, std::size_t value) -> ostdstream& {
 }
 
 } // namespace detail
-} // namespace openmethod
-} // namespace boost
+
+} // namespace boost::openmethod
 
 #endif

@@ -9,9 +9,7 @@
 #include <boost/openmethod/policies/basic_policy.hpp>
 #include <boost/openmethod/detail/ostdstream.hpp>
 
-namespace boost {
-namespace openmethod {
-namespace policies {
+namespace boost::openmethod::policies {
 
 template<class Policy, typename Stream = detail::ostderr>
 struct basic_error_output : virtual error_output {
@@ -21,8 +19,6 @@ struct basic_error_output : virtual error_output {
 template<class Policy, typename Stream>
 Stream basic_error_output<Policy, Stream>::error_stream;
 
-} // namespace policies
-} // namespace openmethod
-} // namespace boost
+} // namespace boost::openmethod::policies
 
 #endif

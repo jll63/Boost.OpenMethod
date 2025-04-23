@@ -169,7 +169,6 @@ BOOST_AUTO_TEST_CASE(test_virtual_ptr_non_polymorphic) {
 
 } // namespace using_non_polymorphic_classes
 
-
 struct Player {
     virtual ~Player() {
     }

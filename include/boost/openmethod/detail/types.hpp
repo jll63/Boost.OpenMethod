@@ -10,8 +10,7 @@
 
 #include <boost/openmethod/detail/static_list.hpp>
 
-namespace boost {
-namespace openmethod {
+namespace boost::openmethod {
 
 using type_id = std::uintptr_t;
 using vptr_type = const std::uintptr_t*;
@@ -133,7 +132,7 @@ struct overrider_info : static_list<overrider_info>::static_link {
 };
 
 } // namespace detail
-} // namespace openmethod
-} // namespace boost
+
+} // namespace boost::openmethod
 
 #endif

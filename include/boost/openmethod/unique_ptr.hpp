@@ -10,8 +10,7 @@
 
 #include <memory>
 
-namespace boost {
-namespace openmethod {
+namespace boost::openmethod {
 
 template<class Class, class Policy>
 struct virtual_traits<std::unique_ptr<Class>, Policy> {
@@ -47,7 +46,6 @@ inline auto make_unique_virtual(T&&... args)
         std::make_unique<Class>(std::forward<T>(args)...));
 }
 
-} // namespace openmethod
-} // namespace boost
+} // namespace boost::openmethod
 
 #endif

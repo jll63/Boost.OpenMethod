@@ -25,8 +25,7 @@
 #include <boost/assert.hpp>
 #include <boost/dynamic_bitset.hpp>
 
-namespace boost {
-namespace openmethod {
+namespace boost::openmethod {
 namespace detail {
 
 template<class Reports, class Facets, typename = void>
@@ -1320,7 +1319,6 @@ auto finalize() -> void {
     Policy::dispatch_data.clear();
 }
 
-} // namespace openmethod
-} // namespace boost
+} // namespace boost::openmethod
 
 #endif

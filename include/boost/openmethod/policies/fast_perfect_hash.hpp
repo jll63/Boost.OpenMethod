@@ -10,8 +10,7 @@
 
 #include <random>
 
-namespace boost {
-namespace openmethod {
+namespace boost::openmethod {
 
 namespace detail {
 
@@ -187,7 +186,6 @@ template<class Policy>
 std::size_t fast_perfect_hash<Policy>::hash_max;
 
 } // namespace policies
-} // namespace openmethod
-} // namespace boost
+} // namespace boost::openmethod
 
 #endif

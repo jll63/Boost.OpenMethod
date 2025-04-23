@@ -41,10 +41,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(shared_virtual_ptr_value, Policy, test_policies) {
     // construction and assignment from a plain pointer or reference is not
     // allowed
 
-    static_assert(
-        !construct_assign_ok<shared_virtual_ptr<Dog, Policy>, Dog>);
-    static_assert(
-        !construct_assign_ok<shared_virtual_ptr<Dog, Policy>, Dog&&>);
+    static_assert(!construct_assign_ok<shared_virtual_ptr<Dog, Policy>, Dog>);
+    static_assert(!construct_assign_ok<shared_virtual_ptr<Dog, Policy>, Dog&&>);
     static_assert(
         !construct_assign_ok<shared_virtual_ptr<Dog, Policy>, const Dog&>);
     static_assert(

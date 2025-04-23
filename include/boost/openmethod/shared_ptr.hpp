@@ -9,8 +9,7 @@
 #include <boost/openmethod/core.hpp>
 #include <memory>
 
-namespace boost {
-namespace openmethod {
+namespace boost::openmethod {
 namespace detail {
 
 template<typename Class>
@@ -125,7 +124,6 @@ inline auto make_shared_virtual(T&&... args)
         std::make_shared<Class>(std::forward<T>(args)...));
 }
 
-} // namespace openmethod
-} // namespace boost
+} // namespace boost::openmethod
 
 #endif

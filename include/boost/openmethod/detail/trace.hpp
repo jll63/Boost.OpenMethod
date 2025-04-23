@@ -10,8 +10,8 @@
 
 #include <boost/dynamic_bitset.hpp>
 
-namespace boost {
-namespace openmethod {
+namespace boost::openmethod {
+
 namespace detail {
 
 template<typename Iterator>
@@ -158,7 +158,6 @@ auto operator<<(trace_type<Policy>& trace, const type_name& manip) -> auto& {
 }
 
 } // namespace detail
-} // namespace openmethod
-} // namespace boost
+} // namespace boost::openmethod
 
 #endif // BOOST_OPENMETHOD_DETAIL_HPP

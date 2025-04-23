@@ -239,10 +239,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(plain_virtual_ptr_value, Policy, test_policies) {
         BOOST_TEST(p.vptr() == nullptr);
     }
 
-    static_assert(
-        !construct_assign_ok<virtual_ptr<Dog, Policy>, const Dog&>);
-    static_assert(
-        !construct_assign_ok<virtual_ptr<Dog, Policy>, const Dog*>);
+    static_assert(!construct_assign_ok<virtual_ptr<Dog, Policy>, const Dog&>);
+    static_assert(!construct_assign_ok<virtual_ptr<Dog, Policy>, const Dog*>);
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(indirect_virtual_ptr, Policy, test_policies) {

@@ -10,9 +10,7 @@
 
 #include <unordered_map>
 
-namespace boost {
-namespace openmethod {
-namespace policies {
+namespace boost::openmethod::policies {
 
 template<
     class Policy, class Facet = void,
@@ -84,8 +82,6 @@ class vptr_map : public extern_vptr,
 template<class Policy, typename UseIndirectVptrs, class Map>
 Map vptr_map<Policy, UseIndirectVptrs, Map>::vptrs;
 
-} // namespace policies
-} // namespace openmethod
-} // namespace boost
+} // namespace boost::openmethod::policies
 
 #endif

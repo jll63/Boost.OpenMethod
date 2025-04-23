@@ -325,9 +325,7 @@ namespace test_static_slots {
 struct Animal;
 }
 
-namespace boost {
-namespace openmethod {
-namespace detail {
+namespace boost::openmethod::detail {
 
 template<>
 struct static_offsets<method<
@@ -338,9 +336,7 @@ struct static_offsets<method<
     static constexpr std::size_t slots[] = {0, 1};
 };
 
-} // namespace detail
-} // namespace openmethod
-} // namespace boost
+} // namespace boost::openmethod::detail
 
 namespace test_static_slots {
 

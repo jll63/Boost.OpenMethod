@@ -741,7 +741,8 @@ class virtual_ptr : public detail::virtual_ptr_impl<Class, Policy> {
 
         if constexpr (
             Policy::template has_facet<policies::runtime_checks> &&
-            Policy::template is_polymorphic<typename impl::traits::virtual_type> &&
+            Policy::template is_polymorphic<
+                typename impl::traits::virtual_type> &&
             Policy::template is_polymorphic<other_class>) {
             // check that dynamic type == static type
             auto static_type = Policy::template static_type<other_class>();

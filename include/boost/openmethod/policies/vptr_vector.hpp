@@ -11,9 +11,7 @@
 #include <variant>
 #include <vector>
 
-namespace boost {
-namespace openmethod {
-namespace policies {
+namespace boost::openmethod::policies {
 
 template<class Policy, typename Facet = void>
 class vptr_vector : public extern_vptr,
@@ -95,8 +93,6 @@ template<class Policy, typename UseIndirectVptrs>
 std::vector<typename vptr_vector<Policy, UseIndirectVptrs>::element_type>
     vptr_vector<Policy, UseIndirectVptrs>::vptrs;
 
-} // namespace policies
-} // namespace openmethod
-} // namespace boost
+} // namespace boost::openmethod::policies
 
 #endif

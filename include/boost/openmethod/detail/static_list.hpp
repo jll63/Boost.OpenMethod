@@ -9,8 +9,8 @@
 #include <algorithm>
 #include <boost/assert.hpp>
 
-namespace boost {
-namespace openmethod {
+namespace boost::openmethod {
+
 namespace detail {
 
 template<typename T>
@@ -210,6 +210,6 @@ class static_list {
 };
 
 } // namespace detail
-} // namespace openmethod
-} // namespace boost
+} // namespace boost::openmethod
+
 #endif

@@ -18,6 +18,6 @@ BOOST_OPENMETHOD(
 using app_specific_behavior::BOOST_OPENMETHOD_GUIDE(meet);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    meet, (std::ostream& os, virtual_ptr<Animal>, virtual_ptr<Animal>), void) {
+    meet, (std::ostream & os, virtual_ptr<Animal>, virtual_ptr<Animal>), void) {
     os << "ignore";
 }

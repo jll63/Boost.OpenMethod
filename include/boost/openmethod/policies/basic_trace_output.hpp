@@ -15,9 +15,7 @@
 #pragma warning(disable : 4996)
 #endif
 
-namespace boost {
-namespace openmethod {
-namespace policies {
+namespace boost::openmethod::policies {
 
 template<class Policy, typename Stream = detail::ostderr>
 struct basic_trace_output : virtual trace_output {
@@ -34,9 +32,7 @@ bool basic_trace_output<Policy, Stream>::trace_enabled([]() {
     return env && *env++ == '1' && *env++ == 0;
 }());
 
-} // namespace policies
-} // namespace openmethod
-} // namespace boost
+} // namespace boost::openmethod::policies
 
 #ifdef _MSC_VER
 #pragma warning(pop)

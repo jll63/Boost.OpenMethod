@@ -14,9 +14,7 @@
 #include <boost/core/demangle.hpp>
 #endif
 
-namespace boost {
-namespace openmethod {
-namespace policies {
+namespace boost::openmethod::policies {
 
 struct std_rtti : virtual rtti {
 #ifndef BOOST_NO_RTTI
@@ -52,8 +50,6 @@ struct std_rtti : virtual rtti {
 #endif
 };
 
-} // namespace policies
-} // namespace openmethod
-} // namespace boost
+} // namespace boost::openmethod::policies
 
 #endif

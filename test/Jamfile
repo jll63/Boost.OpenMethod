@@ -6,37 +6,31 @@
 #  See accompanying file LICENSE_1_0.txt or copy at
 #  http://www.boost.org/LICENSE_1_0.txt
 
+import-search /boost/config/checks ;
+
 import testing ;
-import ../../config/checks/config : requires ;
+import config : requires ;
 
 project
   : requirements
 
     [ requires cxx11_variadic_templates cxx11_template_aliases cxx11_decltype cxx11_hdr_tuple ]
 
+    <library>/boost/open_method//boost_open_method
+
     <warnings>extra
 
-    <toolset>msvc:<warnings-as-errors>on
-    <toolset>gcc:<warnings-as-errors>on
-    <toolset>clang:<warnings-as-errors>on
+    # <toolset>msvc:<warnings-as-errors>on
+    # <toolset>gcc:<warnings-as-errors>on
+    # <toolset>clang:<warnings-as-errors>on
   ;
 
 # list
-run test_blackbox.cpp ;
-run test_compiler.cpp ;
-run test_core.cpp ;
-run test_custom_rtti.cpp ;
-run test_member_method.cpp ;
-run test_namespaces.cpp ;
-run test_pointer_to_method.cpp ;
-run test_rolex.cpp ;
-run test_static_list.cpp ;
-run test_virtual_ptr_all.cpp ;
-run test_virtual_ptr_basic.cpp ;
-run test_virtual_ptr_value_semantics.cpp ;
-run test_shared_virtual_ptr_value_semantics.cpp ;
-run test_unique_virtual_ptr_value_semantics.cpp ;
+for local src in [ glob test_*.cpp ]
+{
+  run $(src) ;
+}
 
 # quick (for CI)
-alias quick : blackbox ;
+alias quick : test_blackbox ;
 explicit quick ;

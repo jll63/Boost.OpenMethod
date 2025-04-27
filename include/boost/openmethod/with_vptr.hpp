@@ -113,15 +113,15 @@ class with_vptr_aux<Class, Base, false> : with_vptr_derived {
 } // namespace detail
 
 template<typename...>
-struct with_vptr;
+class with_vptr;
 
 template<class Class>
-struct with_vptr<Class>
-    : detail::with_vptr_aux<Class, BOOST_OPENMETHOD_DEFAULT_POLICY, true> {};
+class with_vptr<Class> : public detail::with_vptr_aux<
+                             Class, BOOST_OPENMETHOD_DEFAULT_POLICY, true> {};
 
 template<class Class, class Other>
-struct with_vptr<Class, Other>
-    : detail::with_vptr_aux<Class, Other, detail::is_policy<Other>> {};
+class with_vptr<Class, Other>
+    : public detail::with_vptr_aux<Class, Other, detail::is_policy<Other>> {};
 
 template<class Class, class Base1, class Base2, class... MoreBases>
 class with_vptr<Class, Base1, Base2, MoreBases...> : detail::with_vptr_derived {

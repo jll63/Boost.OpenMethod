@@ -1077,7 +1077,7 @@ void compiler<Policy>::write_global_data() {
 
     Policy::dispatch_data.resize(dispatch_data_size);
     auto gv_first = Policy::dispatch_data.data();
-    auto gv_last = gv_first + Policy::dispatch_data.size();
+    [[maybe_unused]] auto gv_last = gv_first + Policy::dispatch_data.size();
     auto gv_iter = gv_first;
 
     ++trace << "Initializing multi-method dispatch tables at " << gv_iter

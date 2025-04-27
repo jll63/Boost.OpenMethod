@@ -32,6 +32,10 @@ if(MSVC)
   add_compile_options(/EHsc /FAs)
 endif()
 
+if(GCC)
+  add_compile_options(-fPIC -fvisibility=hidden -Wno-deprecated-declarations -Wall -Wextra)
+endif()
+
 if(BUILD_TESTING)
   message(STATUS "Building tests")
   include(CTest)

@@ -196,7 +196,7 @@ using virtual_types = boost::mp11::mp_transform<
 
 template<typename T, class Policy>
 struct parameter_traits {
-    static auto peek(const T& arg) {
+    static auto peek(const T&) {
         return nullptr;
     }
 
@@ -346,15 +346,15 @@ class virtual_ptr_impl {
     virtual_ptr_impl() = default;
 
     explicit virtual_ptr_impl(std::nullptr_t)
-        : obj(nullptr), vp(box_vptr<use_indirect_vptrs>(null_vptr)) {
+        : vp(box_vptr<use_indirect_vptrs>(null_vptr)), obj(nullptr) {
     }
 
     template<
         class Other,
         typename = std::enable_if_t<std::is_constructible_v<Class*, Other*>>>
     virtual_ptr_impl(Other& other)
-        : obj(&other),
-          vp(box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(other))) {
+        : vp(box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(other))),
+          obj(&other) {
     }
 
     template<
@@ -363,8 +363,8 @@ class virtual_ptr_impl {
             Class*,
             decltype(std::declval<virtual_ptr<Other, Policy>>().get())>>>
     virtual_ptr_impl(Other* other)
-        : obj(other),
-          vp(box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(*other))) {
+        : vp(box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(*other))),
+          obj(other) {
     }
 
     template<
@@ -373,7 +373,7 @@ class virtual_ptr_impl {
             Class*,
             decltype(std::declval<virtual_ptr<Other, Policy>>().get())>>>
     virtual_ptr_impl(const virtual_ptr<Other, Policy>& other)
-        : obj(other.get()), vp(other.vp) {
+        : vp(other.vp), obj(other.get()) {
     }
 
     template<
@@ -382,7 +382,7 @@ class virtual_ptr_impl {
             Class*,
             decltype(std::declval<virtual_ptr<Other, Policy>>().get())>>>
     virtual_ptr_impl(virtual_ptr<Other, Policy>& other)
-        : obj(other.get()), vp(other.vp) {
+        : vp(other.vp), obj(other.get()) {
         // Why is this needed? Consider this conversion conversion from
         // smart to dumb pointer:
         //      virtual_ptr<std::shared_ptr<const Node>> p = ...;
@@ -397,7 +397,7 @@ class virtual_ptr_impl {
         class Other,
         typename = std::enable_if_t<std::is_constructible_v<Class*, Other*>>>
     virtual_ptr_impl(Other& other, const vptr_type& vp)
-        : obj(&other), vp(box_vptr<use_indirect_vptrs>(vp)) {
+        : vp(box_vptr<use_indirect_vptrs>(vp)), obj(&other) {
     }
 
     template<
@@ -515,7 +515,7 @@ class virtual_ptr_impl<
     }
 
     explicit virtual_ptr_impl(std::nullptr_t)
-        : obj(nullptr), vp(box_vptr<use_indirect_vptrs>(null_vptr)) {
+        : vp(box_vptr<use_indirect_vptrs>(null_vptr)), obj(nullptr) {
     }
 
     virtual_ptr_impl(const virtual_ptr_impl& other) = default;
@@ -526,8 +526,9 @@ class virtual_ptr_impl<
             same_smart_ptr<Class, Other, Policy> &&
             std::is_constructible_v<Class, const Other&>>>
     virtual_ptr_impl(const Other& other)
-        : obj(other), vp(box_vptr<use_indirect_vptrs>(
-                          other ? Policy::dynamic_vptr(*other) : null_vptr)) {
+        : vp(box_vptr<use_indirect_vptrs>(
+              other ? Policy::dynamic_vptr(*other) : null_vptr)),
+          obj(other) {
     }
 
     template<
@@ -536,8 +537,9 @@ class virtual_ptr_impl<
             same_smart_ptr<Class, Other, Policy> &&
             std::is_constructible_v<Class, Other&>>>
     virtual_ptr_impl(Other& other)
-        : obj(other), vp(box_vptr<use_indirect_vptrs>(
-                          other ? Policy::dynamic_vptr(*other) : null_vptr)) {
+        : vp(box_vptr<use_indirect_vptrs>(
+                 other ? Policy::dynamic_vptr(*other) : null_vptr)),
+             obj(other) {
     }
 
     template<
@@ -546,9 +548,9 @@ class virtual_ptr_impl<
             same_smart_ptr<Class, Other, Policy> &&
             std::is_constructible_v<Class, Other&&>>>
     virtual_ptr_impl(Other&& other)
-        : obj(std::move(other)),
-          vp(box_vptr<use_indirect_vptrs>(
-              other ? Policy::dynamic_vptr(*other) : null_vptr)) {
+        : vp(box_vptr<use_indirect_vptrs>(
+              other ? Policy::dynamic_vptr(*other) : null_vptr)),
+          obj(std::move(other)) {
     }
 
     template<
@@ -557,7 +559,7 @@ class virtual_ptr_impl<
             same_smart_ptr<Class, Other, Policy> &&
             std::is_constructible_v<Class, const Other&>>>
     virtual_ptr_impl(const virtual_ptr<Other, Policy>& other)
-        : obj(other.obj), vp(other.vp) {
+        : vp(other.vp), obj(other.obj) {
     }
 
     template<
@@ -566,11 +568,11 @@ class virtual_ptr_impl<
             same_smart_ptr<Class, Other, Policy> &&
             std::is_constructible_v<Class, Other&>>>
     virtual_ptr_impl(virtual_ptr<Other, Policy>& other)
-        : obj(other.obj), vp(other.vp) {
+        : vp(other.vp), obj(other.obj) {
     }
 
     virtual_ptr_impl(virtual_ptr_impl&& other)
-        : obj(std::move(other.obj)), vp(other.vp) {
+        : vp(other.vp), obj(std::move(other.obj)) {
         other.vp = box_vptr<use_indirect_vptrs>(null_vptr);
     }
 
@@ -580,7 +582,7 @@ class virtual_ptr_impl<
             same_smart_ptr<Class, Other, Policy> &&
             std::is_constructible_v<Class, Other&&>>>
     virtual_ptr_impl(virtual_ptr<Other, Policy>&& other)
-        : obj(std::move(other.obj)), vp(other.vp) {
+        : vp(other.vp), obj(std::move(other.obj)) {
         other.vp = box_vptr<use_indirect_vptrs>(null_vptr);
     }
 
@@ -665,7 +667,7 @@ class virtual_ptr_impl<
 
     template<typename Arg>
     virtual_ptr_impl(Arg&& obj, decltype(vp) other_vp)
-        : obj(std::forward<Arg>(obj)), vp(other_vp) {
+        : vp(other_vp), obj(std::forward<Arg>(obj)) {
     }
 
     template<class Other>

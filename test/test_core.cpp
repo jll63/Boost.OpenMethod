@@ -169,7 +169,6 @@ BOOST_AUTO_TEST_CASE(test_policy) {
 }
 
 BOOST_AUTO_TEST_CASE(test_type_id_list) {
-    type_id expected[] = {type_id(&typeid(a)), type_id(&typeid(b))};
     auto iter = type_id_list<mp11::mp_list<a&, b&>, default_policy>::begin;
     auto last = type_id_list<mp11::mp_list<a&, b&>, default_policy>::end;
     BOOST_TEST_REQUIRE(last - iter == 2);
@@ -254,7 +253,6 @@ BOOST_AUTO_TEST_CASE(casts) {
               carnivore)
               .c) == &dog.c);
 
-    using voidp = const void*;
     using virtual_animal_t = virtual_type<const Animal&, default_policy>;
     static_assert(std::is_same_v<virtual_animal_t, Animal>, "animal");
     using virtual_mammal_t = virtual_type<const Mammal&, default_policy>;

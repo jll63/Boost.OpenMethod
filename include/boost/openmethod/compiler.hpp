@@ -95,7 +95,7 @@ struct generic_compiler {
         std::vector<parameter> used_by_vp;
         boost::dynamic_bitset<> used_slots;
         boost::dynamic_bitset<> reserved_slots;
-        std::size_t first_slot = 0;
+        int first_slot = 0;
         std::size_t mark = 0;   // temporary mark to detect cycles
         std::size_t weight = 0; // number of proper direct or indirect bases
         std::vector<vtbl_entry> vtbl;
@@ -562,7 +562,7 @@ void compiler<Policy>::augment_methods() {
 
                 abort();
             }
-            parameter param = {&*meth_iter, param_index++};
+
             meth_iter->vp.push_back(class_);
         }
 

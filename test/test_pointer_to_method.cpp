@@ -25,7 +25,7 @@ BOOST_OPENMETHOD_CLASSES(Animal, Dog, Animal);
 
 BOOST_OPENMETHOD(poke, (virtual_<Animal&>), std::string);
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (Dog & dog), std::string) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (Dog &), std::string) {
     return "bark";
 }
 
@@ -33,6 +33,5 @@ BOOST_AUTO_TEST_CASE(noadl) {
     boost::openmethod::initialize();
     std::string (*stimulus)(Animal&) = poke;
     Dog snoopy;
-    Animal& animal = snoopy;
     BOOST_TEST(stimulus(snoopy) == "bark");
 }

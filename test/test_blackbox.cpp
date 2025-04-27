@@ -326,19 +326,19 @@ BOOST_OPENMETHOD_OVERRIDE(
     return Types(DIAGONAL_DIAGONAL, MATRIX_MATRIX);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(times, (double a, const matrix& m), Types) {
+BOOST_OPENMETHOD_OVERRIDE(times, (double, const matrix&), Types) {
     return Types(SCALAR_MATRIX, NONE);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(times, (double a, const diagonal_matrix& m), Types) {
+BOOST_OPENMETHOD_OVERRIDE(times, (double, const diagonal_matrix&), Types) {
     return Types(SCALAR_DIAGONAL, SCALAR_MATRIX);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(times, (const diagonal_matrix& m, double a), Types) {
+BOOST_OPENMETHOD_OVERRIDE(times, (const diagonal_matrix&, double), Types) {
     return Types(DIAGONAL_SCALAR, MATRIX_SCALAR);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(times, (const matrix& m, double a), Types) {
+BOOST_OPENMETHOD_OVERRIDE(times, (const matrix&, double), Types) {
     return Types(MATRIX_SCALAR, NONE);
 }
 
@@ -389,9 +389,10 @@ BOOST_OPENMETHOD_OVERRIDE(
     return Types(DIAGONAL_MATRIX, next(a, b).first);
 }
 
+
 BOOST_AUTO_TEST_CASE(ambiguity) {
     auto compiler = initialize<policy>();
-    BOOST_TEST(compiler.report.ambiguous == 1);
+    BOOST_TEST(compiler.report.ambiguous == 1u);
 
     // N2216: in case of ambiguity, pick one.
     diagonal_matrix diag1, diag2;
@@ -436,7 +437,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 
 BOOST_AUTO_TEST_CASE(covariant_return_type) {
     auto compiler = initialize<policy>();
-    BOOST_TEST(compiler.report.ambiguous == 0);
+    BOOST_TEST(compiler.report.ambiguous == 0u);
 
     // N2216: use covariant return types to resolve ambiguity.
     dense_matrix left, right;
@@ -462,7 +463,7 @@ struct BOOST_OPENMETHOD_NAME(poke);
 using poke =
     method<BOOST_OPENMETHOD_NAME(poke)(virtual_<Animal&>), std::string>;
 
-auto poke_dog(Dog& dog) -> std::string {
+auto poke_dog(Dog&) -> std::string {
     return "bark";
 }
 
@@ -573,7 +574,7 @@ class Dog : public animals::Animal {};
 
 BOOST_OPENMETHOD_CLASSES(Dog, animals::Animal);
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (const Dog& dog), std::string) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (const Dog&), std::string) {
     return "bark";
 }
 
@@ -621,39 +622,39 @@ BOOST_AUTO_TEST_CASE(initialize_report) {
         method<meet_(virtual_<Animal&>, virtual_<Animal&>), void, policy>;
 
     auto report = initialize<policy>().report;
-    BOOST_TEST(report.not_implemented == 3);
-    BOOST_TEST(report.ambiguous == 0);
+    BOOST_TEST(report.not_implemented == 3u);
+    BOOST_TEST(report.ambiguous == 0u);
     // 'meet' dispatch table is one cell, containing 'not_implemented'
-    BOOST_TEST(report.cells == 1);
+    BOOST_TEST(report.cells == 1u);
 
     BOOST_OPENMETHOD_REGISTER(poke::override<fn<Animal>>);
     report = initialize<policy>().report;
-    BOOST_TEST(report.not_implemented == 2);
+    BOOST_TEST(report.not_implemented == 2u);
 
     BOOST_OPENMETHOD_REGISTER(pet::override<fn<Cat>>);
     BOOST_OPENMETHOD_REGISTER(pet::override<fn<Dog>>);
     report = initialize<policy>().report;
-    BOOST_TEST(report.not_implemented == 2);
+    BOOST_TEST(report.not_implemented == 2u);
 
     // create ambiguity
     BOOST_OPENMETHOD_REGISTER(meet::override<fn<Animal, Cat>>);
     BOOST_OPENMETHOD_REGISTER(meet::override<fn<Dog, Animal>>);
     report = initialize<policy>().report;
-    BOOST_TEST(report.cells == 4);
-    BOOST_TEST(report.ambiguous == 1);
+    BOOST_TEST(report.cells == 4u);
+    BOOST_TEST(report.ambiguous == 1u);
 
     BOOST_OPENMETHOD_REGISTER(meet::override<fn<Cat, Cat>>);
     report = initialize<policy>().report;
-    BOOST_TEST(report.cells == 6);
-    BOOST_TEST(report.ambiguous == 1);
+    BOOST_TEST(report.cells == 6u);
+    BOOST_TEST(report.ambiguous == 1u);
 
     // shadow ambiguity
     BOOST_OPENMETHOD_REGISTER(meet::override<fn<Dog, Dog>>);
     BOOST_OPENMETHOD_REGISTER(meet::override<fn<Dog, Cat>>);
     BOOST_OPENMETHOD_REGISTER(meet::override<fn<Cat, Dog>>);
     report = initialize<policy>().report;
-    BOOST_TEST(report.cells == 9);
-    BOOST_TEST(report.ambiguous == 0);
+    BOOST_TEST(report.cells == 9u);
+    BOOST_TEST(report.ambiguous == 0u);
 }
 
 } // namespace report

@@ -41,7 +41,7 @@ struct trace_type {
     auto operator++() -> trace_type& {
         if constexpr (trace_enabled) {
             if (Policy::trace_enabled) {
-                for (int i = 0; i < indentation_level; ++i) {
+                for (std::size_t i = 0; i < indentation_level; ++i) {
                     Policy::trace_stream << "  ";
                 }
             }
@@ -96,10 +96,7 @@ template<class Policy>
 auto operator<<(trace_type<Policy>& trace, const rflush& rf) -> auto& {
     if constexpr (trace_type<Policy>::trace_enabled) {
         if (Policy::trace_enabled) {
-            auto pad = rf.width;
-            auto remain = rf.value;
-
-            int digits = 1;
+            std::size_t digits = 1;
             auto tmp = rf.value / 10;
 
             while (tmp) {

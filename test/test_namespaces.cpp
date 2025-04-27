@@ -40,7 +40,7 @@ BOOST_OPENMETHOD(poke, (virtual_<interfaces::Animal&>), std::string);
 
 namespace canis {
 // implement 'poke' for dogs
-BOOST_OPENMETHOD_OVERRIDE(poke, (Dog & dog), std::string) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (Dog &), std::string) {
     return "bark";
 }
 
@@ -62,17 +62,17 @@ BOOST_OPENMETHOD_OVERRIDE(
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    meet, (canis::Dog & dog1, canis::Dog& dog2), std::string) {
+    meet, (canis::Dog &, canis::Dog&), std::string) {
     return "wag tail";
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    meet, (canis::Dog & dog, felis::Cat& cat), std::string) {
+    meet, (canis::Dog &, felis::Cat&), std::string) {
     return "chase";
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    meet, (felis::Cat & cat, canis::Dog& dog), std::string) {
+    meet, (felis::Cat &, canis::Dog&), std::string) {
     return "run";
 }
 

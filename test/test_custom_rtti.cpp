@@ -192,9 +192,9 @@ void call_poke(Animal& a, std::ostream& os) {
 // TAILCALL
 
 BOOST_AUTO_TEST_CASE(custom_rtti_simple) {
-    BOOST_TEST(Animal::static_type == 0);
-    BOOST_TEST(Dog::static_type == 1);
-    BOOST_TEST(Cat::static_type == 2);
+    BOOST_TEST(Animal::static_type == 0u);
+    BOOST_TEST(Dog::static_type == 1u);
+    BOOST_TEST(Cat::static_type == 2u);
     initialize<test_policy>();
 
     Animal &&a = Dog("Snoopy"), &&b = Cat("Sylvester");
@@ -348,9 +348,9 @@ void call_poke(Animal& a, std::ostream& os) {
 // TAILCALL
 
 BOOST_AUTO_TEST_CASE(virtual_base) {
-    BOOST_TEST(Animal::static_type == 0);
-    BOOST_TEST(Dog::static_type == 1);
-    BOOST_TEST(Cat::static_type == 2);
+    BOOST_TEST(Animal::static_type == 0u);
+    BOOST_TEST(Dog::static_type == 1u);
+    BOOST_TEST(Cat::static_type == 2u);
     initialize<test_policy>();
 
     Animal &&a = Dog("Snoopy"), &&b = Cat("Sylvester");

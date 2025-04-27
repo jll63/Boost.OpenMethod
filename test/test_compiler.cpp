@@ -60,13 +60,15 @@ auto get_class(const Compiler& comp) {
     return comp.class_map.at(typeid(T));
 }
 
-// A   B
-//  \ / \
-//  AB   D
-//  |    |
-//  C    E
-//   \  /
-//    F
+/*
+A   B
+ \ / \
+ AB   D
+ |    |
+ C    E
+  \  /
+   F
+*/
 
 struct A {
     virtual ~A() {
@@ -174,9 +176,11 @@ struct M;
 BOOST_AUTO_TEST_CASE(test_assign_slots_a_b1_c) {
     using test_policy = test_policy_<__COUNTER__>;
 
-    //   A
-    //  / \
-    // B1  C
+    /*
+      A
+     / \
+    B1  C
+    */
 
     struct A {};
     struct B : A {};
@@ -189,11 +193,11 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a_b1_c) {
 
     auto comp = initialize<test_policy>();
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_B).slots.size() == 1);
-    BOOST_TEST(get_method(comp, m_B).slots[0] == 0);
-    BOOST_TEST(get_class<A>(comp)->vtbl.size() == 0);
-    BOOST_TEST(get_class<B>(comp)->vtbl.size() == 1);
-    BOOST_TEST(get_class<C>(comp)->vtbl.size() == 0);
+    BOOST_TEST_REQUIRE(get_method(comp, m_B).slots.size() == 1u);
+    BOOST_TEST(get_method(comp, m_B).slots[0] == 0u);
+    BOOST_TEST(get_class<A>(comp)->vtbl.size() == 0u);
+    BOOST_TEST(get_class<B>(comp)->vtbl.size() == 1u);
+    BOOST_TEST(get_class<C>(comp)->vtbl.size() == 0u);
 
     finalize<test_policy>();
     BOOST_TEST(test_policy::dispatch_data.empty());
@@ -202,9 +206,11 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a_b1_c) {
 BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_c1) {
     using test_policy = test_policy_<__COUNTER__>;
 
-    //   A1
-    //  / \
-    // B1  C1
+    /*
+      A1
+     / \
+    B1  C1
+    */
 
     struct A {};
     struct B : A {};
@@ -218,27 +224,29 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_c1) {
     ADD_METHOD(C);
     auto comp = initialize<test_policy>();
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_A).slots.size() == 1);
-    BOOST_TEST(get_method(comp, m_A).slots[0] == 0);
-    BOOST_TEST(get_class<A>(comp)->vtbl.size() == 1);
+    BOOST_TEST_REQUIRE(get_method(comp, m_A).slots.size() == 1u);
+    BOOST_TEST(get_method(comp, m_A).slots[0] == 0u);
+    BOOST_TEST(get_class<A>(comp)->vtbl.size() == 1u);
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_B).slots.size() == 1);
-    BOOST_TEST(get_method(comp, m_B).slots[0] == 1);
-    BOOST_TEST(get_class<B>(comp)->vtbl.size() == 2);
+    BOOST_TEST_REQUIRE(get_method(comp, m_B).slots.size() == 1u);
+    BOOST_TEST(get_method(comp, m_B).slots[0] == 1u);
+    BOOST_TEST(get_class<B>(comp)->vtbl.size() == 2u);
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_C).slots.size() == 1);
-    BOOST_TEST(get_method(comp, m_C).slots[0] == 1);
-    BOOST_TEST(get_class<C>(comp)->vtbl.size() == 2);
+    BOOST_TEST_REQUIRE(get_method(comp, m_C).slots.size() == 1u);
+    BOOST_TEST(get_method(comp, m_C).slots[0] == 1u);
+    BOOST_TEST(get_class<C>(comp)->vtbl.size() == 2u);
 }
 
 BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_d1_c1_d1) {
     using test_policy = test_policy_<__COUNTER__>;
 
-    //   A1
-    //  / \
-    // B1  C1 - slots 0-2 are wasted
-    //  \ /
-    //   D1
+    /*
+      A1
+     / \
+    B1  C1 - slots 0-2 are wasted
+     \ /
+      D1
+    */
 
     struct A {};
     struct B : virtual A {};
@@ -255,32 +263,34 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_d1_c1_d1) {
     ADD_METHOD(D);
     auto comp = initialize<test_policy>();
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_A).slots.size() == 1);
-    BOOST_TEST(get_method(comp, m_A).slots[0] == 0);
-    BOOST_TEST(get_class<A>(comp)->vtbl.size() == 1);
+    BOOST_TEST_REQUIRE(get_method(comp, m_A).slots.size() == 1u);
+    BOOST_TEST(get_method(comp, m_A).slots[0] == 0u);
+    BOOST_TEST(get_class<A>(comp)->vtbl.size() == 1u);
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_B).slots.size() == 1);
-    BOOST_TEST(get_method(comp, m_B).slots[0] == 1);
-    BOOST_TEST(get_class<B>(comp)->vtbl.size() == 2);
+    BOOST_TEST_REQUIRE(get_method(comp, m_B).slots.size() == 1u);
+    BOOST_TEST(get_method(comp, m_B).slots[0] == 1u);
+    BOOST_TEST(get_class<B>(comp)->vtbl.size() == 2u);
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_D).slots.size() == 1);
-    BOOST_TEST(get_method(comp, m_D).slots[0] == 2);
-    BOOST_TEST(get_class<D>(comp)->vtbl.size() == 4);
+    BOOST_TEST_REQUIRE(get_method(comp, m_D).slots.size() == 1u);
+    BOOST_TEST(get_method(comp, m_D).slots[0] == 2u);
+    BOOST_TEST(get_class<D>(comp)->vtbl.size() == 4u);
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_C).slots.size() == 1);
-    BOOST_TEST(get_method(comp, m_C).slots[0] == 3);
-    BOOST_TEST(get_class<C>(comp)->vtbl.size() == 4);
+    BOOST_TEST_REQUIRE(get_method(comp, m_C).slots.size() == 1u);
+    BOOST_TEST(get_method(comp, m_C).slots[0] == 3u);
+    BOOST_TEST(get_class<C>(comp)->vtbl.size() == 4u);
     // slots 0-2 in C are wasted, to make room for methods in B and D
 }
 
 BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_d1_c1_d1_e2) {
     using test_policy = test_policy_<__COUNTER__>;
 
-    //   A1
-    //  / \
-    // B1  C1 slots 0-2 are wasted
-    //  \ /  \
-    //   D1  E2 but E can use them
+    /*
+      A1
+     / \
+    B1  C1 slots 0-2 are wasted
+     \ /  \
+      D1  E2 but E can use them
+    */
 
     struct A {};
     struct B : virtual A {};
@@ -302,41 +312,43 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_d1_c1_d1_e2) {
     ADD_METHOD_N(E, 3);
     auto comp = initialize<test_policy>();
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_A).slots.size() == 1);
-    BOOST_TEST(get_method(comp, m_A).slots[0] == 0);
-    BOOST_TEST(get_class<A>(comp)->vtbl.size() == 1);
+    BOOST_TEST_REQUIRE(get_method(comp, m_A).slots.size() == 1u);
+    BOOST_TEST(get_method(comp, m_A).slots[0] == 0u);
+    BOOST_TEST(get_class<A>(comp)->vtbl.size() == 1u);
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_B).slots.size() == 1);
-    BOOST_TEST(get_method(comp, m_B).slots[0] == 1);
-    BOOST_TEST(get_class<B>(comp)->vtbl.size() == 2);
+    BOOST_TEST_REQUIRE(get_method(comp, m_B).slots.size() == 1u);
+    BOOST_TEST(get_method(comp, m_B).slots[0] == 1u);
+    BOOST_TEST(get_class<B>(comp)->vtbl.size() == 2u);
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_D).slots.size() == 1);
-    BOOST_TEST(get_method(comp, m_D).slots[0] == 2);
-    BOOST_TEST(get_class<D>(comp)->vtbl.size() == 4);
+    BOOST_TEST_REQUIRE(get_method(comp, m_D).slots.size() == 1u);
+    BOOST_TEST(get_method(comp, m_D).slots[0] == 2u);
+    BOOST_TEST(get_class<D>(comp)->vtbl.size() == 4u);
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_C).slots.size() == 1);
-    BOOST_TEST(get_method(comp, m_C).slots[0] == 3);
-    BOOST_TEST(get_class<C>(comp)->vtbl.size() == 4);
+    BOOST_TEST_REQUIRE(get_method(comp, m_C).slots.size() == 1u);
+    BOOST_TEST(get_method(comp, m_C).slots[0] == 3u);
+    BOOST_TEST(get_class<C>(comp)->vtbl.size() == 4u);
     // slots 0-2 in C are wasted, to make room for methods in B and D
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_E1).slots.size() == 1);
-    BOOST_TEST(get_method(comp, m_E1).slots[0] == 1);
+    BOOST_TEST_REQUIRE(get_method(comp, m_E1).slots.size() == 1u);
+    BOOST_TEST(get_method(comp, m_E1).slots[0] == 1u);
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_E2).slots.size() == 1);
-    BOOST_TEST(get_method(comp, m_E2).slots[0] == 2);
+    BOOST_TEST_REQUIRE(get_method(comp, m_E2).slots.size() == 1u);
+    BOOST_TEST(get_method(comp, m_E2).slots[0] == 2u);
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_E3).slots.size() == 1);
-    BOOST_TEST(get_method(comp, m_E3).slots[0] == 4);
+    BOOST_TEST_REQUIRE(get_method(comp, m_E3).slots.size() == 1u);
+    BOOST_TEST(get_method(comp, m_E3).slots[0] == 4u);
 
-    BOOST_TEST(get_class<E>(comp)->vtbl.size() == 5);
+    BOOST_TEST(get_class<E>(comp)->vtbl.size() == 5u);
 }
 
 BOOST_AUTO_TEST_CASE(test_assign_slots_a1_c1_b1) {
     using test_policy = test_policy_<__COUNTER__>;
 
-    // A1  B1
-    //  \  /
-    //   C1
+    /*
+    A1  B1
+     \  /
+      C1
+    */
 
     struct A {};
     struct B {};
@@ -350,16 +362,16 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a1_c1_b1) {
     ADD_METHOD(C);
     auto comp = initialize<test_policy>();
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_A).slots.size() == 1);
-    BOOST_TEST(get_method(comp, m_A).slots[0] == 0);
-    BOOST_TEST(get_class<A>(comp)->vtbl.size() == 1);
+    BOOST_TEST_REQUIRE(get_method(comp, m_A).slots.size() == 1u);
+    BOOST_TEST(get_method(comp, m_A).slots[0] == 0u);
+    BOOST_TEST(get_class<A>(comp)->vtbl.size() == 1u);
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_C).slots.size() == 1);
-    BOOST_TEST(get_method(comp, m_C).slots[0] == 1);
-    BOOST_TEST(get_class<C>(comp)->vtbl.size() == 3);
+    BOOST_TEST_REQUIRE(get_method(comp, m_C).slots.size() == 1u);
+    BOOST_TEST(get_method(comp, m_C).slots[0] == 1u);
+    BOOST_TEST(get_class<C>(comp)->vtbl.size() == 3u);
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_B).slots.size() == 1);
-    BOOST_TEST(get_method(comp, m_B).slots[0] == 2);
+    BOOST_TEST_REQUIRE(get_method(comp, m_B).slots.size() == 1u);
+    BOOST_TEST(get_method(comp, m_B).slots[0] == 2u);
     BOOST_TEST(get_class<B>(comp)->first_slot == 2);
-    BOOST_TEST(get_class<B>(comp)->vtbl.size() == 1);
+    BOOST_TEST(get_class<B>(comp)->vtbl.size() == 1u);
 }

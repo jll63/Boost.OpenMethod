@@ -241,7 +241,6 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
         (vptr_player(bear).vptr() == Policy::template static_vptr<Bear>));
 
     vptr_bear virtual_bear_ptr(bear);
-    vptr_player virtual_player_ptr = virtual_bear_ptr;
 
     struct upcast {
         static void fn(vptr_player) {

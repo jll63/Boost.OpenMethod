@@ -96,8 +96,3 @@ reference, because `virtual_ptr` has a conversion constructor for that:
 ----
 include::{examplesdir}/hello_world.cpp[tag=call]
 ----
-
-NOTE: `virtual_ptr` is more like a reference than a pointer: it cannot be null,
-and it cannot be re-assigned. The only reason why it is not called `virtual_ref`
-is to save the name in case it becomes possible to overload the dot operator in
-future versions of C++.

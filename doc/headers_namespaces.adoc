@@ -2,9 +2,9 @@
 ## Headers and Namespaces
 
 Most real-life programs will be organized in multiple files and multiple
-namespaces. OpenMethod interacts with headers and namespaces very naturally,
-unless using-directives are avoided. In that case, there are a few things to be
-aware of.
+namespaces. OpenMethod interacts with headers and namespaces naturally, if
+using-directives are avoided. In that case, there are a few things to be aware
+of.
 
 Let's break the Animals example into headers and namespaces. First we put
 `Animal` in its own header and namespace:

@@ -25,7 +25,9 @@ struct release : basic_policy<
 struct debug : release::add<
                    runtime_checks, basic_error_output<debug>,
                    basic_trace_output<debug>>::
-                   replace<error_handler, vectored_error_handler<debug>> {};
+                   replace<error_handler, vectored_error_handler<debug>>::
+                   replace<type_hash, fast_perfect_hash<debug>>::
+                   replace<extern_vptr, vptr_vector<debug>> {};
 
 } // namespace policies
 

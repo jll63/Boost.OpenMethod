@@ -101,6 +101,8 @@ void fast_perfect_hash<Policy>::hash_initialize(
     for (std::size_t pass = 0; pass < 4; ++pass, ++M) {
         hash_shift = 8 * sizeof(type_id) - M;
         auto hash_size = 1 << M;
+        hash_min = (std::numeric_limits<std::size_t>::max)();
+        hash_max = (std::numeric_limits<std::size_t>::min)();
 
         if constexpr (trace_enabled) {
             if (Policy::trace_enabled) {
@@ -182,8 +184,7 @@ type_id fast_perfect_hash<Policy>::hash_mult;
 template<class Policy>
 std::size_t fast_perfect_hash<Policy>::hash_shift;
 template<class Policy>
-std::size_t fast_perfect_hash<Policy>::hash_min =
-    std::numeric_limits<std::size_t>::max();
+std::size_t fast_perfect_hash<Policy>::hash_min;
 template<class Policy>
 std::size_t fast_perfect_hash<Policy>::hash_max;
 

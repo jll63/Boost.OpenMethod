@@ -181,7 +181,8 @@ type_id fast_perfect_hash<Policy>::hash_mult;
 template<class Policy>
 std::size_t fast_perfect_hash<Policy>::hash_shift;
 template<class Policy>
-std::size_t fast_perfect_hash<Policy>::hash_min;
+std::size_t fast_perfect_hash<Policy>::hash_min =
+    std::numeric_limits<std::size_t>::max();
 template<class Policy>
 std::size_t fast_perfect_hash<Policy>::hash_max;
 

@@ -693,7 +693,7 @@ void compiler<Policy>::assign_slots() {
 
             auto first_slot = cls.used_slots.find_first();
             cls.first_slot =
-                first_slot == boost::dynamic_bitset<>::npos ? 0 : first_slot;
+                first_slot == boost::dynamic_bitset<>::npos ? 0u : first_slot;
             cls.vtbl.resize(cls.used_slots.size() - cls.first_slot);
             ++trace << cls << " vtbl: " << cls.first_slot << "-"
                     << cls.used_slots.size() << " slots " << cls.used_slots

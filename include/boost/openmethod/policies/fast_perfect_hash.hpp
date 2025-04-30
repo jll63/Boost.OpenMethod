@@ -8,6 +8,7 @@
 
 #include <boost/openmethod/policies/basic_policy.hpp>
 
+#include <limits>
 #include <random>
 
 namespace boost::openmethod {

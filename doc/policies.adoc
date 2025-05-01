@@ -29,7 +29,7 @@ library: `release` and `debug`.
 | provides type information for classes and objects
 
 | extern_vptr
-| vptr_vector, vptr_map
+| vptr_vector
 | stores vptrs in an indexed collection
 
 | type_hash

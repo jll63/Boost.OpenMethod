@@ -23,7 +23,7 @@ include::{examplesdir}/friendship.cpp[tag=friend_all]
 Be aware, though, that the overriders of _any_ method called `poke` - with any
 signature - are granted friendship.
 
-We can also befriendto individual overriders:
+We can also befriend individual overriders:
 
 [source,c++]
 ----

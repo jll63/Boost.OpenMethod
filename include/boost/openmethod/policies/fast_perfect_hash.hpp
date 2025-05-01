@@ -111,15 +111,13 @@ void fast_perfect_hash<Policy>::hash_initialize(
             }
         }
 
-        bool found = false;
         std::size_t attempts = 0;
         buckets.resize(hash_size);
 
-        while (!found && attempts < 100000) {
+        while (attempts < 100000) {
             std::fill(buckets.begin(), buckets.end(), static_cast<type_id>(-1));
             ++attempts;
             ++total_attempts;
-            found = true;
             hash_mult = uniform_dist(rnd) | 1;
 
             for (auto iter = first; iter != last; ++iter) {
@@ -131,16 +129,13 @@ void fast_perfect_hash<Policy>::hash_initialize(
                     hash_max = (std::max)(hash_max, index);
 
                     if (buckets[index] != static_cast<type_id>(-1)) {
-                        found = false;
-                        break;
+                        goto collision;
                     }
 
                     buckets[index] = type;
                 }
             }
-        }
 
-        if (found) {
             if constexpr (trace_enabled) {
                 if (Policy::trace_enabled) {
                     Policy::trace_stream << "  found " << hash_mult << " after "
@@ -151,6 +146,8 @@ void fast_perfect_hash<Policy>::hash_initialize(
             }
 
             return;
+
+            collision: {}
         }
     }
 

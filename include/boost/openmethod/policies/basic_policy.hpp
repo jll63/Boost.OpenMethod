@@ -72,25 +72,12 @@ struct runtime_checks : facet {};
 
 template<class Policy>
 struct domain {
-    static detail::class_catalog classes;
-    static detail::method_catalog methods;
+    inline static detail::class_catalog classes;
+    inline static detail::method_catalog methods;
     template<class Class>
-    static vptr_type static_vptr;
-    static std::vector<std::uintptr_t> dispatch_data;
+    inline static vptr_type static_vptr;
+    inline static std::vector<std::uintptr_t> dispatch_data;
 };
-
-template<class Policy>
-detail::class_catalog domain<Policy>::classes;
-
-template<class Policy>
-detail::method_catalog domain<Policy>::methods;
-
-template<class Policy>
-template<class Class>
-vptr_type domain<Policy>::static_vptr;
-
-template<class Policy>
-std::vector<std::uintptr_t> domain<Policy>::dispatch_data;
 
 template<class Policy, class... Facets>
 struct basic_policy : abstract_policy, domain<Policy>, Facets... {

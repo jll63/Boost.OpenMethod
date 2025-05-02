@@ -25,11 +25,11 @@ namespace policies {
 template<class Policy>
 class fast_perfect_hash : public type_hash {
 
-    static type_id hash_mult;
-    static std::size_t hash_shift;
-    static std::size_t hash_min;
-    static std::size_t hash_max;
-
+    inline static type_id hash_mult;
+    inline static std::size_t hash_shift;
+    inline static std::size_t hash_min;
+    inline static std::size_t hash_max;
+inline
     static void check(std::size_t index, type_id type);
 
   public:
@@ -175,15 +175,6 @@ void fast_perfect_hash<Policy>::check(std::size_t index, type_id type) {
         abort();
     }
 }
-
-template<class Policy>
-type_id fast_perfect_hash<Policy>::hash_mult;
-template<class Policy>
-std::size_t fast_perfect_hash<Policy>::hash_shift;
-template<class Policy>
-std::size_t fast_perfect_hash<Policy>::hash_min;
-template<class Policy>
-std::size_t fast_perfect_hash<Policy>::hash_max;
 
 } // namespace policies
 } // namespace boost::openmethod

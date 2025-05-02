@@ -1042,6 +1042,8 @@ class method<Name(Parameters...), ReturnType, Policy>
     };
 };
 
+// Following cannot be `inline static` becaused of MSVC bug causinga "no
+// appropriate default constructor available".
 template<
     typename Name, typename... Parameters, typename ReturnType, class Policy>
 method<Name(Parameters...), ReturnType, Policy>

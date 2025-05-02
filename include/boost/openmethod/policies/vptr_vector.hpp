@@ -23,7 +23,7 @@ class vptr_vector : public extern_vptr,
         std::is_same_v<Facet, indirect_vptr>;
     using element_type =
         std::conditional_t<use_indirect_vptrs, const vptr_type*, vptr_type>;
-    static std::vector<element_type> vptrs;
+    inline static std::vector<element_type> vptrs;
 
   public:
     template<typename ForwardIterator>
@@ -88,10 +88,6 @@ class vptr_vector : public extern_vptr,
         vptrs.clear();
     }
 };
-
-template<class Policy, typename UseIndirectVptrs>
-std::vector<typename vptr_vector<Policy, UseIndirectVptrs>::element_type>
-    vptr_vector<Policy, UseIndirectVptrs>::vptrs;
 
 } // namespace boost::openmethod::policies
 

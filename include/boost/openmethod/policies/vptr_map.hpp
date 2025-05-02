@@ -32,7 +32,7 @@ class vptr_map : public extern_vptr,
         std::is_same_v<typename Map::mapped_type, const vptr_type*> ==
         use_indirect_vptrs);
 
-    static Map vptrs;
+    inline static Map vptrs;
 
   public:
     template<typename ForwardIterator>
@@ -78,9 +78,6 @@ class vptr_map : public extern_vptr,
         vptrs.clear();
     }
 };
-
-template<class Policy, typename UseIndirectVptrs, class Map>
-Map vptr_map<Policy, UseIndirectVptrs, Map>::vptrs;
 
 } // namespace boost::openmethod::policies
 

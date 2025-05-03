@@ -11,6 +11,8 @@
 #include <boost/openmethod/compiler.hpp>
 #include <boost/openmethod/unique_ptr.hpp>
 
+#include <utility>
+
 using namespace boost::openmethod;
 using namespace boost::openmethod::policies;
 
@@ -25,6 +27,12 @@ struct Animal {
 struct Cat : virtual Animal {};
 
 struct Dog : Animal {};
+
+template<class Left, class Right>
+constexpr bool construct_assign_ok =
+    std::is_constructible_v<Left, Right> && std::is_assignable_v<Left, Right>;
+
+struct NonPolymorphic {};
 
 template<class Policy>
 void init_test() {
@@ -117,9 +125,5 @@ struct check_illegal_smart_ops {
             decltype(*std::declval<virtual_ptr<smart_ptr<Animal>, Policy>>()),
             Animal&>);
 };
-
-template<class Left, class Right>
-constexpr bool construct_assign_ok =
-    std::is_constructible_v<Left, Right> && std::is_assignable_v<Left, Right>;
 
 #endif // TEST_VIRTUAL_PTR_VALUE_SEMANTICS_HPP

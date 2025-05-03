@@ -314,3 +314,19 @@ BOOST_AUTO_TEST_CASE(virtual_ptr_final_error) {
         }
     }
 }
+
+// Cannot construct or assign a virtual_ptr from a non-polymorphic object.
+static_assert(
+    !construct_assign_ok<virtual_ptr<NonPolymorphic>, const NonPolymorphic&>);
+static_assert(
+    !construct_assign_ok<virtual_ptr<NonPolymorphic>, NonPolymorphic&>);
+static_assert(
+    !construct_assign_ok<virtual_ptr<NonPolymorphic>, NonPolymorphic&&>);
+static_assert(
+    !construct_assign_ok<virtual_ptr<NonPolymorphic>, const NonPolymorphic*>);
+static_assert(
+    !construct_assign_ok<virtual_ptr<NonPolymorphic>, NonPolymorphic*>);
+// OK from another virtual_ptr though, because it can be constructed using
+// 'final'.
+static_assert(construct_assign_ok<
+              virtual_ptr<NonPolymorphic>, virtual_ptr<NonPolymorphic>>);

@@ -468,25 +468,12 @@ struct runtime_checks : facet {};
 
 template<class Policy>
 struct domain {
-    static detail::class_catalog classes;
-    static detail::method_catalog methods;
+    inline static detail::class_catalog classes;
+    inline static detail::method_catalog methods;
     template<class Class>
-    static vptr_type static_vptr;
-    static std::vector<std::uintptr_t> dispatch_data;
+    inline static vptr_type static_vptr;
+    inline static std::vector<std::uintptr_t> dispatch_data;
 };
-
-template<class Policy>
-detail::class_catalog domain<Policy>::classes;
-
-template<class Policy>
-detail::method_catalog domain<Policy>::methods;
-
-template<class Policy>
-template<class Class>
-vptr_type domain<Policy>::static_vptr;
-
-template<class Policy>
-std::vector<std::uintptr_t> domain<Policy>::dispatch_data;
 
 template<class Policy, class... Facets>
 struct basic_policy : abstract_policy, domain<Policy>, Facets... {
@@ -615,7 +602,7 @@ class vptr_vector : public extern_vptr,
         std::is_same_v<Facet, indirect_vptr>;
     using element_type =
         std::conditional_t<use_indirect_vptrs, const vptr_type*, vptr_type>;
-    static std::vector<element_type> vptrs;
+    inline static std::vector<element_type> vptrs;
 
   public:
     template<typename ForwardIterator>
@@ -680,10 +667,6 @@ class vptr_vector : public extern_vptr,
         vptrs.clear();
     }
 };
-
-template<class Policy, typename UseIndirectVptrs>
-std::vector<typename vptr_vector<Policy, UseIndirectVptrs>::element_type>
-    vptr_vector<Policy, UseIndirectVptrs>::vptrs;
 
 } // namespace boost::openmethod::policies
 
@@ -799,11 +782,8 @@ namespace boost::openmethod::policies {
 
 template<class Policy, typename Stream = detail::ostderr>
 struct basic_error_output : virtual error_output {
-    static Stream error_stream;
+    inline static Stream error_stream;
 };
-
-template<class Policy, typename Stream>
-Stream basic_error_output<Policy, Stream>::error_stream;
 
 } // namespace boost::openmethod::policies
 
@@ -833,18 +813,9 @@ namespace boost::openmethod::policies {
 
 template<class Policy, typename Stream = detail::ostderr>
 struct basic_trace_output : virtual trace_output {
-    static bool trace_enabled;
-    static Stream trace_stream;
+    inline static bool trace_enabled;
+    inline static Stream trace_stream;
 };
-
-template<class Policy, typename Stream>
-Stream basic_trace_output<Policy, Stream>::trace_stream;
-
-template<class Policy, typename Stream>
-bool basic_trace_output<Policy, Stream>::trace_enabled([]() {
-    auto env = getenv("BOOST_OPENMETHOD_TRACE");
-    return env && *env++ == '1' && *env++ == 0;
-}());
 
 } // namespace boost::openmethod::policies
 
@@ -866,6 +837,7 @@ bool basic_trace_output<Policy, Stream>::trace_enabled([]() {
 
 
 
+#include <limits>
 #include <random>
 
 namespace boost::openmethod {
@@ -882,12 +854,11 @@ namespace policies {
 template<class Policy>
 class fast_perfect_hash : public type_hash {
 
-    static type_id hash_mult;
-    static std::size_t hash_shift;
-    static std::size_t hash_min;
-    static std::size_t hash_max;
-
-    static void check(std::size_t index, type_id type);
+    inline static type_id hash_mult;
+    inline static std::size_t hash_shift;
+    inline static std::size_t hash_min;
+    inline static std::size_t hash_max;
+    inline static void check(std::size_t index, type_id type);
 
   public:
     struct report {
@@ -958,6 +929,8 @@ void fast_perfect_hash<Policy>::hash_initialize(
     for (std::size_t pass = 0; pass < 4; ++pass, ++M) {
         hash_shift = 8 * sizeof(type_id) - M;
         auto hash_size = 1 << M;
+        hash_min = (std::numeric_limits<std::size_t>::max)();
+        hash_max = (std::numeric_limits<std::size_t>::min)();
 
         if constexpr (trace_enabled) {
             if (Policy::trace_enabled) {
@@ -966,15 +939,13 @@ void fast_perfect_hash<Policy>::hash_initialize(
             }
         }
 
-        bool found = false;
         std::size_t attempts = 0;
         buckets.resize(hash_size);
 
-        while (!found && attempts < 100000) {
+        while (attempts < 100000) {
             std::fill(buckets.begin(), buckets.end(), static_cast<type_id>(-1));
             ++attempts;
             ++total_attempts;
-            found = true;
             hash_mult = uniform_dist(rnd) | 1;
 
             for (auto iter = first; iter != last; ++iter) {
@@ -986,16 +957,13 @@ void fast_perfect_hash<Policy>::hash_initialize(
                     hash_max = (std::max)(hash_max, index);
 
                     if (buckets[index] != static_cast<type_id>(-1)) {
-                        found = false;
-                        break;
+                        goto collision;
                     }
 
                     buckets[index] = type;
                 }
             }
-        }
 
-        if (found) {
             if constexpr (trace_enabled) {
                 if (Policy::trace_enabled) {
                     Policy::trace_stream << "  found " << hash_mult << " after "
@@ -1006,6 +974,8 @@ void fast_perfect_hash<Policy>::hash_initialize(
             }
 
             return;
+
+        collision: {}
         }
     }
 
@@ -1033,15 +1003,6 @@ void fast_perfect_hash<Policy>::check(std::size_t index, type_id type) {
         abort();
     }
 }
-
-template<class Policy>
-type_id fast_perfect_hash<Policy>::hash_mult;
-template<class Policy>
-std::size_t fast_perfect_hash<Policy>::hash_shift;
-template<class Policy>
-std::size_t fast_perfect_hash<Policy>::hash_min;
-template<class Policy>
-std::size_t fast_perfect_hash<Policy>::hash_max;
 
 } // namespace policies
 } // namespace boost::openmethod
@@ -1088,7 +1049,7 @@ class vectored_error_handler : public error_handler {
     }
 
   private:
-    static function_type fn;
+    inline static function_type fn;
 
     static auto default_handler(const error_variant& error_v) {
         using namespace detail;
@@ -1128,11 +1089,6 @@ class vectored_error_handler : public error_handler {
     }
 };
 
-template<class Policy>
-typename vectored_error_handler<Policy>::function_type
-    vectored_error_handler<Policy>::fn =
-        vectored_error_handler<Policy>::default_handler;
-
 } // namespace boost::openmethod::policies
 
 #endif
@@ -1150,8 +1106,8 @@ struct debug : release::add<
                    runtime_checks, basic_error_output<debug>,
                    basic_trace_output<debug>>::
                    replace<error_handler, vectored_error_handler<debug>>::
-                   replace<type_hash, fast_perfect_hash<debug>>::
-                   replace<extern_vptr, vptr_vector<debug>> {};
+                       replace<type_hash, fast_perfect_hash<debug>>::replace<
+                           extern_vptr, vptr_vector<debug>> {};
 
 } // namespace policies
 
@@ -1495,7 +1451,9 @@ class virtual_ptr_impl {
 
     template<
         class Other,
-        typename = std::enable_if_t<std::is_constructible_v<Class*, Other*>>>
+        typename = std::enable_if_t<
+            std::is_constructible_v<Class*, Other*> &&
+            std::is_polymorphic_v<Class>>>
     virtual_ptr_impl(Other& other)
         : vp(box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(other))),
           obj(&other) {
@@ -1503,9 +1461,11 @@ class virtual_ptr_impl {
 
     template<
         class Other,
-        typename = std::enable_if_t<std::is_constructible_v<
-            Class*,
-            decltype(std::declval<virtual_ptr<Other, Policy>>().get())>>>
+        typename = std::enable_if_t<
+            std::is_constructible_v<
+                Class*,
+                decltype(std::declval<virtual_ptr<Other, Policy>>().get())> &&
+            std::is_polymorphic_v<Class>>>
     virtual_ptr_impl(Other* other)
         : vp(box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(*other))),
           obj(other) {
@@ -1525,7 +1485,7 @@ class virtual_ptr_impl {
         typename = std::enable_if_t<std::is_constructible_v<
             Class*,
             decltype(std::declval<virtual_ptr<Other, Policy>>().get())>>>
-    virtual_ptr_impl(virtual_ptr<Other, Policy>& other)
+    virtual_ptr_impl(virtual_ptr_impl<Other, Policy>& other)
         : vp(other.vp), obj(other.get()) {
         // Why is this needed? Consider this conversion conversion from
         // smart to dumb pointer:
@@ -1546,7 +1506,9 @@ class virtual_ptr_impl {
 
     template<
         class Other,
-        typename = std::enable_if_t<std::is_assignable_v<Class*, Other*>>>
+        typename = std::enable_if_t<
+            std::is_assignable_v<Class*, Other*> &&
+            std::is_polymorphic_v<Class>>>
     virtual_ptr_impl& operator=(Other& other) {
         obj = &other;
         vp = box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(other));
@@ -1555,7 +1517,9 @@ class virtual_ptr_impl {
 
     template<
         class Other,
-        typename = std::enable_if_t<std::is_assignable_v<Class*, Other*>>>
+        typename = std::enable_if_t<
+            std::is_assignable_v<Class*, Other*> &&
+            std::is_polymorphic_v<Class>>>
     virtual_ptr_impl& operator=(Other* other) {
         obj = other;
         vp = box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(*other));
@@ -1668,7 +1632,8 @@ class virtual_ptr_impl<
         class Other,
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Policy> &&
-            std::is_constructible_v<Class, const Other&>>>
+            std::is_constructible_v<Class, const Other&> &&
+            std::is_polymorphic_v<element_type>>>
     virtual_ptr_impl(const Other& other)
         : vp(box_vptr<use_indirect_vptrs>(
               other ? Policy::dynamic_vptr(*other) : null_vptr)),
@@ -1679,18 +1644,20 @@ class virtual_ptr_impl<
         class Other,
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Policy> &&
-            std::is_constructible_v<Class, Other&>>>
+            std::is_constructible_v<Class, Other&> &&
+            std::is_polymorphic_v<element_type>>>
     virtual_ptr_impl(Other& other)
         : vp(box_vptr<use_indirect_vptrs>(
-                 other ? Policy::dynamic_vptr(*other) : null_vptr)),
-             obj(other) {
+              other ? Policy::dynamic_vptr(*other) : null_vptr)),
+          obj(other) {
     }
 
     template<
         class Other,
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Policy> &&
-            std::is_constructible_v<Class, Other&&>>>
+            std::is_constructible_v<Class, Other&&> &&
+            std::is_polymorphic_v<element_type>>>
     virtual_ptr_impl(Other&& other)
         : vp(box_vptr<use_indirect_vptrs>(
               other ? Policy::dynamic_vptr(*other) : null_vptr)),
@@ -1702,7 +1669,7 @@ class virtual_ptr_impl<
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Policy> &&
             std::is_constructible_v<Class, const Other&>>>
-    virtual_ptr_impl(const virtual_ptr<Other, Policy>& other)
+    virtual_ptr_impl(const virtual_ptr_impl<Other, Policy>& other)
         : vp(other.vp), obj(other.obj) {
     }
 
@@ -1711,7 +1678,7 @@ class virtual_ptr_impl<
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Policy> &&
             std::is_constructible_v<Class, Other&>>>
-    virtual_ptr_impl(virtual_ptr<Other, Policy>& other)
+    virtual_ptr_impl(virtual_ptr_impl<Other, Policy>& other)
         : vp(other.vp), obj(other.obj) {
     }
 
@@ -1725,7 +1692,7 @@ class virtual_ptr_impl<
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Policy> &&
             std::is_constructible_v<Class, Other&&>>>
-    virtual_ptr_impl(virtual_ptr<Other, Policy>&& other)
+    virtual_ptr_impl(virtual_ptr_impl<Other, Policy>&& other)
         : vp(other.vp), obj(std::move(other.obj)) {
         other.vp = box_vptr<use_indirect_vptrs>(null_vptr);
     }
@@ -1740,7 +1707,8 @@ class virtual_ptr_impl<
         class Other,
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Policy> &&
-            std::is_assignable_v<Class, const Other&>>>
+            std::is_assignable_v<Class, const Other&> &&
+            std::is_polymorphic_v<element_type>>>
     virtual_ptr_impl& operator=(const Other& other) {
         obj = other;
         vp = box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(*other));
@@ -1751,7 +1719,8 @@ class virtual_ptr_impl<
         class Other,
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Policy> &&
-            std::is_assignable_v<Class, Other&&>>>
+            std::is_assignable_v<Class, Other&&> &&
+            std::is_polymorphic_v<element_type>>>
     virtual_ptr_impl& operator=(Other&& other) {
         vp = box_vptr<use_indirect_vptrs>(
             other ? Policy::dynamic_vptr(*other) : null_vptr);
@@ -1764,11 +1733,13 @@ class virtual_ptr_impl<
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Policy> &&
             std::is_assignable_v<Class, Other&>>>
-    virtual_ptr_impl& operator=(virtual_ptr<Other, Policy>& other) {
+    virtual_ptr_impl& operator=(virtual_ptr_impl<Other, Policy>& other) {
         obj = other.obj;
         vp = other.vp;
         return *this;
     }
+
+    virtual_ptr_impl& operator=(const virtual_ptr_impl& other) = default;
 
     template<
         class Other,
@@ -2185,6 +2156,21 @@ class method<Name(Parameters...), ReturnType, Policy>
         std::tuple<override_aux<Function, decltype(Function)>...> impl;
     };
 };
+
+// Following cannot be `inline static` becaused of MSVC (19.43) bug causing a
+// "no appropriate default constructor available". Try this in CE:
+//
+// template<typename>
+// class method {
+//         method();
+//         method(const method&) = delete;
+//         method(method&&) = delete;
+//         ~method();
+//     public:
+//         static inline method instance;
+// };
+// template method<void>;
+// https://godbolt.org/z/GzEn486P7
 
 template<
     typename Name, typename... Parameters, typename ReturnType, class Policy>
@@ -3714,7 +3700,7 @@ void compiler<Policy>::assign_slots() {
 
             auto first_slot = cls.used_slots.find_first();
             cls.first_slot =
-                first_slot == boost::dynamic_bitset<>::npos ? 0 : first_slot;
+                first_slot == boost::dynamic_bitset<>::npos ? 0u : first_slot;
             cls.vtbl.resize(cls.used_slots.size() - cls.first_slot);
             ++trace << cls << " vtbl: " << cls.first_slot << "-"
                     << cls.used_slots.size() << " slots " << cls.used_slots

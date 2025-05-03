@@ -84,8 +84,7 @@ DomesticCat::~DomesticCat() {
     describe(*this, std::cout);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(
-    speak, (const Animal&, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(speak, (const Animal&, std::ostream& os), void) {
     os << "???\n";
 }
 

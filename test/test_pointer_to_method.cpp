@@ -25,7 +25,7 @@ BOOST_OPENMETHOD_CLASSES(Animal, Dog, Animal);
 
 BOOST_OPENMETHOD(poke, (virtual_<Animal&>), std::string);
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (Dog &), std::string) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (Dog&), std::string) {
     return "bark";
 }
 

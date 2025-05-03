@@ -29,8 +29,7 @@ class fast_perfect_hash : public type_hash {
     inline static std::size_t hash_shift;
     inline static std::size_t hash_min;
     inline static std::size_t hash_max;
-inline
-    static void check(std::size_t index, type_id type);
+    inline static void check(std::size_t index, type_id type);
 
   public:
     struct report {
@@ -147,7 +146,7 @@ void fast_perfect_hash<Policy>::hash_initialize(
 
             return;
 
-            collision: {}
+        collision: {}
         }
     }
 

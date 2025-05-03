@@ -389,7 +389,6 @@ BOOST_OPENMETHOD_OVERRIDE(
     return Types(DIAGONAL_MATRIX, next(a, b).first);
 }
 
-
 BOOST_AUTO_TEST_CASE(ambiguity) {
     auto compiler = initialize<policy>();
     BOOST_TEST(compiler.report.ambiguous == 1u);

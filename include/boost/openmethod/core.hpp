@@ -1042,8 +1042,21 @@ class method<Name(Parameters...), ReturnType, Policy>
     };
 };
 
-// Following cannot be `inline static` becaused of MSVC bug causinga "no
-// appropriate default constructor available".
+// Following cannot be `inline static` becaused of MSVC (19.43) bug causing a
+// "no appropriate default constructor available". Try this in CE:
+//
+// template<typename>
+// class method {
+//         method();
+//         method(const method&) = delete;
+//         method(method&&) = delete;
+//         ~method();
+//     public:
+//         static inline method instance;
+// };
+// template method<void>;
+// https://godbolt.org/z/GzEn486P7
+
 template<
     typename Name, typename... Parameters, typename ReturnType, class Policy>
 method<Name(Parameters...), ReturnType, Policy>

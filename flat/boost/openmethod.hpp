@@ -590,20 +590,19 @@ struct std_rtti : virtual rtti {
 #include <variant>
 #include <vector>
 
-namespace boost::openmethod::policies {
+namespace boost::openmethod {
 
-template<class Policy, typename Facet = void>
-class vptr_vector : public extern_vptr,
-                    public std::conditional_t<
-                        std::is_same_v<Facet, void>, detail::empty, Facet> {
-    static_assert(
-        std::is_same_v<Facet, void> || std::is_same_v<Facet, indirect_vptr>);
-    static constexpr bool use_indirect_vptrs =
-        std::is_same_v<Facet, indirect_vptr>;
-    using element_type =
-        std::conditional_t<use_indirect_vptrs, const vptr_type*, vptr_type>;
-    inline static std::vector<element_type> vptrs;
+namespace detail {
 
+inline std::vector<vptr_type> vptr_vector_vptrs;
+inline std::vector<const vptr_type*> vptr_vector_indirect_vptrs;
+
+} // namespace detail
+
+namespace policies {
+
+template<class Policy>
+class vptr_vector : public extern_vptr {
   public:
     template<typename ForwardIterator>
     static auto register_vptrs(ForwardIterator first, ForwardIterator last)
@@ -628,7 +627,11 @@ class vptr_vector : public extern_vptr,
             ++size;
         }
 
-        vptrs.resize(size);
+        if constexpr (Policy::template has_facet<indirect_vptr>) {
+            detail::vptr_vector_indirect_vptrs.resize(size);
+        } else {
+            detail::vptr_vector_vptrs.resize(size);
+        }
 
         for (auto iter = first; iter != last; ++iter) {
             for (auto type_iter = iter->type_id_begin();
@@ -639,10 +642,10 @@ class vptr_vector : public extern_vptr,
                     index = Policy::hash_type_id(index);
                 }
 
-                if constexpr (use_indirect_vptrs) {
-                    vptrs[index] = &iter->vptr();
+                if constexpr (Policy::template has_facet<indirect_vptr>) {
+                    detail::vptr_vector_indirect_vptrs[index] = &iter->vptr();
                 } else {
-                    vptrs[index] = iter->vptr();
+                    detail::vptr_vector_vptrs[index] = iter->vptr();
                 }
             }
         }
@@ -656,19 +659,24 @@ class vptr_vector : public extern_vptr,
             index = Policy::hash_type_id(index);
         }
 
-        if constexpr (use_indirect_vptrs) {
-            return *vptrs[index];
+        if constexpr (Policy::template has_facet<indirect_vptr>) {
+            return *detail::vptr_vector_indirect_vptrs[index];
         } else {
-            return vptrs[index];
+            return detail::vptr_vector_vptrs[index];
         }
     }
 
     static auto finalize() -> void {
-        vptrs.clear();
+        if constexpr (Policy::template has_facet<indirect_vptr>) {
+            detail::vptr_vector_indirect_vptrs.clear();
+        } else {
+            detail::vptr_vector_vptrs.clear();
+        }
     }
 };
 
-} // namespace boost::openmethod::policies
+} // namespace policies
+} // namespace boost::openmethod
 
 #endif
 

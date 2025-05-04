@@ -8,7 +8,7 @@ Defined in <boost/openmethod/policies/vptr_vector.hpp>.
 ```c++
 namespace boost::openmethod::policies {
 
-template<class Policy, typename Facet = void>
+template<class Policy>
 class vptr_vector : Base {
   public:
     template<typename ForwardIterator>
@@ -23,12 +23,10 @@ class vptr_vector : Base {
 
 ### Description
 
-`vptr_vector` is an implementation or `external_vptr` that keeps the pointers
-to the v-tables in a `std::vector`. If `UseIndirectVptrs` is `indirect_vptr`,
-stores pointers to pointers to the v-tables.
-
-If `Facet` is specified, it must be either `void` or `indirect_vptr`. `void`
-indicates that straight pointers to v-tables should be stored.
+`vptr_vector` is an implementation or `external_vptr` that keeps the pointers to
+the v-tables in a `std::vector`. If `Policy` contains `indirect_vptr`, a level
+of indirection is added, making the policy usable in presence of dynamic
+loading.
 
 `Policy` is the policy containing the facet.
 

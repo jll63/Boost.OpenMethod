@@ -8,8 +8,8 @@ namespace boost::openmethod::policies {
 
 ### Synopsis
 
-template<class Policy, class Facet = void, class Map = /* unspecified */>
-class vptr_map : extern_vptr, Facet /* if not void */ {
+template<class Policy, class MapAdaptor = mp11::mp_quote<std::unordered_map>>
+class vptr_map : public extern_vptr {
   public:
     template<typename ForwardIterator>
     static auto register_vptrs(ForwardIterator first, ForwardIterator last) -> void;
@@ -24,16 +24,12 @@ class vptr_map : extern_vptr, Facet /* if not void */ {
 ### Description
 
 `vptr_map` is an implementation of `external_vptr that stores the pointers to
-the v-tables in a map.
+the v-tables in a map. If `Policy` contains `indirect_vptr`, a level of
+indirection is added, making the policy usable in presence of dynamic loading.
 
 `Policy` is the policy containing the facet.
 
-If `Facet` is specified, it must be either `void` or `indirect_vptr`. `void`
-indicates that straight pointers to v-tables should be stored.
-
-`Map` is an `AssociativeContainer` that maps `type_id`{empty}s to
-`vptr_type`{empty}s if `Facet` is `void`, or pointers `vptr_type`{empty}s if
-`Facet` is `indirect_vptr`.
+`MapAdaptor` is a Boost.Mp11 quoted metafunction that returns a map type.
 
 ### Members
 

@@ -78,6 +78,11 @@ contains, do not share static variables with the original _Policy_. The new
 policy does not retain any knowledge of the classes and methods registered in
 the original.
 
+`fork` replaces all the facet implementations in the form `template<class
+Policy, typename... T> class FacetImplementation` with
+`FacetImplementation<NewPolicy, T...>`. All the other facets implementations are
+copied as is.
+
 #### add
 
 ```c++

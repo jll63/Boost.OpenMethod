@@ -15,7 +15,10 @@ namespace boost::openmethod {
 
 namespace detail {
 
+template<class Policy>
 inline std::vector<vptr_type> vptr_vector_vptrs;
+
+template<class Policy>
 inline std::vector<const vptr_type*> vptr_vector_indirect_vptrs;
 
 } // namespace detail
@@ -49,9 +52,9 @@ class vptr_vector : public extern_vptr {
         }
 
         if constexpr (Policy::template has_facet<indirect_vptr>) {
-            detail::vptr_vector_indirect_vptrs.resize(size);
+            detail::vptr_vector_indirect_vptrs<Policy>.resize(size);
         } else {
-            detail::vptr_vector_vptrs.resize(size);
+            detail::vptr_vector_vptrs<Policy>.resize(size);
         }
 
         for (auto iter = first; iter != last; ++iter) {
@@ -64,9 +67,10 @@ class vptr_vector : public extern_vptr {
                 }
 
                 if constexpr (Policy::template has_facet<indirect_vptr>) {
-                    detail::vptr_vector_indirect_vptrs[index] = &iter->vptr();
+                    detail::vptr_vector_indirect_vptrs<Policy>[index] =
+                        &iter->vptr();
                 } else {
-                    detail::vptr_vector_vptrs[index] = iter->vptr();
+                    detail::vptr_vector_vptrs<Policy>[index] = iter->vptr();
                 }
             }
         }
@@ -81,17 +85,17 @@ class vptr_vector : public extern_vptr {
         }
 
         if constexpr (Policy::template has_facet<indirect_vptr>) {
-            return *detail::vptr_vector_indirect_vptrs[index];
+            return *detail::vptr_vector_indirect_vptrs<Policy>[index];
         } else {
-            return detail::vptr_vector_vptrs[index];
+            return detail::vptr_vector_vptrs<Policy>[index];
         }
     }
 
     static auto finalize() -> void {
         if constexpr (Policy::template has_facet<indirect_vptr>) {
-            detail::vptr_vector_indirect_vptrs.clear();
+            detail::vptr_vector_indirect_vptrs<Policy>.clear();
         } else {
-            detail::vptr_vector_vptrs.clear();
+            detail::vptr_vector_vptrs<Policy>.clear();
         }
     }
 };

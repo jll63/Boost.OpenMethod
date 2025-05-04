@@ -14,7 +14,7 @@ namespace boost::openmethod {
 
 namespace detail {
 
-template<class MapAdaptor, typename Key, typename Value>
+template<class Policy, class MapAdaptor, typename Key, typename Value>
 inline typename MapAdaptor::template fn<Key, Value> vptr_map_vptrs;
 
 } // namespace detail
@@ -31,12 +31,13 @@ class vptr_map : public extern_vptr {
                  type_iter != iter->type_id_end(); ++type_iter) {
 
                 if constexpr (Policy::template has_facet<indirect_vptr>) {
-                    detail::vptr_map_vptrs<
+                    detail::vptr_map_vptrs<Policy,
                         MapAdaptor, type_id,
                         const vptr_type*>.emplace(*type_iter, &iter->vptr());
                 } else {
-                    detail::vptr_map_vptrs<MapAdaptor, type_id, vptr_type>.emplace(
-                        *type_iter, iter->vptr());
+                    detail::vptr_map_vptrs<
+                        Policy, MapAdaptor, type_id, vptr_type
+                    >.emplace(*type_iter, iter->vptr());
                 }
             }
         }
@@ -48,7 +49,7 @@ class vptr_map : public extern_vptr {
         bool constexpr use_indirect_vptrs =
             Policy::template has_facet<indirect_vptr>;
         const auto& map = detail::vptr_map_vptrs<
-            MapAdaptor, type_id,
+            Policy, MapAdaptor, type_id,
             std::conditional_t<
                 use_indirect_vptrs, const vptr_type*, vptr_type>>;
         auto iter = map.find(type);
@@ -74,9 +75,9 @@ class vptr_map : public extern_vptr {
 
     static auto finalize() -> void {
         detail::vptr_map_vptrs<
-            MapAdaptor, type_id,
-            std::conditional_t<
-            Policy::template has_facet<indirect_vptr>, const vptr_type*, vptr_type>>.clear();
+            Policy, MapAdaptor, type_id, std::conditional_t<
+                Policy::template has_facet<indirect_vptr>,
+                const vptr_type*, vptr_type>>.clear();
     }
 };
 

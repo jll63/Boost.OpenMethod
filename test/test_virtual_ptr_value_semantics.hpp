@@ -45,13 +45,13 @@ void init_test() {
 struct direct_vector_policy : default_policy::fork<direct_vector_policy> {};
 
 struct indirect_vector_policy
-    : default_policy::fork<indirect_vector_policy>::add<indirect_vptr> {};
+    : default_policy::fork<indirect_vector_policy>::with<indirect_vptr> {};
 
-struct direct_map_policy : default_policy::fork<direct_map_policy>::replace<
-                               extern_vptr, vptr_map<direct_map_policy>> {};
+struct direct_map_policy : default_policy::fork<direct_map_policy>::with<
+                               vptr_map<direct_map_policy>> {};
 
 struct indirect_map_policy
-    : default_policy::fork<indirect_map_policy>::add<indirect_vptr> {};
+    : default_policy::fork<indirect_map_policy>::with<indirect_vptr> {};
 
 using test_policies = boost::mp11::mp_list<
     direct_vector_policy, indirect_vector_policy, direct_map_policy,

@@ -159,7 +159,7 @@ BOOST_AUTO_TEST_CASE(test_policy) {
 
     {
         // check that adding a facet keeps static data from original
-        struct policy : default_policy::add<policies::indirect_vptr> {};
+        struct policy : default_policy::with<policies::indirect_vptr> {};
         BOOST_TEST(&policy::methods == &default_policy::methods);
         BOOST_TEST(&policy::classes == &default_policy::classes);
         BOOST_TEST(
@@ -301,18 +301,63 @@ using namespace policies;
 
 struct key1;
 struct key2;
-struct alt_rtti {};
+struct foo : detail::basic_facet<foo> {};
+struct foo1 : foo {};
+struct foo2 : foo {};
+struct bar : detail::basic_facet<bar> {};
+struct bar1 : bar {};
+struct bar2 : bar {};
 
 static_assert(
     std::is_same_v<fork_facet<key2, domain<key1>>::type, domain<key2>>);
 
-struct policy1 : basic_policy<policy1, std_rtti> {};
-struct policy2 : policy1::fork<policy2> {};
-struct policy3 : policy1::fork<policy3>::replace<std_rtti, alt_rtti> {};
+static_assert(std::is_base_of_v<foo1::facet_type, foo>);
+static_assert(std::is_base_of_v<bar1::facet_type, bar>);
 
-static_assert(std::is_same_v<policy2::facets, mp11::mp_list<std_rtti>>);
+static_assert(
+    std::is_same_v<
+        detail::with_aux<mp11::mp_list<>, foo1>::type, mp11::mp_list<foo1>>);
 
-static_assert(std::is_same_v<policy3::facets, mp11::mp_list<alt_rtti>>);
+static_assert(std::is_same_v<
+              detail::with_aux<mp11::mp_list<foo1>, foo2>::type,
+              mp11::mp_list<foo2>>);
+
+static_assert(std::is_same_v<
+              detail::with_aux<mp11::mp_list<foo1, bar1>, foo2, bar2>::type,
+              mp11::mp_list<foo2, bar2>>);
+
+static_assert(
+    std::is_same_v<basic_policy<key1>::with<foo1>, basic_policy<key1, foo1>>);
+
+static_assert(std::is_same_v<
+              basic_policy<key1, foo1>::with<foo2>, basic_policy<key1, foo2>>);
+
+template<class Policy, class... Facets>
+constexpr bool has_facets = (... && Policy::template has_facet<Facets>) &&
+    mp11::mp_size<typename Policy::facets>::value == sizeof...(Facets);
+
+static_assert(std::is_same_v<
+              basic_policy<key1, foo1, bar1>::with<foo2>::facets,
+              mp11::mp_list<foo2, bar1>>);
+
+static_assert(std::is_same_v<
+              basic_policy<key1, foo1, bar1>::with<bar2>::facets,
+              mp11::mp_list<foo1, bar2>>);
+
+static_assert(std::is_same_v<
+              basic_policy<key1, foo1, bar1>::with<foo2, bar2>::facets,
+              mp11::mp_list<foo2, bar2>>);
+
+static_assert(
+    std::is_same_v<basic_policy<key1>::without<foo>::facets, mp11::mp_list<>>);
+
+static_assert(std::is_same_v<
+              basic_policy<key1, foo1, bar1>::without<foo>::facets,
+              mp11::mp_list<bar1>>);
+
+static_assert(std::is_same_v<
+              basic_policy<key1, foo1, bar1>::without<bar>::facets,
+              mp11::mp_list<foo1>>);
 
 } // namespace facets
 

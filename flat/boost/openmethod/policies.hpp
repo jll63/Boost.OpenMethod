@@ -380,10 +380,24 @@ struct overrider_info : static_list<overrider_info>::static_link {
 
 namespace boost::openmethod {
 
+namespace policies {
+
+struct facet {
+    static auto finalize() -> void {
+    }
+};
+
+} // namespace policies
+
 namespace detail {
 
 using class_catalog = detail::static_list<detail::class_info>;
 using method_catalog = detail::static_list<detail::method_info>;
+
+template<class Facet>
+struct basic_facet : policies::facet {
+    using facet_type = Facet;
+};
 
 template<typename Policy, class Facet>
 struct fork_facet {
@@ -397,6 +411,46 @@ struct fork_facet<NewPolicy, GenericFacet<OldPolicy, Args...>> {
     using type = GenericFacet<NewPolicy, Args...>;
 };
 
+template<class Facets, class...>
+struct with_aux;
+
+template<class Facets>
+struct with_aux<Facets> {
+    using type = Facets;
+};
+
+template<class Facets, class Facet, class... MoreFacets>
+struct with_aux<Facets, Facet, MoreFacets...> {
+    using replace = mp11::mp_replace_if_q<
+        Facets,
+        mp11::mp_bind_front_q<
+            mp11::mp_quote_trait<std::is_base_of>, typename Facet::facet_type>,
+        Facet>;
+    using replace_or_add = std::conditional_t<
+        std::is_same_v<replace, Facets>, mp11::mp_push_back<Facets, Facet>,
+        replace>;
+    using type = typename with_aux<replace_or_add, MoreFacets...>::type;
+};
+
+template<class Facets, class...>
+struct without_aux;
+
+template<class Facets>
+struct without_aux<Facets> {
+    using type = Facets;
+};
+
+template<class Facets, class Facet, class... MoreFacets>
+struct without_aux<Facets, Facet, MoreFacets...> {
+    using type = typename without_aux<
+        mp11::mp_remove_if_q<
+            Facets,
+            mp11::mp_bind_front_q<
+                mp11::mp_quote_trait<std::is_base_of>,
+                typename Facet::facet_type>>,
+        MoreFacets...>::type;
+};
+
 } // namespace detail
 
 namespace policies {
@@ -406,12 +460,7 @@ struct abstract_policy {};
 // -----------------------------------------------------------------------------
 // Facets
 
-struct facet {
-    static auto finalize() -> void {
-    }
-};
-
-struct rtti : facet {
+struct rtti : detail::basic_facet<rtti> {
     static auto type_index(type_id type) -> type_id {
         return type;
     }
@@ -423,13 +472,13 @@ struct rtti : facet {
 };
 
 struct deferred_static_rtti : rtti {};
-struct error_handler : facet {};
-struct type_hash : facet {};
-struct extern_vptr : facet {};
-struct indirect_vptr : facet {};
-struct error_output : facet {};
-struct trace_output : facet {};
-struct runtime_checks : facet {};
+struct error_handler : detail::basic_facet<error_handler> {};
+struct type_hash : detail::basic_facet<type_hash> {};
+struct extern_vptr : detail::basic_facet<extern_vptr> {};
+struct indirect_vptr : detail::basic_facet<indirect_vptr> {};
+struct error_output : detail::basic_facet<error_output> {};
+struct trace_output : detail::basic_facet<trace_output> {};
+struct runtime_checks : detail::basic_facet<runtime_checks> {};
 
 // -----------------------------------------------------------------------------
 // domain
@@ -454,28 +503,17 @@ struct basic_policy : abstract_policy, domain<Policy>, Facets... {
     using fork = basic_policy<
         NewPolicy, typename detail::fork_facet<NewPolicy, Facets>::type...>;
 
-    template<class... MoreFacets>
-    using add = basic_policy<Policy, Facets..., MoreFacets...>;
-
-    template<class Base, class Facet>
-    using replace = boost::mp11::mp_apply<
+    template<class... NewFacets>
+    using with = boost::mp11::mp_apply<
         basic_policy,
         boost::mp11::mp_push_front<
-            boost::mp11::mp_replace_if_q<
-                facets,
-                boost::mp11::mp_bind_front_q<
-                    boost::mp11::mp_quote_trait<std::is_base_of>, Base>,
-                Facet>,
-            Policy>>;
+            typename detail::with_aux<facets, NewFacets...>::type, Policy>>;
 
-    template<class Base>
-    using remove = boost::mp11::mp_apply<
+    template<class... RemoveFacets>
+    using without = boost::mp11::mp_apply<
         basic_policy,
         boost::mp11::mp_push_front<
-            boost::mp11::mp_remove_if_q<
-                facets,
-                boost::mp11::mp_bind_front_q<
-                    boost::mp11::mp_quote_trait<std::is_base_of>, Base>>,
+            typename detail::without_aux<facets, RemoveFacets...>::type,
             Policy>>;
 };
 
@@ -562,7 +600,10 @@ namespace boost::openmethod {
 
 namespace detail {
 
+template<class Policy>
 inline std::vector<vptr_type> vptr_vector_vptrs;
+
+template<class Policy>
 inline std::vector<const vptr_type*> vptr_vector_indirect_vptrs;
 
 } // namespace detail
@@ -596,9 +637,9 @@ class vptr_vector : public extern_vptr {
         }
 
         if constexpr (Policy::template has_facet<indirect_vptr>) {
-            detail::vptr_vector_indirect_vptrs.resize(size);
+            detail::vptr_vector_indirect_vptrs<Policy>.resize(size);
         } else {
-            detail::vptr_vector_vptrs.resize(size);
+            detail::vptr_vector_vptrs<Policy>.resize(size);
         }
 
         for (auto iter = first; iter != last; ++iter) {
@@ -611,9 +652,10 @@ class vptr_vector : public extern_vptr {
                 }
 
                 if constexpr (Policy::template has_facet<indirect_vptr>) {
-                    detail::vptr_vector_indirect_vptrs[index] = &iter->vptr();
+                    detail::vptr_vector_indirect_vptrs<Policy>[index] =
+                        &iter->vptr();
                 } else {
-                    detail::vptr_vector_vptrs[index] = iter->vptr();
+                    detail::vptr_vector_vptrs<Policy>[index] = iter->vptr();
                 }
             }
         }
@@ -628,17 +670,17 @@ class vptr_vector : public extern_vptr {
         }
 
         if constexpr (Policy::template has_facet<indirect_vptr>) {
-            return *detail::vptr_vector_indirect_vptrs[index];
+            return *detail::vptr_vector_indirect_vptrs<Policy>[index];
         } else {
-            return detail::vptr_vector_vptrs[index];
+            return detail::vptr_vector_vptrs<Policy>[index];
         }
     }
 
     static auto finalize() -> void {
         if constexpr (Policy::template has_facet<indirect_vptr>) {
-            detail::vptr_vector_indirect_vptrs.clear();
+            detail::vptr_vector_indirect_vptrs<Policy>.clear();
         } else {
-            detail::vptr_vector_vptrs.clear();
+            detail::vptr_vector_vptrs<Policy>.clear();
         }
     }
 };
@@ -1078,12 +1120,10 @@ struct release : basic_policy<
                      release, std_rtti, fast_perfect_hash<release>,
                      vptr_vector<release>, vectored_error_handler<release>> {};
 
-struct debug : release::add<
+struct debug : release::with<
                    runtime_checks, basic_error_output<debug>,
-                   basic_trace_output<debug>>::
-                   replace<error_handler, vectored_error_handler<debug>>::
-                       replace<type_hash, fast_perfect_hash<debug>>::replace<
-                           extern_vptr, vptr_vector<debug>> {};
+                   basic_trace_output<debug>, vectored_error_handler<debug>,
+                   fast_perfect_hash<debug>, vptr_vector<debug>> {};
 
 } // namespace policies
 

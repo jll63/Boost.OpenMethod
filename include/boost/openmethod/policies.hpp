@@ -22,12 +22,9 @@ struct release : basic_policy<
                      release, std_rtti, fast_perfect_hash<release>,
                      vptr_vector<release>, vectored_error_handler<release>> {};
 
-struct debug : release::add<
+struct debug : release::fork<debug>::with<
                    runtime_checks, basic_error_output<debug>,
-                   basic_trace_output<debug>>::
-                   replace<error_handler, vectored_error_handler<debug>>::
-                       replace<type_hash, fast_perfect_hash<debug>>::replace<
-                           extern_vptr, vptr_vector<debug>> {};
+                   basic_trace_output<debug>> {};
 
 } // namespace policies
 

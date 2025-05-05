@@ -12,7 +12,7 @@
 namespace boost::openmethod::policies {
 
 template<class Policy, typename Stream = detail::ostderr>
-struct basic_error_output : virtual error_output {
+struct basic_error_output : error_output {
     inline static Stream error_stream;
 };
 

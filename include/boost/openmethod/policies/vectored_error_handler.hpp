@@ -36,8 +36,6 @@ class vectored_error_handler : public error_handler {
     }
 
   private:
-    inline static function_type fn;
-
     static auto default_handler(const error_variant& error_v) {
         using namespace detail;
         using namespace policies;
@@ -74,7 +72,13 @@ class vectored_error_handler : public error_handler {
             }
         }
     }
+
+    static function_type fn; // Cannot be inline static because it confuses MSVC
 };
+
+template<class Policy>
+typename vectored_error_handler<Policy>::function_type
+vectored_error_handler<Policy>::fn = default_handler;
 
 } // namespace boost::openmethod::policies
 

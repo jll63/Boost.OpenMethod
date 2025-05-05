@@ -19,7 +19,10 @@ namespace boost::openmethod::policies {
 
 template<class Policy, typename Stream = detail::ostderr>
 struct basic_trace_output : virtual trace_output {
-    inline static bool trace_enabled;
+    inline static bool trace_enabled = []() {
+        auto env = getenv("BOOST_OPENMETHOD_TRACE");
+        return env && *env++ == '1' && *env++ == 0;
+    }();
     inline static Stream trace_stream;
 };
 

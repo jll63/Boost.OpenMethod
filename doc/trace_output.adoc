@@ -1,5 +1,5 @@
 
-## trace_output
+## trace
 
 ### Synopsis
 
@@ -8,7 +8,7 @@ Defined in <boost/openmethod/policies/basic_policy.hpp>.
 ```c++
 namespace boost::openmethod::policies {
 
-struct trace_output : facet {};
+struct trace : facet {};
 
 }
 ```
@@ -17,7 +17,7 @@ struct trace_output : facet {};
 
 ### Description
 
-`trace_output` is a facet used to write trace messages.
+`trace` is a facet used to write trace messages.
 
 `initialize` can be directed to describe the classes and methods in a policy,
 and how the dispatch tables are built, by including this facet in the policy,

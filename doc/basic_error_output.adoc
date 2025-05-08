@@ -9,7 +9,7 @@ Defined in <boost/openmethod/policies/basic_error_output.hpp>.
 namespace boost::openmethod::policies {
 
 template<class Policy, typename Stream = /*unspecified*/>
-struct basic_error_output : error_output {
+struct basic_error_output : output {
     static Stream error_stream;
 };
 
@@ -18,7 +18,7 @@ struct basic_error_output : error_output {
 
 ### Description
 
-`basic_error_output` is an implementation of `error_output` that writes error
+`basic_error_output` is an implementation of `output` that writes error
 messages to a `RestrictedOutputStream`.
 
 ### Members

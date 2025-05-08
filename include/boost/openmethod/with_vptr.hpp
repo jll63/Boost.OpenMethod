@@ -37,7 +37,7 @@ void update_vptr(Class* obj) {
     using bases = decltype(boost_openmethod_bases(obj));
 
     if constexpr (mp11::mp_size<bases>::value == 0) {
-        if constexpr (policy::template has_facet<policies::indirect_vptr>) {
+        if constexpr (policy::template has_policy<policies::indirect_vptr>) {
             obj->boost_openmethod_vptr = &policy::template static_vptr<To>;
         } else {
             obj->boost_openmethod_vptr = policy::template static_vptr<To>;
@@ -59,16 +59,16 @@ class with_vptr_aux;
 template<class... Classes>
 inline use_classes<Classes...> with_vptr_use_classes;
 
-template<class Class, class Policy>
-class with_vptr_aux<Class, Policy, true> {
+template<class Class, class Registry>
+class with_vptr_aux<Class, Registry, true> {
   protected:
     template<class To, class Other>
     friend void update_vptr(Other*);
-    friend auto boost_openmethod_policy(Class*) -> Policy;
+    friend auto boost_openmethod_policy(Class*) -> Registry;
     friend auto boost_openmethod_bases(Class*) -> mp11::mp_list<>;
 
     with_vptr_aux() {
-        (void)&with_vptr_use_classes<Class, Policy>;
+        (void)&with_vptr_use_classes<Class, Registry>;
         detail::update_vptr<Class>(static_cast<Class*>(this));
     }
 
@@ -77,18 +77,18 @@ class with_vptr_aux<Class, Policy, true> {
     }
 
     friend auto boost_openmethod_vptr(const Class& obj) -> vptr_type {
-        if constexpr (Policy::template has_facet<policies::indirect_vptr>) {
+        if constexpr (Registry::template has_policy<policies::indirect_vptr>) {
             return *obj.boost_openmethod_vptr;
         } else {
             return obj.boost_openmethod_vptr;
         }
     }
 
-    friend auto boost_openmethod_policy(Class*) -> Policy;
+    friend auto boost_openmethod_policy(Class*) -> Registry;
 
     std::conditional_t<
-        Policy::template has_facet<policies::indirect_vptr>, const vptr_type*,
-        vptr_type>
+        Registry::template has_policy<policies::indirect_vptr>,
+        const vptr_type*, vptr_type>
         boost_openmethod_vptr = nullptr;
 };
 
@@ -117,18 +117,18 @@ class with_vptr;
 
 template<class Class>
 class with_vptr<Class> : public detail::with_vptr_aux<
-                             Class, BOOST_OPENMETHOD_DEFAULT_POLICY, true> {};
+                             Class, BOOST_OPENMETHOD_DEFAULT_REGISTRY, true> {};
 
 template<class Class, class Other>
 class with_vptr<Class, Other>
-    : public detail::with_vptr_aux<Class, Other, detail::is_policy<Other>> {};
+    : public detail::with_vptr_aux<Class, Other, detail::is_registry<Other>> {};
 
 template<class Class, class Base1, class Base2, class... MoreBases>
 class with_vptr<Class, Base1, Base2, MoreBases...> : detail::with_vptr_derived {
 
     static_assert(
-        !detail::is_policy<Base1> && !detail::is_policy<Base2> &&
-            (!detail::is_policy<MoreBases> && ...),
+        !detail::is_registry<Base1> && !detail::is_registry<Base2> &&
+            (!detail::is_registry<MoreBases> && ...),
         "policy can be specified only for root classes");
 
   protected:

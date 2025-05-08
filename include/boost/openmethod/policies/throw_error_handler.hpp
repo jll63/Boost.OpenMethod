@@ -6,7 +6,7 @@
 #ifndef BOOST_OPENMETHOD_POLICY_THROW_ERROR_HPP
 #define BOOST_OPENMETHOD_POLICY_THROW_ERROR_HPP
 
-#include <boost/openmethod/policies/basic_policy.hpp>
+#include <boost/openmethod/registry.hpp>
 
 namespace boost::openmethod::policies {
 

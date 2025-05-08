@@ -197,11 +197,11 @@ auto fight_bear(VirtualWarriorPtr, VirtualAxePtr, VirtualBearPtr) {
 }
 
 template<int N>
-struct indirect_test_policy : test_policy_<N> {};
+struct indirect_test_registry : test_registry_<N> {};
 
 template<int N>
 using policy_types =
-    boost::mp11::mp_list<test_policy_<N>, indirect_test_policy<N>>;
+    boost::mp11::mp_list<test_registry_<N>, indirect_test_registry<N>>;
 
 struct BOOST_OPENMETHOD_NAME(poke);
 struct BOOST_OPENMETHOD_NAME(fight);
@@ -209,36 +209,36 @@ struct BOOST_OPENMETHOD_NAME(fight);
 namespace BOOST_OPENMETHOD_GENSYM {
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(
-    test_virtual_ptr, Policy, policy_types<__COUNTER__>) {
+    test_virtual_ptr, Registry, policy_types<__COUNTER__>) {
 
     BOOST_OPENMETHOD_REGISTER(
-        use_classes<Player, Warrior, Object, Axe, Bear, Policy>);
+        use_classes<Player, Warrior, Object, Axe, Bear, Registry>);
     ;
     using poke = method<
-        BOOST_OPENMETHOD_NAME(poke)(virtual_ptr<Player, Policy>), std::string,
-        Policy>;
+        BOOST_OPENMETHOD_NAME(poke)(virtual_ptr<Player, Registry>), std::string,
+        Registry>;
     BOOST_OPENMETHOD_REGISTER(
         typename poke::template override<
-            poke_bear<virtual_ptr<Player, Policy>>>);
+            poke_bear<virtual_ptr<Player, Registry>>>);
 
-    initialize<Policy>();
+    initialize<Registry>();
 
-    using vptr_player = virtual_ptr<Player, Policy>;
+    using vptr_player = virtual_ptr<Player, Registry>;
     static_assert(detail::is_virtual_ptr<vptr_player>);
-    using vptr_bear = virtual_ptr<Bear, Policy>;
+    using vptr_bear = virtual_ptr<Bear, Registry>;
 
     Player player;
     auto virtual_player = vptr_player::final(player);
     BOOST_TEST(&*virtual_player == &player);
-    BOOST_TEST((virtual_player.vptr() == Policy::template static_vptr<Player>));
+    BOOST_TEST((virtual_player.vptr() == Registry::template static_vptr<Player>));
 
     Bear bear;
     BOOST_TEST((&*vptr_bear::final(bear)) == &bear);
     BOOST_TEST(
-        (vptr_bear::final(bear).vptr() == Policy::template static_vptr<Bear>));
+        (vptr_bear::final(bear).vptr() == Registry::template static_vptr<Bear>));
 
     BOOST_TEST(
-        (vptr_player(bear).vptr() == Policy::template static_vptr<Bear>));
+        (vptr_player(bear).vptr() == Registry::template static_vptr<Bear>));
 
     vptr_bear virtual_bear_ptr(bear);
 
@@ -249,58 +249,58 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
 
     upcast::fn(virtual_bear_ptr);
 
-    auto data = Policy::dispatch_data.data();
-    std::fill_n(data, Policy::dispatch_data.size(), 0);
+    auto data = Registry::dispatch_data.data();
+    std::fill_n(data, Registry::dispatch_data.size(), 0);
 
-    while (data == Policy::dispatch_data.data()) {
-        Policy::dispatch_data.resize(2 * Policy::dispatch_data.size());
+    while (data == Registry::dispatch_data.data()) {
+        Registry::dispatch_data.resize(2 * Registry::dispatch_data.size());
     }
 
-    initialize<Policy>();
+    initialize<Registry>();
 
     BOOST_TEST(
-        (virtual_bear_ptr.vptr() == Policy::template static_vptr<Bear>) ==
-        Policy::template has_facet<policies::indirect_vptr>);
+        (virtual_bear_ptr.vptr() == Registry::template static_vptr<Bear>) ==
+        Registry::template has_policy<policies::indirect_vptr>);
 }
 } // namespace BOOST_OPENMETHOD_GENSYM
 
 namespace test_virtual_ptr_dispatch {
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(
-    test_virtual_ptr_dispatch, Policy, policy_types<__COUNTER__>) {
+    test_virtual_ptr_dispatch, Registry, policy_types<__COUNTER__>) {
 
     BOOST_OPENMETHOD_REGISTER(
-        use_classes<Player, Warrior, Object, Axe, Bear, Policy>);
+        use_classes<Player, Warrior, Object, Axe, Bear, Registry>);
 
     using poke = method<
-        BOOST_OPENMETHOD_NAME(poke)(virtual_ptr<Player, Policy>), std::string,
-        Policy>;
+        BOOST_OPENMETHOD_NAME(poke)(virtual_ptr<Player, Registry>), std::string,
+        Registry>;
     BOOST_OPENMETHOD_REGISTER(
         typename poke::template override<
-            poke_bear<virtual_ptr<Player, Policy>>>);
+            poke_bear<virtual_ptr<Player, Registry>>>);
 
     using fight = method<
         BOOST_OPENMETHOD_NAME(fight)(
-            virtual_ptr<Player, Policy>, virtual_ptr<Object, Policy>,
-            virtual_ptr<Player, Policy>),
-        std::string, Policy>;
+            virtual_ptr<Player, Registry>, virtual_ptr<Object, Registry>,
+            virtual_ptr<Player, Registry>),
+        std::string, Registry>;
     BOOST_OPENMETHOD_REGISTER(
         typename fight::template override<fight_bear<
-            virtual_ptr<Player, Policy>, virtual_ptr<Object, Policy>,
-            virtual_ptr<Player, Policy>>>);
+            virtual_ptr<Player, Registry>, virtual_ptr<Object, Registry>,
+            virtual_ptr<Player, Registry>>>);
 
-    initialize<Policy>();
+    initialize<Registry>();
 
     Bear bear;
-    BOOST_TEST(poke::fn(virtual_ptr<Player, Policy>(bear)) == "growl");
+    BOOST_TEST(poke::fn(virtual_ptr<Player, Registry>(bear)) == "growl");
 
     Warrior warrior;
     Axe axe;
     BOOST_TEST(
         fight::fn(
-            virtual_ptr<Player, Policy>(warrior),
-            virtual_ptr<Object, Policy>(axe),
-            virtual_ptr<Player, Policy>(bear)) == "kill bear");
+            virtual_ptr<Player, Registry>(warrior),
+            virtual_ptr<Object, Registry>(axe),
+            virtual_ptr<Player, Registry>(bear)) == "kill bear");
 }
 
 } // namespace test_virtual_ptr_dispatch
@@ -308,37 +308,37 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
 namespace test_shared_virtual_ptr_dispatch {
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(
-    test_virtual_ptr_dispatch, Policy, policy_types<__COUNTER__>) {
+    test_virtual_ptr_dispatch, Registry, policy_types<__COUNTER__>) {
 
     BOOST_OPENMETHOD_REGISTER(
-        use_classes<Player, Warrior, Object, Axe, Bear, Policy>);
+        use_classes<Player, Warrior, Object, Axe, Bear, Registry>);
 
     using poke = method<
-        BOOST_OPENMETHOD_NAME(poke)(shared_virtual_ptr<Player, Policy>),
-        std::string, Policy>;
+        BOOST_OPENMETHOD_NAME(poke)(shared_virtual_ptr<Player, Registry>),
+        std::string, Registry>;
 
     BOOST_OPENMETHOD_REGISTER(
         typename poke::template override<
-            poke_bear<shared_virtual_ptr<Player, Policy>>>);
+            poke_bear<shared_virtual_ptr<Player, Registry>>>);
 
     using fight = method<
         BOOST_OPENMETHOD_NAME(fight)(
-            shared_virtual_ptr<Player, Policy>,
-            shared_virtual_ptr<Object, Policy>,
-            shared_virtual_ptr<Player, Policy>),
-        std::string, Policy>;
+            shared_virtual_ptr<Player, Registry>,
+            shared_virtual_ptr<Object, Registry>,
+            shared_virtual_ptr<Player, Registry>),
+        std::string, Registry>;
 
     BOOST_OPENMETHOD_REGISTER(
         typename fight::template override<fight_bear<
-            shared_virtual_ptr<Player, Policy>,
-            shared_virtual_ptr<Object, Policy>,
-            shared_virtual_ptr<Player, Policy>>>);
+            shared_virtual_ptr<Player, Registry>,
+            shared_virtual_ptr<Object, Registry>,
+            shared_virtual_ptr<Player, Registry>>>);
 
-    initialize<Policy>();
+    initialize<Registry>();
 
-    auto bear = make_shared_virtual<Bear, Policy>();
-    auto warrior = make_shared_virtual<Warrior, Policy>();
-    auto axe = make_shared_virtual<Axe, Policy>();
+    auto bear = make_shared_virtual<Bear, Registry>();
+    auto warrior = make_shared_virtual<Warrior, Registry>();
+    auto axe = make_shared_virtual<Axe, Registry>();
 
     BOOST_TEST(poke::fn(bear) == "growl");
 

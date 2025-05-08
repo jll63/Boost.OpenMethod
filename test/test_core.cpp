@@ -6,17 +6,19 @@
 #include <iostream>
 #include <type_traits>
 
-#include <boost/openmethod.hpp>
-#include <boost/openmethod/shared_ptr.hpp>
-
-#include "test_util.hpp"
-
 #define BOOST_TEST_MODULE core
 #include <boost/test/included/unit_test.hpp>
+
+#include <boost/openmethod/registry.hpp>
 
 using namespace boost::openmethod;
 using namespace boost::openmethod::detail;
 namespace mp11 = boost::mp11;
+
+#include <boost/openmethod.hpp>
+#include <boost/openmethod/shared_ptr.hpp>
+
+#include "test_util.hpp"
 
 namespace test_virtual {
 
@@ -32,26 +34,27 @@ struct d : base {};
 struct e : base {};
 struct f : base {};
 
+static_assert(std::is_same_v<
+              virtual_traits<base&, default_registry>::virtual_type, base>);
+
 static_assert(
-    std::is_same_v<virtual_traits<base&, default_policy>::virtual_type, base>);
+    std::is_same_v<
+        virtual_traits<const base&, default_registry>::virtual_type, base>);
 
 static_assert(std::is_same_v<
-              virtual_traits<const base&, default_policy>::virtual_type, base>);
+              virtual_traits<base&&, default_registry>::virtual_type, base>);
 
 static_assert(
-    std::is_same_v<virtual_traits<base&&, default_policy>::virtual_type, base>);
-
-static_assert(
-    std::is_same_v<virtual_traits<int, default_policy>::virtual_type, void>);
+    std::is_same_v<virtual_traits<int, default_registry>::virtual_type, void>);
 
 static_assert(std::is_same_v<
-              boost::mp11::mp_filter<
+              mp11::mp_filter<
                   is_virtual, mp11::mp_list<virtual_<a&>, b, virtual_<c&>>>,
               mp11::mp_list<virtual_<a&>, virtual_<c&>>>);
 
 static_assert(std::is_same_v<remove_virtual<virtual_<a&>>, a&>);
 
-static_assert(std::is_same_v<virtual_type<a&, default_policy>, a>);
+static_assert(std::is_same_v<virtual_type<a&, default_registry>, a>);
 
 static_assert(
     std::is_same_v<
@@ -62,25 +65,26 @@ static_assert(
 static_assert(std::is_same_v<
               overrider_virtual_types<
                   mp11::mp_list<virtual_<a&>, b, virtual_<c&>>,
-                  mp11::mp_list<d&, e, f&>, default_policy>,
+                  mp11::mp_list<d&, e, f&>, default_registry>,
               mp11::mp_list<d, f>>);
 
 static_assert(
-    std::is_same_v<virtual_type<std::shared_ptr<a>, default_policy>, a>);
+    std::is_same_v<virtual_type<std::shared_ptr<a>, default_registry>, a>);
 
-static_assert(std::is_same_v<
-              virtual_traits<virtual_ptr<a>, default_policy>::virtual_type, a>);
+static_assert(
+    std::is_same_v<
+        virtual_traits<virtual_ptr<a>, default_registry>::virtual_type, a>);
 
 static_assert(std::is_same_v<
               select_overrider_virtual_type_aux<
-                  virtual_ptr<base>, virtual_ptr<a>, default_policy>::type,
+                  virtual_ptr<base>, virtual_ptr<a>, default_registry>::type,
               a>);
 
 static_assert(
     std::is_same_v<
         overrider_virtual_types<
             mp11::mp_list<virtual_ptr<a>, b, virtual_ptr<c>>,
-            mp11::mp_list<virtual_ptr<d>, e, virtual_ptr<f>>, default_policy>,
+            mp11::mp_list<virtual_ptr<d>, e, virtual_ptr<f>>, default_registry>,
         mp11::mp_list<d, f>>);
 
 static_assert(
@@ -89,7 +93,7 @@ static_assert(
             mp11::mp_list<
                 const virtual_ptr<base>&, b, const virtual_ptr<base>&>,
             mp11::mp_list<const virtual_ptr<d>&, e, const virtual_ptr<f>&>,
-            default_policy>,
+            default_registry>,
         mp11::mp_list<d, f>>);
 
 static_assert(
@@ -98,31 +102,43 @@ static_assert(
             mp11::mp_list<
                 virtual_<std::shared_ptr<a>>, b, virtual_<std::shared_ptr<c>>>,
             mp11::mp_list<std::shared_ptr<d>, e, std::shared_ptr<f>>,
-            default_policy>,
+            default_registry>,
         mp11::mp_list<d, f>>);
 
 static_assert(std::is_same_v<
-              boost::mp11::mp_transform<
+              mp11::mp_transform<
                   remove_virtual, mp11::mp_list<virtual_<a&>, virtual_<c&>>>,
               mp11::mp_list<a&, c&>>);
 
 static_assert(
     std::is_same_v<
-        boost::mp11::mp_transform_q<
-            boost::mp11::mp_bind_back<virtual_type, default_policy>,
-            boost::mp11::mp_transform<
+        mp11::mp_transform_q<
+            mp11::mp_bind_back<virtual_type, default_registry>,
+            mp11::mp_transform<
                 remove_virtual, mp11::mp_list<virtual_<a&>, virtual_<c&>>>>,
         mp11::mp_list<a, c>>);
 
 static_assert(
     std::is_same_v<
-        boost::mp11::mp_transform_q<
-            boost::mp11::mp_bind_back<virtual_type, default_policy>,
-            boost::mp11::mp_transform<
+        mp11::mp_transform_q<
+            mp11::mp_bind_back<virtual_type, default_registry>,
+            mp11::mp_transform<
                 remove_virtual,
-                boost::mp11::mp_filter<
+                mp11::mp_filter<
                     is_virtual, mp11::mp_list<virtual_<a&>, b, virtual_<c&>>>>>,
         mp11::mp_list<a, c>>);
+
+struct registry1
+    : default_registry::with<policies::unique<registry1>> {};
+struct registry2
+    : default_registry::with<policies::unique<registry2>> {};
+
+static_assert(
+    detail::using_same_registry<registry1, virtual_ptr<a, registry1>>::value);
+
+static_assert(detail::using_same_registry<registry1, int>::value);
+static_assert(
+    !detail::using_same_registry<registry1, virtual_ptr<a, registry2>>::value);
 
 // clang-format on
 
@@ -130,47 +146,14 @@ static_assert(std::is_same_v<
               virtual_types<mp11::mp_list<virtual_<a&>, b, virtual_<c&>>>,
               mp11::mp_list<a&, c&>>);
 
-static_assert(detail::is_policy<default_policy>);
+static_assert(detail::is_registry<default_registry>);
 
 struct not_a_policy {};
-static_assert(!detail::is_policy<not_a_policy>);
-
-BOOST_AUTO_TEST_CASE(test_policy) {
-    {
-        // test is_policy_compatible
-        struct policy1 : default_policy::fork<policy1> {};
-        struct policy2 : default_policy::fork<policy2> {};
-        static_assert(detail::is_policy_compatible<
-                      policy1, virtual_ptr<a, policy1>>::value);
-        static_assert(detail::is_policy_compatible<policy1, int>::value);
-        static_assert(!detail::is_policy_compatible<
-                      policy1, virtual_ptr<a, policy2>>::value);
-    }
-
-    {
-        // check that forked policy does not share static data with original
-        struct policy : default_policy::fork<policy> {};
-        BOOST_TEST(&policy::methods != &default_policy::methods);
-        BOOST_TEST(&policy::classes != &default_policy::classes);
-        BOOST_TEST(
-            &policy::static_vptr<void> != &default_policy::static_vptr<void>);
-        BOOST_TEST(&policy::dispatch_data != &default_policy::dispatch_data);
-    }
-
-    {
-        // check that adding a facet keeps static data from original
-        struct policy : default_policy::with<policies::indirect_vptr> {};
-        BOOST_TEST(&policy::methods == &default_policy::methods);
-        BOOST_TEST(&policy::classes == &default_policy::classes);
-        BOOST_TEST(
-            &policy::static_vptr<void> == &default_policy::static_vptr<void>);
-        BOOST_TEST(&policy::dispatch_data == &default_policy::dispatch_data);
-    }
-}
+static_assert(!detail::is_registry<not_a_policy>);
 
 BOOST_AUTO_TEST_CASE(test_type_id_list) {
-    auto iter = type_id_list<mp11::mp_list<a&, b&>, default_policy>::begin;
-    auto last = type_id_list<mp11::mp_list<a&, b&>, default_policy>::end;
+    auto iter = type_id_list<mp11::mp_list<a&, b&>, default_registry>::begin;
+    auto last = type_id_list<mp11::mp_list<a&, b&>, default_registry>::end;
     BOOST_TEST_REQUIRE(last - iter == 2);
     BOOST_TEST_REQUIRE(*iter++ == type_id(&typeid(a)));
     BOOST_TEST_REQUIRE(*iter++ == type_id(&typeid(b)));
@@ -229,33 +212,33 @@ BOOST_AUTO_TEST_CASE(casts) {
     const Carnivore& carnivore = dog;
 
     BOOST_TEST(
-        (&virtual_traits<const Animal&, default_policy>::cast<const Mammal&>(
+        (&virtual_traits<const Animal&, default_registry>::cast<const Mammal&>(
               animal)
               .m) == &dog.m);
     BOOST_TEST(
-        (&virtual_traits<const Animal&, default_policy>::cast<const Carnivore&>(
-              animal)
+        (&virtual_traits<const Animal&, default_registry>::cast<
+              const Carnivore&>(animal)
               .c) == &dog.c);
     BOOST_TEST(
-        (&virtual_traits<const Animal&, default_policy>::cast<const Mammal&>(
+        (&virtual_traits<const Animal&, default_registry>::cast<const Mammal&>(
               animal)
               .m) == &dog.m);
     BOOST_TEST(
-        (&virtual_traits<const Animal&, default_policy>::cast<const Dog&>(
+        (&virtual_traits<const Animal&, default_registry>::cast<const Dog&>(
               animal)
               .d) == &dog.d);
     BOOST_TEST(
-        (&virtual_traits<const Mammal&, default_policy>::cast<const Dog&>(
+        (&virtual_traits<const Mammal&, default_registry>::cast<const Dog&>(
               mammal)
               .d) == &dog.d);
     BOOST_TEST(
-        (&virtual_traits<const Carnivore&, default_policy>::cast<const Dog&>(
+        (&virtual_traits<const Carnivore&, default_registry>::cast<const Dog&>(
               carnivore)
               .c) == &dog.c);
 
-    using virtual_animal_t = virtual_type<const Animal&, default_policy>;
+    using virtual_animal_t = virtual_type<const Animal&, default_registry>;
     static_assert(std::is_same_v<virtual_animal_t, Animal>, "animal");
-    using virtual_mammal_t = virtual_type<const Mammal&, default_policy>;
+    using virtual_mammal_t = virtual_type<const Mammal&, default_registry>;
     static_assert(std::is_same_v<virtual_mammal_t, Mammal>, "mammal");
 }
 
@@ -283,83 +266,17 @@ static_assert(
         use_classes<Animal, Dog, Bulldog, Cat, Dolphin>::tuple_type,
         std::tuple<
             class_declaration_aux<
-                default_policy, mp11::mp_list<Animal, Animal>>,
+                default_registry, mp11::mp_list<Animal, Animal>>,
             class_declaration_aux<
-                default_policy, mp11::mp_list<Dog, Animal, Dog>>,
+                default_registry, mp11::mp_list<Dog, Animal, Dog>>,
             class_declaration_aux<
-                default_policy, mp11::mp_list<Bulldog, Animal, Dog, Bulldog>>,
+                default_registry, mp11::mp_list<Bulldog, Animal, Dog, Bulldog>>,
             class_declaration_aux<
-                default_policy, mp11::mp_list<Cat, Animal, Cat>>,
+                default_registry, mp11::mp_list<Cat, Animal, Cat>>,
             class_declaration_aux<
-                default_policy, mp11::mp_list<Dolphin, Animal, Dolphin>>>>);
+                default_registry, mp11::mp_list<Dolphin, Animal, Dolphin>>>>);
 
 } // namespace test_use_classes
-
-namespace facets {
-
-using namespace policies;
-
-struct key1;
-struct key2;
-struct foo : detail::basic_facet<foo> {};
-struct foo1 : foo {};
-struct foo2 : foo {};
-struct bar : detail::basic_facet<bar> {};
-struct bar1 : bar {};
-struct bar2 : bar {};
-
-static_assert(
-    std::is_same_v<fork_facet<key2, domain<key1>>::type, domain<key2>>);
-
-static_assert(std::is_base_of_v<foo1::facet_type, foo>);
-static_assert(std::is_base_of_v<bar1::facet_type, bar>);
-
-static_assert(
-    std::is_same_v<
-        detail::with_aux<mp11::mp_list<>, foo1>::type, mp11::mp_list<foo1>>);
-
-static_assert(std::is_same_v<
-              detail::with_aux<mp11::mp_list<foo1>, foo2>::type,
-              mp11::mp_list<foo2>>);
-
-static_assert(std::is_same_v<
-              detail::with_aux<mp11::mp_list<foo1, bar1>, foo2, bar2>::type,
-              mp11::mp_list<foo2, bar2>>);
-
-static_assert(
-    std::is_same_v<basic_policy<key1>::with<foo1>, basic_policy<key1, foo1>>);
-
-static_assert(std::is_same_v<
-              basic_policy<key1, foo1>::with<foo2>, basic_policy<key1, foo2>>);
-
-template<class Policy, class... Facets>
-constexpr bool has_facets = (... && Policy::template has_facet<Facets>) &&
-    mp11::mp_size<typename Policy::facets>::value == sizeof...(Facets);
-
-static_assert(std::is_same_v<
-              basic_policy<key1, foo1, bar1>::with<foo2>::facets,
-              mp11::mp_list<foo2, bar1>>);
-
-static_assert(std::is_same_v<
-              basic_policy<key1, foo1, bar1>::with<bar2>::facets,
-              mp11::mp_list<foo1, bar2>>);
-
-static_assert(std::is_same_v<
-              basic_policy<key1, foo1, bar1>::with<foo2, bar2>::facets,
-              mp11::mp_list<foo2, bar2>>);
-
-static_assert(
-    std::is_same_v<basic_policy<key1>::without<foo>::facets, mp11::mp_list<>>);
-
-static_assert(std::is_same_v<
-              basic_policy<key1, foo1, bar1>::without<foo>::facets,
-              mp11::mp_list<bar1>>);
-
-static_assert(std::is_same_v<
-              basic_policy<key1, foo1, bar1>::without<bar>::facets,
-              mp11::mp_list<foo1>>);
-
-} // namespace facets
 
 // -----------------------------------------------------------------------------
 // static_slots

@@ -1,5 +1,5 @@
 
-## error_output
+## output
 
 ### Synopsis
 
@@ -8,14 +8,14 @@ Defined in <boost/openmethod/policies/basic_policy.hpp>.
 ```c++
 namespace boost::openmethod::policies {
 
-struct error_output : facet {};
+struct output : facet {};
 
 } // boost::openmethod::policies
 ```
 
 ### Description
 
-`error_output` is a facet that provides a stream for writing error messages.
+`output` is a facet that provides a stream for writing error messages.
 
 ### Requirements
 

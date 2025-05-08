@@ -31,7 +31,7 @@ However, we can now customize how the vptr is obtained. When the method sees a
 `virtual_` parameter, it looks for a `boost_openmethod_vptr` function that takes
 the parameter (by const reference), and returns a `vptr_type`. If one is found,
 it is called to obtain the vptr. The vptr for a specific registered class can be
-obtained via a variable template `static_vptr`, nested in class `default_policy`
+obtained via a variable template `static_vptr`, nested in class `default_registry`
 (more on policies below).
 
 In the following example, we embed a vptr in the object, just like the vptr for

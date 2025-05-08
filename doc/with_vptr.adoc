@@ -8,7 +8,7 @@ Defined in <boost/openmethod/with_vptr.hpp>.
 ```c++
 namespace boost::openmethod {
 
-template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
+template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
 class with_vptr {
   protected:
     with_vptr();

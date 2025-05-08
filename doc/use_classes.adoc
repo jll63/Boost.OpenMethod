@@ -8,7 +8,7 @@ Defined in <boost/openmethod/core.hpp>.
 ```c++
 namespace boost::openmethod {
 
-template<class... Classes, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
+template<class... Classes, class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
 struct use_classes {
     use_classes();
     ~use_classes();
@@ -36,7 +36,7 @@ Virtual and multiple inheritance are supported, as long as they don't result in
 a class lattice that contains repeated inheritance.
 
 NOTE: The default value for `Policy` is the value of
-`BOOST_OPENMETHOD_DEFAULT_POLICY` when `<boost/openmethod/core.hpp>` is
+`BOOST_OPENMETHOD_DEFAULT_REGISTRY` when `<boost/openmethod/core.hpp>` is
 included. Subsequently changing it has no retroactive effect.
 
 ### Members

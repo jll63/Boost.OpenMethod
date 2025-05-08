@@ -10,6 +10,8 @@
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/compiler.hpp>
 
+#include "test_util.hpp"
+
 using namespace boost::openmethod;
 
 namespace type_hash {
@@ -39,43 +41,46 @@ struct Cat : Animal {
 };
 
 struct custom_rtti : policies::rtti {
-    template<class T>
-    static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
+    template<class Registry>
+    struct fn : policies::rtti::fn<Registry> {
+        template<class T>
+        static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
 
-    template<typename T>
-    static auto static_type() {
-        if constexpr (is_polymorphic<T>) {
-            return reinterpret_cast<type_id>(T::static_type);
-        } else {
-            return 0;
+        template<typename T>
+        static auto static_type() {
+            if constexpr (is_polymorphic<T>) {
+                return reinterpret_cast<type_id>(T::static_type);
+            } else {
+                return 0;
+            }
         }
-    }
 
-    template<typename T>
-    static auto dynamic_type(const T& obj) {
-        if constexpr (is_polymorphic<T>) {
-            return reinterpret_cast<type_id>(obj.type);
-        } else {
-            return 0;
+        template<typename T>
+        static auto dynamic_type(const T& obj) {
+            if constexpr (is_polymorphic<T>) {
+                return reinterpret_cast<type_id>(obj.type);
+            } else {
+                return 0;
+            }
         }
-    }
 
-    template<class Stream>
-    static void type_name(type_id type, Stream& stream) {
-        stream << (type == 0 ? "?" : reinterpret_cast<const char*>(type));
-    }
+        template<class Stream>
+        static void type_name(type_id type, Stream& stream) {
+            stream << (type == 0 ? "?" : reinterpret_cast<const char*>(type));
+        }
 
-    static auto type_index(type_id type) {
-        return std::string_view(
-            (type == 0 ? "?" : reinterpret_cast<const char*>(type)));
-    }
+        static auto type_index(type_id type) {
+            return std::string_view(
+                (type == 0 ? "?" : reinterpret_cast<const char*>(type)));
+        }
+    };
 };
 
-struct test_policy : default_policy::fork<test_policy>::with<custom_rtti> {};
+struct test_registry : test_registry_<__COUNTER__>::with<custom_rtti> {};
 
-BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_policy);
+BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_registry);
 
-BOOST_OPENMETHOD(poke, (virtual_<Animal&>, std::ostream&), void, test_policy);
+BOOST_OPENMETHOD(poke, (virtual_<Animal&>, std::ostream&), void, test_registry);
 
 BOOST_OPENMETHOD_OVERRIDE(poke, (Dog & dog, std::ostream& os), void) {
     os << dog.name << " barks.";
@@ -86,7 +91,7 @@ BOOST_OPENMETHOD_OVERRIDE(poke, (Cat & cat, std::ostream& os), void) {
 }
 
 BOOST_AUTO_TEST_CASE(custom_rtti_simple_projection) {
-    initialize<test_policy>();
+    initialize<test_registry>();
 
     Animal &&a = Dog("Snoopy"), &&b = Cat("Sylvester");
 
@@ -130,44 +135,50 @@ struct Cat : Animal {
 };
 
 struct custom_rtti : policies::rtti {
-    template<class T>
-    static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
+    template<class Registry>
+    struct fn : policies::rtti::fn<Registry> {
+        template<class T>
+        static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
 
-    template<typename T>
-    static auto static_type() {
-        if constexpr (is_polymorphic<T>) {
-            return T::static_type;
-        } else {
-            return 666;
+        static constexpr auto invalid_type =
+            (std::numeric_limits<std::size_t>::max)();
+
+        template<typename T>
+        static auto static_type() {
+            if constexpr (is_polymorphic<T>) {
+                return T::static_type;
+            } else {
+                return invalid_type;
+            }
         }
-    }
 
-    template<typename T>
-    static auto dynamic_type(const T& obj) {
-        if constexpr (is_polymorphic<T>) {
-            return obj.type;
-        } else {
-            return 666;
+        template<typename T>
+        static auto dynamic_type(const T& obj) {
+            if constexpr (is_polymorphic<T>) {
+                return obj.type;
+            } else {
+                return invalid_type;
+            }
         }
-    }
 
-    template<class Stream>
-    static void type_name(type_id type, Stream& stream) {
-        static const char* name[] = {"Animal", "Dog", "Cat"};
-        stream << (type == 666 ? "?" : name[type]);
-    }
+        template<class Stream>
+        static void type_name(type_id type, Stream& stream) {
+            static const char* name[] = {"Animal", "Dog", "Cat"};
+            stream << (type == invalid_type ? "?" : name[type]);
+        }
 
-    static auto type_index(type_id type) {
-        return type;
-    }
+        static auto type_index(type_id type) {
+            return type;
+        }
+    };
 };
 
-struct test_policy : default_policy::fork<test_policy>::with<
-                         custom_rtti>::without<policies::type_hash> {};
+struct test_registry : test_registry_<__COUNTER__>::with<custom_rtti>::without<
+                           policies::type_hash> {};
 
-BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_policy);
+BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_registry);
 
-BOOST_OPENMETHOD(poke, (virtual_<Animal&>, std::ostream&), void, test_policy);
+BOOST_OPENMETHOD(poke, (virtual_<Animal&>, std::ostream&), void, test_registry);
 
 BOOST_OPENMETHOD_OVERRIDE(poke, (Dog & dog, std::ostream& os), void) {
     os << dog.name << " barks.";
@@ -181,9 +192,9 @@ void call_poke(Animal& a, std::ostream& os) {
     return poke(a, os);
 }
 // mov     rax, qword ptr [rdi + 8]
-// mov     rcx, qword ptr [rip + domain<test_policy>::context+24]
+// mov     rcx, qword ptr [rip + domain<test_registry>::context+24]
 // mov     rax, qword ptr [rcx + 8*rax]
-// mov     rcx, qword ptr [rip + method<test_policy, poke, void
+// mov     rcx, qword ptr [rip + method<test_registry, poke, void
 // (virtual_<Animal&>, basic_ostream<char, char_traits<char> >&)>::fn+80] mov
 // rax, qword ptr [rax + 8*rcx] jmp     rax                             #
 // TAILCALL
@@ -192,7 +203,7 @@ BOOST_AUTO_TEST_CASE(custom_rtti_simple) {
     BOOST_TEST(Animal::static_type == 0u);
     BOOST_TEST(Dog::static_type == 1u);
     BOOST_TEST(Cat::static_type == 2u);
-    initialize<test_policy>();
+    initialize<test_registry>();
 
     Animal &&a = Dog("Snoopy"), &&b = Cat("Sylvester");
 
@@ -211,9 +222,9 @@ BOOST_AUTO_TEST_CASE(custom_rtti_simple) {
 namespace using_vptr {
 
 template<class C>
-using vptr = virtual_ptr<C, test_policy>;
+using vptr = virtual_ptr<C, test_registry>;
 
-BOOST_OPENMETHOD(poke, (vptr<Animal>, std::ostream&), void, test_policy);
+BOOST_OPENMETHOD(poke, (vptr<Animal>, std::ostream&), void, test_registry);
 
 BOOST_OPENMETHOD_OVERRIDE(poke, (vptr<Dog> dog, std::ostream& os), void) {
     os << dog->name << " barks.";
@@ -224,7 +235,7 @@ BOOST_OPENMETHOD_OVERRIDE(poke, (vptr<Cat> cat, std::ostream& os), void) {
 }
 
 void call_poke(vptr<Animal> a, std::ostream& os) {
-    // mov     rax, qword ptr [rip + method<test_policy, poke, ...>::fn+80]
+    // mov     rax, qword ptr [rip + method<test_registry, poke, ...>::fn+80]
     // mov     rax, qword ptr [rsi + 8*rax]
     // jmp     rax                             # TAILCALL
     return poke(a, os);
@@ -280,49 +291,55 @@ struct Cat : virtual Animal {
 };
 
 struct custom_rtti : policies::rtti {
-    template<class T>
-    static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
+    template<class Registry>
+    struct fn : policies::rtti::fn<Registry> {
+        template<class T>
+        static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
 
-    template<typename T>
-    static auto static_type() {
-        if constexpr (is_polymorphic<T>) {
-            return T::static_type;
-        } else {
-            return 666;
+        static constexpr auto invalid_type =
+            (std::numeric_limits<std::size_t>::max)();
+
+        template<typename T>
+        static auto static_type() {
+            if constexpr (is_polymorphic<T>) {
+                return T::static_type;
+            } else {
+                return invalid_type;
+            }
         }
-    }
 
-    template<typename T>
-    static auto dynamic_type(const T& obj) {
-        if constexpr (is_polymorphic<T>) {
-            return obj.type;
-        } else {
-            return 666;
+        template<typename T>
+        static auto dynamic_type(const T& obj) {
+            if constexpr (is_polymorphic<T>) {
+                return obj.type;
+            } else {
+                return invalid_type;
+            }
         }
-    }
 
-    template<class Stream>
-    static void type_name(type_id type, Stream& stream) {
-        static const char* name[] = {"Animal", "Dog", "Cat"};
-        stream << (type == 666 ? "?" : name[type]);
-    }
+        template<class Stream>
+        static void type_name(type_id type, Stream& stream) {
+            static const char* name[] = {"Animal", "Dog", "Cat"};
+            stream << (type == invalid_type ? "?" : name[type]);
+        }
 
-    static auto type_index(type_id type) {
-        return type;
-    }
+        static auto type_index(type_id type) {
+            return type;
+        }
 
-    template<typename Derived, typename Base>
-    static auto dynamic_cast_ref(Base&& obj) -> Derived {
-        return custom_dynamic_cast<Derived>(obj);
-    }
+        template<typename Derived, typename Base>
+        static auto dynamic_cast_ref(Base&& obj) -> Derived {
+            return custom_dynamic_cast<Derived>(obj);
+        }
+    };
 };
 
-struct test_policy : default_policy::fork<test_policy>::with<
-                         custom_rtti>::without<policies::type_hash> {};
+struct test_registry : test_registry_<__COUNTER__>::with<custom_rtti>::without<
+                           policies::type_hash> {};
 
-BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_policy);
+BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_registry);
 
-BOOST_OPENMETHOD(poke, (virtual_<Animal&>, std::ostream&), void, test_policy);
+BOOST_OPENMETHOD(poke, (virtual_<Animal&>, std::ostream&), void, test_registry);
 
 BOOST_OPENMETHOD_OVERRIDE(poke, (Dog & dog, std::ostream& os), void) {
     os << dog.name << " barks.";
@@ -336,9 +353,9 @@ void call_poke(Animal& a, std::ostream& os) {
     return poke(a, os);
 }
 // mov     rax, qword ptr [rdi + 8]
-// mov     rcx, qword ptr [rip + domain<test_policy>::context+24]
+// mov     rcx, qword ptr [rip + domain<test_registry>::context+24]
 // mov     rax, qword ptr [rcx + 8*rax]
-// mov     rcx, qword ptr [rip + method<test_policy, poke, void
+// mov     rcx, qword ptr [rip + method<test_registry, poke, void
 // (virtual_<Animal&>, basic_ostream<char, char_traits<char> >&)>::fn+80] mov
 // rax, qword ptr [rax + 8*rcx] jmp     rax                             #
 // TAILCALL
@@ -347,7 +364,7 @@ BOOST_AUTO_TEST_CASE(virtual_base) {
     BOOST_TEST(Animal::static_type == 0u);
     BOOST_TEST(Dog::static_type == 1u);
     BOOST_TEST(Cat::static_type == 2u);
-    initialize<test_policy>();
+    initialize<test_registry>();
 
     Animal &&a = Dog("Snoopy"), &&b = Cat("Sylvester");
 
@@ -366,9 +383,9 @@ BOOST_AUTO_TEST_CASE(virtual_base) {
 namespace using_vptr {
 
 template<class C>
-using vptr = virtual_ptr<C, test_policy>;
+using vptr = virtual_ptr<C, test_registry>;
 
-BOOST_OPENMETHOD(poke, (vptr<Animal>, std::ostream&), void, test_policy);
+BOOST_OPENMETHOD(poke, (vptr<Animal>, std::ostream&), void, test_registry);
 
 BOOST_OPENMETHOD_OVERRIDE(poke, (vptr<Dog> dog, std::ostream& os), void) {
     os << dog->name << " barks.";
@@ -379,7 +396,7 @@ BOOST_OPENMETHOD_OVERRIDE(poke, (vptr<Cat> cat, std::ostream& os), void) {
 }
 
 void call_poke(vptr<Animal> a, std::ostream& os) {
-    // mov     rax, qword ptr [rip + method<test_policy, poke, ...>::fn+80]
+    // mov     rax, qword ptr [rip + method<test_registry, poke, ...>::fn+80]
     // mov     rax, qword ptr [rsi + 8*rax]
     // jmp     rax                             # TAILCALL
     return poke(a, os);
@@ -423,45 +440,47 @@ struct Cat : Animal {
 std::size_t Cat::static_type = ++Animal::last_type_id;
 
 struct custom_rtti : policies::deferred_static_rtti {
-    template<class T>
-    static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
+    template<class Registry>
+    struct fn : policies::rtti::fn<Registry> {
+        template<class T>
+        static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
 
-    template<typename T>
-    static auto static_type() {
-        if constexpr (is_polymorphic<T>) {
-            return T::static_type;
-        } else {
-            static type_id invalid = 0;
-            return invalid;
+        template<typename T>
+        static auto static_type() {
+            if constexpr (is_polymorphic<T>) {
+                return T::static_type;
+            } else {
+                return 0;
+            }
         }
-    }
 
-    template<typename T>
-    static auto dynamic_type(const T& obj) {
-        if constexpr (is_polymorphic<T>) {
-            return obj.type;
-        } else {
-            return 666;
+        template<typename T>
+        static auto dynamic_type(const T& obj) {
+            if constexpr (is_polymorphic<T>) {
+                return obj.type;
+            } else {
+                return 0;
+            }
         }
-    }
 
-    template<class Stream>
-    static void type_name(type_id type, Stream& stream) {
-        static const char* name[] = {"Animal", "Dog", "Cat"};
-        stream << (type == 0 ? "?" : name[type]);
-    }
+        template<class Stream>
+        static void type_name(type_id type, Stream& stream) {
+            static const char* name[] = {"Animal", "Dog", "Cat"};
+            stream << (type == 0 ? "?" : name[type]);
+        }
 
-    static auto type_index(type_id type) {
-        return type;
-    }
+        static auto type_index(type_id type) {
+            return type;
+        }
+    };
 };
 
-struct test_policy : default_policy::fork<test_policy>::with<
-                         custom_rtti>::without<policies::type_hash> {};
+struct test_registry : test_registry_<__COUNTER__>::with<custom_rtti>::without<
+                           policies::type_hash> {};
 
-BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_policy);
+BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_registry);
 
-BOOST_OPENMETHOD(poke, (virtual_<Animal&>, std::ostream&), void, test_policy);
+BOOST_OPENMETHOD(poke, (virtual_<Animal&>, std::ostream&), void, test_registry);
 
 BOOST_OPENMETHOD_OVERRIDE(poke, (Dog & dog, std::ostream& os), void) {
     os << dog.name << " barks.";
@@ -473,14 +492,14 @@ BOOST_OPENMETHOD_OVERRIDE(poke, (Cat & cat, std::ostream& os), void) {
 
 BOOST_OPENMETHOD(
     meet, (virtual_<Animal&>, virtual_<Animal&>, std::ostream&), void,
-    test_policy);
+    test_registry);
 
 BOOST_OPENMETHOD_OVERRIDE(meet, (Dog&, Dog&, std::ostream& os), void) {
     os << "Both wag tails.";
 }
 
 BOOST_AUTO_TEST_CASE(custom_rtti_deferred) {
-    initialize<test_policy>();
+    initialize<test_registry>();
 
     Animal &&a = Dog("Snoopy"), &&b = Cat("Sylvester");
 

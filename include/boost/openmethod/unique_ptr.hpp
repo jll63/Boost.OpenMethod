@@ -12,8 +12,8 @@
 
 namespace boost::openmethod {
 
-template<class Class, class Policy>
-struct virtual_traits<std::unique_ptr<Class>, Policy> {
+template<class Class, class Registry>
+struct virtual_traits<std::unique_ptr<Class>, Registry> {
     using virtual_type = std::remove_cv_t<Class>;
 
     static auto peek(const std::unique_ptr<Class>& arg) -> const Class& {
@@ -35,14 +35,14 @@ struct virtual_traits<std::unique_ptr<Class>, Policy> {
     }
 };
 
-template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
-using unique_virtual_ptr = virtual_ptr<std::unique_ptr<Class>, Policy>;
+template<class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
+using unique_virtual_ptr = virtual_ptr<std::unique_ptr<Class>, Registry>;
 
 template<
-    class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY, typename... T>
+    class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY, typename... T>
 inline auto make_unique_virtual(T&&... args)
-    -> unique_virtual_ptr<Class, Policy> {
-    return unique_virtual_ptr<Class, Policy>::final(
+    -> unique_virtual_ptr<Class, Registry> {
+    return unique_virtual_ptr<Class, Registry>::final(
         std::make_unique<Class>(std::forward<T>(args)...));
 }
 

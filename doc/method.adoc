@@ -9,7 +9,7 @@ namespace boost::openmethod {
 
 template<
     typename Method, typename ReturnType,
-    class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
+    class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
 class method;
 
 template<typename Name, typename... Parameters, typename ReturnType, class Policy>

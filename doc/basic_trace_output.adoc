@@ -9,7 +9,7 @@ Defined in <boost/openmethod/policies/basic_trace_output.hpp>.
 namespace boost::openmethod::policies {
 
 template<class Policy, typename Stream = /*unspecified*/>
-struct basic_trace_output : trace_output {
+struct basic_trace_output : trace {
     static bool trace_enabled;
     static Stream trace_stream;
 };
@@ -19,7 +19,7 @@ struct basic_trace_output : trace_output {
 
 ### Description
 
-`basic_error_output` is an implementation of `trace_output` that writes error
+`basic_error_output` is an implementation of `trace` that writes error
 messages to a `RestrictedOutputStream`.
 
 ### Members

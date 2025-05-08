@@ -169,22 +169,23 @@ struct generic_compiler {
     bool compilation_done = false;
 };
 
-template<class Policy>
-auto operator<<(trace_type<Policy>& trace, const generic_compiler::class_& cls)
-    -> trace_type<Policy>& {
-    if constexpr (Policy::template has_facet<policies::trace_output>) {
+template<class Registry>
+auto operator<<(
+    trace_type<Registry>& trace, const generic_compiler::class_& cls)
+    -> trace_type<Registry>& {
+    if constexpr (Registry::template has_policy<policies::trace>) {
         trace << type_name(cls.type_ids[0]);
     }
 
     return trace;
 }
 
-template<class Policy, template<typename...> class Container, typename... T>
+template<class Registry, template<typename...> class Container, typename... T>
 auto operator<<(
-    trace_type<Policy>& trace,
+    trace_type<Registry>& trace,
     Container<generic_compiler::class_*, T...>& classes)
-    -> trace_type<Policy>& {
-    if constexpr (Policy::template has_facet<policies::trace_output>) {
+    -> trace_type<Registry>& {
+    if constexpr (Registry::template has_policy<policies::trace>) {
         trace << "(";
         const char* sep = "";
         for (auto cls : classes) {
@@ -208,9 +209,9 @@ struct spec_name {
     const detail::generic_compiler::overrider* def;
 };
 
-template<class Policy>
-auto operator<<(trace_type<Policy>& trace, const spec_name& sn)
-    -> trace_type<Policy>& {
+template<class Registry>
+auto operator<<(trace_type<Registry>& trace, const spec_name& sn)
+    -> trace_type<Registry>& {
     if (sn.def == &sn.method.not_implemented) {
         trace << "not implemented";
     } else {
@@ -222,13 +223,13 @@ auto operator<<(trace_type<Policy>& trace, const spec_name& sn)
 
 } // namespace detail
 
-template<class Policy>
+template<class Registry>
 struct compiler : detail::generic_compiler {
-    using policy_type = Policy;
-    using type_index_type = decltype(Policy::type_index(0));
+    using type_index_type =
+        decltype(Registry::template policy<policies::rtti>::type_index(0));
 
     typename detail::aggregate_reports<
-        mp11::mp_list<report>, typename Policy::facets>::type report;
+        mp11::mp_list<report>, typename Registry::policies>::type report;
 
     std::unordered_map<type_index_type, class_*> class_map;
 
@@ -260,16 +261,16 @@ struct compiler : detail::generic_compiler {
         -> bool;
     static auto is_base(const overrider* a, const overrider* b) -> bool;
 
-    mutable detail::trace_type<Policy> trace;
+    mutable detail::trace_type<Registry> trace;
     static constexpr bool trace_enabled =
-        Policy::template has_facet<policies::trace_output>;
-    using indent = typename detail::trace_type<Policy>::indent;
+        Registry::template has_policy<policies::trace>;
+    using indent = typename detail::trace_type<Registry>::indent;
 };
 
-compiler() -> compiler<default_policy>;
+compiler() -> compiler<default_registry>;
 
-template<class Policy>
-void compiler<Policy>::install_global_tables() {
+template<class Registry>
+void compiler<Registry>::install_global_tables() {
     if (!compilation_done) {
         abort();
     }
@@ -280,8 +281,8 @@ void compiler<Policy>::install_global_tables() {
     ++trace << "Finished\n";
 }
 
-template<class Policy>
-auto compiler<Policy>::compile() {
+template<class Registry>
+auto compiler<Registry>::compile() {
     resolve_static_type_ids();
     augment_classes();
     augment_methods();
@@ -293,29 +294,30 @@ auto compiler<Policy>::compile() {
     return report;
 }
 
-template<class Policy>
-auto compiler<Policy>::initialize() {
+template<class Registry>
+auto compiler<Registry>::initialize() {
     compile();
     install_global_tables();
 
     return *this;
 }
 
-template<class Policy>
-compiler<Policy>::compiler() {
+template<class Registry>
+compiler<Registry>::compiler() {
 }
 
-template<class Policy>
-void compiler<Policy>::resolve_static_type_ids() {
-    using namespace detail;
+template<class Registry>
+void compiler<Registry>::resolve_static_type_ids() {
+    if constexpr (Registry::template has_policy<
+                      policies::deferred_static_rtti>) {
+        using namespace detail;
 
-    auto resolve = [](type_id* p) {
-        auto pf = reinterpret_cast<type_id (*)()>(*p);
-        *p = pf();
-    };
+        auto resolve = [](type_id* p) {
+            auto pf = reinterpret_cast<type_id (*)()>(*p);
+            *p = pf();
+        };
 
-    if constexpr (std::is_base_of_v<policies::deferred_static_rtti, Policy>) {
-        for (auto& ci : Policy::classes) {
+        for (auto& ci : Registry::classes) {
             resolve(&ci.type);
 
             if (*ci.last_base == 0) {
@@ -327,7 +329,7 @@ void compiler<Policy>::resolve_static_type_ids() {
             }
         }
 
-        for (auto& method : Policy::methods) {
+        for (auto& method : Registry::methods) {
             for (auto& ti : range{method.vp_begin, method.vp_end}) {
                 if (*method.vp_end == 0) {
                     resolve(&ti);
@@ -350,8 +352,8 @@ void compiler<Policy>::resolve_static_type_ids() {
     }
 }
 
-template<class Policy>
-void compiler<Policy>::collect_transitive_bases(class_* cls, class_* base) {
+template<class Registry>
+void compiler<Registry>::collect_transitive_bases(class_* cls, class_* base) {
     if (base->mark == class_mark) {
         return;
     }
@@ -364,8 +366,8 @@ void compiler<Policy>::collect_transitive_bases(class_* cls, class_* base) {
     }
 }
 
-template<class Policy>
-void compiler<Policy>::augment_classes() {
+template<class Registry>
+void compiler<Registry>::augment_classes() {
     using namespace detail;
 
     // scope
@@ -375,14 +377,16 @@ void compiler<Policy>::augment_classes() {
         // The standard does not guarantee that there is exactly one
         // type_info object per class. However, it guarantees that the
         // type_index for a class has a unique value.
-        for (auto& cr : Policy::classes) {
+        for (auto& cr : Registry::classes) {
             {
                 indent _(trace);
                 ++trace << type_name(cr.type) << ": "
                         << range{cr.first_base, cr.last_base} << "\n";
             }
 
-            auto& rtc = class_map[Policy::type_index(cr.type)];
+            auto& rtc =
+                class_map[Registry::template policy<policies::rtti>::type_index(
+                    cr.type)];
 
             if (rtc == nullptr) {
                 rtc = &classes.emplace_back();
@@ -406,19 +410,24 @@ void compiler<Policy>::augment_classes() {
     // All known classes now have exactly one associated class_* in the
     // map. Collect the bases.
 
-    for (auto& cr : Policy::classes) {
-        auto rtc = class_map[Policy::type_index(cr.type)];
+    for (auto& cr : Registry::classes) {
+        auto rtc =
+            class_map[Registry::template policy<policies::rtti>::type_index(
+                cr.type)];
 
         for (auto& base : range{cr.first_base, cr.last_base}) {
-            auto rtb = class_map[Policy::type_index(base)];
+            auto rtb =
+                class_map[Registry::template policy<policies::rtti>::type_index(
+                    base)];
 
             if (!rtb) {
                 unknown_class_error error;
                 error.type = base;
 
-                if constexpr (Policy::template has_facet<
+                if constexpr (Registry::template has_policy<
                                   policies::error_handler>) {
-                    Policy::error(error);
+                    Registry::template policy<policies::error_handler>::error(
+                        error);
                 }
 
                 abort();
@@ -507,8 +516,8 @@ void compiler<Policy>::augment_classes() {
     }
 }
 
-template<class Policy>
-void compiler<Policy>::calculate_transitive_derived(class_& cls) {
+template<class Registry>
+void compiler<Registry>::calculate_transitive_derived(class_& cls) {
     if (!cls.transitive_derived.empty()) {
         return;
     }
@@ -528,19 +537,19 @@ void compiler<Policy>::calculate_transitive_derived(class_& cls) {
     }
 }
 
-template<class Policy>
-void compiler<Policy>::augment_methods() {
+template<class Registry>
+void compiler<Registry>::augment_methods() {
     using namespace policies;
     using namespace detail;
 
-    methods.resize(Policy::methods.size());
+    methods.resize(Registry::methods.size());
 
     ++trace << "Methods:\n";
     indent _(trace);
 
     auto meth_iter = methods.begin();
 
-    for (auto& meth_info : Policy::methods) {
+    for (auto& meth_info : Registry::methods) {
         ++trace << type_name(meth_info.method_type) << " "
                 << range{meth_info.vp_begin, meth_info.vp_end} << "\n";
 
@@ -552,15 +561,19 @@ void compiler<Policy>::augment_methods() {
         std::size_t param_index = 0;
 
         for (auto ti : range{meth_info.vp_begin, meth_info.vp_end}) {
-            auto class_ = class_map[Policy::type_index(ti)];
+            auto class_ =
+                class_map[Registry::template policy<policies::rtti>::type_index(
+                    ti)];
             if (!class_) {
                 ++trace << "unknown class " << ti << "(" << type_name(ti)
                         << ") for parameter #" << (param_index + 1) << "\n";
                 unknown_class_error error;
                 error.type = ti;
 
-                if constexpr (Policy::template has_facet<error_handler>) {
-                    Policy::error(error);
+                if constexpr (Registry::template has_policy<
+                                  policies::error_handler>) {
+                    Registry::template policy<policies::error_handler>::error(
+                        error);
                 }
 
                 abort();
@@ -569,10 +582,14 @@ void compiler<Policy>::augment_methods() {
             meth_iter->vp.push_back(class_);
         }
 
-        if (Policy::type_index(meth_info.return_type) !=
-            Policy::type_index(Policy::template static_type<void>())) {
-            auto covariant_return_iter =
-                class_map.find(Policy::type_index(meth_info.return_type));
+        if (Registry::template policy<policies::rtti>::type_index(
+                meth_info.return_type) !=
+            Registry::template policy<policies::rtti>::type_index(
+                Registry::template policy<policies::rtti>::template static_type<
+                    void>())) {
+            auto covariant_return_iter = class_map.find(
+                Registry::template policy<policies::rtti>::type_index(
+                    meth_info.return_type));
 
             if (covariant_return_iter != class_map.end()) {
                 meth_iter->covariant_return_type =
@@ -605,7 +622,8 @@ void compiler<Policy>::augment_methods() {
             for (auto type :
                  range{overrider_info.vp_begin, overrider_info.vp_end}) {
                 indent _(trace);
-                auto class_ = class_map[Policy::type_index(type)];
+                auto class_ = class_map[Registry::template policy<
+                    policies::rtti>::type_index(type)];
 
                 if (!class_) {
                     ++trace << "unknown class error for *virtual* parameter #"
@@ -613,8 +631,10 @@ void compiler<Policy>::augment_methods() {
                     unknown_class_error error;
                     error.type = type;
 
-                    if constexpr (Policy::template has_facet<error_handler>) {
-                        Policy::error(error);
+                    if constexpr (Registry::template has_policy<
+                                      policies::error_handler>) {
+                        Registry::template policy<
+                            policies::error_handler>::error(error);
                     }
 
                     abort();
@@ -626,7 +646,8 @@ void compiler<Policy>::augment_methods() {
 
             if (meth_iter->covariant_return_type) {
                 auto covariant_return_iter = class_map.find(
-                    Policy::type_index(overrider_info.return_type));
+                    Registry::template policy<policies::rtti>::type_index(
+                        overrider_info.return_type));
 
                 if (covariant_return_iter != class_map.end()) {
                     spec_iter->covariant_return_type =
@@ -635,8 +656,10 @@ void compiler<Policy>::augment_methods() {
                     unknown_class_error error;
                     error.type = overrider_info.return_type;
 
-                    if constexpr (Policy::template has_facet<error_handler>) {
-                        Policy::error(error);
+                    if constexpr (Registry::template has_policy<
+                                      policies::error_handler>) {
+                        Registry::template policy<
+                            policies::error_handler>::error(error);
                     }
 
                     abort();
@@ -658,8 +681,8 @@ void compiler<Policy>::augment_methods() {
     }
 }
 
-template<class Policy>
-void compiler<Policy>::assign_slots() {
+template<class Registry>
+void compiler<Registry>::assign_slots() {
     ++trace << "Allocating slots...\n";
 
     {
@@ -705,8 +728,8 @@ void compiler<Policy>::assign_slots() {
     }
 }
 
-template<class Policy>
-void compiler<Policy>::assign_tree_slots(class_& cls, std::size_t base_slot) {
+template<class Registry>
+void compiler<Registry>::assign_tree_slots(class_& cls, std::size_t base_slot) {
     auto next_slot = base_slot;
     using namespace detail;
 
@@ -725,8 +748,8 @@ void compiler<Policy>::assign_tree_slots(class_& cls, std::size_t base_slot) {
     }
 }
 
-template<class Policy>
-void compiler<Policy>::assign_lattice_slots(class_& cls) {
+template<class Registry>
+void compiler<Registry>::assign_lattice_slots(class_& cls) {
     using namespace detail;
 
     if (cls.mark == class_mark) {
@@ -801,8 +824,8 @@ void compiler<Policy>::assign_lattice_slots(class_& cls) {
     }
 }
 
-template<class Policy>
-void compiler<Policy>::build_dispatch_tables() {
+template<class Registry>
+void compiler<Registry>::build_dispatch_tables() {
     using namespace detail;
 
     for (auto& m : methods) {
@@ -928,8 +951,8 @@ void compiler<Policy>::build_dispatch_tables() {
     }
 }
 
-template<class Policy>
-void compiler<Policy>::build_dispatch_table(
+template<class Registry>
+void compiler<Registry>::build_dispatch_table(
     method& m, std::size_t dim,
     std::vector<group_map>::const_iterator group_iter, const bitvec& candidates,
     bool concrete) {
@@ -1066,8 +1089,8 @@ inline void detail::generic_compiler::accumulate(
     total.ambiguous += partial.ambiguous != 0;
 }
 
-template<class Policy>
-void compiler<Policy>::write_global_data() {
+template<class Registry>
+void compiler<Registry>::write_global_data() {
     using namespace policies;
     using namespace detail;
 
@@ -1078,9 +1101,9 @@ void compiler<Policy>::write_global_data() {
         classes.begin(), classes.end(), dispatch_data_size,
         [](auto sum, auto& cls) { return sum + cls.vtbl.size(); });
 
-    Policy::dispatch_data.resize(dispatch_data_size);
-    auto gv_first = Policy::dispatch_data.data();
-    [[maybe_unused]] auto gv_last = gv_first + Policy::dispatch_data.size();
+    Registry::dispatch_data.resize(dispatch_data_size);
+    auto gv_first = Registry::dispatch_data.data();
+    [[maybe_unused]] auto gv_last = gv_first + Registry::dispatch_data.size();
     auto gv_iter = gv_first;
 
     ++trace << "Initializing multi-method dispatch tables at " << gv_iter
@@ -1096,7 +1119,7 @@ void compiler<Policy>::write_global_data() {
             std::copy(m.strides.begin(), m.strides.end(), strides_iter);
 
             if constexpr (trace_enabled) {
-                ++trace << rflush(4, Policy::dispatch_data.size()) << " "
+                ++trace << rflush(4, Registry::dispatch_data.size()) << " "
                         << " method #" << m.dispatch_table[0]->method_index
                         << " " << type_name(m.info->method_type) << "\n";
                 indent _(trace);
@@ -1185,16 +1208,17 @@ void compiler<Policy>::write_global_data() {
         }
     }
 
-    ++trace << rflush(4, Policy::dispatch_data.size()) << " " << gv_iter
+    ++trace << rflush(4, Registry::dispatch_data.size()) << " " << gv_iter
             << " end\n";
 
-    if constexpr (Policy::template has_facet<extern_vptr>) {
-        Policy::register_vptrs(classes.begin(), classes.end());
+    if constexpr (Registry::template has_policy<extern_vptr>) {
+        Registry::template policy<extern_vptr>::register_vptrs(
+            classes.begin(), classes.end());
     }
 }
 
-template<class Policy>
-void compiler<Policy>::select_dominant_overriders(
+template<class Registry>
+void compiler<Registry>::select_dominant_overriders(
     std::vector<overrider*>& candidates, std::size_t& pick,
     std::size_t& remaining) {
 
@@ -1251,9 +1275,9 @@ void compiler<Policy>::select_dominant_overriders(
     }
 }
 
-template<class Policy>
-auto compiler<Policy>::is_more_specific(const overrider* a, const overrider* b)
-    -> bool {
+template<class Registry>
+auto compiler<Registry>::is_more_specific(
+    const overrider* a, const overrider* b) -> bool {
     bool result = false;
 
     auto a_iter = a->vp.begin(), a_last = a->vp.end(), b_iter = b->vp.begin();
@@ -1274,8 +1298,9 @@ auto compiler<Policy>::is_more_specific(const overrider* a, const overrider* b)
     return result;
 }
 
-template<class Policy>
-auto compiler<Policy>::is_base(const overrider* a, const overrider* b) -> bool {
+template<class Registry>
+auto compiler<Registry>::is_base(const overrider* a, const overrider* b)
+    -> bool {
     bool result = false;
 
     auto a_iter = a->vp.begin(), a_last = a->vp.end(), b_iter = b->vp.begin();
@@ -1294,8 +1319,8 @@ auto compiler<Policy>::is_base(const overrider* a, const overrider* b) -> bool {
     return result;
 }
 
-template<class Policy>
-void compiler<Policy>::print(const method_report& report) const {
+template<class Registry>
+void compiler<Registry>::print(const method_report& report) const {
     ++trace;
 
     if (report.cells) {
@@ -1307,19 +1332,19 @@ void compiler<Policy>::print(const method_report& report) const {
           << " ambiguous\n";
 }
 
-template<class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
-auto initialize() -> compiler<Policy> {
-    compiler<Policy> compiler;
+template<class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
+auto initialize() -> compiler<Registry> {
+    compiler<Registry> compiler;
     compiler.initialize();
 
     return compiler;
 }
 
-template<class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
+template<class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
 auto finalize() -> void {
-    mp11::mp_for_each<typename Policy::facets>(
-        [](auto facet) { decltype(facet)::finalize(); });
-    Policy::dispatch_data.clear();
+    mp11::mp_for_each<typename Registry::policies>(
+        [](auto policy) { decltype(policy)::finalize(); });
+    Registry::dispatch_data.clear();
 }
 
 } // namespace boost::openmethod

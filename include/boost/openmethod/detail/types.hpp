@@ -18,10 +18,10 @@ using vptr_type = const std::uintptr_t*;
 template<typename T>
 struct virtual_;
 
-template<class Class, class Policy>
+template<class Class, class Registry>
 class virtual_ptr;
 
-template<typename T, class Policy>
+template<typename T, class Registry>
 struct virtual_traits;
 
 // -----------------------------------------------------------------------------

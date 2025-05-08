@@ -39,5 +39,5 @@ auto BOOST_OPENMETHOD_NAME(NAME)_guide(...)
 NOTE: `NAME` must be an *identifier*. Qualified names are not allowed.
 
 NOTE: The default value for `POLICY` is the value of
-`BOOST_OPENMETHOD_DEFAULT_POLICY` at the point `<boost/openmethod/core.hpp>` is
+`BOOST_OPENMETHOD_DEFAULT_REGISTRY` at the point `<boost/openmethod/core.hpp>` is
 included. Changing the value of this symbol has no effect after that point.

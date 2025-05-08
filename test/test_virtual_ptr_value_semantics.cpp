@@ -8,127 +8,129 @@
 
 #include "test_virtual_ptr_value_semantics.hpp"
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(plain_virtual_ptr_value, Policy, test_policies) {
-    static_assert(std::is_same_v<
-                  typename virtual_ptr<Animal, Policy>::element_type, Animal>);
-    static_assert(std::is_same_v<
-                  decltype(std::declval<virtual_ptr<Animal, Policy>>().get()),
-                  Animal*>);
-    static_assert(!virtual_ptr<Animal, Policy>::is_smart_ptr);
-    static_assert(!virtual_ptr<const Animal, Policy>::is_smart_ptr);
+BOOST_AUTO_TEST_CASE_TEMPLATE(
+    plain_virtual_ptr_value, Registry, test_policies) {
     static_assert(
         std::is_same_v<
-            decltype(*std::declval<virtual_ptr<Animal, Policy>>()), Animal&>);
+            typename virtual_ptr<Animal, Registry>::element_type, Animal>);
+    static_assert(std::is_same_v<
+                  decltype(std::declval<virtual_ptr<Animal, Registry>>().get()),
+                  Animal*>);
+    static_assert(!virtual_ptr<Animal, Registry>::is_smart_ptr);
+    static_assert(!virtual_ptr<const Animal, Registry>::is_smart_ptr);
+    static_assert(
+        std::is_same_v<
+            decltype(*std::declval<virtual_ptr<Animal, Registry>>()), Animal&>);
 
-    init_test<Policy>();
+    init_test<Registry>();
 
     // -------------------------------------------------------------------------
     // construction and assignment from plain references and pointers
 
     {
-        virtual_ptr<Dog, Policy> p{nullptr};
+        virtual_ptr<Dog, Registry> p{nullptr};
         BOOST_TEST(p.get() == nullptr);
         BOOST_TEST(p.vptr() == nullptr);
     }
 
     {
         Dog snoopy;
-        virtual_ptr<Dog, Policy> p(snoopy);
+        virtual_ptr<Dog, Registry> p(snoopy);
         BOOST_TEST(p.get() == &snoopy);
-        BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
+        BOOST_TEST(p.vptr() == Registry::template static_vptr<Dog>);
 
         Dog hector;
         p = hector;
         BOOST_TEST(p.get() == &hector);
-        BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
+        BOOST_TEST(p.vptr() == Registry::template static_vptr<Dog>);
     }
 
     {
         Dog snoopy;
-        virtual_ptr<Animal, Policy> p(snoopy);
+        virtual_ptr<Animal, Registry> p(snoopy);
         BOOST_TEST(p.get() == &snoopy);
-        BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
+        BOOST_TEST(p.vptr() == Registry::template static_vptr<Dog>);
 
         Cat felix;
         p = felix;
         BOOST_TEST(p.get() == &felix);
-        BOOST_TEST(p.vptr() == Policy::template static_vptr<Cat>);
+        BOOST_TEST(p.vptr() == Registry::template static_vptr<Cat>);
     }
 
     {
         const Dog snoopy;
-        virtual_ptr<const Dog, Policy> p(snoopy);
+        virtual_ptr<const Dog, Registry> p(snoopy);
         BOOST_TEST(p.get() == &snoopy);
-        BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
+        BOOST_TEST(p.vptr() == Registry::template static_vptr<Dog>);
 
         const Dog hector;
         p = hector;
         BOOST_TEST(p.get() == &hector);
-        BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
+        BOOST_TEST(p.vptr() == Registry::template static_vptr<Dog>);
     }
 
     {
         const Dog snoopy;
-        virtual_ptr<const Animal, Policy> p(snoopy);
+        virtual_ptr<const Animal, Registry> p(snoopy);
         BOOST_TEST(p.get() == &snoopy);
-        BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
+        BOOST_TEST(p.vptr() == Registry::template static_vptr<Dog>);
 
         const Cat felix;
         p = felix;
         BOOST_TEST(p.get() == &felix);
-        BOOST_TEST(p.vptr() == Policy::template static_vptr<Cat>);
+        BOOST_TEST(p.vptr() == Registry::template static_vptr<Cat>);
     }
 
     {
         Dog snoopy;
-        virtual_ptr<Dog, Policy> p(&snoopy);
+        virtual_ptr<Dog, Registry> p(&snoopy);
         BOOST_TEST(p.get() == &snoopy);
-        BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
+        BOOST_TEST(p.vptr() == Registry::template static_vptr<Dog>);
 
         Dog hector;
         p = &hector;
         BOOST_TEST(p.get() == &hector);
-        BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
+        BOOST_TEST(p.vptr() == Registry::template static_vptr<Dog>);
     }
 
     {
         Dog snoopy;
-        virtual_ptr<Animal, Policy> p(&snoopy);
+        virtual_ptr<Animal, Registry> p(&snoopy);
         BOOST_TEST(p.get() == &snoopy);
-        BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
+        BOOST_TEST(p.vptr() == Registry::template static_vptr<Dog>);
 
         Cat felix;
         p = &felix;
         BOOST_TEST(p.get() == &felix);
-        BOOST_TEST(p.vptr() == Policy::template static_vptr<Cat>);
+        BOOST_TEST(p.vptr() == Registry::template static_vptr<Cat>);
     }
 
     {
         const Dog snoopy;
-        virtual_ptr<const Dog, Policy> p(&snoopy);
+        virtual_ptr<const Dog, Registry> p(&snoopy);
         BOOST_TEST(p.get() == &snoopy);
-        BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
+        BOOST_TEST(p.vptr() == Registry::template static_vptr<Dog>);
 
         const Dog hector;
         p = &hector;
         BOOST_TEST(p.get() == &hector);
-        BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
+        BOOST_TEST(p.vptr() == Registry::template static_vptr<Dog>);
     }
 
     {
         const Dog snoopy;
-        virtual_ptr<const Animal, Policy> p(&snoopy);
+        virtual_ptr<const Animal, Registry> p(&snoopy);
         BOOST_TEST(p.get() == &snoopy);
-        BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
+        BOOST_TEST(p.vptr() == Registry::template static_vptr<Dog>);
 
         const Cat felix;
         p = &felix;
         BOOST_TEST(p.get() == &felix);
-        BOOST_TEST(p.vptr() == Policy::template static_vptr<Cat>);
+        BOOST_TEST(p.vptr() == Registry::template static_vptr<Cat>);
     }
 
-    // virtual_ptr<Dog, Policy> p{Dog()};
-    static_assert(!construct_assign_ok<virtual_ptr<Dog, Policy>, Dog&&>);
+    // virtual_ptr<Dog, Registry> p{Dog()};
+    static_assert(!construct_assign_ok<virtual_ptr<Dog, Registry>, Dog&&>);
 
     // -------------------------------------------------------------------------
     // construction and assignment from other virtual_ptr
@@ -136,62 +138,62 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(plain_virtual_ptr_value, Policy, test_policies) {
     {
         // virtual_ptr<Dog>(const virtual_ptr<Dog>&)
         Dog snoopy;
-        const virtual_ptr<Dog, Policy> p(snoopy);
-        virtual_ptr<Dog, Policy> q(p);
+        const virtual_ptr<Dog, Registry> p(snoopy);
+        virtual_ptr<Dog, Registry> q(p);
         BOOST_TEST(q.get() == &snoopy);
-        BOOST_TEST(q.vptr() == Policy::template static_vptr<Dog>);
+        BOOST_TEST(q.vptr() == Registry::template static_vptr<Dog>);
     }
 
     {
         // virtual_ptr<Dog>(virtual_ptr<Dog>&)
         Dog snoopy;
-        virtual_ptr<Dog, Policy> p(snoopy);
-        virtual_ptr<Dog, Policy> q(p);
+        virtual_ptr<Dog, Registry> p(snoopy);
+        virtual_ptr<Dog, Registry> q(p);
         BOOST_TEST(q.get() == &snoopy);
-        BOOST_TEST(q.vptr() == Policy::template static_vptr<Dog>);
+        BOOST_TEST(q.vptr() == Registry::template static_vptr<Dog>);
     }
 
     {
         // virtual_ptr<Dog>(virtual_ptr<Dog>&&)
         Dog snoopy;
-        virtual_ptr<Dog, Policy> p(snoopy);
-        virtual_ptr<Dog, Policy> q(std::move(p));
+        virtual_ptr<Dog, Registry> p(snoopy);
+        virtual_ptr<Dog, Registry> q(std::move(p));
         BOOST_TEST(q.get() == &snoopy);
-        BOOST_TEST(q.vptr() == Policy::template static_vptr<Dog>);
+        BOOST_TEST(q.vptr() == Registry::template static_vptr<Dog>);
         BOOST_TEST(p.get() == &snoopy);
-        BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
+        BOOST_TEST(p.vptr() == Registry::template static_vptr<Dog>);
     }
 
     {
         // virtual_ptr<Animal>(const virtual_ptr<Dog>&)
         Dog snoopy;
-        const virtual_ptr<Dog, Policy> p(snoopy);
-        virtual_ptr<Animal, Policy> base(p);
+        const virtual_ptr<Dog, Registry> p(snoopy);
+        virtual_ptr<Animal, Registry> base(p);
         BOOST_TEST(base.get() == &snoopy);
-        BOOST_TEST(base.vptr() == Policy::template static_vptr<Dog>);
+        BOOST_TEST(base.vptr() == Registry::template static_vptr<Dog>);
     }
 
     {
         // virtual_ptr<const Dog>(const virtual_ptr<Dog>&)
         Dog snoopy;
-        const virtual_ptr<Dog, Policy> p(snoopy);
-        virtual_ptr<const Dog, Policy> const_q(p);
+        const virtual_ptr<Dog, Registry> p(snoopy);
+        virtual_ptr<const Dog, Registry> const_q(p);
         BOOST_TEST(const_q.get() == &snoopy);
-        BOOST_TEST(const_q.vptr() == Policy::template static_vptr<Dog>);
+        BOOST_TEST(const_q.vptr() == Registry::template static_vptr<Dog>);
     }
 
     {
         // virtual_ptr<const Animal>(const virtual_ptr<Dog>&)
         Dog snoopy;
-        const virtual_ptr<Dog, Policy> p(snoopy);
-        virtual_ptr<const Animal, Policy> const_base_q(p);
+        const virtual_ptr<Dog, Registry> p(snoopy);
+        virtual_ptr<const Animal, Registry> const_base_q(p);
         BOOST_TEST(const_base_q.get() == &snoopy);
-        BOOST_TEST(const_base_q.vptr() == Policy::template static_vptr<Dog>);
+        BOOST_TEST(const_base_q.vptr() == Registry::template static_vptr<Dog>);
     }
 
     {
         // virtual_ptr<Dog>()
-        virtual_ptr<Dog, Policy> p{nullptr};
+        virtual_ptr<Dog, Registry> p{nullptr};
         BOOST_TEST(p.get() == nullptr);
         BOOST_TEST(p.vptr() == nullptr);
     }
@@ -200,86 +202,86 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(plain_virtual_ptr_value, Policy, test_policies) {
     // assignment
 
     {
-        virtual_ptr<Dog, Policy> p;
+        virtual_ptr<Dog, Registry> p;
         Dog snoopy;
         p = snoopy;
         BOOST_TEST(p.get() == &snoopy);
-        BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
+        BOOST_TEST(p.vptr() == Registry::template static_vptr<Dog>);
     }
 
     {
-        virtual_ptr<Dog, Policy> p;
+        virtual_ptr<Dog, Registry> p;
         Dog snoopy;
         p = &snoopy;
         BOOST_TEST(p.get() == &snoopy);
-        BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
+        BOOST_TEST(p.vptr() == Registry::template static_vptr<Dog>);
     }
 
     {
-        virtual_ptr<Animal, Policy> p;
+        virtual_ptr<Animal, Registry> p;
         Dog snoopy;
         p = snoopy;
         BOOST_TEST(p.get() == &snoopy);
-        BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
+        BOOST_TEST(p.vptr() == Registry::template static_vptr<Dog>);
     }
 
     {
-        virtual_ptr<Animal, Policy> p;
+        virtual_ptr<Animal, Registry> p;
         Dog snoopy;
         p = &snoopy;
         BOOST_TEST(p.get() == &snoopy);
-        BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
+        BOOST_TEST(p.vptr() == Registry::template static_vptr<Dog>);
     }
 
     {
         Dog snoopy;
-        virtual_ptr<Animal, Policy> p(snoopy);
+        virtual_ptr<Animal, Registry> p(snoopy);
         p = nullptr;
         BOOST_TEST(p.get() == nullptr);
         BOOST_TEST(p.vptr() == nullptr);
     }
 
-    static_assert(!construct_assign_ok<virtual_ptr<Dog, Policy>, const Dog&>);
-    static_assert(!construct_assign_ok<virtual_ptr<Dog, Policy>, const Dog*>);
+    static_assert(!construct_assign_ok<virtual_ptr<Dog, Registry>, const Dog&>);
+    static_assert(!construct_assign_ok<virtual_ptr<Dog, Registry>, const Dog*>);
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(indirect_virtual_ptr, Policy, test_policies) {
+BOOST_AUTO_TEST_CASE_TEMPLATE(indirect_virtual_ptr, Registry, test_policies) {
     BOOST_TEST_MESSAGE(
-        "Policy = " << boost::core::demangle(typeid(Policy).name()));
+        "Registry = " << boost::core::demangle(typeid(Registry).name()));
 
-    init_test<Policy>();
+    init_test<Registry>();
 
     Dog snoopy;
-    virtual_ptr<Dog, Policy> p(snoopy);
+    virtual_ptr<Dog, Registry> p(snoopy);
 
     BOOST_TEST_MESSAGE("After first call to initialize:");
     BOOST_TEST_MESSAGE("p.vptr() = " << p.vptr());
     BOOST_TEST_MESSAGE(
-        "static_vptr<Dog> = " << Policy::template static_vptr<Dog>);
-    BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
+        "static_vptr<Dog> = " << Registry::template static_vptr<Dog>);
+    BOOST_TEST(p.vptr() == Registry::template static_vptr<Dog>);
 
     // Add a class, to make sure dispatch data is not re-constructed in the same
     // place with the same values:
     struct Cat : Animal {};
-    BOOST_OPENMETHOD_CLASSES(Animal, Cat, Policy);
+    BOOST_OPENMETHOD_CLASSES(Animal, Cat, Registry);
 
-    init_test<Policy>();
+    init_test<Registry>();
 
     BOOST_TEST_MESSAGE("After second call to initialize:");
     BOOST_TEST_MESSAGE("p.vptr() = " << p.vptr());
     BOOST_TEST_MESSAGE(
-        "static_vptr<Dog> = " << Policy::template static_vptr<Dog>);
+        "static_vptr<Dog> = " << Registry::template static_vptr<Dog>);
 
-    if constexpr (Policy::template has_facet<indirect_vptr>) {
-        BOOST_TEST(p.vptr() == Policy::template static_vptr<Dog>);
+    if constexpr (Registry::template has_policy<indirect_vptr>) {
+        BOOST_TEST(p.vptr() == Registry::template static_vptr<Dog>);
     } else {
-        BOOST_TEST(p.vptr() != Policy::template static_vptr<Dog>);
+        BOOST_TEST(p.vptr() != Registry::template static_vptr<Dog>);
     }
 }
 
 BOOST_AUTO_TEST_CASE(virtual_ptr_final_error) {
-    auto prev_handler = default_policy::set_error_handler(
-        [](const default_policy::error_variant& ev) {
+    auto prev_handler =
+        default_registry::ErrorHandler::set_error_handler([](const auto& ev) {
             if (auto error = std::get_if<type_mismatch_error>(&ev)) {
                 static_assert(std::is_same_v<
                               decltype(error), const type_mismatch_error*>);
@@ -287,7 +289,7 @@ BOOST_AUTO_TEST_CASE(virtual_ptr_final_error) {
             }
         });
 
-    init_test<default_policy>();
+    init_test<default_registry>();
     bool threw = false;
 
     try {
@@ -295,16 +297,16 @@ BOOST_AUTO_TEST_CASE(virtual_ptr_final_error) {
         Animal& animal = snoopy;
         virtual_ptr<Animal>::final(animal);
     } catch (const type_mismatch_error& error) {
-        default_policy::set_error_handler(prev_handler);
+        default_registry::ErrorHandler::set_error_handler(prev_handler);
         BOOST_TEST(error.type == reinterpret_cast<type_id>(&typeid(Dog)));
         threw = true;
     } catch (...) {
-        default_policy::set_error_handler(prev_handler);
+        default_registry::ErrorHandler::set_error_handler(prev_handler);
         BOOST_FAIL("wrong exception");
         return;
     }
 
-    if constexpr (default_policy::has_facet<runtime_checks>) {
+    if constexpr (default_registry::RuntimeChecks) {
         if (!threw) {
             BOOST_FAIL("should have thrown");
         }

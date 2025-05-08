@@ -33,8 +33,8 @@ struct shared_ptr_traits<const std::shared_ptr<Class>&> {
 
 } // namespace detail
 
-template<class Class, class Policy>
-struct virtual_traits<const std::shared_ptr<Class>&, Policy> {
+template<class Class, class Registry>
+struct virtual_traits<const std::shared_ptr<Class>&, Registry> {
     using virtual_type = std::remove_cv_t<Class>;
 
     static auto peek(const std::shared_ptr<Class>& arg) -> const Class& {
@@ -73,8 +73,8 @@ struct virtual_traits<const std::shared_ptr<Class>&, Policy> {
     }
 };
 
-template<typename Class, class Policy>
-struct virtual_traits<std::shared_ptr<Class>, Policy> {
+template<typename Class, class Registry>
+struct virtual_traits<std::shared_ptr<Class>, Registry> {
     using virtual_type = std::remove_cv_t<Class>;
 
     static auto peek(const std::shared_ptr<Class>& arg) -> const Class& {
@@ -113,14 +113,14 @@ struct virtual_traits<std::shared_ptr<Class>, Policy> {
     }
 };
 
-template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
-using shared_virtual_ptr = virtual_ptr<std::shared_ptr<Class>, Policy>;
+template<class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
+using shared_virtual_ptr = virtual_ptr<std::shared_ptr<Class>, Registry>;
 
 template<
-    class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY, typename... T>
+    class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY, typename... T>
 inline auto make_shared_virtual(T&&... args)
-    -> shared_virtual_ptr<Class, Policy> {
-    return shared_virtual_ptr<Class, Policy>::final(
+    -> shared_virtual_ptr<Class, Registry> {
+    return shared_virtual_ptr<Class, Registry>::final(
         std::make_shared<Class>(std::forward<T>(args)...));
 }
 

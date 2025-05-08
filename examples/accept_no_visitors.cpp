@@ -116,7 +116,7 @@ auto main() -> int {
 
     cout << as_forth(expr) << " = " << as_lisp(expr) << " = " << value(expr)
          << "\n";
-    // error_output:
+    // output:
     // 2 3 4 + * = (times 2 (plus 3 4)) = 14
 
     return 0;

@@ -24,7 +24,7 @@ the `include` directory to your project's include path.
 #### boost::openmethod
 
 The library's main namespace. Contains `method`, `virtual_ptr` and
-`virtual_ptr_traits`, `use_classes`, the `default_policy`, etc.
+`virtual_ptr_traits`, `use_classes`, the `default_registry`, etc.
 
 #### boost::openmethod::policies
 
@@ -37,10 +37,10 @@ Contains the policy framework.
 The library's main header. Provides `method`, `virtual_ptr` and
 `virtual_ptr_traits`, `use_classes`, the default policy, etc.
 
-If `BOOST_OPENMETHOD_DEFAULT_POLICY` is defined before including this header,
+If `BOOST_OPENMETHOD_DEFAULT_REGISTRY` is defined before including this header,
 its value is used as the default value for the `Policy` template parameter
-throughout the code. Otherwise, `boost::openmethod::default_policy` is used.
-Setting `BOOST_OPENMETHOD_DEFAULT_POLICY` after including the core header has no
+throughout the code. Otherwise, `boost::openmethod::default_registry` is used.
+Setting `BOOST_OPENMETHOD_DEFAULT_REGISTRY` after including the core header has no
 effect.
 
 #### <boost/openmethod/macros.hpp>
@@ -91,7 +91,7 @@ manner as native virtual functions.
 #### <boost/openmethod/policies.hpp>
 
 Provides the `debug` and `release` policies in the `boost::openmethod::policies`
-namespace, and `default_policy` in the `boost::openmethod` namespace, which is
+namespace, and `default_registry` in the `boost::openmethod` namespace, which is
 an alias to either `debug` or `release`, depending on the value of the
 preprocessor symbol `NDEBUG`.
 
@@ -135,10 +135,10 @@ Implements the `error_handler` facet by throwing an exception.
 
 #### <boost/openmethod/policies/basic_error_output.hpp>
 
-Implements the `error_output` facet using a lightweight version of
+Implements the `output` facet using a lightweight version of
 `std::ostream`.
 
 #### <boost/openmethod/policies/basic_trace_output.hpp>
 
-Implements the `trace_output` facet using a lightweight version of
+Implements the `trace` facet using a lightweight version of
 `std::ostream`.

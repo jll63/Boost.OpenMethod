@@ -831,7 +831,7 @@ inline auto operator<<(ostdstream& os, std::size_t value) -> ostdstream& {
 namespace boost::openmethod::policies {
 
 template<class Policy, typename Stream = detail::ostderr>
-struct basic_error_output : virtual error_output {
+struct basic_error_output : error_output {
     inline static Stream error_stream;
 };
 
@@ -863,7 +863,10 @@ namespace boost::openmethod::policies {
 
 template<class Policy, typename Stream = detail::ostderr>
 struct basic_trace_output : virtual trace_output {
-    inline static bool trace_enabled;
+    inline static bool trace_enabled = []() {
+        auto env = getenv("BOOST_OPENMETHOD_TRACE");
+        return env && *env++ == '1' && *env++ == 0;
+    }();
     inline static Stream trace_stream;
 };
 
@@ -1099,8 +1102,6 @@ class vectored_error_handler : public error_handler {
     }
 
   private:
-    inline static function_type fn;
-
     static auto default_handler(const error_variant& error_v) {
         using namespace detail;
         using namespace policies;
@@ -1137,7 +1138,13 @@ class vectored_error_handler : public error_handler {
             }
         }
     }
+
+    static function_type fn; // Cannot be inline static because it confuses MSVC
 };
+
+template<class Policy>
+typename vectored_error_handler<Policy>::function_type
+vectored_error_handler<Policy>::fn = default_handler;
 
 } // namespace boost::openmethod::policies
 
@@ -1152,10 +1159,9 @@ struct release : basic_policy<
                      release, std_rtti, fast_perfect_hash<release>,
                      vptr_vector<release>, vectored_error_handler<release>> {};
 
-struct debug : release::with<
+struct debug : release::fork<debug>::with<
                    runtime_checks, basic_error_output<debug>,
-                   basic_trace_output<debug>, vectored_error_handler<debug>,
-                   fast_perfect_hash<debug>, vptr_vector<debug>> {};
+                   basic_trace_output<debug>> {};
 
 } // namespace policies
 
@@ -1501,7 +1507,7 @@ class virtual_ptr_impl {
         class Other,
         typename = std::enable_if_t<
             std::is_constructible_v<Class*, Other*> &&
-            std::is_polymorphic_v<Class>>>
+            Policy::template is_polymorphic<Class>>>
     virtual_ptr_impl(Other& other)
         : vp(box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(other))),
           obj(&other) {
@@ -1513,7 +1519,7 @@ class virtual_ptr_impl {
             std::is_constructible_v<
                 Class*,
                 decltype(std::declval<virtual_ptr<Other, Policy>>().get())> &&
-            std::is_polymorphic_v<Class>>>
+            Policy::template is_polymorphic<Class>>>
     virtual_ptr_impl(Other* other)
         : vp(box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(*other))),
           obj(other) {
@@ -1556,7 +1562,7 @@ class virtual_ptr_impl {
         class Other,
         typename = std::enable_if_t<
             std::is_assignable_v<Class*, Other*> &&
-            std::is_polymorphic_v<Class>>>
+            Policy::template is_polymorphic<Class>>>
     virtual_ptr_impl& operator=(Other& other) {
         obj = &other;
         vp = box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(other));
@@ -1567,7 +1573,7 @@ class virtual_ptr_impl {
         class Other,
         typename = std::enable_if_t<
             std::is_assignable_v<Class*, Other*> &&
-            std::is_polymorphic_v<Class>>>
+            Policy::template is_polymorphic<Class>>>
     virtual_ptr_impl& operator=(Other* other) {
         obj = other;
         vp = box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(*other));
@@ -1681,7 +1687,7 @@ class virtual_ptr_impl<
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Policy> &&
             std::is_constructible_v<Class, const Other&> &&
-            std::is_polymorphic_v<element_type>>>
+            Policy::template is_polymorphic<element_type>>>
     virtual_ptr_impl(const Other& other)
         : vp(box_vptr<use_indirect_vptrs>(
               other ? Policy::dynamic_vptr(*other) : null_vptr)),
@@ -1693,7 +1699,7 @@ class virtual_ptr_impl<
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Policy> &&
             std::is_constructible_v<Class, Other&> &&
-            std::is_polymorphic_v<element_type>>>
+            Policy::template is_polymorphic<element_type>>>
     virtual_ptr_impl(Other& other)
         : vp(box_vptr<use_indirect_vptrs>(
               other ? Policy::dynamic_vptr(*other) : null_vptr)),
@@ -1705,7 +1711,7 @@ class virtual_ptr_impl<
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Policy> &&
             std::is_constructible_v<Class, Other&&> &&
-            std::is_polymorphic_v<element_type>>>
+            Policy::template is_polymorphic<element_type>>>
     virtual_ptr_impl(Other&& other)
         : vp(box_vptr<use_indirect_vptrs>(
               other ? Policy::dynamic_vptr(*other) : null_vptr)),
@@ -1756,7 +1762,7 @@ class virtual_ptr_impl<
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Policy> &&
             std::is_assignable_v<Class, const Other&> &&
-            std::is_polymorphic_v<element_type>>>
+            Policy::template is_polymorphic<element_type>>>
     virtual_ptr_impl& operator=(const Other& other) {
         obj = other;
         vp = box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(*other));
@@ -1768,7 +1774,7 @@ class virtual_ptr_impl<
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Policy> &&
             std::is_assignable_v<Class, Other&&> &&
-            std::is_polymorphic_v<element_type>>>
+            Policy::template is_polymorphic<element_type>>>
     virtual_ptr_impl& operator=(Other&& other) {
         vp = box_vptr<use_indirect_vptrs>(
             other ? Policy::dynamic_vptr(*other) : null_vptr);
@@ -2346,13 +2352,7 @@ method<Name(Parameters...), ReturnType, Policy>::resolve_uni(
     using namespace boost::mp11;
 
     if constexpr (is_virtual<mp_first<MethodArgList>>::value) {
-        vptr_type vtbl;
-
-        if constexpr (is_virtual_ptr<ArgType>) {
-            vtbl = arg.vptr();
-        } else {
-            vtbl = vptr<ArgType>(arg);
-        }
+        vptr_type vtbl = vptr<ArgType>(arg);
 
         if constexpr (has_static_offsets<method>::value) {
             if constexpr (Policy::template has_facet<
@@ -2381,14 +2381,7 @@ method<Name(Parameters...), ReturnType, Policy>::resolve_multi_first(
     using namespace boost::mp11;
 
     if constexpr (is_virtual<mp_first<MethodArgList>>::value) {
-        vptr_type vtbl;
-
-        if constexpr (is_virtual_ptr<ArgType>) {
-            vtbl = arg.vptr();
-        } else {
-            vtbl = vptr<ArgType>(arg);
-        }
-
+        vptr_type vtbl = vptr<ArgType>(arg);
         std::size_t slot;
 
         if constexpr (has_static_offsets<method>::value) {
@@ -2429,14 +2422,7 @@ method<Name(Parameters...), ReturnType, Policy>::resolve_multi_next(
     using namespace boost::mp11;
 
     if constexpr (is_virtual<mp_first<MethodArgList>>::value) {
-        vptr_type vtbl;
-
-        if constexpr (is_virtual_ptr<ArgType>) {
-            vtbl = arg.vptr();
-        } else {
-            vtbl = vptr<ArgType>(arg);
-        }
-
+        vptr_type vtbl = vptr<ArgType>(arg);
         std::size_t slot, stride;
 
         if constexpr (has_static_offsets<method>::value) {

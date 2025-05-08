@@ -799,7 +799,7 @@ inline auto operator<<(ostdstream& os, std::size_t value) -> ostdstream& {
 namespace boost::openmethod::policies {
 
 template<class Policy, typename Stream = detail::ostderr>
-struct basic_error_output : virtual error_output {
+struct basic_error_output : error_output {
     inline static Stream error_stream;
 };
 
@@ -831,7 +831,10 @@ namespace boost::openmethod::policies {
 
 template<class Policy, typename Stream = detail::ostderr>
 struct basic_trace_output : virtual trace_output {
-    inline static bool trace_enabled;
+    inline static bool trace_enabled = []() {
+        auto env = getenv("BOOST_OPENMETHOD_TRACE");
+        return env && *env++ == '1' && *env++ == 0;
+    }();
     inline static Stream trace_stream;
 };
 
@@ -1067,8 +1070,6 @@ class vectored_error_handler : public error_handler {
     }
 
   private:
-    inline static function_type fn;
-
     static auto default_handler(const error_variant& error_v) {
         using namespace detail;
         using namespace policies;
@@ -1105,7 +1106,13 @@ class vectored_error_handler : public error_handler {
             }
         }
     }
+
+    static function_type fn; // Cannot be inline static because it confuses MSVC
 };
+
+template<class Policy>
+typename vectored_error_handler<Policy>::function_type
+vectored_error_handler<Policy>::fn = default_handler;
 
 } // namespace boost::openmethod::policies
 
@@ -1120,10 +1127,9 @@ struct release : basic_policy<
                      release, std_rtti, fast_perfect_hash<release>,
                      vptr_vector<release>, vectored_error_handler<release>> {};
 
-struct debug : release::with<
+struct debug : release::fork<debug>::with<
                    runtime_checks, basic_error_output<debug>,
-                   basic_trace_output<debug>, vectored_error_handler<debug>,
-                   fast_perfect_hash<debug>, vptr_vector<debug>> {};
+                   basic_trace_output<debug>> {};
 
 } // namespace policies
 

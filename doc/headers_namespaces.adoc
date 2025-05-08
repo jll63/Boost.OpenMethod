@@ -27,7 +27,7 @@ it is "called" only in a non-evaluated context.
 * It defines an inline function with the same name and signature as the
 method (with the `virtual_` decorators stripped).
 
-Next, let's implement the `Cat` class, and a derived class, `Chhetah`, in the
+Next, let's implement the `Cat` class, and a derived class, `Cheetah`, in the
 `felines` namespace:
 
 [source,c++]
@@ -140,7 +140,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 
 ...will fail to compile, with an error like "reference to
 'poke_boost_openmethod_overriders' is ambiguous". That is because the overrider
-containers exist in both the canides and felides namespaces, with the same name.
+containers exist in both the canines and felines namespaces, with the same name.
 
 Finally, the names passed as first arguments to the BOOST_OPENMETHOD and
 BOOST_OPENMETHOD_OVERRIDE macros must be identifiers. Qualified names are not

@@ -53,11 +53,11 @@ The `debug` policy contains the same facets as `release`, plus a few more:
 | (itself)
 | enables runtime checks
 
-| error_output
+| output
 | basic_error_output
 | prints error descriptions to `stderr`
 
-| trace_output
+| trace
 | basic_trace_output
 | enables `initialize` to print information about dispatch table construction to  `stderr`
 
@@ -81,11 +81,11 @@ struct debug : release::fork<debug>::with<
 }
 ----
 
-`boost::openmethod::default_policy` is an alias to `release` or `debug`,
+`boost::openmethod::default_registry` is an alias to `release` or `debug`,
 depending on the value of preprocessor symbols `NDEBUG`. The default policy can
 be overriden by defining the macroprocessor symbol
-`BOOST_OPENMETHOD_DEFAULT_POLICY` _before_ including
+`BOOST_OPENMETHOD_DEFAULT_REGISTRY` _before_ including
 `<boost/openmethod/core.hpp>`. The value of the symbol is used as a default
 template parameter for `use_classes`, `method`, `virtual_ptr`, and others. Once
-the `core` header has been included, changing `BOOST_OPENMETHOD_DEFAULT_POLICY`
+the `core` header has been included, changing `BOOST_OPENMETHOD_DEFAULT_REGISTRY`
 has no effect.

@@ -6,7 +6,7 @@
 #ifndef BOOST_OPENMETHOD_POLICY_FAST_PERFECT_HASH_HPP
 #define BOOST_OPENMETHOD_POLICY_FAST_PERFECT_HASH_HPP
 
-#include <boost/openmethod/policies/basic_policy.hpp>
+#include <boost/openmethod/registry.hpp>
 
 #include <limits>
 #include <random>
@@ -15,75 +15,78 @@ namespace boost::openmethod {
 
 namespace detail {
 
-template<class Policy>
+template<class Registry>
 std::vector<type_id> fast_perfect_hash_control;
 
 }
 
 namespace policies {
 
-template<class Policy>
-class fast_perfect_hash : public type_hash {
+struct fast_perfect_hash : type_hash {
+    template<class Registry>
+    struct fn {
 
-    inline static type_id hash_mult;
-    inline static std::size_t hash_shift;
-    inline static std::size_t hash_min;
-    inline static std::size_t hash_max;
-    inline static void check(std::size_t index, type_id type);
+        inline static type_id hash_mult;
+        inline static std::size_t hash_shift;
+        inline static std::size_t hash_min;
+        inline static std::size_t hash_max;
+        inline static void check(std::size_t index, type_id type);
 
-  public:
-    struct report {
-        std::size_t first, last;
+      public:
+        struct report {
+            std::size_t first, last;
+        };
+
+        BOOST_FORCEINLINE
+        static auto hash_type_id(type_id type) -> type_id {
+            auto index = (hash_mult * type) >> hash_shift;
+
+            if constexpr (Registry::template has_policy<runtime_checks>) {
+                check(index, type);
+            }
+
+            return index;
+        }
+
+        template<typename ForwardIterator>
+        static auto
+        hash_initialize(ForwardIterator first, ForwardIterator last) {
+            if constexpr (Registry::template has_policy<runtime_checks>) {
+                hash_initialize(
+                    first, last, detail::fast_perfect_hash_control<Registry>);
+            } else {
+                std::vector<type_id> buckets;
+                hash_initialize(first, last, buckets);
+            }
+
+            return report{hash_min, hash_max};
+        }
+
+        template<typename ForwardIterator>
+        static void hash_initialize(
+            ForwardIterator first, ForwardIterator last,
+            std::vector<type_id>& buckets);
+
+        static auto finalize() -> void {
+            detail::fast_perfect_hash_control<Registry>.clear();
+        }
     };
-
-    BOOST_FORCEINLINE
-    static auto hash_type_id(type_id type) -> type_id {
-        auto index = (hash_mult * type) >> hash_shift;
-
-        if constexpr (Policy::template has_facet<runtime_checks>) {
-            check(index, type);
-        }
-
-        return index;
-    }
-
-    template<typename ForwardIterator>
-    static auto hash_initialize(ForwardIterator first, ForwardIterator last) {
-        if constexpr (Policy::template has_facet<runtime_checks>) {
-            hash_initialize(
-                first, last, detail::fast_perfect_hash_control<Policy>);
-        } else {
-            std::vector<type_id> buckets;
-            hash_initialize(first, last, buckets);
-        }
-
-        return report{hash_min, hash_max};
-    }
-
-    template<typename ForwardIterator>
-    static void hash_initialize(
-        ForwardIterator first, ForwardIterator last,
-        std::vector<type_id>& buckets);
-
-    static auto finalize() -> void {
-        detail::fast_perfect_hash_control<Policy>.clear();
-    }
 };
 
-template<class Policy>
+template<class Registry>
 template<typename ForwardIterator>
-void fast_perfect_hash<Policy>::hash_initialize(
+void fast_perfect_hash::fn<Registry>::hash_initialize(
     ForwardIterator first, ForwardIterator last,
     std::vector<type_id>& buckets) {
     using namespace policies;
 
-    constexpr bool trace_enabled = Policy::template has_facet<trace_output>;
+    constexpr bool trace_enabled = Registry::template has_policy<trace>;
     const auto N = std::distance(first, last);
 
     if constexpr (trace_enabled) {
-        if (Policy::trace_enabled) {
-            Policy::trace_stream << "Finding hash factor for " << N
-                                 << " types\n";
+        if (Registry::template policy<policies::trace>::trace_enabled) {
+            Registry::template policy<policies::output>::os << "Finding hash factor for " << N
+                                   << " types\n";
         }
     }
 
@@ -104,9 +107,9 @@ void fast_perfect_hash<Policy>::hash_initialize(
         hash_max = (std::numeric_limits<std::size_t>::min)();
 
         if constexpr (trace_enabled) {
-            if (Policy::trace_enabled) {
-                Policy::trace_stream << "  trying with M = " << M << ", "
-                                     << hash_size << " buckets\n";
+            if (Registry::template policy<policies::trace>::trace_enabled) {
+                Registry::template policy<policies::output>::os << "  trying with M = " << M << ", "
+                                       << hash_size << " buckets\n";
             }
         }
 
@@ -136,11 +139,11 @@ void fast_perfect_hash<Policy>::hash_initialize(
             }
 
             if constexpr (trace_enabled) {
-                if (Policy::trace_enabled) {
-                    Policy::trace_stream << "  found " << hash_mult << " after "
-                                         << total_attempts
-                                         << " attempts; span = [" << hash_min
-                                         << ", " << hash_max << "]\n";
+                if (Registry::template policy<policies::trace>::trace_enabled) {
+                    Registry::template policy<policies::output>::os << "  found " << hash_mult
+                                           << " after " << total_attempts
+                                           << " attempts; span = [" << hash_min
+                                           << ", " << hash_max << "]\n";
                 }
             }
 
@@ -154,21 +157,21 @@ void fast_perfect_hash<Policy>::hash_initialize(
     error.attempts = total_attempts;
     error.buckets = std::size_t(1) << M;
 
-    if constexpr (Policy::template has_facet<error_handler>) {
-        Policy::error(error);
+    if constexpr (Registry::template has_policy<policies::error_handler>) {
+        Registry::template policy<policies::error_handler>::error(error);
     }
 
     abort();
 }
 
-template<class Policy>
-void fast_perfect_hash<Policy>::check(std::size_t index, type_id type) {
+template<class Registry>
+void fast_perfect_hash::fn<Registry>::check(std::size_t index, type_id type) {
     if (index < hash_min || index > hash_max ||
-        detail::fast_perfect_hash_control<Policy>[index] != type) {
-        if constexpr (Policy::template has_facet<error_handler>) {
+        detail::fast_perfect_hash_control<Registry>[index] != type) {
+        if constexpr (Registry::template has_policy<policies::error_handler>) {
             unknown_class_error error;
             error.type = type;
-            Policy::error(error);
+            Registry::template policy<policies::error_handler>::error(error);
         }
 
         abort();

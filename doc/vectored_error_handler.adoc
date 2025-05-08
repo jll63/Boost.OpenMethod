@@ -40,7 +40,7 @@ static auto error(const Error& error) -> void;
 ```
 
 Calls the function last set via `set_error_handler` or, if it was never called,
-and if _Policy_ contains an `error_output` facet, use it to print a description
+and if _Policy_ contains an `output` facet, use it to print a description
 of `error`.
 
 #### error

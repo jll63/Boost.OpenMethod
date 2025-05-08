@@ -95,5 +95,5 @@ If no such factors cannot be found, `hash_initialize` reports a
 `hash_search_error` using the policy's error_handler facet, if present, the
 calls `abort`.
 
-If the policy has a `trace_output` facet, `hash_initialize` uses it to write a
+If the policy has a `trace` facet, `hash_initialize` uses it to write a
 summary of the search.

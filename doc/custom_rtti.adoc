@@ -116,7 +116,7 @@ CRTP template:
 include::{examplesdir}/custom_rtti.cpp[tag=policy]
 ----
 
-Next, we include the main header. Because `BOOST_OPENMETHOD_DEFAULT_POLICY` is
+Next, we include the main header. Because `BOOST_OPENMETHOD_DEFAULT_REGISTRY` is
 defined, its value is used for the default policy. Then comes the usual example.
 
 [source,c++]

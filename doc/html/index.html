@@ -537,7 +537,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#ref_description_11">Description</a></li>
 </ul>
 </li>
-<li><a href="#BOOST_OPENMETHOD_DEFAULT_POLICY">BOOST_OPENMETHOD_DEFAULT_POLICY</a>
+<li><a href="#BOOST_OPENMETHOD_DEFAULT_REGISTRY">BOOST_OPENMETHOD_DEFAULT_REGISTRY</a>
 <ul class="sectlevel3">
 <li><a href="#ref_description_12">Description</a></li>
 </ul>
@@ -733,7 +733,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#virtual_ptr_members_14">Members</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_error_output">error_output</a>
+<li><a href="#virtual_ptr_error_output">output</a>
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_synopsis_23">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_23">Description</a></li>
@@ -747,7 +747,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#virtual_ptr_members_15">Members</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_trace_output">trace_output</a>
+<li><a href="#virtual_ptr_trace_output">trace</a>
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_synopsis_25">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_25">Description</a></li>
@@ -1907,7 +1907,7 @@ is that the virtual argument is passed as one pointer instead of two.</p>
 <code>virtual_</code> parameter, it looks for a <code>boost_openmethod_vptr</code> function that takes
 the parameter (by const reference), and returns a <code>vptr_type</code>. If one is found,
 it is called to obtain the vptr. The vptr for a specific registered class can be
-obtained via a variable template <code>static_vptr</code>, nested in class <code>default_policy</code>
+obtained via a variable template <code>static_vptr</code>, nested in class <code>default_registry</code>
 (more on policies below).</p>
 </div>
 <div class="paragraph">
@@ -1925,14 +1925,14 @@ native virtual functions:</p>
 
   public:
     Animal() {
-        vptr = boost::openmethod::default_policy::static_vptr&lt;Animal&gt;;
+        vptr = boost::openmethod::default_registry::static_vptr&lt;Animal&gt;;
     }
 };
 
 class Cat : public Animal {
   public:
     Cat() {
-        vptr = boost::openmethod::default_policy::static_vptr&lt;Cat&gt;;
+        vptr = boost::openmethod::default_registry::static_vptr&lt;Cat&gt;;
     }
 };
 
@@ -2254,12 +2254,12 @@ library: <code>release</code> and <code>debug</code>.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">enables runtime checks</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">error_output</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">output</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">basic_error_output</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">prints error descriptions to <code>stderr</code></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">trace_output</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">trace</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">basic_trace_output</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">enables <code>initialize</code> to print information about dispatch table construction to  <code>stderr</code></p></td>
 </tr>
@@ -2286,13 +2286,13 @@ struct debug : release::fork&lt;debug&gt;::with&lt;
 </div>
 </div>
 <div class="paragraph">
-<p><code>boost::openmethod::default_policy</code> is an alias to <code>release</code> or <code>debug</code>,
+<p><code>boost::openmethod::default_registry</code> is an alias to <code>release</code> or <code>debug</code>,
 depending on the value of preprocessor symbols <code>NDEBUG</code>. The default policy can
 be overriden by defining the macroprocessor symbol
-<code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> <em>before</em> including
+<code>BOOST_OPENMETHOD_DEFAULT_REGISTRY</code> <em>before</em> including
 <code>&lt;boost/openmethod/core.hpp&gt;</code>. The value of the symbol is used as a default
 template parameter for <code>use_classes</code>, <code>method</code>, <code>virtual_ptr</code>, and others. Once
-the <code>core</code> header has been included, changing <code>BOOST_OPENMETHOD_DEFAULT_POLICY</code>
+the <code>core</code> header has been included, changing <code>BOOST_OPENMETHOD_DEFAULT_REGISTRY</code>
 has no effect.</p>
 </div>
 </div>
@@ -2336,8 +2336,8 @@ auto main() -&gt; int {
     namespace bom = boost::openmethod;
     bom::initialize();
 
-    bom::default_policy::set_error_handler(
-        [](const bom::default_policy::error_variant&amp; error) {
+    bom::default_registry::set_error_handler(
+        [](const bom::default_registry::error_variant&amp; error) {
             if (std::holds_alternative&lt;bom::not_implemented_error&gt;(error)) {
                 throw std::runtime_error("not implemented");
             }
@@ -2396,10 +2396,10 @@ struct throw_if_not_implemented : bom::policies::error_handler {
     }
 };
 
-struct throwing_policy : bom::default_policy::fork&lt;throwing_policy&gt;::with&lt;
+struct throwing_policy : bom::default_registry::fork&lt;throwing_policy&gt;::with&lt;
                              throw_if_not_implemented&gt; {};
 
-#define BOOST_OPENMETHOD_DEFAULT_POLICY throwing_policy
+#define BOOST_OPENMETHOD_DEFAULT_REGISTRY throwing_policy
 
 #include &lt;boost/openmethod.hpp&gt;
 #include &lt;boost/openmethod/compiler.hpp&gt;
@@ -2615,11 +2615,11 @@ CRTP template:</p>
                            custom_policy, custom_rtti,
                            bom::policies::vptr_vector&lt;custom_policy&gt;&gt; {};
 
-#define BOOST_OPENMETHOD_DEFAULT_POLICY custom_policy</code></pre>
+#define BOOST_OPENMETHOD_DEFAULT_REGISTRY custom_policy</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Next, we include the main header. Because <code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> is
+<p>Next, we include the main header. Because <code>BOOST_OPENMETHOD_DEFAULT_REGISTRY</code> is
 defined, its value is used for the default policy. Then comes the usual example.</p>
 </div>
 <div class="listingblock">
@@ -2824,7 +2824,7 @@ struct Cow : Herbivore {};
 struct Wolf : Carnivore {};
 
 struct dynamic_policy
-    : boost::openmethod::default_policy::fork&lt;dynamic_policy&gt;::with&lt;
+    : boost::openmethod::default_registry::fork&lt;dynamic_policy&gt;::with&lt;
           boost::openmethod::policies::indirect_vptr&gt; {};
 
 template&lt;class Class&gt;
@@ -3042,7 +3042,7 @@ the <code>include</code> directory to your project&#8217;s include path.</p>
 <h5 id="ref_boostopenmethod">boost::openmethod</h5>
 <div class="paragraph">
 <p>The library&#8217;s main namespace. Contains <code>method</code>, <code>virtual_ptr</code> and
-<code>virtual_ptr_traits</code>, <code>use_classes</code>, the <code>default_policy</code>, etc.</p>
+<code>virtual_ptr_traits</code>, <code>use_classes</code>, the <code>default_registry</code>, etc.</p>
 </div>
 </div>
 <div class="sect4">
@@ -3061,10 +3061,10 @@ the <code>include</code> directory to your project&#8217;s include path.</p>
 <code>virtual_ptr_traits</code>, <code>use_classes</code>, the default policy, etc.</p>
 </div>
 <div class="paragraph">
-<p>If <code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> is defined before including this header,
+<p>If <code>BOOST_OPENMETHOD_DEFAULT_REGISTRY</code> is defined before including this header,
 its value is used as the default value for the <code>Policy</code> template parameter
-throughout the code. Otherwise, <code>boost::openmethod::default_policy</code> is used.
-Setting <code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> after including the core header has no
+throughout the code. Otherwise, <code>boost::openmethod::default_registry</code> is used.
+Setting <code>BOOST_OPENMETHOD_DEFAULT_REGISTRY</code> after including the core header has no
 effect.</p>
 </div>
 </div>
@@ -3137,7 +3137,7 @@ manner as native virtual functions.</p>
 <h5 id="ref_boostopenmethodpolicies_hpp">&lt;boost/openmethod/policies.hpp&gt;</h5>
 <div class="paragraph">
 <p>Provides the <code>debug</code> and <code>release</code> policies in the <code>boost::openmethod::policies</code>
-namespace, and <code>default_policy</code> in the <code>boost::openmethod</code> namespace, which is
+namespace, and <code>default_registry</code> in the <code>boost::openmethod</code> namespace, which is
 an alias to either <code>debug</code> or <code>release</code>, depending on the value of the
 preprocessor symbol <code>NDEBUG</code>.</p>
 </div>
@@ -3200,14 +3200,14 @@ etc).</p>
 <div class="sect4">
 <h5 id="ref_boostopenmethodpoliciesbasic_error_output_hpp">&lt;boost/openmethod/policies/basic_error_output.hpp&gt;</h5>
 <div class="paragraph">
-<p>Implements the <code>error_output</code> facet using a lightweight version of
+<p>Implements the <code>output</code> facet using a lightweight version of
 <code>std::ostream</code>.</p>
 </div>
 </div>
 <div class="sect4">
 <h5 id="ref_boostopenmethodpoliciesbasic_trace_output_hpp">&lt;boost/openmethod/policies/basic_trace_output.hpp&gt;</h5>
 <div class="paragraph">
-<p>Implements the <code>trace_output</code> facet using a lightweight version of
+<p>Implements the <code>trace</code> facet using a lightweight version of
 <code>std::ostream</code>.</p>
 </div>
 </div>
@@ -3286,7 +3286,7 @@ forwards to<br>
 </td>
 <td class="content">
 The default value for <code>POLICY</code> is the value of
-<code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> at the point <code>&lt;boost/openmethod/core.hpp&gt;</code> is
+<code>BOOST_OPENMETHOD_DEFAULT_REGISTRY</code> at the point <code>&lt;boost/openmethod/core.hpp&gt;</code> is
 included. Changing the value of this symbol has no effect after that point.
 </td>
 </tr>
@@ -3684,7 +3684,7 @@ contains the overriders for all the methods with a given name.</p>
 </td>
 <td class="content">
 The default value for <code>POLICY</code> is the value of
-<code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> when <code>&lt;boost/openmethod/core.hpp&gt;</code> is
+<code>BOOST_OPENMETHOD_DEFAULT_REGISTRY</code> when <code>&lt;boost/openmethod/core.hpp&gt;</code> is
 included. Subsequently changing it has no retroactive effect.
 </td>
 </tr>
@@ -3697,20 +3697,20 @@ details.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="BOOST_OPENMETHOD_DEFAULT_POLICY">BOOST_OPENMETHOD_DEFAULT_POLICY</h3>
+<h3 id="BOOST_OPENMETHOD_DEFAULT_REGISTRY">BOOST_OPENMETHOD_DEFAULT_REGISTRY</h3>
 <div class="sect3">
 <h4 id="ref_description_12">Description</h4>
 <div class="paragraph">
 <p>The name of the default policy.</p>
 </div>
 <div class="paragraph">
-<p><code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> is the default value for the <code>Policy</code> template
+<p><code>BOOST_OPENMETHOD_DEFAULT_REGISTRY</code> is the default value for the <code>Policy</code> template
 parameter of <code>method</code>, <code>use_classes</code>, and other constructs defined in
 <code>&lt;boost/openmethod/core.hpp&gt;</code>. If it is not defined,
-<code>::boost::openmethod::policy::default_policy</code> is used.</p>
+<code>::boost::openmethod::policy::default_registry</code> is used.</p>
 </div>
 <div class="paragraph">
-<p><code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> can be defined by a program to change the
+<p><code>BOOST_OPENMETHOD_DEFAULT_REGISTRY</code> can be defined by a program to change the
 default policy globally. Once <code>&lt;boost/openmethod/core.hpp&gt;</code> has been included,
 redefining the symbol has no effect. To override the default policy, proceed as
 follows:</p>
@@ -3721,7 +3721,7 @@ follows:</p>
 <p>Include headers under <code>boost/openmethod/policies/</code> as needed.</p>
 </li>
 <li>
-<p>Create a policy class, and set <code>BOOST_OPENMETHOD_DEFAULT_POLICY</code>.</p>
+<p>Create a policy class, and set <code>BOOST_OPENMETHOD_DEFAULT_REGISTRY</code>.</p>
 </li>
 <li>
 <p>Include <code>&lt;boost/openmethod/core.hpp&gt;</code>.</p>
@@ -3741,7 +3741,7 @@ follows:</p>
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++">namespace boost::openmethod {
 
-template&lt;class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY&gt;
+template&lt;class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY&gt;
 auto initialize() -&gt; /*unspecified*/;
 
 }</code></pre>
@@ -3789,7 +3789,7 @@ combination of virtual arguments.</p>
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++">namespace boost::openmethod {
 
-template&lt;class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY&gt;
+template&lt;class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY&gt;
 auto finalize() -&gt; void;
 
 }</code></pre>
@@ -3866,7 +3866,7 @@ using vptr_type = const /*unspecified*/ *;
 
 template&lt;
     typename Method, typename ReturnType,
-    class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY&gt;
+    class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY&gt;
 class method;
 
 template&lt;typename Name, typename... Parameters, typename ReturnType, class Policy&gt;
@@ -4154,7 +4154,7 @@ or, if it is a polymorphic type, covariant with the method&#8217;s return type.<
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++">namespace boost::openmethod {
 
-template&lt;class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY&gt;
+template&lt;class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY&gt;
 class virtual_ptr {
   public:
     static constexpr bool is_smart_ptr = /* see below */;
@@ -4184,11 +4184,11 @@ class virtual_ptr {
 };
 
 template&lt;class Class&gt;
-virtual_ptr(Class&amp;) -&gt; virtual_ptr&lt;Class, BOOST_OPENMETHOD_DEFAULT_POLICY&gt;;
+virtual_ptr(Class&amp;) -&gt; virtual_ptr&lt;Class, BOOST_OPENMETHOD_DEFAULT_REGISTRY&gt;;
 
 template&lt;class Class&gt;
 inline auto final_virtual_ptr(Class&amp; obj) -&gt; virtual_ptr&lt;
-    Class, BOOST_OPENMETHOD_DEFAULT_POLICY&gt;;
+    Class, BOOST_OPENMETHOD_DEFAULT_REGISTRY&gt;;
 
 template&lt;class Policy, class Class&gt;
 inline auto final_virtual_ptr(Class&amp; obj) -&gt; virtual_ptr&lt;Class, Policy&gt;;
@@ -4213,11 +4213,11 @@ auto operator!=(
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++">namespace boost::openmethod {
 
-template&lt;class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY&gt;
+template&lt;class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY&gt;
 using shared_virtual_ptr = virtual_ptr&lt;std::shared_ptr&lt;Class&gt;, Policy&gt;;
 
 template&lt;
-    class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY, typename... T&gt;
+    class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY, typename... T&gt;
 inline auto make_shared_virtual(T&amp;&amp;... args)
     -&gt; shared_virtual_ptr&lt;Class, Policy&gt;;
 
@@ -4231,11 +4231,11 @@ inline auto make_shared_virtual(T&amp;&amp;... args)
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++">namespace boost::openmethod {
 
-template&lt;class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY&gt;
+template&lt;class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY&gt;
 using unique_virtual_ptr = virtual_ptr&lt;std::unique_ptr&lt;Class&gt;, Policy&gt;;
 
 template&lt;
-    class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY, typename... T&gt;
+    class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY, typename... T&gt;
 inline auto make_unique_virtual(T&amp;&amp;... args)
     -&gt; unique_virtual_ptr&lt;Class, Policy&gt;;
 }</code></pre>
@@ -4435,7 +4435,7 @@ auto cast() const -&gt; virtual_ptr&lt;Other, Policy&gt;;</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++">template&lt;class Class&gt;
-virtual_ptr(Class&amp;) -&gt; virtual_ptr&lt;Class, BOOST_OPENMETHOD_DEFAULT_POLICY&gt;;</code></pre>
+virtual_ptr(Class&amp;) -&gt; virtual_ptr&lt;Class, BOOST_OPENMETHOD_DEFAULT_REGISTRY&gt;;</code></pre>
 </div>
 </div>
 <hr>
@@ -4446,7 +4446,7 @@ virtual_ptr(Class&amp;) -&gt; virtual_ptr&lt;Class, BOOST_OPENMETHOD_DEFAULT_POL
 <h5 id="virtual_ptr_virtual_shared_ptr">virtual_shared_ptr</h5>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++">template&lt;class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY&gt;
+<pre class="rouge highlight"><code data-lang="c++">template&lt;class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY&gt;
 using virtual_shared_ptr = virtual_ptr&lt;std::shared_ptr&lt;Class&gt;, Policy&gt;;</code></pre>
 </div>
 </div>
@@ -4458,7 +4458,7 @@ using virtual_shared_ptr = virtual_ptr&lt;std::shared_ptr&lt;Class&gt;, Policy&g
 <h5 id="virtual_ptr_virtual_unique_ptr">virtual_unique_ptr</h5>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++">template&lt;class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY&gt;
+<pre class="rouge highlight"><code data-lang="c++">template&lt;class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY&gt;
 using virtual_unique_ptr = virtual_ptr&lt;std::unique_ptr&lt;Class&gt;, Policy&gt;;</code></pre>
 </div>
 </div>
@@ -4481,7 +4481,7 @@ inline auto final_virtual_ptr(Class&amp;&amp; obj);</code></pre>
 <p>Utility functions, forwarding to <code>virtual_ptr&lt;Class, Policy&gt;::final</code>.</p>
 </div>
 <div class="paragraph">
-<p>If <code>Policy</code> is not specified, <code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> is used.</p>
+<p>If <code>Policy</code> is not specified, <code>BOOST_OPENMETHOD_DEFAULT_REGISTRY</code> is used.</p>
 </div>
 </div>
 <div class="sect4">
@@ -4489,7 +4489,7 @@ inline auto final_virtual_ptr(Class&amp;&amp; obj);</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++">template&lt;
-    class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY, typename... T&gt;
+    class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY, typename... T&gt;
 inline auto make_shared_virtual(T&amp;&amp;... args)
     -&gt; shared_virtual_ptr&lt;Class, Policy&gt;;</code></pre>
 </div>
@@ -4505,7 +4505,7 @@ the class, which needs not be polymorphic.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++">template&lt;
-    class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY, typename... T&gt;
+    class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY, typename... T&gt;
 inline auto make_unique_virtual(T&amp;&amp;... args)
     -&gt; unique_virtual_ptr&lt;Class, Policy&gt;;</code></pre>
 </div>
@@ -4703,7 +4703,7 @@ example, <code>virtual_traits&lt;std::shared_ptr&lt;T&gt;, Policy&gt;::rebind&lt
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++">namespace boost::openmethod {
 
-template&lt;class... Classes, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY&gt;
+template&lt;class... Classes, class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY&gt;
 struct use_classes {
     use_classes();
     ~use_classes();
@@ -4744,7 +4744,7 @@ a class lattice that contains repeated inheritance.</p>
 </td>
 <td class="content">
 The default value for <code>Policy</code> is the value of
-<code>BOOST_OPENMETHOD_DEFAULT_POLICY</code> when <code>&lt;boost/openmethod/core.hpp&gt;</code> is
+<code>BOOST_OPENMETHOD_DEFAULT_REGISTRY</code> when <code>&lt;boost/openmethod/core.hpp&gt;</code> is
 included. Subsequently changing it has no retroactive effect.
 </td>
 </tr>
@@ -4817,7 +4817,7 @@ more information.</p>
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++">namespace boost::openmethod {
 
-template&lt;class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY&gt;
+template&lt;class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY&gt;
 class with_vptr {
   protected:
     with_vptr();
@@ -4982,7 +4982,7 @@ namespace policies {
 template&lt;class Policy, class... Facets&gt;
 struct basic_policy : abstract_policy, domain&lt;Policy&gt;, Facets... {
     template&lt;class Facet&gt;
-    static constexpr bool has_facet = /*unspecified*/;
+    static constexpr bool has = /*unspecified*/;
 
     template&lt;class NewPolicy&gt;
     using fork = /*unspecified*/;
@@ -5001,9 +5001,9 @@ struct debug : release::add&lt;...&gt; {};
 } // policies
 
 #ifdef NDEBUG
-using default_policy = policies::release;
+using default_registry = policies::release;
 #else
-using default_policy = policies::debug;
+using default_registry = policies::debug;
 #endif
 
 } // boost::openmethod</code></pre>
@@ -5033,11 +5033,11 @@ allow distinct policies to have distinct sets of static variables.</p>
 <div class="sect3">
 <h4 id="virtual_ptr_members_6">Members</h4>
 <div class="sect4">
-<h5 id="virtual_ptr_has_facet">has_facet</h5>
+<h5 id="virtual_ptr_has">has</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++">template&lt;class Facet&gt;
-static constexpr bool has_facet;</code></pre>
+static constexpr bool has;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5088,8 +5088,8 @@ that do not have the same category as <em>Facets</em>.</p>
 <div class="ulist">
 <ul>
 <li>
-<p><code>struct dyn_load : default_policy::fork&lt;dyn_load&gt;::with&lt;indirect_vptr&gt; {};</code><br>
-Creates a policy just like <code>default_policy</code>, with an extra indirection added
+<p><code>struct dyn_load : default_registry::fork&lt;dyn_load&gt;::with&lt;indirect_vptr&gt; {};</code><br>
+Creates a policy just like <code>default_registry</code>, with an extra indirection added
 to the v-table pointers. This policy is suitable for use with dynamic loading.</p>
 </li>
 <li>
@@ -5098,8 +5098,8 @@ Creates a policy just like <code>release</code>, except that it prints a diagnos
 message before terminating with <code>abort()</code>.</p>
 </li>
 <li>
-<p><code>struct default_throw : default_policy::fork&lt;default_throw&gt;::with&lt;throw_error_handler&gt; {};</code><br>
-Creates a policy just like <code>default_policy</code>, except that it reports errors by
+<p><code>struct default_throw : default_registry::fork&lt;default_throw&gt;::with&lt;throw_error_handler&gt; {};</code><br>
+Creates a policy just like <code>default_registry</code>, except that it reports errors by
 throwing exceptions, instead of calling a <code>std::function</code> like the default
 error handler does.</p>
 </li>
@@ -5133,8 +5133,8 @@ the same category as <em>Facets</em>.</p>
 <div class="ulist">
 <ul>
 <li>
-<p><code>struct use_map : default_policy::fork&lt;use_map&gt;::with&lt;vptr_map&lt;use_map&gt;&gt;::without&lt;type_hash&gt; {};</code><br>
-Creates a policy just like <code>default_policy</code>, except that it stores pointers to
+<p><code>struct use_map : default_registry::fork&lt;use_map&gt;::with&lt;vptr_map&lt;use_map&gt;&gt;::without&lt;type_hash&gt; {};</code><br>
+Creates a policy just like <code>default_registry</code>, except that it stores pointers to
 v-table in a <code>std::unordered_map</code>. Also removes the hash function, since it
 will not be used.</p>
 </li>
@@ -5185,7 +5185,7 @@ same <code>domain</code>.
 </div>
 </div>
 <div class="sect4">
-<h5 id="virtual_ptr_default_policy">default_policy</h5>
+<h5 id="virtual_ptr_default_registry">default_registry</h5>
 <div class="paragraph">
 <p>An alias for <code>release</code> if <code>NDEBUG</code> is defined, and for <code>debug</code> otherwise.</p>
 </div>
@@ -5891,7 +5891,7 @@ function.</p>
 calls <code>abort</code>.</p>
 </div>
 <div class="paragraph">
-<p>If the policy has a <code>trace_output</code> facet, <code>hash_initialize</code> uses it to write a
+<p>If the policy has a <code>trace</code> facet, <code>hash_initialize</code> uses it to write a
 summary of the search.</p>
 </div>
 </div>
@@ -6015,7 +6015,7 @@ static auto error(const Error&amp; error) -&gt; void;</code></pre>
 </div>
 <div class="paragraph">
 <p>Calls the function last set via <code>set_error_handler</code> or, if it was never called,
-and if <em>Policy</em> contains an <code>error_output</code> facet, use it to print a description
+and if <em>Policy</em> contains an <code>output</code> facet, use it to print a description
 of <code>error</code>.</p>
 </div>
 </div>
@@ -6076,7 +6076,7 @@ throws the error as an exception.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="virtual_ptr_error_output">error_output</h3>
+<h3 id="virtual_ptr_error_output">output</h3>
 <div class="sect3">
 <h4 id="virtual_ptr_synopsis_23">Synopsis</h4>
 <div class="paragraph">
@@ -6086,7 +6086,7 @@ throws the error as an exception.</p>
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++">namespace boost::openmethod::policies {
 
-struct error_output : facet {};
+struct output : facet {};
 
 } // boost::openmethod::policies</code></pre>
 </div>
@@ -6095,7 +6095,7 @@ struct error_output : facet {};
 <div class="sect3">
 <h4 id="virtual_ptr_description_23">Description</h4>
 <div class="paragraph">
-<p><code>error_output</code> is a facet that provides a stream for writing error messages.</p>
+<p><code>output</code> is a facet that provides a stream for writing error messages.</p>
 </div>
 </div>
 <div class="sect3">
@@ -6125,7 +6125,7 @@ struct error_output : facet {};
 <pre class="rouge highlight"><code data-lang="c++">namespace boost::openmethod::policies {
 
 template&lt;class Policy, typename Stream = /*unspecified*/&gt;
-struct basic_error_output : error_output {
+struct basic_error_output : output {
     static Stream error_stream;
 };
 
@@ -6136,7 +6136,7 @@ struct basic_error_output : error_output {
 <div class="sect3">
 <h4 id="virtual_ptr_description_24">Description</h4>
 <div class="paragraph">
-<p><code>basic_error_output</code> is an implementation of <code>error_output</code> that writes error
+<p><code>basic_error_output</code> is an implementation of <code>output</code> that writes error
 messages to a <code>RestrictedOutputStream</code>.</p>
 </div>
 </div>
@@ -6158,7 +6158,7 @@ it.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="virtual_ptr_trace_output">trace_output</h3>
+<h3 id="virtual_ptr_trace_output">trace</h3>
 <div class="sect3">
 <h4 id="virtual_ptr_synopsis_25">Synopsis</h4>
 <div class="paragraph">
@@ -6168,7 +6168,7 @@ it.</p>
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++">namespace boost::openmethod::policies {
 
-struct trace_output : facet {};
+struct trace : facet {};
 
 }</code></pre>
 </div>
@@ -6178,7 +6178,7 @@ struct trace_output : facet {};
 <div class="sect3">
 <h4 id="virtual_ptr_description_25">Description</h4>
 <div class="paragraph">
-<p><code>trace_output</code> is a facet used to write trace messages.</p>
+<p><code>trace</code> is a facet used to write trace messages.</p>
 </div>
 <div class="paragraph">
 <p><code>initialize</code> can be directed to describe the classes and methods in a policy,
@@ -6227,7 +6227,7 @@ and patch versions.</p>
 <pre class="rouge highlight"><code data-lang="c++">namespace boost::openmethod::policies {
 
 template&lt;class Policy, typename Stream = /*unspecified*/&gt;
-struct basic_trace_output : trace_output {
+struct basic_trace_output : trace {
     static bool trace_enabled;
     static Stream trace_stream;
 };
@@ -6239,7 +6239,7 @@ struct basic_trace_output : trace_output {
 <div class="sect3">
 <h4 id="virtual_ptr_description_26">Description</h4>
 <div class="paragraph">
-<p><code>basic_error_output</code> is an implementation of <code>trace_output</code> that writes error
+<p><code>basic_error_output</code> is an implementation of <code>trace</code> that writes error
 messages to a <code>RestrictedOutputStream</code>.</p>
 </div>
 </div>

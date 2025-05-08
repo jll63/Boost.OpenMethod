@@ -11,7 +11,7 @@
 ```c++
 namespace boost::openmethod {
 
-template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
+template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
 class virtual_ptr {
   public:
     static constexpr bool is_smart_ptr = /* see below */;
@@ -41,11 +41,11 @@ class virtual_ptr {
 };
 
 template<class Class>
-virtual_ptr(Class&) -> virtual_ptr<Class, BOOST_OPENMETHOD_DEFAULT_POLICY>;
+virtual_ptr(Class&) -> virtual_ptr<Class, BOOST_OPENMETHOD_DEFAULT_REGISTRY>;
 
 template<class Class>
 inline auto final_virtual_ptr(Class& obj) -> virtual_ptr<
-    Class, BOOST_OPENMETHOD_DEFAULT_POLICY>;
+    Class, BOOST_OPENMETHOD_DEFAULT_REGISTRY>;
 
 template<class Policy, class Class>
 inline auto final_virtual_ptr(Class& obj) -> virtual_ptr<Class, Policy>;
@@ -68,11 +68,11 @@ Defined in `<boost/openmethod/shared_ptr.hpp>`:
 ```c++
 namespace boost::openmethod {
 
-template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
+template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
 using shared_virtual_ptr = virtual_ptr<std::shared_ptr<Class>, Policy>;
 
 template<
-    class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY, typename... T>
+    class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY, typename... T>
 inline auto make_shared_virtual(T&&... args)
     -> shared_virtual_ptr<Class, Policy>;
 
@@ -83,11 +83,11 @@ Defined in `<boost/openmethod/unique_ptr.hpp>`:
 ```c++
 namespace boost::openmethod {
 
-template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
+template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
 using unique_virtual_ptr = virtual_ptr<std::unique_ptr<Class>, Policy>;
 
 template<
-    class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY, typename... T>
+    class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY, typename... T>
 inline auto make_unique_virtual(T&&... args)
     -> unique_virtual_ptr<Class, Policy>;
 }
@@ -245,7 +245,7 @@ Returns a `virtual_ptr` to the same object, cast to `Other`.
 
 ```c++
 template<class Class>
-virtual_ptr(Class&) -> virtual_ptr<Class, BOOST_OPENMETHOD_DEFAULT_POLICY>;
+virtual_ptr(Class&) -> virtual_ptr<Class, BOOST_OPENMETHOD_DEFAULT_REGISTRY>;
 ```
 
 ---
@@ -255,7 +255,7 @@ virtual_ptr(Class&) -> virtual_ptr<Class, BOOST_OPENMETHOD_DEFAULT_POLICY>;
 #### virtual_shared_ptr
 
 ```c++
-template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
+template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
 using virtual_shared_ptr = virtual_ptr<std::shared_ptr<Class>, Policy>;
 ```
 
@@ -264,7 +264,7 @@ Convenience alias for `virtual_ptr<std::shared_ptr<Class>, Policy>`.
 #### virtual_unique_ptr
 
 ```c++
-template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
+template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
 using virtual_unique_ptr = virtual_ptr<std::unique_ptr<Class>, Policy>;
 ```
 
@@ -282,13 +282,13 @@ inline auto final_virtual_ptr(Class&& obj);
 
 Utility functions, forwarding to `virtual_ptr<Class, Policy>::final`.
 
-If `Policy` is not specified, `BOOST_OPENMETHOD_DEFAULT_POLICY` is used.
+If `Policy` is not specified, `BOOST_OPENMETHOD_DEFAULT_REGISTRY` is used.
 
 #### make_shared_virtual
 
 ```c++
 template<
-    class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY, typename... T>
+    class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY, typename... T>
 inline auto make_shared_virtual(T&&... args)
     -> shared_virtual_ptr<Class, Policy>;
 ```
@@ -301,7 +301,7 @@ the class, which needs not be polymorphic.
 
 ```c++
 template<
-    class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY, typename... T>
+    class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY, typename... T>
 inline auto make_unique_virtual(T&&... args)
     -> unique_virtual_ptr<Class, Policy>;
 ```

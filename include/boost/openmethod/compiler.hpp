@@ -262,15 +262,6 @@ struct compiler : detail::generic_compiler {
         -> bool;
     static auto is_base(const overrider* a, const overrider* b) -> bool;
 
-    static auto static_type(type_id type) -> type_id {
-        if constexpr (std::is_base_of_v<
-                          policies::deferred_static_rtti, policies::rtti>) {
-            return reinterpret_cast<type_id (*)()>(type)();
-        } else {
-            return type;
-        }
-    }
-
     mutable detail::trace_type<Policy> trace;
     static constexpr bool trace_enabled =
         Policy::template has_facet<policies::trace_output>;

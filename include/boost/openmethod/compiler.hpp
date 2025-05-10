@@ -333,7 +333,6 @@ void compiler<Policy>::resolve_static_type_ids() {
             for (auto& ti : range{method.vp_begin, method.vp_end}) {
                 if (*method.vp_end == 0) {
                     resolve(&ti);
-                    *method.vp_end = 1;
                 }
 
                 for (auto& overrider : method.specs) {
@@ -347,6 +346,8 @@ void compiler<Policy>::resolve_static_type_ids() {
                     }
                 }
             }
+
+            *method.vp_end = 1;
         }
     }
 }

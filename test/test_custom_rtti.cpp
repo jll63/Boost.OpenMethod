@@ -471,6 +471,14 @@ BOOST_OPENMETHOD_OVERRIDE(poke, (Cat & cat, std::ostream& os), void) {
     os << cat.name << " hisses.";
 }
 
+BOOST_OPENMETHOD(
+    meet, (virtual_<Animal&>, virtual_<Animal&>, std::ostream&), void,
+    test_policy);
+
+BOOST_OPENMETHOD_OVERRIDE(meet, (Dog&, Dog&, std::ostream& os), void) {
+    os << "Both wag tails.";
+}
+
 BOOST_AUTO_TEST_CASE(custom_rtti_deferred) {
     initialize<test_policy>();
 
@@ -481,10 +489,17 @@ BOOST_AUTO_TEST_CASE(custom_rtti_deferred) {
         poke(a, os);
         BOOST_TEST(os.str() == "Snoopy barks.");
     }
+
     {
         std::stringstream os;
         poke(b, os);
         BOOST_TEST(os.str() == "Sylvester hisses.");
+    }
+
+    {
+        std::stringstream os;
+        meet(a, a, os);
+        BOOST_TEST(os.str() == "Both wag tails.");
     }
 }
 

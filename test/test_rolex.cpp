@@ -50,29 +50,25 @@ BOOST_OPENMETHOD_OVERRIDE(pay, (virtual_ptr<Manager> exec), double) {
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    approve,
-    (virtual_ptr<const Role>, virtual_ptr<const Expense>, double),
+    approve, (virtual_ptr<const Role>, virtual_ptr<const Expense>, double),
     bool) {
     return false;
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    approve,
-    (virtual_ptr<const Employee>, virtual_ptr<const Public>, double),
+    approve, (virtual_ptr<const Employee>, virtual_ptr<const Public>, double),
     bool) {
     return true;
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    approve,
-    (virtual_ptr<const Manager>, virtual_ptr<const Taxi>, double),
+    approve, (virtual_ptr<const Manager>, virtual_ptr<const Taxi>, double),
     bool) {
     return true;
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    approve,
-    (virtual_ptr<const Founder>, virtual_ptr<const Expense>, double),
+    approve, (virtual_ptr<const Founder>, virtual_ptr<const Expense>, double),
     bool) {
     return true;
 }

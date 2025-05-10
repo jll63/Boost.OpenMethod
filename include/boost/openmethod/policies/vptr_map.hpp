@@ -10,30 +10,19 @@
 
 #include <unordered_map>
 
-namespace boost::openmethod::policies {
+namespace boost::openmethod {
 
-template<
-    class Policy, class Facet = void,
-    class Map = std::unordered_map<
-        type_id,
-        std::conditional_t<
-            std::is_same_v<Facet, indirect_vptr>, const vptr_type*, vptr_type>>>
-class vptr_map : public extern_vptr,
-                 public std::conditional_t<
-                     std::is_same_v<Facet, void>, detail::empty, Facet> {
-    static_assert(
-        std::is_same_v<Facet, void> || std::is_same_v<Facet, indirect_vptr>);
-    static constexpr bool use_indirect_vptrs =
-        std::is_same_v<Facet, indirect_vptr>;
-    static_assert(
-        std::is_same_v<typename Map::mapped_type, vptr_type> ||
-        std::is_same_v<typename Map::mapped_type, const vptr_type*>);
-    static_assert(
-        std::is_same_v<typename Map::mapped_type, const vptr_type*> ==
-        use_indirect_vptrs);
+namespace detail {
 
-    static Map vptrs;
+template<class Policy, class MapAdaptor, typename Key, typename Value>
+inline typename MapAdaptor::template fn<Key, Value> vptr_map_vptrs;
 
+} // namespace detail
+
+namespace policies {
+
+template<class Policy, class MapAdaptor = mp11::mp_quote<std::unordered_map>>
+class vptr_map : public extern_vptr {
   public:
     template<typename ForwardIterator>
     static void register_vptrs(ForwardIterator first, ForwardIterator last) {
@@ -41,10 +30,14 @@ class vptr_map : public extern_vptr,
             for (auto type_iter = iter->type_id_begin();
                  type_iter != iter->type_id_end(); ++type_iter) {
 
-                if constexpr (use_indirect_vptrs) {
-                    vptrs[*type_iter] = &iter->vptr();
+                if constexpr (Policy::template has_facet<indirect_vptr>) {
+                    detail::vptr_map_vptrs<Policy,
+                        MapAdaptor, type_id,
+                        const vptr_type*>.emplace(*type_iter, &iter->vptr());
                 } else {
-                    vptrs[*type_iter] = iter->vptr();
+                    detail::vptr_map_vptrs<
+                        Policy, MapAdaptor, type_id, vptr_type
+                    >.emplace(*type_iter, iter->vptr());
                 }
             }
         }
@@ -53,10 +46,16 @@ class vptr_map : public extern_vptr,
     template<class Class>
     static auto dynamic_vptr(const Class& arg) -> const vptr_type& {
         auto type = Policy::dynamic_type(arg);
-        auto iter = vptrs.find(type);
+        bool constexpr use_indirect_vptrs =
+            Policy::template has_facet<indirect_vptr>;
+        const auto& map = detail::vptr_map_vptrs<
+            Policy, MapAdaptor, type_id,
+            std::conditional_t<
+                use_indirect_vptrs, const vptr_type*, vptr_type>>;
+        auto iter = map.find(type);
 
         if constexpr (Policy::template has_facet<runtime_checks>) {
-            if (iter == vptrs.end()) {
+            if (iter == map.end()) {
                 if constexpr (Policy::template has_facet<error_handler>) {
                     unknown_class_error error;
                     error.type = type;
@@ -75,13 +74,14 @@ class vptr_map : public extern_vptr,
     }
 
     static auto finalize() -> void {
-        vptrs.clear();
+        detail::vptr_map_vptrs<
+            Policy, MapAdaptor, type_id, std::conditional_t<
+                Policy::template has_facet<indirect_vptr>,
+                const vptr_type*, vptr_type>>.clear();
     }
 };
 
-template<class Policy, typename UseIndirectVptrs, class Map>
-Map vptr_map<Policy, UseIndirectVptrs, Map>::vptrs;
-
-} // namespace boost::openmethod::policies
+} // namespace policies
+} // namespace boost::openmethod
 
 #endif

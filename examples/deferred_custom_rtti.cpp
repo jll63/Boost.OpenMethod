@@ -78,6 +78,9 @@ struct Dog : virtual Animal {
 namespace bom = boost::openmethod;
 
 struct custom_rtti : bom::policies::rtti {
+    template<class T>
+    static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
+
     template<typename T>
     static auto static_type() -> bom::type_id {
         if constexpr (std::is_base_of_v<Animal, T>) {

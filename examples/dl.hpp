@@ -27,10 +27,9 @@ struct Cow : Herbivore {};
 struct Wolf : Carnivore {};
 
 struct dynamic_policy
-    : boost::openmethod::default_policy::fork<dynamic_policy>::replace<
-          boost::openmethod::policies::extern_vptr,
-          boost::openmethod::policies::vptr_vector<
-              dynamic_policy, boost::openmethod::policies::indirect_vptr>> {};
+    : boost::openmethod::default_policy::fork<dynamic_policy>::with<
+          boost::openmethod::policies::indirect_vptr> {};
+
 template<class Class>
 using dyn_vptr = boost::openmethod::virtual_ptr<Class, dynamic_policy>;
 

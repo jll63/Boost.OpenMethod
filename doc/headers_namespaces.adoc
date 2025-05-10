@@ -2,9 +2,9 @@
 ## Headers and Namespaces
 
 Most real-life programs will be organized in multiple files and multiple
-namespaces. OpenMethod interacts with headers and namespaces very naturally,
-unless using-directives are avoided. In that case, there are a few things to be
-aware of.
+namespaces. OpenMethod interacts with headers and namespaces naturally, if
+using-directives are avoided. In that case, there are a few things to be aware
+of.
 
 Let's break the Animals example into headers and namespaces. First we put
 `Animal` in its own header and namespace:
@@ -27,7 +27,7 @@ it is "called" only in a non-evaluated context.
 * It defines an inline function with the same name and signature as the
 method (with the `virtual_` decorators stripped).
 
-Next, let's implement the `Cat` class, and a derived class, `Chhetah`, in the
+Next, let's implement the `Cat` class, and a derived class, `Cheetah`, in the
 `felines` namespace:
 
 [source,c++]
@@ -51,7 +51,7 @@ in scope, or with qualified names.
 as the overrider itself. It "calls" the guide function in a non-evaluated
 context, passing it a `std::ostream&` and a `virtual_ptr<Cat>`. The return type
 of the guide function is the method to add the overrider to. Exactly one guide
-function must match. The normal rules of overload resolution apply. In this
+function must match. The normal rules of overload resolution apply. In that
 case, the guide function is found via argument dependant lookup (ADL).
 
 The macro adds several constructs to the current namespace:
@@ -140,7 +140,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 
 ...will fail to compile, with an error like "reference to
 'poke_boost_openmethod_overriders' is ambiguous". That is because the overrider
-containers exist in both the canides and felides namespaces, with the same name.
+containers exist in both the canines and felines namespaces, with the same name.
 
 Finally, the names passed as first arguments to the BOOST_OPENMETHOD and
 BOOST_OPENMETHOD_OVERRIDE macros must be identifiers. Qualified names are not

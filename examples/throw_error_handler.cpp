@@ -26,9 +26,8 @@ struct throw_if_not_implemented : bom::policies::error_handler {
     }
 };
 
-struct throwing_policy
-    : bom::default_policy::fork<throwing_policy>::replace<
-          bom::policies::error_handler, throw_if_not_implemented> {};
+struct throwing_policy : bom::default_policy::fork<throwing_policy>::with<
+                             throw_if_not_implemented> {};
 
 #define BOOST_OPENMETHOD_DEFAULT_POLICY throwing_policy
 

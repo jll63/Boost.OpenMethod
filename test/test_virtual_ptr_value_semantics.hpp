@@ -11,6 +11,8 @@
 #include <boost/openmethod/compiler.hpp>
 #include <boost/openmethod/unique_ptr.hpp>
 
+#include <utility>
+
 using namespace boost::openmethod;
 using namespace boost::openmethod::policies;
 
@@ -26,6 +28,12 @@ struct Cat : virtual Animal {};
 
 struct Dog : Animal {};
 
+template<class Left, class Right>
+constexpr bool construct_assign_ok =
+    std::is_constructible_v<Left, Right> && std::is_assignable_v<Left, Right>;
+
+struct NonPolymorphic {};
+
 template<class Policy>
 void init_test() {
     BOOST_OPENMETHOD_REGISTER(use_classes<Animal, Cat, Dog, Policy>);
@@ -37,15 +45,13 @@ void init_test() {
 struct direct_vector_policy : default_policy::fork<direct_vector_policy> {};
 
 struct indirect_vector_policy
-    : default_policy::fork<indirect_vector_policy>::replace<
-          extern_vptr, vptr_vector<indirect_vector_policy, indirect_vptr>> {};
+    : default_policy::fork<indirect_vector_policy>::with<indirect_vptr> {};
 
-struct direct_map_policy : default_policy::fork<direct_map_policy>::replace<
-                               extern_vptr, vptr_map<direct_map_policy>> {};
+struct direct_map_policy : default_policy::fork<direct_map_policy>::with<
+                               vptr_map<direct_map_policy>> {};
 
 struct indirect_map_policy
-    : default_policy::fork<indirect_map_policy>::replace<
-          extern_vptr, vptr_map<indirect_map_policy, indirect_vptr>> {};
+    : default_policy::fork<indirect_map_policy>::with<indirect_vptr> {};
 
 using test_policies = boost::mp11::mp_list<
     direct_vector_policy, indirect_vector_policy, direct_map_policy,
@@ -117,9 +123,5 @@ struct check_illegal_smart_ops {
             decltype(*std::declval<virtual_ptr<smart_ptr<Animal>, Policy>>()),
             Animal&>);
 };
-
-template<class Left, class Right>
-constexpr bool construct_assign_ok =
-    std::is_constructible_v<Left, Right> && std::is_assignable_v<Left, Right>;
 
 #endif // TEST_VIRTUAL_PTR_VALUE_SEMANTICS_HPP

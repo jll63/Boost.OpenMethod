@@ -6,17 +6,14 @@
 Defined in <boost/openmethod/policies/basic_policy.hpp>.
 
 ```c++
-namespace boost::openmethod::policies {
+
+namespace boost::openmethod {
+
+namespace policies {
 
 struct error_handler;
 
 }
-```
-
-Defined in <boost/openmethod/types.hpp>.
-
-```c++
-namespace boost::openmethod {
 
 struct openmethod_error {};
 
@@ -40,7 +37,7 @@ struct type_mismatch_error : openmethod_error {
     type_id type;
 };
 
-} // boost::openmethod::policies
+}
 ```
 
 ### Description

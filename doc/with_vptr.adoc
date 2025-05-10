@@ -3,7 +3,7 @@
 
 ### Synopsis
 
-Defined in <boost/openmethod/core.hpp>.
+Defined in <boost/openmethod/with_vptr.hpp>.
 
 ```c++
 namespace boost::openmethod {

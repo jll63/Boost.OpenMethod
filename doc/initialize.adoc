@@ -9,7 +9,7 @@ Defined in `<boost/openmethod/compiler.hpp>`.
 namespace boost::openmethod {
 
 template<class Policy = BOOST_OPENMETHOD_DEFAULT_POLICY>
-auto compiler<Policy>::initialize() -> /*unspecified*/;
+auto initialize() -> /*unspecified*/;
 
 }
 ```

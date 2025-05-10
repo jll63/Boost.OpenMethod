@@ -8,6 +8,7 @@
 
 #include <boost/openmethod/policies/basic_policy.hpp>
 
+#include <limits>
 #include <random>
 
 namespace boost::openmethod {
@@ -24,12 +25,11 @@ namespace policies {
 template<class Policy>
 class fast_perfect_hash : public type_hash {
 
-    static type_id hash_mult;
-    static std::size_t hash_shift;
-    static std::size_t hash_min;
-    static std::size_t hash_max;
-
-    static void check(std::size_t index, type_id type);
+    inline static type_id hash_mult;
+    inline static std::size_t hash_shift;
+    inline static std::size_t hash_min;
+    inline static std::size_t hash_max;
+    inline static void check(std::size_t index, type_id type);
 
   public:
     struct report {
@@ -100,6 +100,8 @@ void fast_perfect_hash<Policy>::hash_initialize(
     for (std::size_t pass = 0; pass < 4; ++pass, ++M) {
         hash_shift = 8 * sizeof(type_id) - M;
         auto hash_size = 1 << M;
+        hash_min = (std::numeric_limits<std::size_t>::max)();
+        hash_max = (std::numeric_limits<std::size_t>::min)();
 
         if constexpr (trace_enabled) {
             if (Policy::trace_enabled) {
@@ -108,15 +110,13 @@ void fast_perfect_hash<Policy>::hash_initialize(
             }
         }
 
-        bool found = false;
         std::size_t attempts = 0;
         buckets.resize(hash_size);
 
-        while (!found && attempts < 100000) {
+        while (attempts < 100000) {
             std::fill(buckets.begin(), buckets.end(), static_cast<type_id>(-1));
             ++attempts;
             ++total_attempts;
-            found = true;
             hash_mult = uniform_dist(rnd) | 1;
 
             for (auto iter = first; iter != last; ++iter) {
@@ -128,16 +128,13 @@ void fast_perfect_hash<Policy>::hash_initialize(
                     hash_max = (std::max)(hash_max, index);
 
                     if (buckets[index] != static_cast<type_id>(-1)) {
-                        found = false;
-                        break;
+                        goto collision;
                     }
 
                     buckets[index] = type;
                 }
             }
-        }
 
-        if (found) {
             if constexpr (trace_enabled) {
                 if (Policy::trace_enabled) {
                     Policy::trace_stream << "  found " << hash_mult << " after "
@@ -148,6 +145,8 @@ void fast_perfect_hash<Policy>::hash_initialize(
             }
 
             return;
+
+        collision: {}
         }
     }
 
@@ -175,15 +174,6 @@ void fast_perfect_hash<Policy>::check(std::size_t index, type_id type) {
         abort();
     }
 }
-
-template<class Policy>
-type_id fast_perfect_hash<Policy>::hash_mult;
-template<class Policy>
-std::size_t fast_perfect_hash<Policy>::hash_shift;
-template<class Policy>
-std::size_t fast_perfect_hash<Policy>::hash_min;
-template<class Policy>
-std::size_t fast_perfect_hash<Policy>::hash_max;
 
 } // namespace policies
 } // namespace boost::openmethod

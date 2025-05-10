@@ -351,7 +351,9 @@ class virtual_ptr_impl {
 
     template<
         class Other,
-        typename = std::enable_if_t<std::is_constructible_v<Class*, Other*>>>
+        typename = std::enable_if_t<
+            std::is_constructible_v<Class*, Other*> &&
+            Policy::template is_polymorphic<Class>>>
     virtual_ptr_impl(Other& other)
         : vp(box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(other))),
           obj(&other) {
@@ -359,9 +361,11 @@ class virtual_ptr_impl {
 
     template<
         class Other,
-        typename = std::enable_if_t<std::is_constructible_v<
-            Class*,
-            decltype(std::declval<virtual_ptr<Other, Policy>>().get())>>>
+        typename = std::enable_if_t<
+            std::is_constructible_v<
+                Class*,
+                decltype(std::declval<virtual_ptr<Other, Policy>>().get())> &&
+            Policy::template is_polymorphic<Class>>>
     virtual_ptr_impl(Other* other)
         : vp(box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(*other))),
           obj(other) {
@@ -381,7 +385,7 @@ class virtual_ptr_impl {
         typename = std::enable_if_t<std::is_constructible_v<
             Class*,
             decltype(std::declval<virtual_ptr<Other, Policy>>().get())>>>
-    virtual_ptr_impl(virtual_ptr<Other, Policy>& other)
+    virtual_ptr_impl(virtual_ptr_impl<Other, Policy>& other)
         : vp(other.vp), obj(other.get()) {
         // Why is this needed? Consider this conversion conversion from
         // smart to dumb pointer:
@@ -402,7 +406,9 @@ class virtual_ptr_impl {
 
     template<
         class Other,
-        typename = std::enable_if_t<std::is_assignable_v<Class*, Other*>>>
+        typename = std::enable_if_t<
+            std::is_assignable_v<Class*, Other*> &&
+            Policy::template is_polymorphic<Class>>>
     virtual_ptr_impl& operator=(Other& other) {
         obj = &other;
         vp = box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(other));
@@ -411,7 +417,9 @@ class virtual_ptr_impl {
 
     template<
         class Other,
-        typename = std::enable_if_t<std::is_assignable_v<Class*, Other*>>>
+        typename = std::enable_if_t<
+            std::is_assignable_v<Class*, Other*> &&
+            Policy::template is_polymorphic<Class>>>
     virtual_ptr_impl& operator=(Other* other) {
         obj = other;
         vp = box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(*other));
@@ -524,7 +532,8 @@ class virtual_ptr_impl<
         class Other,
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Policy> &&
-            std::is_constructible_v<Class, const Other&>>>
+            std::is_constructible_v<Class, const Other&> &&
+            Policy::template is_polymorphic<element_type>>>
     virtual_ptr_impl(const Other& other)
         : vp(box_vptr<use_indirect_vptrs>(
               other ? Policy::dynamic_vptr(*other) : null_vptr)),
@@ -535,18 +544,20 @@ class virtual_ptr_impl<
         class Other,
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Policy> &&
-            std::is_constructible_v<Class, Other&>>>
+            std::is_constructible_v<Class, Other&> &&
+            Policy::template is_polymorphic<element_type>>>
     virtual_ptr_impl(Other& other)
         : vp(box_vptr<use_indirect_vptrs>(
-                 other ? Policy::dynamic_vptr(*other) : null_vptr)),
-             obj(other) {
+              other ? Policy::dynamic_vptr(*other) : null_vptr)),
+          obj(other) {
     }
 
     template<
         class Other,
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Policy> &&
-            std::is_constructible_v<Class, Other&&>>>
+            std::is_constructible_v<Class, Other&&> &&
+            Policy::template is_polymorphic<element_type>>>
     virtual_ptr_impl(Other&& other)
         : vp(box_vptr<use_indirect_vptrs>(
               other ? Policy::dynamic_vptr(*other) : null_vptr)),
@@ -558,7 +569,7 @@ class virtual_ptr_impl<
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Policy> &&
             std::is_constructible_v<Class, const Other&>>>
-    virtual_ptr_impl(const virtual_ptr<Other, Policy>& other)
+    virtual_ptr_impl(const virtual_ptr_impl<Other, Policy>& other)
         : vp(other.vp), obj(other.obj) {
     }
 
@@ -567,7 +578,7 @@ class virtual_ptr_impl<
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Policy> &&
             std::is_constructible_v<Class, Other&>>>
-    virtual_ptr_impl(virtual_ptr<Other, Policy>& other)
+    virtual_ptr_impl(virtual_ptr_impl<Other, Policy>& other)
         : vp(other.vp), obj(other.obj) {
     }
 
@@ -581,7 +592,7 @@ class virtual_ptr_impl<
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Policy> &&
             std::is_constructible_v<Class, Other&&>>>
-    virtual_ptr_impl(virtual_ptr<Other, Policy>&& other)
+    virtual_ptr_impl(virtual_ptr_impl<Other, Policy>&& other)
         : vp(other.vp), obj(std::move(other.obj)) {
         other.vp = box_vptr<use_indirect_vptrs>(null_vptr);
     }
@@ -596,7 +607,8 @@ class virtual_ptr_impl<
         class Other,
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Policy> &&
-            std::is_assignable_v<Class, const Other&>>>
+            std::is_assignable_v<Class, const Other&> &&
+            Policy::template is_polymorphic<element_type>>>
     virtual_ptr_impl& operator=(const Other& other) {
         obj = other;
         vp = box_vptr<use_indirect_vptrs>(Policy::dynamic_vptr(*other));
@@ -607,7 +619,8 @@ class virtual_ptr_impl<
         class Other,
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Policy> &&
-            std::is_assignable_v<Class, Other&&>>>
+            std::is_assignable_v<Class, Other&&> &&
+            Policy::template is_polymorphic<element_type>>>
     virtual_ptr_impl& operator=(Other&& other) {
         vp = box_vptr<use_indirect_vptrs>(
             other ? Policy::dynamic_vptr(*other) : null_vptr);
@@ -620,11 +633,13 @@ class virtual_ptr_impl<
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Policy> &&
             std::is_assignable_v<Class, Other&>>>
-    virtual_ptr_impl& operator=(virtual_ptr<Other, Policy>& other) {
+    virtual_ptr_impl& operator=(virtual_ptr_impl<Other, Policy>& other) {
         obj = other.obj;
         vp = other.vp;
         return *this;
     }
+
+    virtual_ptr_impl& operator=(const virtual_ptr_impl& other) = default;
 
     template<
         class Other,
@@ -1042,6 +1057,21 @@ class method<Name(Parameters...), ReturnType, Policy>
     };
 };
 
+// Following cannot be `inline static` becaused of MSVC (19.43) bug causing a
+// "no appropriate default constructor available". Try this in CE:
+//
+// template<typename>
+// class method {
+//         method();
+//         method(const method&) = delete;
+//         method(method&&) = delete;
+//         ~method();
+//     public:
+//         static inline method instance;
+// };
+// template method<void>;
+// https://godbolt.org/z/GzEn486P7
+
 template<
     typename Name, typename... Parameters, typename ReturnType, class Policy>
 method<Name(Parameters...), ReturnType, Policy>
@@ -1168,13 +1198,7 @@ method<Name(Parameters...), ReturnType, Policy>::resolve_uni(
     using namespace boost::mp11;
 
     if constexpr (is_virtual<mp_first<MethodArgList>>::value) {
-        vptr_type vtbl;
-
-        if constexpr (is_virtual_ptr<ArgType>) {
-            vtbl = arg.vptr();
-        } else {
-            vtbl = vptr<ArgType>(arg);
-        }
+        vptr_type vtbl = vptr<ArgType>(arg);
 
         if constexpr (has_static_offsets<method>::value) {
             if constexpr (Policy::template has_facet<
@@ -1203,14 +1227,7 @@ method<Name(Parameters...), ReturnType, Policy>::resolve_multi_first(
     using namespace boost::mp11;
 
     if constexpr (is_virtual<mp_first<MethodArgList>>::value) {
-        vptr_type vtbl;
-
-        if constexpr (is_virtual_ptr<ArgType>) {
-            vtbl = arg.vptr();
-        } else {
-            vtbl = vptr<ArgType>(arg);
-        }
-
+        vptr_type vtbl = vptr<ArgType>(arg);
         std::size_t slot;
 
         if constexpr (has_static_offsets<method>::value) {
@@ -1251,14 +1268,7 @@ method<Name(Parameters...), ReturnType, Policy>::resolve_multi_next(
     using namespace boost::mp11;
 
     if constexpr (is_virtual<mp_first<MethodArgList>>::value) {
-        vptr_type vtbl;
-
-        if constexpr (is_virtual_ptr<ArgType>) {
-            vtbl = arg.vptr();
-        } else {
-            vtbl = vptr<ArgType>(arg);
-        }
-
+        vptr_type vtbl = vptr<ArgType>(arg);
         std::size_t slot, stride;
 
         if constexpr (has_static_offsets<method>::value) {

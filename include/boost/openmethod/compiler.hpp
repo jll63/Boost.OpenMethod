@@ -262,15 +262,6 @@ struct compiler : detail::generic_compiler {
         -> bool;
     static auto is_base(const overrider* a, const overrider* b) -> bool;
 
-    static auto static_type(type_id type) -> type_id {
-        if constexpr (std::is_base_of_v<
-                          policies::deferred_static_rtti, policies::rtti>) {
-            return reinterpret_cast<type_id (*)()>(type)();
-        } else {
-            return type;
-        }
-    }
-
     mutable detail::trace_type<Policy> trace;
     static constexpr bool trace_enabled =
         Policy::template has_facet<policies::trace_output>;
@@ -342,7 +333,6 @@ void compiler<Policy>::resolve_static_type_ids() {
             for (auto& ti : range{method.vp_begin, method.vp_end}) {
                 if (*method.vp_end == 0) {
                     resolve(&ti);
-                    *method.vp_end = 1;
                 }
 
                 for (auto& overrider : method.specs) {
@@ -356,6 +346,8 @@ void compiler<Policy>::resolve_static_type_ids() {
                     }
                 }
             }
+
+            *method.vp_end = 1;
         }
     }
 }
@@ -693,7 +685,7 @@ void compiler<Policy>::assign_slots() {
 
             auto first_slot = cls.used_slots.find_first();
             cls.first_slot =
-                first_slot == boost::dynamic_bitset<>::npos ? 0 : first_slot;
+                first_slot == boost::dynamic_bitset<>::npos ? 0u : first_slot;
             cls.vtbl.resize(cls.used_slots.size() - cls.first_slot);
             ++trace << cls << " vtbl: " << cls.first_slot << "-"
                     << cls.used_slots.size() << " slots " << cls.used_slots

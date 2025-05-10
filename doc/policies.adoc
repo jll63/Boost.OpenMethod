@@ -10,26 +10,27 @@ Class templates `use_classes`, `method`, `virtual_ptr`, and macros
 argument, a policy class, which defaults to `policies::debug` in debug builds,
 and `policies::release` in release builds.
 
-A policy has a collection of _facets_. Facets control how type information is
-obtained, how vptrs are fetched, how errors are handled and printed, etc. Some
-are used in `initialize` and method dispatch; some are used by other facets in
-the same policy as part of their implementation. See the reference for a list of
-facets and stock implementations. Policies and facets are placed in the
-`boost::openmethod::policies` namespace. Two policies are provided by the
+A policy has a collection of _facets_. Each facet belongs to a facet category. A
+policy may contain at most one facet of a given category. Facets control how
+type information is obtained, how vptrs are fetched, how errors are handled and
+printed, etc. Some are used in `initialize` and method dispatch; some are used
+by other facets in the same policy as part of their implementation. See the
+reference for the list of facets. Policies and facets are placed in the
+`boost::openmethod::policies` namespace. Two stock policies are provided by the
 library: `release` and `debug`.
 
-`release` contains the following facets:
+The `release` policy contains the following facets:
 
 [cols="1,1,1"]
 |===
-|facet |implementations |role
+|facet category |facet |role
 
 | rtti
-| std_rtti, minimal_rtti
+| std_rtti
 | provides type information for classes and objects
 
 | extern_vptr
-| vptr_vector, vptr_map
+| vptr_vector
 | stores vptrs in an indexed collection
 
 | type_hash
@@ -37,16 +38,16 @@ library: `release` and `debug`.
 | hash type id to an index in a vector
 
 | error_handler
-| vectored_error_handler, throw_error_handler
+| vectored_error_handler
 | handles errors
 
 |===
 
-`policies::debug` contains the same facets as `release`, plus a few more:
+The `debug` policy contains the same facets as `release`, plus a few more:
 
 [cols="1,1,1"]
 |===
-|facet |implementation |role
+|facet category |facet |role
 
 | runtime_checks
 | (itself)
@@ -65,16 +66,18 @@ library: `release` and `debug`.
 Policies, and some facets, have static variables. When it is the case, they are
 implemented as CRTP classes.
 
-Policies can be created from scratch, using the `basic_policy` template, or by
-adding or removing facets from existing policies. For example, `policies::debug`
-is a tweak of `policies::release`:
+Policies can be created from scratch, using the `basic_policy` template, or
+constructed from existing policies by adding and removing facets. For example,
+`policies::debug` is a tweak of `policies::release`:
 
 [source,c++]
 ----
 namespace boost::openmethod::policies {
 
-struct debug : release::add<
-    runtime_checks, basic_error_output<debug>, basic_trace_output<debug>> {};
+struct debug : release::fork<debug>::with<
+                   runtime_checks, basic_error_output<debug>,
+                   basic_trace_output<debug>> {};
+
 }
 ----
 
@@ -85,4 +88,4 @@ be overriden by defining the macroprocessor symbol
 `<boost/openmethod/core.hpp>`. The value of the symbol is used as a default
 template parameter for `use_classes`, `method`, `virtual_ptr`, and others. Once
 the `core` header has been included, changing `BOOST_OPENMETHOD_DEFAULT_POLICY`
-has no effect. See below for examples.
+has no effect.

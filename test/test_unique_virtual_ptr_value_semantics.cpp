@@ -254,3 +254,19 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(unique_virtual_ptr_value, Policy, test_policies) {
 
 template struct check_illegal_smart_ops<
     std::unique_ptr, std::shared_ptr, direct_vector_policy>;
+
+// Cannot construct or assign a virtual_ptr from a non-polymorphic object.
+static_assert(!construct_assign_ok<
+              virtual_ptr<std::unique_ptr<NonPolymorphic>>,
+              const std::unique_ptr<NonPolymorphic>&>);
+static_assert(!construct_assign_ok<
+              virtual_ptr<std::unique_ptr<NonPolymorphic>>,
+              std::unique_ptr<NonPolymorphic>&>);
+static_assert(!construct_assign_ok<
+              virtual_ptr<std::unique_ptr<NonPolymorphic>>,
+              std::unique_ptr<NonPolymorphic>&&>);
+// OK to move from another virtual_ptr though, because it can be constructed
+// using 'final'.
+static_assert(construct_assign_ok<
+              virtual_ptr<std::unique_ptr<NonPolymorphic>>,
+              virtual_ptr<std::unique_ptr<NonPolymorphic>>&&>);

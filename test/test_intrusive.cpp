@@ -9,7 +9,10 @@
 #include <boost/openmethod/policies.hpp>
 
 namespace bom = boost::openmethod;
-struct test_policy : bom::default_policy::remove<bom::policies::extern_vptr> {};
+struct test_policy : bom::default_policy::without<
+                         bom::policies::extern_vptr, bom::policies::type_hash> {
+};
+
 #define BOOST_OPENMETHOD_DEFAULT_POLICY test_policy
 
 #include <boost/openmethod.hpp>
@@ -84,8 +87,7 @@ DomesticCat::~DomesticCat() {
     describe(*this, std::cout);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(
-    speak, (const Animal&, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(speak, (const Animal&, std::ostream& os), void) {
     os << "???\n";
 }
 
@@ -168,7 +170,7 @@ BOOST_AUTO_TEST_CASE(intrusive_mode) {
     }
 }
 
-struct indirect_policy : test_policy::add<bom::policies::indirect_vptr> {};
+struct indirect_policy : test_policy::with<bom::policies::indirect_vptr> {};
 
 struct Indirect : bom::with_vptr<Indirect, indirect_policy> {
     using bom::with_vptr<Indirect, indirect_policy>::boost_openmethod_vptr;

@@ -93,7 +93,56 @@ struct F : C, E {};
 // ============================================================================
 // Test use_classes.
 
-BOOST_AUTO_TEST_CASE(test_use_classes) {
+BOOST_AUTO_TEST_CASE(test_use_classes_linear) {
+    struct Base {
+        virtual ~Base() = default;
+    };
+
+    struct D1 : Base {};
+    struct D2 : D1 {};
+    struct D3 : D2 {};
+    struct D4 : D3 {};
+    struct D5 : D4 {};
+
+    using policy = test_policy_<__COUNTER__>;
+
+    BOOST_OPENMETHOD_CLASSES(Base, D1, D2, D3, policy);
+    BOOST_OPENMETHOD_CLASSES(D2, D3, policy);
+    BOOST_OPENMETHOD_CLASSES(D3, D4, policy);
+    BOOST_OPENMETHOD_CLASSES(D4, D5, D3, policy);
+
+    auto comp = initialize<policy>();
+
+    auto base = get_class<Base>(comp);
+    auto d1 = get_class<D1>(comp);
+    auto d2 = get_class<D2>(comp);
+    auto d3 = get_class<D3>(comp);
+    auto d4 = get_class<D4>(comp);
+    auto d5 = get_class<D5>(comp);
+
+    BOOST_CHECK_EQUAL(sstr(base->direct_bases), empty);
+    BOOST_CHECK_EQUAL(sstr(base->direct_derived), sstr(d1));
+    BOOST_CHECK_EQUAL(
+        sstr(base->transitive_derived), sstr(base, d1, d2, d3, d4, d5));
+
+    BOOST_CHECK_EQUAL(sstr(d1->direct_derived), sstr(d2));
+    BOOST_CHECK_EQUAL(sstr(d1->direct_bases), sstr(base));
+    BOOST_CHECK_EQUAL(sstr(d1->transitive_derived), sstr(d1, d2, d3, d4, d5));
+
+    BOOST_CHECK_EQUAL(sstr(d2->direct_derived), sstr(d3));
+    BOOST_CHECK_EQUAL(sstr(d2->direct_bases), sstr(d1));
+    BOOST_CHECK_EQUAL(sstr(d2->transitive_derived), sstr(d2, d3, d4, d5));
+
+    BOOST_CHECK_EQUAL(sstr(d3->direct_derived), sstr(d4));
+    BOOST_CHECK_EQUAL(sstr(d3->direct_bases), sstr(d2));
+    BOOST_CHECK_EQUAL(sstr(d3->transitive_derived), sstr(d3, d4, d5));
+
+    BOOST_CHECK_EQUAL(sstr(d4->direct_derived), sstr(d5));
+    BOOST_CHECK_EQUAL(sstr(d4->direct_bases), sstr(d3));
+    BOOST_CHECK_EQUAL(sstr(d4->transitive_derived), sstr(d4, d5));
+}
+
+BOOST_AUTO_TEST_CASE(test_use_classes_diamond) {
     using test_policy = test_policy_<__COUNTER__>;
     BOOST_OPENMETHOD_REGISTER(use_classes<A, B, AB, C, D, E, test_policy>);
 

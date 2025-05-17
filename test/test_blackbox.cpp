@@ -57,12 +57,12 @@ struct Cat : Property, virtual Animal {
 
 namespace TEST_NS {
 
-using policy = test_policy_<__COUNTER__>;
+using test_registry = test_registry_<__COUNTER__>;
 using namespace animals;
 
-BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, policy);
+BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_registry);
 
-BOOST_OPENMETHOD(name, (virtual_<const Animal&>), std::string, policy);
+BOOST_OPENMETHOD(name, (virtual_<const Animal&>), std::string, test_registry);
 
 BOOST_OPENMETHOD_OVERRIDE(name, (const Cat& cat), std::string) {
     return cat.owner + "'s cat " + cat.name;
@@ -73,7 +73,7 @@ BOOST_OPENMETHOD_OVERRIDE(name, (const Dog& dog), std::string) {
 }
 
 BOOST_AUTO_TEST_CASE(cast_args_lvalue_refs) {
-    initialize<policy>();
+    initialize<test_registry>();
 
     Dog spot("Spot");
     BOOST_TEST(name(spot) == "Bill's dog Spot");
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(cast_args_lvalue_refs) {
 
 namespace TEST_NS {
 
-using policy = test_policy_<__COUNTER__>;
+using test_registry = test_registry_<__COUNTER__>;
 using namespace animals;
 
 } // namespace TEST_NS
@@ -95,13 +95,13 @@ using namespace animals;
 
 namespace TEST_NS {
 
-using policy = test_policy_<__COUNTER__>;
+using test_registry = test_registry_<__COUNTER__>;
 using namespace animals;
 
-BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, policy);
+BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_registry);
 
 BOOST_OPENMETHOD(
-    teleport, (virtual_<Animal&&>), std::unique_ptr<Animal>, policy);
+    teleport, (virtual_<Animal&&>), std::unique_ptr<Animal>, test_registry);
 
 BOOST_OPENMETHOD_OVERRIDE(teleport, (Cat && cat), std::unique_ptr<Animal>) {
     return std::make_unique<Cat>(std::move(cat));
@@ -112,7 +112,7 @@ BOOST_OPENMETHOD_OVERRIDE(teleport, (Dog && dog), std::unique_ptr<Animal>) {
 }
 
 BOOST_AUTO_TEST_CASE(cast_args_rvalue_refs) {
-    initialize<policy>();
+    initialize<test_registry>();
 
     {
         Dog spot("Spot");
@@ -135,12 +135,12 @@ BOOST_AUTO_TEST_CASE(cast_args_rvalue_refs) {
 
 namespace TEST_NS {
 
-using policy = test_policy_<__COUNTER__>;
+using test_registry = test_registry_<__COUNTER__>;
 using namespace animals;
 
-BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, policy);
+BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_registry);
 
-BOOST_OPENMETHOD(name, (virtual_<const Animal*>), std::string, policy);
+BOOST_OPENMETHOD(name, (virtual_<const Animal*>), std::string, test_registry);
 
 BOOST_OPENMETHOD_OVERRIDE(name, (const Cat* cat), std::string) {
     return cat->owner + "'s cat " + cat->name;
@@ -151,7 +151,7 @@ BOOST_OPENMETHOD_OVERRIDE(name, (const Dog* dog), std::string) {
 }
 
 BOOST_AUTO_TEST_CASE(cast_args_pointer) {
-    initialize<policy>();
+    initialize<test_registry>();
 
     Dog spot("Spot");
     BOOST_TEST(name(&spot) == "Bill's dog Spot");
@@ -166,13 +166,14 @@ namespace TEST_NS {
 // -----------------------------------------------------------------------------
 // pass virtual args by shared_ptr by value
 
-using policy = test_policy_<__COUNTER__>;
+using test_registry = test_registry_<__COUNTER__>;
 using namespace animals;
 
-BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, policy);
+BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_registry);
 
 BOOST_OPENMETHOD(
-    name, (virtual_<std::shared_ptr<const Animal>>), std::string, policy);
+    name, (virtual_<std::shared_ptr<const Animal>>), std::string,
+    test_registry);
 
 BOOST_OPENMETHOD_OVERRIDE(name, (std::shared_ptr<const Cat> cat), std::string) {
     return cat->owner + "'s cat " + cat->name;
@@ -183,7 +184,7 @@ BOOST_OPENMETHOD_OVERRIDE(name, (std::shared_ptr<const Dog> dog), std::string) {
 }
 
 BOOST_AUTO_TEST_CASE(cast_args_shared_ptr_by_value) {
-    initialize<policy>();
+    initialize<test_registry>();
 
     auto spot = std::make_shared<Dog>("Spot");
     BOOST_TEST(name(spot) == "Bill's dog Spot");
@@ -195,7 +196,7 @@ BOOST_AUTO_TEST_CASE(cast_args_shared_ptr_by_value) {
 
 namespace TEST_NS {
 
-using policy = test_policy_<__COUNTER__>;
+using test_registry = test_registry_<__COUNTER__>;
 using namespace animals;
 } // namespace TEST_NS
 
@@ -204,14 +205,14 @@ namespace TEST_NS {
 // -----------------------------------------------------------------------------
 // pass virtual args by shared_ptr by ref
 
-using policy = test_policy_<__COUNTER__>;
+using test_registry = test_registry_<__COUNTER__>;
 using namespace animals;
 
-BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, policy);
+BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_registry);
 
 BOOST_OPENMETHOD(
     name, (virtual_<const std::shared_ptr<const Animal>&>), std::string,
-    policy);
+    test_registry);
 
 BOOST_OPENMETHOD_OVERRIDE(
     name, (const std::shared_ptr<const Cat>& cat), std::string) {
@@ -224,7 +225,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 }
 
 BOOST_AUTO_TEST_CASE(cast_args_shared_ptr_by_ref) {
-    initialize<policy>();
+    initialize<test_registry>();
 
     auto spot = std::make_shared<Dog>("Spot");
     BOOST_TEST(name(spot) == "Bill's dog Spot");
@@ -240,13 +241,13 @@ namespace TEST_NS {
 // -----------------------------------------------------------------------------
 // pass virtual args by unique_ptr
 
-using policy = test_policy_<__COUNTER__>;
+using test_registry = test_registry_<__COUNTER__>;
 using namespace animals;
 
-BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, policy);
+BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_registry);
 
 BOOST_OPENMETHOD(
-    name, (virtual_<std::unique_ptr<Animal>>), std::string, policy);
+    name, (virtual_<std::unique_ptr<Animal>>), std::string, test_registry);
 
 BOOST_OPENMETHOD_OVERRIDE(name, (std::unique_ptr<Cat> cat), std::string) {
     return cat->owner + "'s cat " + cat->name;
@@ -257,7 +258,7 @@ BOOST_OPENMETHOD_OVERRIDE(name, (std::unique_ptr<Dog> dog), std::string) {
 }
 
 BOOST_AUTO_TEST_CASE(cast_args_unique_ptr) {
-    initialize<policy>();
+    initialize<test_registry>();
 
     auto spot = std::make_unique<Dog>("Spot");
     BOOST_TEST(name(std::move(spot)) == "Bill's dog Spot");
@@ -271,7 +272,7 @@ BOOST_AUTO_TEST_CASE(cast_args_unique_ptr) {
 
 namespace matrices {
 
-using policy = test_policy_<__COUNTER__>;
+using test_registry = test_registry_<__COUNTER__>;
 
 #define TYPES                                                                  \
     NONE, MATRIX, DIAGONAL, SCALAR_MATRIX, SCALAR_DIAGONAL, MATRIX_SCALAR,     \
@@ -310,12 +311,15 @@ namespace TEST_NS {
 
 using namespace matrices;
 
-BOOST_OPENMETHOD_CLASSES(matrix, dense_matrix, diagonal_matrix, policy);
+BOOST_OPENMETHOD_CLASSES(matrix, dense_matrix, diagonal_matrix, test_registry);
 
 BOOST_OPENMETHOD(
-    times, (virtual_<const matrix&>, virtual_<const matrix&>), Types, policy);
-BOOST_OPENMETHOD(times, (double, virtual_<const matrix&>), Types, policy);
-BOOST_OPENMETHOD(times, (virtual_<const matrix&>, double), Types, policy);
+    times, (virtual_<const matrix&>, virtual_<const matrix&>), Types,
+    test_registry);
+BOOST_OPENMETHOD(
+    times, (double, virtual_<const matrix&>), Types, test_registry);
+BOOST_OPENMETHOD(
+    times, (virtual_<const matrix&>, double), Types, test_registry);
 
 BOOST_OPENMETHOD_OVERRIDE(times, (const matrix&, const matrix&), Types) {
     return Types(MATRIX_MATRIX, NONE);
@@ -343,7 +347,7 @@ BOOST_OPENMETHOD_OVERRIDE(times, (const matrix&, double), Types) {
 }
 
 BOOST_AUTO_TEST_CASE(simple) {
-    auto report = initialize<policy>();
+    auto report = initialize<test_registry>();
 
     {
         // pass by const ref
@@ -365,12 +369,13 @@ namespace TEST_NS {
 
 using namespace matrices;
 
-using policy = test_policy_<__COUNTER__>;
+using test_registry = test_registry_<__COUNTER__>;
 
-BOOST_OPENMETHOD_CLASSES(matrix, dense_matrix, diagonal_matrix, policy);
+BOOST_OPENMETHOD_CLASSES(matrix, dense_matrix, diagonal_matrix, test_registry);
 
 BOOST_OPENMETHOD(
-    times, (virtual_<const matrix&>, virtual_<const matrix&>), Types, policy);
+    times, (virtual_<const matrix&>, virtual_<const matrix&>), Types,
+    test_registry);
 
 BOOST_OPENMETHOD_OVERRIDE(times, (const matrix&, const matrix&), Types) {
     BOOST_TEST(!has_next());
@@ -390,7 +395,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 }
 
 BOOST_AUTO_TEST_CASE(ambiguity) {
-    auto compiler = initialize<policy>();
+    auto compiler = initialize<test_registry>();
     BOOST_TEST(compiler.report.ambiguous == 1u);
 
     // N2216: in case of ambiguity, pick one.
@@ -413,12 +418,13 @@ namespace TEST_NS {
 
 using namespace matrices;
 
-using policy = test_policy_<__COUNTER__>;
+using test_registry = test_registry_<__COUNTER__>;
 
-BOOST_OPENMETHOD_CLASSES(matrix, dense_matrix, policy);
+BOOST_OPENMETHOD_CLASSES(matrix, dense_matrix, test_registry);
 
 BOOST_OPENMETHOD(
-    times, (virtual_<const matrix&>, virtual_<const matrix&>), matrix*, policy);
+    times, (virtual_<const matrix&>, virtual_<const matrix&>), matrix*,
+    test_registry);
 
 BOOST_OPENMETHOD_OVERRIDE(
     times, (const matrix&, const dense_matrix&), matrix*) {
@@ -435,7 +441,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 }
 
 BOOST_AUTO_TEST_CASE(covariant_return_type) {
-    auto compiler = initialize<policy>();
+    auto compiler = initialize<test_registry>();
     BOOST_TEST(compiler.report.ambiguous == 0u);
 
     // N2216: use covariant return types to resolve ambiguity.
@@ -503,7 +509,8 @@ BOOST_OPENMETHOD_OVERRIDE(
     times, (const matrix&, const diagonal_matrix&), void) {
 }
 
-void test_handler(const default_policy::error_variant& error_v) {
+void test_handler(
+    const policies::vectored_error_handler::error_variant& error_v) {
     if (auto error = std::get_if<not_implemented_error>(&error_v)) {
         throw *error;
     }
@@ -523,34 +530,37 @@ void test_handler(const default_policy::error_variant& error_v) {
 
 namespace initialize_error_handling {
 
-using policy = test_policy_<__COUNTER__>;
+using test_registry = test_registry_<__COUNTER__>;
 
 struct base {
     virtual ~base() {
     }
 };
 
-BOOST_OPENMETHOD(foo, (virtual_<base&>), void, policy);
+BOOST_OPENMETHOD(foo, (virtual_<base&>), void, test_registry);
 
 // instantiate the method
 BOOST_OPENMETHOD_OVERRIDE(foo, (base&), void) {
 }
 
 BOOST_AUTO_TEST_CASE(test_initialize_error_handling) {
-    auto prev_handler = policy::set_error_handler(errors::test_handler);
+    auto prev_handler =
+        test_registry::ErrorHandler::set_error_handler(errors::test_handler);
 
     try {
-        initialize<policy>();
+        initialize<test_registry>();
     } catch (const unknown_class_error& error) {
-        policy::set_error_handler(prev_handler);
+        test_registry::ErrorHandler::set_error_handler(prev_handler);
         BOOST_TEST(error.type == reinterpret_cast<type_id>(&typeid(base)));
         return;
     } catch (...) {
-        policy::set_error_handler(prev_handler);
+        test_registry::ErrorHandler::set_error_handler(prev_handler);
         BOOST_FAIL("unexpected exception");
     }
+
     BOOST_FAIL("did not throw");
 }
+
 } // namespace initialize_error_handling
 
 namespace across_namespaces {
@@ -588,7 +598,7 @@ BOOST_AUTO_TEST_CASE(across_namespaces) {
 
 namespace report {
 
-using policy = test_policy_<__COUNTER__>;
+using test_registry = test_registry_<__COUNTER__>;
 
 struct Animal {
     virtual void foo() = 0;
@@ -612,38 +622,38 @@ template<class... Class>
 void fn(Class&...) {
 }
 
-BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, policy);
+BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_registry);
 
 BOOST_AUTO_TEST_CASE(initialize_report) {
-    using poke = method<poke_(virtual_<Animal&>), void, policy>;
-    using pet = method<pet_(virtual_<Animal&>), void, policy>;
-    using meet =
-        method<meet_(virtual_<Animal&>, virtual_<Animal&>), void, policy>;
+    using poke = method<poke_(virtual_<Animal&>), void, test_registry>;
+    using pet = method<pet_(virtual_<Animal&>), void, test_registry>;
+    using meet = method<
+        meet_(virtual_<Animal&>, virtual_<Animal&>), void, test_registry>;
 
-    auto report = initialize<policy>().report;
+    auto report = initialize<test_registry>().report;
     BOOST_TEST(report.not_implemented == 3u);
     BOOST_TEST(report.ambiguous == 0u);
     // 'meet' dispatch table is one cell, containing 'not_implemented'
     BOOST_TEST(report.cells == 1u);
 
     BOOST_OPENMETHOD_REGISTER(poke::override<fn<Animal>>);
-    report = initialize<policy>().report;
+    report = initialize<test_registry>().report;
     BOOST_TEST(report.not_implemented == 2u);
 
     BOOST_OPENMETHOD_REGISTER(pet::override<fn<Cat>>);
     BOOST_OPENMETHOD_REGISTER(pet::override<fn<Dog>>);
-    report = initialize<policy>().report;
+    report = initialize<test_registry>().report;
     BOOST_TEST(report.not_implemented == 2u);
 
     // create ambiguity
     BOOST_OPENMETHOD_REGISTER(meet::override<fn<Animal, Cat>>);
     BOOST_OPENMETHOD_REGISTER(meet::override<fn<Dog, Animal>>);
-    report = initialize<policy>().report;
+    report = initialize<test_registry>().report;
     BOOST_TEST(report.cells == 4u);
     BOOST_TEST(report.ambiguous == 1u);
 
     BOOST_OPENMETHOD_REGISTER(meet::override<fn<Cat, Cat>>);
-    report = initialize<policy>().report;
+    report = initialize<test_registry>().report;
     BOOST_TEST(report.cells == 6u);
     BOOST_TEST(report.ambiguous == 1u);
 
@@ -651,7 +661,7 @@ BOOST_AUTO_TEST_CASE(initialize_report) {
     BOOST_OPENMETHOD_REGISTER(meet::override<fn<Dog, Dog>>);
     BOOST_OPENMETHOD_REGISTER(meet::override<fn<Dog, Cat>>);
     BOOST_OPENMETHOD_REGISTER(meet::override<fn<Cat, Dog>>);
-    report = initialize<policy>().report;
+    report = initialize<test_registry>().report;
     BOOST_TEST(report.cells == 9u);
     BOOST_TEST(report.ambiguous == 0u);
 }
@@ -660,22 +670,22 @@ BOOST_AUTO_TEST_CASE(initialize_report) {
 
 namespace test_comma_in_return_type {
 
-using policy = test_policy_<__COUNTER__>;
+using test_registry = test_registry_<__COUNTER__>;
 
 struct Test {
     virtual ~Test() {};
 };
 
-BOOST_OPENMETHOD_CLASSES(Test, policy);
+BOOST_OPENMETHOD_CLASSES(Test, test_registry);
 
-BOOST_OPENMETHOD(foo, (virtual_<Test&>), std::pair<int, int>, policy);
+BOOST_OPENMETHOD(foo, (virtual_<Test&>), std::pair<int, int>, test_registry);
 
 BOOST_OPENMETHOD_OVERRIDE(foo, (Test&), std::pair<int, int>) {
     return {1, 2};
 }
 
 BOOST_AUTO_TEST_CASE(comma_in_return_type) {
-    initialize<policy>();
+    initialize<test_registry>();
 
     Test test;
 

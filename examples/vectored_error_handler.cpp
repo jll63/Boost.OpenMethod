@@ -30,8 +30,8 @@ auto main() -> int {
     namespace bom = boost::openmethod;
     bom::initialize();
 
-    bom::default_policy::set_error_handler(
-        [](const bom::default_policy::error_variant& error) {
+    bom::default_registry::ErrorHandler::set_error_handler(
+        [](const auto& error) {
             if (std::holds_alternative<bom::not_implemented_error>(error)) {
                 throw std::runtime_error("not implemented");
             }

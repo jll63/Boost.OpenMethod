@@ -6,14 +6,14 @@
 #include <iostream>
 #include <string>
 
-#include <boost/openmethod/policies.hpp>
+#include <boost/openmethod/default_registry.hpp>
 
 namespace bom = boost::openmethod;
-struct test_policy : bom::default_policy::without<
+struct test_registry : bom::default_registry::without<
                          bom::policies::extern_vptr, bom::policies::type_hash> {
 };
 
-#define BOOST_OPENMETHOD_DEFAULT_POLICY test_policy
+#define BOOST_OPENMETHOD_DEFAULT_REGISTRY test_registry
 
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/with_vptr.hpp>
@@ -170,7 +170,7 @@ BOOST_AUTO_TEST_CASE(intrusive_mode) {
     }
 }
 
-struct indirect_policy : test_policy::with<bom::policies::indirect_vptr> {};
+struct indirect_policy : test_registry::with<bom::policies::indirect_vptr> {};
 
 struct Indirect : bom::with_vptr<Indirect, indirect_policy> {
     using bom::with_vptr<Indirect, indirect_policy>::boost_openmethod_vptr;

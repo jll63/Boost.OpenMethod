@@ -6,7 +6,7 @@
 #ifndef BOOST_OPENMETHOD_POLICY_VPTR_MAP_HPP
 #define BOOST_OPENMETHOD_POLICY_VPTR_MAP_HPP
 
-#include <boost/openmethod/policies/basic_policy.hpp>
+#include <boost/openmethod/registry.hpp>
 
 #include <unordered_map>
 
@@ -14,71 +14,77 @@ namespace boost::openmethod {
 
 namespace detail {
 
-template<class Policy, class MapAdaptor, typename Key, typename Value>
+template<class Registry, class MapAdaptor, typename Key, typename Value>
 inline typename MapAdaptor::template fn<Key, Value> vptr_map_vptrs;
 
 } // namespace detail
 
 namespace policies {
 
-template<class Policy, class MapAdaptor = mp11::mp_quote<std::unordered_map>>
+template<class MapAdaptor = mp11::mp_quote<std::unordered_map>>
 class vptr_map : public extern_vptr {
   public:
-    template<typename ForwardIterator>
-    static void register_vptrs(ForwardIterator first, ForwardIterator last) {
-        for (auto iter = first; iter != last; ++iter) {
-            for (auto type_iter = iter->type_id_begin();
-                 type_iter != iter->type_id_end(); ++type_iter) {
+    template<class Registry>
+    struct fn {
+        template<typename ForwardIterator>
+        static void
+        register_vptrs(ForwardIterator first, ForwardIterator last) {
+            for (auto iter = first; iter != last; ++iter) {
+                for (auto type_iter = iter->type_id_begin();
+                     type_iter != iter->type_id_end(); ++type_iter) {
 
-                if constexpr (Policy::template has_facet<indirect_vptr>) {
-                    detail::vptr_map_vptrs<Policy,
+                    if constexpr (Registry::template has_policy<
+                                      indirect_vptr>) {
+                        detail::vptr_map_vptrs<Registry,
                         MapAdaptor, type_id,
                         const vptr_type*>.emplace(*type_iter, &iter->vptr());
-                } else {
-                    detail::vptr_map_vptrs<
-                        Policy, MapAdaptor, type_id, vptr_type
+                    } else {
+                        detail::vptr_map_vptrs<
+                        Registry, MapAdaptor, type_id, vptr_type
                     >.emplace(*type_iter, iter->vptr());
+                    }
                 }
             }
         }
-    }
 
-    template<class Class>
-    static auto dynamic_vptr(const Class& arg) -> const vptr_type& {
-        auto type = Policy::dynamic_type(arg);
-        bool constexpr use_indirect_vptrs =
-            Policy::template has_facet<indirect_vptr>;
-        const auto& map = detail::vptr_map_vptrs<
-            Policy, MapAdaptor, type_id,
-            std::conditional_t<
-                use_indirect_vptrs, const vptr_type*, vptr_type>>;
-        auto iter = map.find(type);
+        template<class Class>
+        static auto dynamic_vptr(const Class& arg) -> const vptr_type& {
+            auto type = Registry::Rtti::dynamic_type(arg);
+            bool constexpr use_indirect_vptrs =
+                Registry::template has_policy<indirect_vptr>;
+            const auto& map = detail::vptr_map_vptrs<
+                Registry, MapAdaptor, type_id,
+                std::conditional_t<
+                    use_indirect_vptrs, const vptr_type*, vptr_type>>;
+            auto iter = map.find(type);
 
-        if constexpr (Policy::template has_facet<runtime_checks>) {
-            if (iter == map.end()) {
-                if constexpr (Policy::template has_facet<error_handler>) {
-                    unknown_class_error error;
-                    error.type = type;
-                    Policy::error(error);
+            if constexpr (Registry::RuntimeChecks) {
+                if (iter == map.end()) {
+                    using ErrorHandler = typename Registry::ErrorHandler;
+                    if constexpr (detail::is_not_void<ErrorHandler>) {
+                        unknown_class_error error;
+                        error.type = type;
+                        ErrorHandler::error(error);
+                    }
+
+                    abort();
                 }
+            }
 
-                abort();
+            if constexpr (use_indirect_vptrs) {
+                return *iter->second;
+            } else {
+                return iter->second;
             }
         }
 
-        if constexpr (use_indirect_vptrs) {
-            return *iter->second;
-        } else {
-            return iter->second;
-        }
-    }
-
-    static auto finalize() -> void {
-        detail::vptr_map_vptrs<
-            Policy, MapAdaptor, type_id, std::conditional_t<
-                Policy::template has_facet<indirect_vptr>,
+        static auto finalize() -> void {
+            detail::vptr_map_vptrs<
+            Registry, MapAdaptor, type_id, std::conditional_t<
+                Registry::template has_policy<indirect_vptr>,
                 const vptr_type*, vptr_type>>.clear();
-    }
+        }
+    };
 };
 
 } // namespace policies

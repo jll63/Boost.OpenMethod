@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE(test_use_classes_linear) {
     struct D4 : D3 {};
     struct D5 : D4 {};
 
-    using policy = test_policy_<__COUNTER__>;
+    using policy = test_registry_<__COUNTER__>;
 
     BOOST_OPENMETHOD_CLASSES(Base, D1, D2, D3, policy);
     BOOST_OPENMETHOD_CLASSES(D2, D3, policy);
@@ -143,12 +143,12 @@ BOOST_AUTO_TEST_CASE(test_use_classes_linear) {
 }
 
 BOOST_AUTO_TEST_CASE(test_use_classes_diamond) {
-    using test_policy = test_policy_<__COUNTER__>;
-    BOOST_OPENMETHOD_REGISTER(use_classes<A, B, AB, C, D, E, test_policy>);
+    using test_registry = test_registry_<__COUNTER__>;
+    BOOST_OPENMETHOD_REGISTER(use_classes<A, B, AB, C, D, E, test_registry>);
 
     std::vector<class_*> actual, expected;
 
-    auto comp = initialize<test_policy>();
+    auto comp = initialize<test_registry>();
 
     auto a = get_class<A>(comp);
     auto b = get_class<B>(comp);
@@ -216,14 +216,14 @@ struct M;
 
 #define ADD_METHOD(CLASS)                                                      \
     auto& BOOST_PP_CAT(m_, CLASS) =                                            \
-        method<CLASS(virtual_<CLASS&>), void, test_policy>::fn;
+        method<CLASS(virtual_<CLASS&>), void, test_registry>::fn;
 
 #define ADD_METHOD_N(CLASS, N)                                                 \
     auto& BOOST_PP_CAT(BOOST_PP_CAT(m_, CLASS), N) =                           \
-        method<M<N>(virtual_<CLASS&>), void, test_policy>::fn;
+        method<M<N>(virtual_<CLASS&>), void, test_registry>::fn;
 
 BOOST_AUTO_TEST_CASE(test_assign_slots_a_b1_c) {
-    using test_policy = test_policy_<__COUNTER__>;
+    using test_registry = test_registry_<__COUNTER__>;
 
     /*
       A
@@ -235,12 +235,12 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a_b1_c) {
     struct B : A {};
     struct C : A {};
 
-    BOOST_OPENMETHOD_REGISTER(use_classes<A, test_policy>);
-    BOOST_OPENMETHOD_REGISTER(use_classes<A, B, test_policy>);
-    BOOST_OPENMETHOD_REGISTER(use_classes<A, C, test_policy>);
+    BOOST_OPENMETHOD_REGISTER(use_classes<A, test_registry>);
+    BOOST_OPENMETHOD_REGISTER(use_classes<A, B, test_registry>);
+    BOOST_OPENMETHOD_REGISTER(use_classes<A, C, test_registry>);
     ADD_METHOD(B);
 
-    auto comp = initialize<test_policy>();
+    auto comp = initialize<test_registry>();
 
     BOOST_TEST_REQUIRE(get_method(comp, m_B).slots.size() == 1u);
     BOOST_TEST(get_method(comp, m_B).slots[0] == 0u);
@@ -248,12 +248,12 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a_b1_c) {
     BOOST_TEST(get_class<B>(comp)->vtbl.size() == 1u);
     BOOST_TEST(get_class<C>(comp)->vtbl.size() == 0u);
 
-    finalize<test_policy>();
-    BOOST_TEST(test_policy::dispatch_data.empty());
+    finalize<test_registry>();
+    BOOST_TEST(test_registry::dispatch_data.empty());
 }
 
 BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_c1) {
-    using test_policy = test_policy_<__COUNTER__>;
+    using test_registry = test_registry_<__COUNTER__>;
 
     /*
       A1
@@ -265,13 +265,13 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_c1) {
     struct B : A {};
     struct C : A {};
 
-    BOOST_OPENMETHOD_REGISTER(use_classes<A, test_policy>);
-    BOOST_OPENMETHOD_REGISTER(use_classes<A, B, test_policy>);
-    BOOST_OPENMETHOD_REGISTER(use_classes<A, C, test_policy>);
+    BOOST_OPENMETHOD_REGISTER(use_classes<A, test_registry>);
+    BOOST_OPENMETHOD_REGISTER(use_classes<A, B, test_registry>);
+    BOOST_OPENMETHOD_REGISTER(use_classes<A, C, test_registry>);
     ADD_METHOD(A);
     ADD_METHOD(B);
     ADD_METHOD(C);
-    auto comp = initialize<test_policy>();
+    auto comp = initialize<test_registry>();
 
     BOOST_TEST_REQUIRE(get_method(comp, m_A).slots.size() == 1u);
     BOOST_TEST(get_method(comp, m_A).slots[0] == 0u);
@@ -287,7 +287,7 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_c1) {
 }
 
 BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_d1_c1_d1) {
-    using test_policy = test_policy_<__COUNTER__>;
+    using test_registry = test_registry_<__COUNTER__>;
 
     /*
       A1
@@ -302,15 +302,15 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_d1_c1_d1) {
     struct C : virtual A {};
     struct D : B, C {};
 
-    BOOST_OPENMETHOD_REGISTER(use_classes<A, test_policy>);
-    BOOST_OPENMETHOD_REGISTER(use_classes<A, B, test_policy>);
-    BOOST_OPENMETHOD_REGISTER(use_classes<A, C, test_policy>);
-    BOOST_OPENMETHOD_REGISTER(use_classes<D, B, C, test_policy>);
+    BOOST_OPENMETHOD_REGISTER(use_classes<A, test_registry>);
+    BOOST_OPENMETHOD_REGISTER(use_classes<A, B, test_registry>);
+    BOOST_OPENMETHOD_REGISTER(use_classes<A, C, test_registry>);
+    BOOST_OPENMETHOD_REGISTER(use_classes<D, B, C, test_registry>);
     ADD_METHOD(A);
     ADD_METHOD(B);
     ADD_METHOD(C);
     ADD_METHOD(D);
-    auto comp = initialize<test_policy>();
+    auto comp = initialize<test_registry>();
 
     BOOST_TEST_REQUIRE(get_method(comp, m_A).slots.size() == 1u);
     BOOST_TEST(get_method(comp, m_A).slots[0] == 0u);
@@ -331,7 +331,7 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_d1_c1_d1) {
 }
 
 BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_d1_c1_d1_e2) {
-    using test_policy = test_policy_<__COUNTER__>;
+    using test_registry = test_registry_<__COUNTER__>;
 
     /*
       A1
@@ -347,11 +347,11 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_d1_c1_d1_e2) {
     struct E : C {};
     struct D : B, C {};
 
-    BOOST_OPENMETHOD_REGISTER(use_classes<A, test_policy>);
-    BOOST_OPENMETHOD_REGISTER(use_classes<A, B, test_policy>);
-    BOOST_OPENMETHOD_REGISTER(use_classes<A, C, test_policy>);
-    BOOST_OPENMETHOD_REGISTER(use_classes<C, E, test_policy>);
-    BOOST_OPENMETHOD_REGISTER(use_classes<D, B, C, test_policy>);
+    BOOST_OPENMETHOD_REGISTER(use_classes<A, test_registry>);
+    BOOST_OPENMETHOD_REGISTER(use_classes<A, B, test_registry>);
+    BOOST_OPENMETHOD_REGISTER(use_classes<A, C, test_registry>);
+    BOOST_OPENMETHOD_REGISTER(use_classes<C, E, test_registry>);
+    BOOST_OPENMETHOD_REGISTER(use_classes<D, B, C, test_registry>);
     ADD_METHOD(A);
     ADD_METHOD(B);
     ADD_METHOD(C);
@@ -359,7 +359,7 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_d1_c1_d1_e2) {
     ADD_METHOD_N(E, 1);
     ADD_METHOD_N(E, 2);
     ADD_METHOD_N(E, 3);
-    auto comp = initialize<test_policy>();
+    auto comp = initialize<test_registry>();
 
     BOOST_TEST_REQUIRE(get_method(comp, m_A).slots.size() == 1u);
     BOOST_TEST(get_method(comp, m_A).slots[0] == 0u);
@@ -391,7 +391,7 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_d1_c1_d1_e2) {
 }
 
 BOOST_AUTO_TEST_CASE(test_assign_slots_a1_c1_b1) {
-    using test_policy = test_policy_<__COUNTER__>;
+    using test_registry = test_registry_<__COUNTER__>;
 
     /*
     A1  B1
@@ -403,13 +403,13 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a1_c1_b1) {
     struct B {};
     struct C : A, B {};
 
-    BOOST_OPENMETHOD_REGISTER(use_classes<A, test_policy>);
-    BOOST_OPENMETHOD_REGISTER(use_classes<B, test_policy>);
-    BOOST_OPENMETHOD_REGISTER(use_classes<A, B, C, test_policy>);
+    BOOST_OPENMETHOD_REGISTER(use_classes<A, test_registry>);
+    BOOST_OPENMETHOD_REGISTER(use_classes<B, test_registry>);
+    BOOST_OPENMETHOD_REGISTER(use_classes<A, B, C, test_registry>);
     ADD_METHOD(A);
     ADD_METHOD(B);
     ADD_METHOD(C);
-    auto comp = initialize<test_policy>();
+    auto comp = initialize<test_registry>();
 
     BOOST_TEST_REQUIRE(get_method(comp, m_A).slots.size() == 1u);
     BOOST_TEST(get_method(comp, m_A).slots[0] == 0u);

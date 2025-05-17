@@ -26,3 +26,4 @@ fetch_and_include/
 tmpinst/
 
 CMakeFiles/
+build/

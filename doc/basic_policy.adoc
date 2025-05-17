@@ -11,7 +11,7 @@ namespace policies {
 template<class Policy, class... Facets>
 struct basic_policy : abstract_policy, domain<Policy>, Facets... {
     template<class Facet>
-    static constexpr bool has_facet = /*unspecified*/;
+    static constexpr bool has = /*unspecified*/;
 
     template<class NewPolicy>
     using fork = /*unspecified*/;
@@ -30,9 +30,9 @@ struct debug : release::add<...> {};
 } // policies
 
 #ifdef NDEBUG
-using default_policy = policies::release;
+using default_registry = policies::release;
 #else
-using default_policy = policies::debug;
+using default_registry = policies::debug;
 #endif
 
 } // boost::openmethod
@@ -55,11 +55,11 @@ allow distinct policies to have distinct sets of static variables.
 
 ### Members
 
-#### has_facet
+#### has
 
 ```c++
 template<class Facet>
-static constexpr bool has_facet;
+static constexpr bool has;
 ```
 
 Evaluates to `true` if _Policy_ contains _Facet_.
@@ -93,14 +93,14 @@ Returns:: A new policy containing _Facets_, and the facets from the original
 that do not have the same category as _Facets_.
 
 Examples::
-* `struct dyn_load : default_policy::fork<dyn_load>::with<indirect_vptr> {};` +
-  Creates a policy just like `default_policy`, with an extra indirection added
+* `struct dyn_load : default_registry::fork<dyn_load>::with<indirect_vptr> {};` +
+  Creates a policy just like `default_registry`, with an extra indirection added
   to the v-table pointers. This policy is suitable for use with dynamic loading.
 * `struct release_with_diags : release::fork<release_with_diags>::with<basic_error_output<release_with_diags>> {};` +
   Creates a policy just like `release`, except that it prints a diagnostic
   message before terminating with `abort()`.
-* `struct default_throw : default_policy::fork<default_throw>::with<throw_error_handler> {};` +
-  Creates a policy just like `default_policy`, except that it reports errors by
+* `struct default_throw : default_registry::fork<default_throw>::with<throw_error_handler> {};` +
+  Creates a policy just like `default_registry`, except that it reports errors by
   throwing exceptions, instead of calling a `std::function` like the default
   error handler does.
 
@@ -117,8 +117,8 @@ Returns:: A new policy containing the facets from the original that do not have
 the same category as _Facets_.
 
 Examples::
-* `struct use_map : default_policy::fork<use_map>::with<vptr_map<use_map>>::without<type_hash> {};` +
-  Creates a policy just like `default_policy`, except that it stores pointers to
+* `struct use_map : default_registry::fork<use_map>::with<vptr_map<use_map>>::without<type_hash> {};` +
+  Creates a policy just like `default_registry`, except that it stores pointers to
   v-table in a `std::unordered_map`. Also removes the hash function, since it
   will not be used.
 
@@ -145,6 +145,6 @@ The `release` policy with additional facet implementations `runtime_checks`,
 NOTE: `debug` extends `release` but it does not a fork it. Both policies use the
 same `domain`.
 
-#### default_policy
+#### default_registry
 
 An alias for `release` if `NDEBUG` is defined, and for `debug` otherwise.

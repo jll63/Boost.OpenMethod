@@ -27,42 +27,44 @@ struct Dog : Animal {
     static constexpr unsigned static_type = 3;
 };
 
-#include <boost/openmethod/policies/basic_policy.hpp>
+#include <boost/openmethod/registry.hpp>
 #include <boost/openmethod/policies/vptr_vector.hpp>
 
 // tag::facet[]
 namespace bom = boost::openmethod;
 
 struct custom_rtti : bom::policies::rtti {
-    template<class T>
-    static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
+    template<class Registry>
+    struct fn : bom::policies::rtti::fn<Registry> {
+        template<class T>
+        static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
 
-    template<typename T>
-    static auto static_type() -> bom::type_id {
-        if constexpr (is_polymorphic<T>) {
-            return T::static_type;
-        } else {
-            return 0;
+        template<typename T>
+        static auto static_type() -> bom::type_id {
+            if constexpr (is_polymorphic<T>) {
+                return T::static_type;
+            } else {
+                return 0;
+            }
         }
-    }
 
-    template<typename T>
-    static auto dynamic_type(const T& obj) -> bom::type_id {
-        if constexpr (is_polymorphic<T>) {
-            return obj.type;
-        } else {
-            return 0;
+        template<typename T>
+        static auto dynamic_type(const T& obj) -> bom::type_id {
+            if constexpr (is_polymorphic<T>) {
+                return obj.type;
+            } else {
+                return 0;
+            }
         }
-    }
+    };
 };
 // end::facet[]
 
 // tag::policy[]
-struct custom_policy : bom::policies::basic_policy<
-                           custom_policy, custom_rtti,
-                           bom::policies::vptr_vector<custom_policy>> {};
+struct custom_policy
+    : bom::registry<custom_rtti, bom::policies::vptr_vector> {};
 
-#define BOOST_OPENMETHOD_DEFAULT_POLICY custom_policy
+#define BOOST_OPENMETHOD_DEFAULT_REGISTRY custom_policy
 // end::policy[]
 
 // tag::example[]

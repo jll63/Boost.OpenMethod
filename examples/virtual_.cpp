@@ -47,14 +47,14 @@ class Animal {
 
   public:
     Animal() {
-        vptr = boost::openmethod::default_policy::static_vptr<Animal>;
+        vptr = boost::openmethod::default_registry::static_vptr<Animal>;
     }
 };
 
 class Cat : public Animal {
   public:
     Cat() {
-        vptr = boost::openmethod::default_policy::static_vptr<Cat>;
+        vptr = boost::openmethod::default_registry::static_vptr<Cat>;
     }
 };
 

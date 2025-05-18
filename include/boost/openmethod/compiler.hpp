@@ -229,7 +229,7 @@ struct compiler : detail::generic_compiler {
         decltype(Registry::template policy<policies::rtti>::type_index(0));
 
     typename detail::aggregate_reports<
-        mp11::mp_list<report>, typename Registry::policies>::type report;
+        mp11::mp_list<report>, typename Registry::policy_list>::type report;
 
     std::unordered_map<type_index_type, class_*> class_map;
 
@@ -1340,10 +1340,27 @@ auto initialize() -> compiler<Registry> {
     return compiler;
 }
 
+namespace detail {
+
+template<class Policy, typename = void>
+struct has_finalize_aux : std::false_type {};
+
+template<class Policy>
+struct has_finalize_aux<Policy, std::void_t<decltype(Policy::finalize)>>
+    : std::true_type {};
+
+} // namespace detail
+
 template<class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
 auto finalize() -> void {
-    mp11::mp_for_each<typename Registry::policies>(
-        [](auto policy) { decltype(policy)::finalize(); });
+    mp11::mp_for_each<typename Registry::policy_list>([](auto policy) {
+        using fn = typename decltype(policy)::template fn<
+            typename Registry::RegistryType>;
+        if constexpr (detail::has_finalize_aux<fn>::value) {
+            fn::finalize();
+        }
+    });
+
     Registry::dispatch_data.clear();
 }
 

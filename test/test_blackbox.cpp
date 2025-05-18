@@ -361,6 +361,13 @@ BOOST_AUTO_TEST_CASE(simple) {
         BOOST_TEST(times(dense, 2) == Types(MATRIX_SCALAR, NONE));
         BOOST_TEST(times(diag, 2) == Types(DIAGONAL_SCALAR, MATRIX_SCALAR));
     }
+
+    BOOST_TEST(!test_registry::dispatch_data.empty());
+    BOOST_TEST(!detail::vptr_vector_vptrs<test_registry::RegistryType>.empty());
+    finalize<test_registry>();
+    static_assert(detail::has_finalize_aux<test_registry::policy<policies::vptr>>::value);
+    BOOST_TEST(test_registry::dispatch_data.empty());
+    BOOST_TEST(detail::vptr_vector_vptrs<test_registry::RegistryType>.empty());
 }
 
 } // namespace TEST_NS

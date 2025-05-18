@@ -12,10 +12,7 @@ namespace boost::openmethod {
 
 namespace policies {
 
-struct policy {
-    static auto finalize() -> void {
-    }
-};
+struct policy {};
 
 struct rtti : policy {
     using category = rtti;
@@ -52,7 +49,7 @@ struct extern_vptr : vptr {};
 struct indirect_vptr : policy {
     using category = indirect_vptr;
     template<class Registry>
-    using fn = indirect_vptr;
+    struct fn {};
 };
 
 struct output : policy {
@@ -73,12 +70,14 @@ struct trace : policy {
 struct runtime_checks : policy {
     using category = runtime_checks;
     template<class Registry>
-    using fn = runtime_checks;
+    struct fn {};
 };
 
 template<typename Key>
 struct unique : policy {
     using category = unique;
+    template<class Registry>
+    struct fn {};
 };
 
 } // namespace policies
@@ -95,10 +94,10 @@ constexpr bool is_not_void = !std::is_same_v<T, void>;
 
 template<
     class Registry, class Index,
-    class Size = mp11::mp_size<typename Registry::policies>>
+    class Size = mp11::mp_size<typename Registry::policy_list>>
 struct get_policy_aux {
     using type = typename mp11::mp_at<
-        typename Registry::policies, Index>::template fn<Registry>;
+        typename Registry::policy_list, Index>::template fn<Registry>;
 };
 
 template<class Registry, class Size>
@@ -159,13 +158,13 @@ struct registry : detail::registry_base {
     inline static vptr_type static_vptr;
     inline static std::vector<std::uintptr_t> dispatch_data;
 
-    using policies = mp11::mp_list<Policies...>;
+    using policy_list = mp11::mp_list<Policies...>;
 
     template<class PolicyCategory>
     using policy = typename detail::get_policy_aux<
         registry,
         mp11::mp_find_if_q<
-            policies,
+            policy_list,
             mp11::mp_bind_front_q<
                 mp11::mp_quote_trait<std::is_base_of>, PolicyCategory>>>::type;
 
@@ -175,17 +174,19 @@ struct registry : detail::registry_base {
 
     template<class... NewPolicies>
     using with = boost::mp11::mp_apply<
-        registry, typename detail::with_aux<policies, NewPolicies...>::type>;
+        registry, typename detail::with_aux<policy_list, NewPolicies...>::type>;
 
     template<class... RemovePolicies>
     using without = boost::mp11::mp_apply<
         registry,
-        typename detail::without_aux<policies, RemovePolicies...>::type>;
+        typename detail::without_aux<policy_list, RemovePolicies...>::type>;
 
-    using Rtti = policy<openmethod::policies::rtti>;
-    using ErrorHandler = policy<openmethod::policies::error_handler>;
-    static constexpr auto RuntimeChecks =
-        has_policy<openmethod::policies::runtime_checks>;
+    // Following typedefs are shortcuts reserved for implementation. DO NOT USE!
+    using RegistryType = registry;
+    using Rtti = policy<policies::rtti>;
+    using ErrorHandler = policy<policies::error_handler>;
+    static constexpr auto RuntimeChecks = has_policy<policies::runtime_checks>;
+    static constexpr auto Trace = has_policy<policies::trace>;
 };
 
 } // namespace boost::openmethod

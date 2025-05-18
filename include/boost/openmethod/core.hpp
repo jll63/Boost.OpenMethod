@@ -357,8 +357,6 @@ inline vptr_type null_vptr = nullptr;
 
 template<class Class, class Registry, typename = void>
 class virtual_ptr_impl {
-    using Policies = typename Registry::policies;
-
   public:
     using traits = virtual_traits<Class&, Registry>;
     using element_type = Class;

@@ -247,9 +247,6 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a_b1_c) {
     BOOST_TEST(get_class<A>(comp)->vtbl.size() == 0u);
     BOOST_TEST(get_class<B>(comp)->vtbl.size() == 1u);
     BOOST_TEST(get_class<C>(comp)->vtbl.size() == 0u);
-
-    finalize<test_registry>();
-    BOOST_TEST(test_registry::dispatch_data.empty());
 }
 
 BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_c1) {

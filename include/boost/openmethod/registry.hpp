@@ -181,7 +181,7 @@ struct registry : detail::registry_base {
         registry,
         typename detail::without_aux<policy_list, RemovePolicies...>::type>;
 
-    using RegistryType = registry;
+    using registry_type = registry;
     using rtti = policy<policies::rtti>;
     using error_handler = policy<policies::error_handler>;
     static constexpr auto runtime_checks = has_policy<policies::runtime_checks>;

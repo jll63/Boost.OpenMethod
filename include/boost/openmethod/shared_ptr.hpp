@@ -117,7 +117,8 @@ template<class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
 using shared_virtual_ptr = virtual_ptr<std::shared_ptr<Class>, Registry>;
 
 template<
-    class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY, typename... T>
+    class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY,
+    typename... T>
 inline auto make_shared_virtual(T&&... args)
     -> shared_virtual_ptr<Class, Registry> {
     return shared_virtual_ptr<Class, Registry>::final(

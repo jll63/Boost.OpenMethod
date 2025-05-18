@@ -39,7 +39,8 @@ template<class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
 using unique_virtual_ptr = virtual_ptr<std::unique_ptr<Class>, Registry>;
 
 template<
-    class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY, typename... T>
+    class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY,
+    typename... T>
 inline auto make_unique_virtual(T&&... args)
     -> unique_virtual_ptr<Class, Registry> {
     return unique_virtual_ptr<Class, Registry>::final(

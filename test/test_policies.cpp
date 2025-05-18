@@ -55,12 +55,10 @@ struct bar2 : bar {};
 
 static_assert(std::is_same_v<registry<>::with<foo1>, registry<foo1>>);
 static_assert(std::is_same_v<registry<foo1>::with<foo2>, registry<foo2>>);
-static_assert(
-    std::is_same_v<
-        registry<foo1, bar1>::with<foo2, bar2>, registry<foo2, bar2>>);
-static_assert(
-    std::is_same_v<
-        registry<foo1, bar1>::with<bar2, foo2>, registry<foo2, bar2>>);
+static_assert(std::is_same_v<
+              registry<foo1, bar1>::with<foo2, bar2>, registry<foo2, bar2>>);
+static_assert(std::is_same_v<
+              registry<foo1, bar1>::with<bar2, foo2>, registry<foo2, bar2>>);
 static_assert(
     std::is_same_v<registry<foo1, bar1>::without<bar>, registry<foo1>>);
 

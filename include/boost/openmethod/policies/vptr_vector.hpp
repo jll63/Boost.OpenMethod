@@ -36,7 +36,7 @@ struct vptr_vector : extern_vptr {
 
             if constexpr (Registry::template has_policy<type_hash>) {
                 auto report =
-                    Registry::template policy<type_hash>::hash_initialize(
+                    Registry::template policy<type_hash>::initialize(
                         first, last);
                 size = report.last + 1;
             } else {
@@ -64,8 +64,8 @@ struct vptr_vector : extern_vptr {
                     auto index = *type_iter;
 
                     if constexpr (Registry::template has_policy<type_hash>) {
-                        index = Registry::template policy<
-                            type_hash>::hash_type_id(index);
+                        index =
+                            Registry::template policy<type_hash>::hash(index);
                     }
 
                     if constexpr (Registry::template has_policy<
@@ -85,8 +85,7 @@ struct vptr_vector : extern_vptr {
             auto index = Registry::template policy<rtti>::dynamic_type(arg);
 
             if constexpr (Registry::template has_policy<type_hash>) {
-                index = Registry::template policy<type_hash>::hash_type_id(
-                    index);
+                index = Registry::template policy<type_hash>::hash(index);
             }
 
             if constexpr (Registry::template has_policy<indirect_vptr>) {

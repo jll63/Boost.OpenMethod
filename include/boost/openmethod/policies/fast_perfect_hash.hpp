@@ -38,7 +38,7 @@ struct fast_perfect_hash : type_hash {
         };
 
         BOOST_FORCEINLINE
-        static auto hash_type_id(type_id type) -> type_id {
+        static auto hash(type_id type) -> type_id {
             auto index = (hash_mult * type) >> hash_shift;
 
             if constexpr (Registry::template has_policy<runtime_checks>) {
@@ -49,21 +49,20 @@ struct fast_perfect_hash : type_hash {
         }
 
         template<typename ForwardIterator>
-        static auto
-        hash_initialize(ForwardIterator first, ForwardIterator last) {
+        static auto initialize(ForwardIterator first, ForwardIterator last) {
             if constexpr (Registry::template has_policy<runtime_checks>) {
-                hash_initialize(
+                initialize(
                     first, last, detail::fast_perfect_hash_control<Registry>);
             } else {
                 std::vector<type_id> buckets;
-                hash_initialize(first, last, buckets);
+                initialize(first, last, buckets);
             }
 
             return report{hash_min, hash_max};
         }
 
         template<typename ForwardIterator>
-        static void hash_initialize(
+        static void initialize(
             ForwardIterator first, ForwardIterator last,
             std::vector<type_id>& buckets);
 
@@ -75,7 +74,7 @@ struct fast_perfect_hash : type_hash {
 
 template<class Registry>
 template<typename ForwardIterator>
-void fast_perfect_hash::fn<Registry>::hash_initialize(
+void fast_perfect_hash::fn<Registry>::initialize(
     ForwardIterator first, ForwardIterator last,
     std::vector<type_id>& buckets) {
     using namespace policies;
@@ -85,8 +84,8 @@ void fast_perfect_hash::fn<Registry>::hash_initialize(
 
     if constexpr (trace_enabled) {
         if (Registry::template policy<policies::trace>::trace_enabled) {
-            Registry::template policy<policies::output>::os << "Finding hash factor for " << N
-                                   << " types\n";
+            Registry::template policy<policies::output>::os
+                << "Finding hash factor for " << N << " types\n";
         }
     }
 
@@ -108,8 +107,9 @@ void fast_perfect_hash::fn<Registry>::hash_initialize(
 
         if constexpr (trace_enabled) {
             if (Registry::template policy<policies::trace>::trace_enabled) {
-                Registry::template policy<policies::output>::os << "  trying with M = " << M << ", "
-                                       << hash_size << " buckets\n";
+                Registry::template policy<policies::output>::os
+                    << "  trying with M = " << M << ", " << hash_size
+                    << " buckets\n";
             }
         }
 
@@ -140,10 +140,10 @@ void fast_perfect_hash::fn<Registry>::hash_initialize(
 
             if constexpr (trace_enabled) {
                 if (Registry::template policy<policies::trace>::trace_enabled) {
-                    Registry::template policy<policies::output>::os << "  found " << hash_mult
-                                           << " after " << total_attempts
-                                           << " attempts; span = [" << hash_min
-                                           << ", " << hash_max << "]\n";
+                    Registry::template policy<policies::output>::os
+                        << "  found " << hash_mult << " after "
+                        << total_attempts << " attempts; span = [" << hash_min
+                        << ", " << hash_max << "]\n";
                 }
             }
 

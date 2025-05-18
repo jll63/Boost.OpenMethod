@@ -558,16 +558,16 @@ BOOST_OPENMETHOD_OVERRIDE(foo, (base&), void) {
 
 BOOST_AUTO_TEST_CASE(test_initialize_error_handling) {
     auto prev_handler =
-        test_registry::ErrorHandler::set_error_handler(errors::test_handler);
+        test_registry::error_handler::set(errors::test_handler);
 
     try {
         initialize<test_registry>();
     } catch (const unknown_class_error& error) {
-        test_registry::ErrorHandler::set_error_handler(prev_handler);
+        test_registry::error_handler::set(prev_handler);
         BOOST_TEST(error.type == reinterpret_cast<type_id>(&typeid(base)));
         return;
     } catch (...) {
-        test_registry::ErrorHandler::set_error_handler(prev_handler);
+        test_registry::error_handler::set(prev_handler);
         BOOST_FAIL("unexpected exception");
     }
 

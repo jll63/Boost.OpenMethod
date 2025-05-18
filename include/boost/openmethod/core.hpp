@@ -43,7 +43,7 @@ namespace detail {
 // Helpers
 
 template<class Registry, class Class>
-constexpr bool is_polymorphic = Registry::Rtti::template is_polymorphic<Class>;
+constexpr bool is_polymorphic = Registry::rtti::template is_polymorphic<Class>;
 
 template<typename...>
 struct extract_registry;
@@ -72,13 +72,13 @@ struct extract_registry<Type1, Type2, MoreTypes...> {
 
 template<class Registry, class Class>
 auto collect_static_type_id() -> type_id {
-    using Rtti = typename Registry::Rtti;
+    using rtti = typename Registry::rtti;
 
     if constexpr (Registry::template has_policy<
                       policies::deferred_static_rtti>) {
-        return reinterpret_cast<type_id>(Rtti::template static_type<Class>);
+        return reinterpret_cast<type_id>(rtti::template static_type<Class>);
     } else {
-        return Rtti::template static_type<Class>();
+        return rtti::template static_type<Class>();
     }
 }
 
@@ -165,7 +165,7 @@ constexpr bool requires_dynamic_cast =
 template<class Registry, class D, class B>
 auto optimal_cast(B&& obj) -> decltype(auto) {
     if constexpr (requires_dynamic_cast<B, D>) {
-        return Registry::Rtti::template dynamic_cast_ref<D>(
+        return Registry::rtti::template dynamic_cast_ref<D>(
             std::forward<B>(obj));
     } else {
         return static_cast<D>(obj);
@@ -778,28 +778,28 @@ class virtual_ptr : public detail::virtual_ptr_impl<Class, Registry> {
         using namespace detail;
         using other_traits = virtual_traits<Other, Registry>;
         using other_class = typename other_traits::virtual_type;
-        using Rtti = typename Registry::Rtti;
+        using rtti = typename Registry::rtti;
 
         static_assert(
             std::is_base_of_v<element_type, other_class> ||
             std::is_base_of_v<other_class, element_type>);
 
         if constexpr (
-            Registry::RuntimeChecks &&
+            Registry::runtime_checks &&
             is_polymorphic<Registry, typename impl::traits::virtual_type> &&
             is_polymorphic<Registry, other_class>) {
 
             // check that dynamic type == static type
-            auto static_type = Rtti::template static_type<other_class>();
-            type_id dynamic_type = Rtti::dynamic_type(other_traits::peek(obj));
+            auto static_type = rtti::template static_type<other_class>();
+            type_id dynamic_type = rtti::dynamic_type(other_traits::peek(obj));
 
             if (dynamic_type != static_type) {
                 type_mismatch_error error;
                 error.type = dynamic_type;
-                using ErrorHandler = typename Registry::ErrorHandler;
+                using error_handler = typename Registry::error_handler;
 
-                if constexpr (is_not_void<ErrorHandler>) {
-                    ErrorHandler::error(error);
+                if constexpr (is_not_void<error_handler>) {
+                    error_handler::error(error);
                 }
 
                 abort();
@@ -966,7 +966,7 @@ class method<Name(Parameters...), ReturnType, Registry>
     : public detail::method_info {
     // Aliases used in implementation only. Everything extracted from template
     // arguments is capitalized like the arguments themselves.
-    using Rtti = typename Registry::Rtti;
+    using rtti = typename Registry::rtti;
     using DeclaredParameters = mp11::mp_list<Parameters...>;
     using CallParameters =
         boost::mp11::mp_transform<detail::remove_virtual, DeclaredParameters>;
@@ -1132,8 +1132,8 @@ method<Name(Parameters...), ReturnType, Registry>::method() {
     method_info::vp_begin = virtual_type_ids::begin;
     method_info::vp_end = virtual_type_ids::end;
     method_info::not_implemented = (void*)not_implemented_handler;
-    method_info::method_type = Rtti::template static_type<method>();
-    method_info::return_type = Rtti::template static_type<
+    method_info::method_type = rtti::template static_type<method>();
+    method_info::return_type = rtti::template static_type<
         typename virtual_traits<ReturnType, Registry>::virtual_type>();
     Registry::methods.push_back(*this);
 }
@@ -1155,16 +1155,16 @@ template<class Error>
 auto method<Name(Parameters...), ReturnType, Registry>::check_static_offset(
     std::size_t actual, std::size_t expected) const -> void {
     using namespace detail;
-    using ErrorHandler =
+    using error_handler =
         typename Registry::template policy<policies::error_handler>;
 
-    if constexpr (is_not_void<ErrorHandler>) {
+    if constexpr (is_not_void<error_handler>) {
         if (actual != expected) {
             Error error;
-            error.method = Registry::Rtti::template static_type<method>();
+            error.method = Registry::rtti::template static_type<method>();
             error.expected = this->slots_strides[0];
             error.actual = actual;
-            ErrorHandler::error(error);
+            error_handler::error(error);
 
             abort();
         }
@@ -1337,10 +1337,10 @@ namespace detail {
 
 template<class Registry, class Class>
 auto error_type_id(const Class& obj) {
-    if constexpr (Registry::Rtti::template is_polymorphic<Class>) {
-        return Registry::Rtti::template dynamic_type<Class>(obj);
+    if constexpr (Registry::rtti::template is_polymorphic<Class>) {
+        return Registry::rtti::template dynamic_type<Class>(obj);
     } else {
-        return Registry::Rtti::template static_type<void>();
+        return Registry::rtti::template static_type<void>();
     }
 }
 
@@ -1353,7 +1353,7 @@ method<Name(Parameters...), ReturnType, Registry>::not_implemented_handler(
     detail::remove_virtual<Parameters>... args) -> ReturnType {
     if constexpr (Registry::template has_policy<policies::error_handler>) {
         not_implemented_error error;
-        error.method = Registry::Rtti::template static_type<method>();
+        error.method = Registry::rtti::template static_type<method>();
         error.arity = Arity;
         type_id types[sizeof...(args)];
         auto ti_iter = types;
@@ -1421,9 +1421,9 @@ method<Name(Parameters...), ReturnType, Registry>::override_impl<
     }
 
     info.method = &fn;
-    info.return_type = Registry::Rtti::template static_type<
+    info.return_type = Registry::rtti::template static_type<
         typename virtual_traits<FnReturnType, Registry>::virtual_type>();
-    info.type = Registry::Rtti::template static_type<decltype(Function)>();
+    info.type = Registry::rtti::template static_type<decltype(Function)>();
     info.next = reinterpret_cast<void**>(p_next);
     using Thunk = thunk<Function, decltype(Function)>;
     info.pf = (void*)Thunk::fn;

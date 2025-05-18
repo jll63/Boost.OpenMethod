@@ -281,7 +281,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(indirect_virtual_ptr, Registry, test_policies) {
 
 BOOST_AUTO_TEST_CASE(virtual_ptr_final_error) {
     auto prev_handler =
-        default_registry::ErrorHandler::set_error_handler([](const auto& ev) {
+        default_registry::error_handler::set([](const auto& ev) {
             if (auto error = std::get_if<type_mismatch_error>(&ev)) {
                 static_assert(std::is_same_v<
                               decltype(error), const type_mismatch_error*>);
@@ -297,16 +297,16 @@ BOOST_AUTO_TEST_CASE(virtual_ptr_final_error) {
         Animal& animal = snoopy;
         virtual_ptr<Animal>::final(animal);
     } catch (const type_mismatch_error& error) {
-        default_registry::ErrorHandler::set_error_handler(prev_handler);
+        default_registry::error_handler::set(prev_handler);
         BOOST_TEST(error.type == reinterpret_cast<type_id>(&typeid(Dog)));
         threw = true;
     } catch (...) {
-        default_registry::ErrorHandler::set_error_handler(prev_handler);
+        default_registry::error_handler::set(prev_handler);
         BOOST_FAIL("wrong exception");
         return;
     }
 
-    if constexpr (default_registry::RuntimeChecks) {
+    if constexpr (default_registry::runtime_checks) {
         if (!threw) {
             BOOST_FAIL("should have thrown");
         }

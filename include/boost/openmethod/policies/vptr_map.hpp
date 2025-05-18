@@ -12,13 +12,6 @@
 
 namespace boost::openmethod {
 
-namespace detail {
-
-template<class Registry, class MapAdaptor, typename Key, typename Value>
-inline typename MapAdaptor::template fn<Key, Value> vptr_map_vptrs;
-
-} // namespace detail
-
 namespace policies {
 
 template<class MapAdaptor = mp11::mp_quote<std::unordered_map>>
@@ -26,6 +19,12 @@ class vptr_map : public extern_vptr {
   public:
     template<class Registry>
     struct fn {
+        static constexpr bool IndirectVptr =
+            Registry::template has_policy<indirect_vptr>;
+        using Value =
+            std::conditional_t<IndirectVptr, const vptr_type*, vptr_type>;
+        static inline typename MapAdaptor::template fn<type_id, Value> vptrs;
+
         template<typename ForwardIterator>
         static void
         register_vptrs(ForwardIterator first, ForwardIterator last) {
@@ -33,15 +32,10 @@ class vptr_map : public extern_vptr {
                 for (auto type_iter = iter->type_id_begin();
                      type_iter != iter->type_id_end(); ++type_iter) {
 
-                    if constexpr (Registry::template has_policy<
-                                      indirect_vptr>) {
-                        detail::vptr_map_vptrs<Registry,
-                        MapAdaptor, type_id,
-                        const vptr_type*>.emplace(*type_iter, &iter->vptr());
+                    if constexpr (IndirectVptr) {
+                        vptrs.emplace(*type_iter, &iter->vptr());
                     } else {
-                        detail::vptr_map_vptrs<
-                        Registry, MapAdaptor, type_id, vptr_type
-                    >.emplace(*type_iter, iter->vptr());
+                        vptrs.emplace(*type_iter, iter->vptr());
                     }
                 }
             }
@@ -50,17 +44,12 @@ class vptr_map : public extern_vptr {
         template<class Class>
         static auto dynamic_vptr(const Class& arg) -> const vptr_type& {
             auto type = Registry::Rtti::dynamic_type(arg);
-            bool constexpr use_indirect_vptrs =
-                Registry::template has_policy<indirect_vptr>;
-            const auto& map = detail::vptr_map_vptrs<
-                Registry, MapAdaptor, type_id,
-                std::conditional_t<
-                    use_indirect_vptrs, const vptr_type*, vptr_type>>;
-            auto iter = map.find(type);
+            auto iter = vptrs.find(type);
 
             if constexpr (Registry::RuntimeChecks) {
-                if (iter == map.end()) {
+                if (iter == vptrs.end()) {
                     using ErrorHandler = typename Registry::ErrorHandler;
+
                     if constexpr (detail::is_not_void<ErrorHandler>) {
                         unknown_class_error error;
                         error.type = type;
@@ -71,7 +60,7 @@ class vptr_map : public extern_vptr {
                 }
             }
 
-            if constexpr (use_indirect_vptrs) {
+            if constexpr (IndirectVptr) {
                 return *iter->second;
             } else {
                 return iter->second;
@@ -79,10 +68,7 @@ class vptr_map : public extern_vptr {
         }
 
         static auto finalize() -> void {
-            detail::vptr_map_vptrs<
-            Registry, MapAdaptor, type_id, std::conditional_t<
-                Registry::template has_policy<indirect_vptr>,
-                const vptr_type*, vptr_type>>.clear();
+            vptrs.clear();
         }
     };
 };

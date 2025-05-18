@@ -36,7 +36,7 @@ struct trace_type {
     std::size_t indentation_level{0};
 
     auto operator++() -> trace_type& {
-        if constexpr (Registry::Trace) {
+        if constexpr (Registry::trace) {
             using trace = typename Registry::template policy<policies::trace>;
             if (trace::trace_enabled) {
                 for (std::size_t i = 0; i < indentation_level; ++i) {
@@ -64,7 +64,7 @@ struct trace_type {
 
 template<class Registry, typename T, typename F>
 auto write_range(trace_type<Registry>& trace, range<T> range, F fn) -> auto& {
-    if constexpr (Registry::Trace) {
+    if constexpr (Registry::trace) {
         if (Registry::template policy<policies::trace>::trace_enabled) {
             trace << "(";
             const char* sep = "";
@@ -82,7 +82,7 @@ auto write_range(trace_type<Registry>& trace, range<T> range, F fn) -> auto& {
 
 template<class Registry, typename T>
 auto operator<<(trace_type<Registry>& trace, const T& value) -> auto& {
-    if constexpr (Registry::Trace) {
+    if constexpr (Registry::trace) {
         if (Registry::template policy<policies::trace>::trace_enabled) {
             Registry::template policy<policies::output>::os << value;
         }
@@ -92,7 +92,7 @@ auto operator<<(trace_type<Registry>& trace, const T& value) -> auto& {
 
 template<class Registry>
 auto operator<<(trace_type<Registry>& trace, const rflush& rf) -> auto& {
-    if constexpr (Registry::Trace) {
+    if constexpr (Registry::trace) {
         if (Registry::template policy<policies::trace>::trace_enabled) {
             std::size_t digits = 1;
             auto tmp = rf.value / 10;
@@ -117,7 +117,7 @@ auto operator<<(trace_type<Registry>& trace, const rflush& rf) -> auto& {
 template<class Registry>
 auto operator<<(
     trace_type<Registry>& trace, const boost::dynamic_bitset<>& bits) -> auto& {
-    if constexpr (Registry::Trace) {
+    if constexpr (Registry::trace) {
         if (Registry::template policy<policies::trace>::trace_enabled) {
             auto i = bits.size();
             while (i != 0) {
@@ -143,7 +143,7 @@ auto operator<<(trace_type<Registry>& trace, const range<T>& range) -> auto& {
 
 template<class Registry>
 auto operator<<(trace_type<Registry>& trace, const type_name& manip) -> auto& {
-    if constexpr (Registry::Trace) {
+    if constexpr (Registry::trace) {
         Registry::template policy<policies::rtti>::type_name(manip.type, trace);
     }
 

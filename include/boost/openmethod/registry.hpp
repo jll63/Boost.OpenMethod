@@ -181,12 +181,11 @@ struct registry : detail::registry_base {
         registry,
         typename detail::without_aux<policy_list, RemovePolicies...>::type>;
 
-    // Following typedefs are shortcuts reserved for implementation. DO NOT USE!
     using RegistryType = registry;
-    using Rtti = policy<policies::rtti>;
-    using ErrorHandler = policy<policies::error_handler>;
-    static constexpr auto RuntimeChecks = has_policy<policies::runtime_checks>;
-    static constexpr auto Trace = has_policy<policies::trace>;
+    using rtti = policy<policies::rtti>;
+    using error_handler = policy<policies::error_handler>;
+    static constexpr auto runtime_checks = has_policy<policies::runtime_checks>;
+    static constexpr auto trace = has_policy<policies::trace>;
 };
 
 } // namespace boost::openmethod

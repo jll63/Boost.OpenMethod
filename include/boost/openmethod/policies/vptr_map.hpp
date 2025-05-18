@@ -43,17 +43,17 @@ class vptr_map : public extern_vptr {
 
         template<class Class>
         static auto dynamic_vptr(const Class& arg) -> const vptr_type& {
-            auto type = Registry::Rtti::dynamic_type(arg);
+            auto type = Registry::rtti::dynamic_type(arg);
             auto iter = vptrs.find(type);
 
-            if constexpr (Registry::RuntimeChecks) {
+            if constexpr (Registry::runtime_checks) {
                 if (iter == vptrs.end()) {
-                    using ErrorHandler = typename Registry::ErrorHandler;
+                    using error_handler = typename Registry::error_handler;
 
-                    if constexpr (detail::is_not_void<ErrorHandler>) {
+                    if constexpr (detail::is_not_void<error_handler>) {
                         unknown_class_error error;
                         error.type = type;
-                        ErrorHandler::error(error);
+                        error_handler::error(error);
                     }
 
                     abort();

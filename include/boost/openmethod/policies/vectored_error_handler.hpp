@@ -29,14 +29,13 @@ struct vectored_error_handler : error_handler {
             handler(error_variant(error));
         }
 
-        static auto set_error_handler(function_type handler) -> function_type {
+        static auto set(function_type handler) -> function_type {
             auto prev = handler;
             fn::handler = handler;
 
             return prev;
         }
 
-      private:
         static auto default_handler(const error_variant& error_v) {
             using namespace detail;
             using namespace policies;
@@ -81,6 +80,7 @@ struct vectored_error_handler : error_handler {
             }
         }
 
+      private:
         static function_type
             handler; // Cannot be inline static because it confuses MSVC
     };

@@ -30,12 +30,11 @@ auto main() -> int {
     namespace bom = boost::openmethod;
     bom::initialize();
 
-    bom::default_registry::error_handler::set(
-        [](const auto& error) {
-            if (std::holds_alternative<bom::not_implemented_error>(error)) {
-                throw std::runtime_error("not implemented");
-            }
-        });
+    bom::default_registry::error_handler::set([](const auto& error) {
+        if (std::holds_alternative<bom::not_implemented_error>(error)) {
+            throw std::runtime_error("not implemented");
+        }
+    });
 
     Cat felix;
     Dog hector, snoopy;

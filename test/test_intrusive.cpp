@@ -9,9 +9,9 @@
 #include <boost/openmethod/default_registry.hpp>
 
 namespace bom = boost::openmethod;
-struct test_registry : bom::default_registry::without<
-                         bom::policies::extern_vptr, bom::policies::type_hash> {
-};
+struct test_registry
+    : bom::default_registry::without<
+          bom::policies::extern_vptr, bom::policies::type_hash> {};
 
 #define BOOST_OPENMETHOD_DEFAULT_REGISTRY test_registry
 

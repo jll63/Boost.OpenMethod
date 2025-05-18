@@ -366,13 +366,13 @@ BOOST_AUTO_TEST_CASE(simple) {
     if constexpr (test_registry::has_policy<policies::vptr_vector>) {
         BOOST_TEST(!test_registry::dispatch_data.empty());
         BOOST_TEST(
-            !detail::vptr_vector_vptrs<test_registry::RegistryType>.empty());
+            !detail::vptr_vector_vptrs<test_registry::registry_type>.empty());
         finalize<test_registry>();
         static_assert(detail::has_finalize_aux<
                       test_registry::policy<policies::vptr>>::value);
         BOOST_TEST(test_registry::dispatch_data.empty());
         BOOST_TEST(
-            detail::vptr_vector_vptrs<test_registry::RegistryType>.empty());
+            detail::vptr_vector_vptrs<test_registry::registry_type>.empty());
     }
 }
 
@@ -557,8 +557,7 @@ BOOST_OPENMETHOD_OVERRIDE(foo, (base&), void) {
 }
 
 BOOST_AUTO_TEST_CASE(test_initialize_error_handling) {
-    auto prev_handler =
-        test_registry::error_handler::set(errors::test_handler);
+    auto prev_handler = test_registry::error_handler::set(errors::test_handler);
 
     try {
         initialize<test_registry>();

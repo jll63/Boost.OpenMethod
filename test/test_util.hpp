@@ -12,9 +12,9 @@
 #include <boost/openmethod/compiler.hpp>
 
 template<int N>
-    struct test_registry_
-    : boost::openmethod::default_registry::with <
-      boost::openmethod::policies::unique<test_registry_<N>>> {};
+struct test_registry_
+    : boost::openmethod::default_registry::with<
+          boost::openmethod::policies::unique<test_registry_<N>>> {};
 
 #define TEST_NS BOOST_PP_CAT(test, __COUNTER__)
 

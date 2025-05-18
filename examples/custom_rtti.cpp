@@ -61,8 +61,8 @@ struct custom_rtti : bom::policies::rtti {
 // end::facet[]
 
 // tag::policy[]
-struct custom_policy
-    : bom::registry<custom_rtti, bom::policies::vptr_vector> {};
+struct custom_policy : bom::registry<custom_rtti, bom::policies::vptr_vector> {
+};
 
 #define BOOST_OPENMETHOD_DEFAULT_REGISTRY custom_policy
 // end::policy[]

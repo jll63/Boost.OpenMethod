@@ -1355,7 +1355,7 @@ template<class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
 auto finalize() -> void {
     mp11::mp_for_each<typename Registry::policy_list>([](auto policy) {
         using fn = typename decltype(policy)::template fn<
-            typename Registry::RegistryType>;
+            typename Registry::registry_type>;
         if constexpr (detail::has_finalize_aux<fn>::value) {
             fn::finalize();
         }

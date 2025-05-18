@@ -13,6 +13,7 @@
 #include <boost/openmethod/shared_ptr.hpp>
 #include <boost/openmethod/unique_ptr.hpp>
 #include <boost/openmethod/compiler.hpp>
+#include <boost/openmethod/policies/vptr_vector.hpp>
 
 #include "test_util.hpp"
 
@@ -362,12 +363,17 @@ BOOST_AUTO_TEST_CASE(simple) {
         BOOST_TEST(times(diag, 2) == Types(DIAGONAL_SCALAR, MATRIX_SCALAR));
     }
 
-    BOOST_TEST(!test_registry::dispatch_data.empty());
-    BOOST_TEST(!detail::vptr_vector_vptrs<test_registry::RegistryType>.empty());
-    finalize<test_registry>();
-    static_assert(detail::has_finalize_aux<test_registry::policy<policies::vptr>>::value);
-    BOOST_TEST(test_registry::dispatch_data.empty());
-    BOOST_TEST(detail::vptr_vector_vptrs<test_registry::RegistryType>.empty());
+    if constexpr (test_registry::has_policy<policies::vptr_vector>) {
+        BOOST_TEST(!test_registry::dispatch_data.empty());
+        BOOST_TEST(
+            !detail::vptr_vector_vptrs<test_registry::RegistryType>.empty());
+        finalize<test_registry>();
+        static_assert(detail::has_finalize_aux<
+                      test_registry::policy<policies::vptr>>::value);
+        BOOST_TEST(test_registry::dispatch_data.empty());
+        BOOST_TEST(
+            detail::vptr_vector_vptrs<test_registry::RegistryType>.empty());
+    }
 }
 
 } // namespace TEST_NS

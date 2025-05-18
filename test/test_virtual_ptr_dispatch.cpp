@@ -197,7 +197,8 @@ auto fight_bear(VirtualWarriorPtr, VirtualAxePtr, VirtualBearPtr) {
 }
 
 template<int N>
-struct indirect_test_registry : test_registry_<N> {};
+struct indirect_test_registry
+    : test_registry_<N>::template with<policies::indirect_vptr> {};
 
 template<int N>
 using policy_types =
@@ -230,12 +231,13 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
     Player player;
     auto virtual_player = vptr_player::final(player);
     BOOST_TEST(&*virtual_player == &player);
-    BOOST_TEST((virtual_player.vptr() == Registry::template static_vptr<Player>));
+    BOOST_TEST(
+        (virtual_player.vptr() == Registry::template static_vptr<Player>));
 
     Bear bear;
     BOOST_TEST((&*vptr_bear::final(bear)) == &bear);
-    BOOST_TEST(
-        (vptr_bear::final(bear).vptr() == Registry::template static_vptr<Bear>));
+    BOOST_TEST((
+        vptr_bear::final(bear).vptr() == Registry::template static_vptr<Bear>));
 
     BOOST_TEST(
         (vptr_player(bear).vptr() == Registry::template static_vptr<Bear>));

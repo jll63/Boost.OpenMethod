@@ -55,9 +55,9 @@ add_executable(core_api core_api.cpp)
 target_link_libraries(core_api Boost::openmethod)
 add_test(NAME core_api COMMAND core_api)
 
-add_executable(vectored_error_handler vectored_error_handler.cpp)
-target_link_libraries(vectored_error_handler Boost::openmethod)
-add_test(NAME vectored_error_handler COMMAND vectored_error_handler)
+add_executable(default_error_handler default_error_handler.cpp)
+target_link_libraries(default_error_handler Boost::openmethod)
+add_test(NAME default_error_handler COMMAND default_error_handler)
 
 add_executable(throw_error_handler throw_error_handler.cpp)
 target_link_libraries(throw_error_handler Boost::openmethod)

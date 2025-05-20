@@ -523,7 +523,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 }
 
 void test_handler(
-    const policies::vectored_error_handler::error_variant& error_v) {
+    const policies::default_error_handler::error_variant& error_v) {
     if (auto error = std::get_if<not_implemented_error>(&error_v)) {
         throw *error;
     }

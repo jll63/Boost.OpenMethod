@@ -11,7 +11,7 @@
 #include <boost/openmethod/policies/vptr_vector.hpp>
 #include <boost/openmethod/policies/stderr_output.hpp>
 #include <boost/openmethod/policies/fast_perfect_hash.hpp>
-#include <boost/openmethod/policies/vectored_error_handler.hpp>
+#include <boost/openmethod/policies/default_error_handler.hpp>
 
 namespace boost::openmethod {
 
@@ -19,11 +19,11 @@ namespace policies {
 
 struct release : registry<
                      std_rtti, fast_perfect_hash, vptr_vector,
-                     vectored_error_handler, stderr_output> {};
+                     default_error_handler, stderr_output> {};
 
 struct debug
     : registry<
-          std_rtti, fast_perfect_hash, vptr_vector, vectored_error_handler,
+          std_rtti, fast_perfect_hash, vptr_vector, default_error_handler,
           runtime_checks, stderr_output, trace> {};
 
 } // namespace policies

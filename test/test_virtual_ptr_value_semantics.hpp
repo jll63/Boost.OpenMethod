@@ -40,7 +40,7 @@ template<class Registry>
 void init_test() {
     BOOST_OPENMETHOD_REGISTER(use_classes<Animal, Cat, Dog, Registry>);
     struct id;
-    (void)&method<id(virtual_ptr<Animal, Registry>), void, Registry>::fn;
+    (void)&method<id, auto(virtual_ptr<Animal, Registry>)->void, Registry>::fn;
     boost::openmethod::initialize<Registry>();
 }
 

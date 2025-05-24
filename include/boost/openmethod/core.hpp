@@ -45,6 +45,8 @@ namespace detail {
 template<class Registry, class Class>
 constexpr bool is_polymorphic = Registry::rtti::template is_polymorphic<Class>;
 
+using macro_default_registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY;
+
 template<typename...>
 struct extract_registry;
 
@@ -962,10 +964,11 @@ class method;
 
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
-class method<Name(Parameters...), ReturnType, Registry>
+class method<Name, auto(Parameters...)->ReturnType, Registry>
     : public detail::method_info {
     // Aliases used in implementation only. Everything extracted from template
     // arguments is capitalized like the arguments themselves.
+    using RegistryType = Registry;
     using rtti = typename Registry::rtti;
     using DeclaredParameters = mp11::mp_list<Parameters...>;
     using CallParameters =
@@ -1107,21 +1110,22 @@ class method<Name(Parameters...), ReturnType, Registry>
 
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
-method<Name(Parameters...), ReturnType, Registry>
-    method<Name(Parameters...), ReturnType, Registry>::fn;
+method<Name, auto(Parameters...)->ReturnType, Registry>
+    method<Name, auto(Parameters...)->ReturnType, Registry>::fn;
 
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 template<auto>
-typename method<Name(Parameters...), ReturnType, Registry>::FunctionPointer
-    method<Name(Parameters...), ReturnType, Registry>::next;
+typename method<
+    Name, auto(Parameters...)->ReturnType, Registry>::FunctionPointer
+    method<Name, auto(Parameters...)->ReturnType, Registry>::next;
 
 template<typename T>
 constexpr bool is_method = std::is_base_of_v<detail::method_info, T>;
 
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
-method<Name(Parameters...), ReturnType, Registry>::method() {
+method<Name, auto(Parameters...)->ReturnType, Registry>::method() {
     method_info::slots_strides_ptr = slots_strides;
 
     using virtual_type_ids = detail::type_id_list<
@@ -1140,20 +1144,21 @@ method<Name(Parameters...), ReturnType, Registry>::method() {
 
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
-std::size_t method<
-    Name(Parameters...), ReturnType, Registry>::slots_strides[2 * Arity - 1];
+std::size_t method<Name, auto(Parameters...)->ReturnType, Registry>::
+    slots_strides[2 * Arity - 1];
 
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
-method<Name(Parameters...), ReturnType, Registry>::~method() {
+method<Name, auto(Parameters...)->ReturnType, Registry>::~method() {
     Registry::methods.remove(*this);
 }
 
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 template<class Error>
-auto method<Name(Parameters...), ReturnType, Registry>::check_static_offset(
-    std::size_t actual, std::size_t expected) const -> void {
+auto method<Name, auto(Parameters...)->ReturnType, Registry>::
+    check_static_offset(std::size_t actual, std::size_t expected) const
+    -> void {
     using namespace detail;
     using error_handler =
         typename Registry::template policy<policies::error_handler>;
@@ -1177,7 +1182,7 @@ auto method<Name(Parameters...), ReturnType, Registry>::check_static_offset(
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 BOOST_FORCEINLINE auto
-method<Name(Parameters...), ReturnType, Registry>::operator()(
+method<Name, auto(Parameters...)->ReturnType, Registry>::operator()(
     detail::remove_virtual<Parameters>... args) const -> ReturnType {
     using namespace detail;
     auto pf = resolve(parameter_traits<Parameters, Registry>::peek(args)...);
@@ -1188,10 +1193,10 @@ method<Name(Parameters...), ReturnType, Registry>::operator()(
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 template<typename... ArgType>
-BOOST_FORCEINLINE
-    typename method<Name(Parameters...), ReturnType, Registry>::FunctionPointer
-    method<Name(Parameters...), ReturnType, Registry>::resolve(
-        const ArgType&... args) const {
+BOOST_FORCEINLINE typename method<
+    Name, auto(Parameters...)->ReturnType, Registry>::FunctionPointer
+method<Name, auto(Parameters...)->ReturnType, Registry>::resolve(
+    const ArgType&... args) const {
     using namespace detail;
 
     std::uintptr_t pf;
@@ -1209,7 +1214,8 @@ BOOST_FORCEINLINE
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 template<typename ArgType>
-BOOST_FORCEINLINE auto method<Name(Parameters...), ReturnType, Registry>::vptr(
+BOOST_FORCEINLINE auto
+method<Name, auto(Parameters...)->ReturnType, Registry>::vptr(
     const ArgType& arg) const -> vptr_type {
     if constexpr (detail::is_virtual_ptr<ArgType>) {
         return arg.vptr();
@@ -1222,7 +1228,7 @@ template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 template<typename MethodArgList, typename ArgType, typename... MoreArgTypes>
 BOOST_FORCEINLINE auto
-method<Name(Parameters...), ReturnType, Registry>::resolve_uni(
+method<Name, auto(Parameters...)->ReturnType, Registry>::resolve_uni(
     const ArgType& arg, const MoreArgTypes&... more_args) const
     -> std::uintptr_t {
 
@@ -1251,7 +1257,7 @@ template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 template<typename MethodArgList, typename ArgType, typename... MoreArgTypes>
 BOOST_FORCEINLINE auto
-method<Name(Parameters...), ReturnType, Registry>::resolve_multi_first(
+method<Name, auto(Parameters...)->ReturnType, Registry>::resolve_multi_first(
     const ArgType& arg, const MoreArgTypes&... more_args) const
     -> std::uintptr_t {
 
@@ -1292,7 +1298,7 @@ template<
     std::size_t VirtualArg, typename MethodArgList, typename ArgType,
     typename... MoreArgTypes>
 BOOST_FORCEINLINE auto
-method<Name(Parameters...), ReturnType, Registry>::resolve_multi_next(
+method<Name, auto(Parameters...)->ReturnType, Registry>::resolve_multi_next(
     vptr_type dispatch, const ArgType& arg,
     const MoreArgTypes&... more_args) const -> std::uintptr_t {
 
@@ -1348,9 +1354,9 @@ auto error_type_id(const Class& obj) {
 
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
-BOOST_NORETURN auto
-method<Name(Parameters...), ReturnType, Registry>::not_implemented_handler(
-    detail::remove_virtual<Parameters>... args) -> ReturnType {
+BOOST_NORETURN auto method<Name, auto(Parameters...)->ReturnType, Registry>::
+    not_implemented_handler(detail::remove_virtual<Parameters>... args)
+        -> ReturnType {
     if constexpr (Registry::template has_policy<policies::error_handler>) {
         not_implemented_error error;
         error.method = Registry::rtti::template static_type<method>();
@@ -1383,7 +1389,7 @@ template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 template<
     auto Overrider, typename OverriderReturn, typename... OverriderParameters>
-auto method<Name(Parameters...), ReturnType, Registry>::
+auto method<Name, auto(Parameters...)->ReturnType, Registry>::
     thunk<Overrider, OverriderReturn (*)(OverriderParameters...)>::fn(
         detail::remove_virtual<Parameters>... arg) -> ReturnType {
     using namespace detail;
@@ -1403,7 +1409,7 @@ auto method<Name(Parameters...), ReturnType, Registry>::
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 template<auto Function, typename FnReturnType>
-method<Name(Parameters...), ReturnType, Registry>::override_impl<
+method<Name, auto(Parameters...)->ReturnType, Registry>::override_impl<
     Function, FnReturnType>::override_impl(FunctionPointer* p_next) {
     using namespace detail;
 

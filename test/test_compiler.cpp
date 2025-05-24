@@ -216,11 +216,11 @@ struct M;
 
 #define ADD_METHOD(CLASS)                                                      \
     auto& BOOST_PP_CAT(m_, CLASS) =                                            \
-        method<CLASS(virtual_<CLASS&>), void, test_registry>::fn;
+        method<CLASS, auto(virtual_<CLASS&>)->void, test_registry>::fn;
 
 #define ADD_METHOD_N(CLASS, N)                                                 \
     auto& BOOST_PP_CAT(BOOST_PP_CAT(m_, CLASS), N) =                           \
-        method<M<N>(virtual_<CLASS&>), void, test_registry>::fn;
+        method<M<N>, auto(virtual_<CLASS&>)->void, test_registry>::fn;
 
 BOOST_AUTO_TEST_CASE(test_assign_slots_a_b1_c) {
     using test_registry = test_registry_<__COUNTER__>;

@@ -260,7 +260,7 @@ using namespace nodes;
 use_classes<Node, Number, Plus, Times> use_node_classes;
 
 struct value_id;
-using value = method<value_id(virtual_ptr<const Node>), int>;
+using value = method<value_id, auto (virtual_ptr<const Node>)->int>;
 
 auto number_value(virtual_ptr<const Number> node) -> int {
   return node->val;

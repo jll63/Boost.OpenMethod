@@ -36,40 +36,40 @@ BOOST_OPENMETHOD_CLASSES(
     Role, Employee, Manager, Founder, Expense, Public, Bus, Metro, Taxi, Jet);
 
 //static_assert(!virtual_ptr<Role>::IsSmartPtr);
-BOOST_OPENMETHOD(pay, (virtual_ptr<Employee>), double);
+BOOST_OPENMETHOD(pay, (virtual_ptr<Employee>)->double);
 BOOST_OPENMETHOD(
-    approve, (virtual_ptr<const Role>, virtual_ptr<const Expense>, double),
-    bool);
+    approve,
+    (virtual_ptr<const Role>, virtual_ptr<const Expense>, double)->bool);
 
-BOOST_OPENMETHOD_OVERRIDE(pay, (virtual_ptr<Employee>), double) {
+BOOST_OPENMETHOD_OVERRIDE(pay, (virtual_ptr<Employee>)->double) {
     return 3000;
 }
 
-BOOST_OPENMETHOD_OVERRIDE(pay, (virtual_ptr<Manager> exec), double) {
+BOOST_OPENMETHOD_OVERRIDE(pay, (virtual_ptr<Manager> exec)->double) {
     return next(exec) + 2000;
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    approve, (virtual_ptr<const Role>, virtual_ptr<const Expense>, double),
-    bool) {
+    approve,
+    (virtual_ptr<const Role>, virtual_ptr<const Expense>, double)->bool) {
     return false;
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    approve, (virtual_ptr<const Employee>, virtual_ptr<const Public>, double),
-    bool) {
+    approve,
+    (virtual_ptr<const Employee>, virtual_ptr<const Public>, double)->bool) {
     return true;
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    approve, (virtual_ptr<const Manager>, virtual_ptr<const Taxi>, double),
-    bool) {
+    approve,
+    (virtual_ptr<const Manager>, virtual_ptr<const Taxi>, double)->bool) {
     return true;
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    approve, (virtual_ptr<const Founder>, virtual_ptr<const Expense>, double),
-    bool) {
+    approve,
+    (virtual_ptr<const Founder>, virtual_ptr<const Expense>, double)->bool) {
     return true;
 }
 

@@ -22,7 +22,7 @@ BOOST_OPENMETHOD_CLASSES(
     Animal, Herbivore, Cow, Wolf, Carnivore, dynamic_policy);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    encounter, (dyn_vptr<Animal>, dyn_vptr<Animal>), std::string) {
+    encounter, (dyn_vptr<Animal>, dyn_vptr<Animal>)->std::string) {
     return "ignore\n";
 }
 

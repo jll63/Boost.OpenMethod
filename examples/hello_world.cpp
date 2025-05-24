@@ -32,27 +32,26 @@ struct Bulldog : Dog {
 #include <boost/openmethod.hpp>
 
 BOOST_OPENMETHOD(
-    poke,                                       // method name
-    (std::ostream&, virtual_ptr<Animal>),       // method signature
-    void);                                      // return type
+    poke,                                        // method name
+    (std::ostream&, virtual_ptr<Animal>)->void); // method signature
 // end::method[]
 
 // tag::overriders[]
 BOOST_OPENMETHOD_OVERRIDE(
     poke,                                       // method name
-    (std::ostream & os, virtual_ptr<Cat> cat),  // overrider signature
-    void) {                                     // return type
+    (std::ostream & os, virtual_ptr<Cat> cat)   // overrider signature
+        ->void) {
     os << cat->name << " hisses";               // overrider body
 }
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, virtual_ptr<Dog> dog), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, virtual_ptr<Dog> dog)->void) {
     os << dog->name << " barks";
 }
 // end::overriders[]
 
 // tag::next[]
 BOOST_OPENMETHOD_OVERRIDE(
-    poke, (std::ostream & os, virtual_ptr<Bulldog> dog), void) {
+    poke, (std::ostream & os, virtual_ptr<Bulldog> dog)->void) {
     next(os, dog);                              // call base overrider
     os << " and bites back";
 }
@@ -65,31 +64,29 @@ BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog, Bulldog);
 // tag::multi[]
 BOOST_OPENMETHOD(
     encounter,
-    (std::ostream&, virtual_ptr<Animal>, virtual_ptr<Animal>), void);
+    (std::ostream&, virtual_ptr<Animal>, virtual_ptr<Animal>)->void);
 
 // 'encounter' catch-all implementation.
 BOOST_OPENMETHOD_OVERRIDE(
     encounter,
-    (std::ostream & os, virtual_ptr<Animal> a, virtual_ptr<Animal> b), void) {
+    (std::ostream & os, virtual_ptr<Animal> a, virtual_ptr<Animal> b)->void) {
     os << a->name << " and " << b->name << " ignore each other";
 }
 
 // Add definitions for specific pairs of animals.
 BOOST_OPENMETHOD_OVERRIDE(
     encounter,
-    (std::ostream & os, virtual_ptr<Dog> dog1, virtual_ptr<Dog> dog2), void) {
+    (std::ostream & os, virtual_ptr<Dog> dog1, virtual_ptr<Dog> dog2)->void) {
     os << "Both wag tails";
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    encounter, (std::ostream & os, virtual_ptr<Dog> dog, virtual_ptr<Cat> cat),
-    void) {
+    encounter, (std::ostream & os, virtual_ptr<Dog> dog, virtual_ptr<Cat> cat)->void) {
     os << dog->name << " chases " << cat->name;
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    encounter, (std::ostream & os, virtual_ptr<Cat> cat, virtual_ptr<Dog> dog),
-    void) {
+    encounter, (std::ostream & os, virtual_ptr<Cat> cat, virtual_ptr<Dog> dog)->void) {
     os << cat->name << " runs away from " << dog->name;
 }
 // end::multi[]

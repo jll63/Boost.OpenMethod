@@ -22,6 +22,12 @@
 
 using namespace boost::openmethod;
 
+#if defined(_MSC_VER)
+#define MSVC_RT(T) decltype(T())
+#else
+#define MSVC_RT(T) T
+#endif
+
 namespace animals {
 
 struct Animal {
@@ -63,13 +69,13 @@ using namespace animals;
 
 BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_registry);
 
-BOOST_OPENMETHOD(name, (virtual_<const Animal&>), std::string, test_registry);
+BOOST_OPENMETHOD(name, (virtual_<const Animal&>)->std::string, test_registry);
 
-BOOST_OPENMETHOD_OVERRIDE(name, (const Cat& cat), std::string) {
+BOOST_OPENMETHOD_OVERRIDE(name, (const Cat& cat)->std::string) {
     return cat.owner + "'s cat " + cat.name;
 }
 
-BOOST_OPENMETHOD_OVERRIDE(name, (const Dog& dog), std::string) {
+BOOST_OPENMETHOD_OVERRIDE(name, (const Dog& dog)->std::string) {
     return dog.owner + "'s dog " + dog.name;
 }
 
@@ -102,13 +108,16 @@ using namespace animals;
 BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_registry);
 
 BOOST_OPENMETHOD(
-    teleport, (virtual_<Animal&&>), std::unique_ptr<Animal>, test_registry);
+    teleport, (virtual_<Animal&&>)->MSVC_RT(std::unique_ptr<Animal>),
+    test_registry);
 
-BOOST_OPENMETHOD_OVERRIDE(teleport, (Cat && cat), std::unique_ptr<Animal>) {
+BOOST_OPENMETHOD_OVERRIDE(
+    teleport, (Cat && cat)->decltype(std::unique_ptr<Animal>())) {
     return std::make_unique<Cat>(std::move(cat));
 }
 
-BOOST_OPENMETHOD_OVERRIDE(teleport, (Dog && dog), std::unique_ptr<Animal>) {
+BOOST_OPENMETHOD_OVERRIDE(
+    teleport, (Dog && dog)->MSVC_RT(std::unique_ptr<Animal>)) {
     return std::make_unique<Dog>(std::move(dog));
 }
 
@@ -141,13 +150,13 @@ using namespace animals;
 
 BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_registry);
 
-BOOST_OPENMETHOD(name, (virtual_<const Animal*>), std::string, test_registry);
+BOOST_OPENMETHOD(name, (virtual_<const Animal*>)->std::string, test_registry);
 
-BOOST_OPENMETHOD_OVERRIDE(name, (const Cat* cat), std::string) {
+BOOST_OPENMETHOD_OVERRIDE(name, (const Cat* cat)->std::string) {
     return cat->owner + "'s cat " + cat->name;
 }
 
-BOOST_OPENMETHOD_OVERRIDE(name, (const Dog* dog), std::string) {
+BOOST_OPENMETHOD_OVERRIDE(name, (const Dog* dog)->std::string) {
     return dog->owner + "'s dog " + dog->name;
 }
 
@@ -173,14 +182,14 @@ using namespace animals;
 BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_registry);
 
 BOOST_OPENMETHOD(
-    name, (virtual_<std::shared_ptr<const Animal>>), std::string,
+    name, (virtual_<std::shared_ptr<const Animal>>)->std::string,
     test_registry);
 
-BOOST_OPENMETHOD_OVERRIDE(name, (std::shared_ptr<const Cat> cat), std::string) {
+BOOST_OPENMETHOD_OVERRIDE(name, (std::shared_ptr<const Cat> cat)->std::string) {
     return cat->owner + "'s cat " + cat->name;
 }
 
-BOOST_OPENMETHOD_OVERRIDE(name, (std::shared_ptr<const Dog> dog), std::string) {
+BOOST_OPENMETHOD_OVERRIDE(name, (std::shared_ptr<const Dog> dog)->std::string) {
     return dog->owner + "'s dog " + dog->name;
 }
 
@@ -212,16 +221,16 @@ using namespace animals;
 BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_registry);
 
 BOOST_OPENMETHOD(
-    name, (virtual_<const std::shared_ptr<const Animal>&>), std::string,
+    name, (virtual_<const std::shared_ptr<const Animal>&>)->std::string,
     test_registry);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    name, (const std::shared_ptr<const Cat>& cat), std::string) {
+    name, (const std::shared_ptr<const Cat>& cat)->std::string) {
     return cat->owner + "'s cat " + cat->name;
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    name, (const std::shared_ptr<const Dog>& dog), std::string) {
+    name, (const std::shared_ptr<const Dog>& dog)->std::string) {
     return dog->owner + "'s dog " + dog->name;
 }
 
@@ -248,13 +257,13 @@ using namespace animals;
 BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_registry);
 
 BOOST_OPENMETHOD(
-    name, (virtual_<std::unique_ptr<Animal>>), std::string, test_registry);
+    name, (virtual_<std::unique_ptr<Animal>>)->std::string, test_registry);
 
-BOOST_OPENMETHOD_OVERRIDE(name, (std::unique_ptr<Cat> cat), std::string) {
+BOOST_OPENMETHOD_OVERRIDE(name, (std::unique_ptr<Cat> cat)->std::string) {
     return cat->owner + "'s cat " + cat->name;
 }
 
-BOOST_OPENMETHOD_OVERRIDE(name, (std::unique_ptr<Dog> dog), std::string) {
+BOOST_OPENMETHOD_OVERRIDE(name, (std::unique_ptr<Dog> dog)->std::string) {
     return dog->owner + "'s dog " + dog->name;
 }
 
@@ -315,35 +324,35 @@ using namespace matrices;
 BOOST_OPENMETHOD_CLASSES(matrix, dense_matrix, diagonal_matrix, test_registry);
 
 BOOST_OPENMETHOD(
-    times, (virtual_<const matrix&>, virtual_<const matrix&>), Types,
+    times, (virtual_<const matrix&>, virtual_<const matrix&>)->Types,
     test_registry);
 BOOST_OPENMETHOD(
-    times, (double, virtual_<const matrix&>), Types, test_registry);
+    times, (double, virtual_<const matrix&>)->Types, test_registry);
 BOOST_OPENMETHOD(
-    times, (virtual_<const matrix&>, double), Types, test_registry);
+    times, (virtual_<const matrix&>, double)->Types, test_registry);
 
-BOOST_OPENMETHOD_OVERRIDE(times, (const matrix&, const matrix&), Types) {
+BOOST_OPENMETHOD_OVERRIDE(times, (const matrix&, const matrix&)->Types) {
     return Types(MATRIX_MATRIX, NONE);
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    times, (const diagonal_matrix&, const diagonal_matrix&), Types) {
+    times, (const diagonal_matrix&, const diagonal_matrix&)->Types) {
     return Types(DIAGONAL_DIAGONAL, MATRIX_MATRIX);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(times, (double, const matrix&), Types) {
+BOOST_OPENMETHOD_OVERRIDE(times, (double, const matrix&)->Types) {
     return Types(SCALAR_MATRIX, NONE);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(times, (double, const diagonal_matrix&), Types) {
+BOOST_OPENMETHOD_OVERRIDE(times, (double, const diagonal_matrix&)->Types) {
     return Types(SCALAR_DIAGONAL, SCALAR_MATRIX);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(times, (const diagonal_matrix&, double), Types) {
+BOOST_OPENMETHOD_OVERRIDE(times, (const diagonal_matrix&, double)->Types) {
     return Types(DIAGONAL_SCALAR, MATRIX_SCALAR);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(times, (const matrix&, double), Types) {
+BOOST_OPENMETHOD_OVERRIDE(times, (const matrix&, double)->Types) {
     return Types(MATRIX_SCALAR, NONE);
 }
 
@@ -387,22 +396,22 @@ using test_registry = test_registry_<__COUNTER__>;
 BOOST_OPENMETHOD_CLASSES(matrix, dense_matrix, diagonal_matrix, test_registry);
 
 BOOST_OPENMETHOD(
-    times, (virtual_<const matrix&>, virtual_<const matrix&>), Types,
+    times, (virtual_<const matrix&>, virtual_<const matrix&>)->Types,
     test_registry);
 
-BOOST_OPENMETHOD_OVERRIDE(times, (const matrix&, const matrix&), Types) {
+BOOST_OPENMETHOD_OVERRIDE(times, (const matrix&, const matrix&)->Types) {
     BOOST_TEST(!has_next());
     return Types(MATRIX_MATRIX, NONE);
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    times, (const matrix& a, const diagonal_matrix& b), Types) {
+    times, (const matrix& a, const diagonal_matrix& b)->Types) {
     BOOST_TEST(has_next());
     return Types(MATRIX_DIAGONAL, next(a, b).first);
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    times, (const diagonal_matrix& a, const matrix& b), Types) {
+    times, (const diagonal_matrix& a, const matrix& b)->Types) {
     BOOST_TEST(has_next());
     return Types(DIAGONAL_MATRIX, next(a, b).first);
 }
@@ -436,18 +445,18 @@ using test_registry = test_registry_<__COUNTER__>;
 BOOST_OPENMETHOD_CLASSES(matrix, dense_matrix, test_registry);
 
 BOOST_OPENMETHOD(
-    times, (virtual_<const matrix&>, virtual_<const matrix&>), matrix*,
+    times, (virtual_<const matrix&>, virtual_<const matrix&>)->matrix*,
     test_registry);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    times, (const matrix&, const dense_matrix&), matrix*) {
+    times, (const matrix&, const dense_matrix&)->matrix*) {
     auto result = new dense_matrix;
     result->type = MATRIX_DENSE;
     return result;
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    times, (const dense_matrix&, const matrix&), dense_matrix*) {
+    times, (const dense_matrix&, const matrix&)->dense_matrix*) {
     auto result = new dense_matrix;
     result->type = DENSE_MATRIX;
     return result;
@@ -512,14 +521,14 @@ using namespace matrices;
 BOOST_OPENMETHOD_CLASSES(matrix, dense_matrix, diagonal_matrix, matrix);
 
 BOOST_OPENMETHOD(
-    times, (virtual_<const matrix&>, virtual_<const matrix&>), void);
+    times, (virtual_<const matrix&>, virtual_<const matrix&>)->void);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    times, (const diagonal_matrix&, const matrix&), void) {
+    times, (const diagonal_matrix&, const matrix&)->void) {
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    times, (const matrix&, const diagonal_matrix&), void) {
+    times, (const matrix&, const diagonal_matrix&)->void) {
 }
 
 void test_handler(
@@ -550,10 +559,10 @@ struct base {
     }
 };
 
-BOOST_OPENMETHOD(foo, (virtual_<base&>), void, test_registry);
+BOOST_OPENMETHOD(foo, (virtual_<base&>)->void, test_registry);
 
 // instantiate the method
-BOOST_OPENMETHOD_OVERRIDE(foo, (base&), void) {
+BOOST_OPENMETHOD_OVERRIDE(foo, (base&)->void) {
 }
 
 BOOST_AUTO_TEST_CASE(test_initialize_error_handling) {
@@ -585,7 +594,7 @@ class Animal {
     }
 };
 
-BOOST_OPENMETHOD(poke, (virtual_<const Animal&>), std::string);
+BOOST_OPENMETHOD(poke, (virtual_<const Animal&>)->std::string);
 
 } // namespace animals
 
@@ -595,7 +604,7 @@ class Dog : public animals::Animal {};
 
 BOOST_OPENMETHOD_CLASSES(Dog, animals::Animal);
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (const Dog&), std::string) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (const Dog&)->std::string) {
     return "bark";
 }
 
@@ -680,6 +689,8 @@ BOOST_AUTO_TEST_CASE(initialize_report) {
 
 } // namespace report
 
+#ifndef _MSC_VER
+
 namespace test_comma_in_return_type {
 
 using test_registry = test_registry_<__COUNTER__>;
@@ -690,9 +701,10 @@ struct Test {
 
 BOOST_OPENMETHOD_CLASSES(Test, test_registry);
 
-BOOST_OPENMETHOD(foo, (virtual_<Test&>), std::pair<int, int>, test_registry);
+BOOST_OPENMETHOD(
+    foo, (virtual_<Test&>)->decltype(std::pair<int, int>()), test_registry);
 
-BOOST_OPENMETHOD_OVERRIDE(foo, (Test&), std::pair<int, int>) {
+BOOST_OPENMETHOD_OVERRIDE(foo, (Test&)->decltype(std::pair<int, int>())) {
     return {1, 2};
 }
 
@@ -705,3 +717,5 @@ BOOST_AUTO_TEST_CASE(comma_in_return_type) {
 }
 
 } // namespace test_comma_in_return_type
+
+#endif

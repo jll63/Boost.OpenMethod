@@ -167,7 +167,7 @@ struct Animal {
     virtual ~Animal() = default;
 };
 
-BOOST_OPENMETHOD(poke, (virtual_<Animal&>), std::tuple<int, int>);
+BOOST_OPENMETHOD(poke, (virtual_<Animal&>)->std::tuple<int, int>);
 
 } // namespace test_macros
 

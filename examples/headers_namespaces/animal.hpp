@@ -15,7 +15,7 @@ struct Animal {
     virtual ~Animal() = default;
 };
 
-BOOST_OPENMETHOD(poke, (std::ostream&, virtual_ptr<Animal>), void);
+BOOST_OPENMETHOD(poke, (std::ostream&, virtual_ptr<Animal>)->void);
 
 } // namespace animals
 

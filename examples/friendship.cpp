@@ -68,15 +68,15 @@ class Dog : public Animal {
 
 class Animal;
 
-BOOST_OPENMETHOD(poke, (std::ostream&, virtual_ptr<Animal>), void);
+BOOST_OPENMETHOD(poke, (std::ostream&, virtual_ptr<Animal>)->void);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    poke, (std::ostream& os, virtual_ptr<Cat> cat), void) {
+    poke, (std::ostream& os, virtual_ptr<Cat> cat)->void) {
     os << cat->name << " hisses";
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    poke, (std::ostream& os, virtual_ptr<Dog> dog), void) {
+    poke, (std::ostream& os, virtual_ptr<Dog> dog)->void) {
     os << dog->name << " barks";
 }
 

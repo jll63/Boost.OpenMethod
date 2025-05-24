@@ -45,8 +45,6 @@ namespace detail {
 template<class Registry, class Class>
 constexpr bool is_polymorphic = Registry::rtti::template is_polymorphic<Class>;
 
-using macro_default_registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY;
-
 template<typename...>
 struct extract_registry;
 

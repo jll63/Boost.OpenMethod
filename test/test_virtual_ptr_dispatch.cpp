@@ -36,10 +36,10 @@ BOOST_OPENMETHOD_CLASSES(Animal, Dog);
 
 namespace BOOST_OPENMETHOD_GENSYM {
 
-BOOST_OPENMETHOD(poke, (const virtual_ptr<Animal>&, std::ostream&), void);
+BOOST_OPENMETHOD(poke, (const virtual_ptr<Animal>&, std::ostream&)->void);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    poke, (const virtual_ptr<Dog>&, std::ostream& os), void) {
+    poke, (const virtual_ptr<Dog>&, std::ostream& os)->void) {
     os << "bark";
 }
 
@@ -77,9 +77,9 @@ BOOST_AUTO_TEST_CASE(test_virtual_ptr_by_ref) {
 
 namespace BOOST_OPENMETHOD_GENSYM {
 
-BOOST_OPENMETHOD(poke, (virtual_ptr<Animal>, std::ostream&), void);
+BOOST_OPENMETHOD(poke, (virtual_ptr<Animal>, std::ostream&)->void);
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (virtual_ptr<Dog>, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (virtual_ptr<Dog>, std::ostream& os)->void) {
     os << "bark";
 }
 
@@ -99,10 +99,10 @@ BOOST_AUTO_TEST_CASE(test_virtual_shared_by_value) {
 namespace BOOST_OPENMETHOD_GENSYM {
 
 BOOST_OPENMETHOD(
-    poke, (const shared_virtual_ptr<Animal>&, std::ostream&), void);
+    poke, (const shared_virtual_ptr<Animal>&, std::ostream&)->void);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    poke, (const shared_virtual_ptr<Dog>&, std::ostream& os), void) {
+    poke, (const shared_virtual_ptr<Dog>&, std::ostream& os)->void) {
     os << "bark";
 }
 
@@ -121,10 +121,10 @@ BOOST_AUTO_TEST_CASE(test_virtual_shared_by_const_reference) {
 
 namespace BOOST_OPENMETHOD_GENSYM {
 
-BOOST_OPENMETHOD(poke, (unique_virtual_ptr<Animal>, std::ostream&), void);
+BOOST_OPENMETHOD(poke, (unique_virtual_ptr<Animal>, std::ostream&)->void);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    poke, (unique_virtual_ptr<Dog>, std::ostream& os), void) {
+    poke, (unique_virtual_ptr<Dog>, std::ostream& os)->void) {
     os << "bark";
 }
 
@@ -149,9 +149,9 @@ struct Dog : Animal {};
 
 BOOST_OPENMETHOD_CLASSES(Animal, Dog);
 
-BOOST_OPENMETHOD(poke, (virtual_ptr<Animal>, std::ostream&), void);
+BOOST_OPENMETHOD(poke, (virtual_ptr<Animal>, std::ostream&)->void);
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (virtual_ptr<Dog>, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (virtual_ptr<Dog>, std::ostream& os)->void) {
     os << "bark";
 }
 

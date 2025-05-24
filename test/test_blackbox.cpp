@@ -479,7 +479,7 @@ BOOST_OPENMETHOD_CLASSES(Animal, Dog, Bulldog);
 
 struct BOOST_OPENMETHOD_NAME(poke);
 using poke =
-    method<BOOST_OPENMETHOD_NAME(poke)(virtual_<Animal&>), std::string>;
+    method<BOOST_OPENMETHOD_NAME(poke), auto(virtual_<Animal&>)->std::string>;
 
 auto poke_dog(Dog&) -> std::string {
     return "bark";
@@ -637,10 +637,10 @@ void fn(Class&...) {
 BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_registry);
 
 BOOST_AUTO_TEST_CASE(initialize_report) {
-    using poke = method<poke_(virtual_<Animal&>), void, test_registry>;
-    using pet = method<pet_(virtual_<Animal&>), void, test_registry>;
+    using poke = method<poke_, auto(virtual_<Animal&>)->void, test_registry>;
+    using pet = method<pet_, auto(virtual_<Animal&>)->void, test_registry>;
     using meet = method<
-        meet_(virtual_<Animal&>, virtual_<Animal&>), void, test_registry>;
+        meet_, auto(virtual_<Animal&>, virtual_<Animal&>)->void, test_registry>;
 
     auto report = initialize<test_registry>().report;
     BOOST_TEST(report.not_implemented == 3u);

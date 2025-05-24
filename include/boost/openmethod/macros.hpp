@@ -22,6 +22,21 @@ struct enable_forwarder<
     using type = ReturnType;
 };
 
+template<class...>
+struct va_args;
+
+template<class ReturnType, class Registry>
+struct va_args<ReturnType, Registry> {
+    using return_type = ReturnType;
+    using registry = Registry;
+};
+
+template<class ReturnType>
+struct va_args<ReturnType> {
+    using return_type = ReturnType;
+    using registry = macro_default_registry;
+};
+
 } // namespace boost::openmethod::detail
 
 #define BOOST_OPENMETHOD_GENSYM BOOST_PP_CAT(openmethod_gensym_, __COUNTER__)
@@ -43,9 +58,15 @@ struct enable_forwarder<
     typename ::boost::openmethod::detail::enable_forwarder<                    \
         void,                                                                  \
         ::boost::openmethod::method<                                           \
-            BOOST_OPENMETHOD_NAME(NAME) ARGS, __VA_ARGS__>,                    \
+            BOOST_OPENMETHOD_NAME(NAME),                                       \
+            ::boost::openmethod::detail::va_args<__VA_ARGS__>::return_type     \
+                ARGS,                                                          \
+            ::boost::openmethod::detail::va_args<__VA_ARGS__>::registry>,      \
         typename ::boost::openmethod::method<                                  \
-            BOOST_OPENMETHOD_NAME(NAME) ARGS, __VA_ARGS__>,                    \
+            BOOST_OPENMETHOD_NAME(NAME),                                       \
+            ::boost::openmethod::detail::va_args<__VA_ARGS__>::return_type     \
+                ARGS,                                                          \
+            ::boost::openmethod::detail::va_args<__VA_ARGS__>::registry>,      \
         ForwarderParameters...>::type                                          \
         BOOST_OPENMETHOD_GUIDE(NAME)(ForwarderParameters && ... args);         \
     template<typename... ForwarderParameters>                                  \
@@ -53,13 +74,23 @@ struct enable_forwarder<
         typename ::boost::openmethod::detail::enable_forwarder<                \
             void,                                                              \
             ::boost::openmethod::method<                                       \
-                BOOST_OPENMETHOD_NAME(NAME) ARGS, __VA_ARGS__>,                \
+                BOOST_OPENMETHOD_NAME(NAME),                                   \
+                ::boost::openmethod::detail::va_args<__VA_ARGS__>::return_type \
+                    ARGS,                                                      \
+                ::boost::openmethod::detail::va_args<__VA_ARGS__>::registry>,  \
             typename ::boost::openmethod::method<                              \
-                BOOST_OPENMETHOD_NAME(NAME) ARGS, __VA_ARGS__>::return_type,   \
+                BOOST_OPENMETHOD_NAME(NAME),                                   \
+                ::boost::openmethod::detail::va_args<__VA_ARGS__>::return_type \
+                    ARGS,                                                      \
+                ::boost::openmethod::detail::va_args<__VA_ARGS__>::registry>:: \
+                return_type,                                                   \
             ForwarderParameters...>::type {                                    \
-        return ::boost::openmethod::                                           \
-            method<BOOST_OPENMETHOD_NAME(NAME) ARGS, __VA_ARGS__>::fn(         \
-                std::forward<ForwarderParameters>(args)...);                   \
+        return ::boost::openmethod::method<                                    \
+            BOOST_OPENMETHOD_NAME(NAME),                                       \
+            ::boost::openmethod::detail::va_args<__VA_ARGS__>::return_type     \
+                ARGS,                                                          \
+            ::boost::openmethod::detail::va_args<__VA_ARGS__>::registry>::     \
+            fn(std::forward<ForwarderParameters>(args)...);                    \
     }
 
 #define BOOST_OPENMETHOD_DETAIL_LOCATE_METHOD(NAME, ARGS)                      \

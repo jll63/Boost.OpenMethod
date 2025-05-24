@@ -214,10 +214,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
 
     BOOST_OPENMETHOD_REGISTER(
         use_classes<Player, Warrior, Object, Axe, Bear, Registry>);
-    ;
     using poke = method<
-        BOOST_OPENMETHOD_NAME(poke)(virtual_ptr<Player, Registry>), std::string,
-        Registry>;
+        BOOST_OPENMETHOD_NAME(poke),
+        auto(virtual_ptr<Player, Registry>)->std::string, Registry>;
     BOOST_OPENMETHOD_REGISTER(
         typename poke::template override<
             poke_bear<virtual_ptr<Player, Registry>>>);
@@ -275,17 +274,19 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
         use_classes<Player, Warrior, Object, Axe, Bear, Registry>);
 
     using poke = method<
-        BOOST_OPENMETHOD_NAME(poke)(virtual_ptr<Player, Registry>), std::string,
-        Registry>;
+        BOOST_OPENMETHOD_NAME(poke),
+        auto(virtual_ptr<Player, Registry>)->std::string, Registry>;
     BOOST_OPENMETHOD_REGISTER(
         typename poke::template override<
             poke_bear<virtual_ptr<Player, Registry>>>);
 
     using fight = method<
-        BOOST_OPENMETHOD_NAME(fight)(
+        BOOST_OPENMETHOD_NAME(fight),
+        auto(
             virtual_ptr<Player, Registry>, virtual_ptr<Object, Registry>,
-            virtual_ptr<Player, Registry>),
-        std::string, Registry>;
+            virtual_ptr<Player, Registry>)
+            ->std::string,
+        Registry>;
     BOOST_OPENMETHOD_REGISTER(
         typename fight::template override<fight_bear<
             virtual_ptr<Player, Registry>, virtual_ptr<Object, Registry>,
@@ -316,19 +317,21 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
         use_classes<Player, Warrior, Object, Axe, Bear, Registry>);
 
     using poke = method<
-        BOOST_OPENMETHOD_NAME(poke)(shared_virtual_ptr<Player, Registry>),
-        std::string, Registry>;
+        BOOST_OPENMETHOD_NAME(poke),
+        auto(shared_virtual_ptr<Player, Registry>)->std::string, Registry>;
 
     BOOST_OPENMETHOD_REGISTER(
         typename poke::template override<
             poke_bear<shared_virtual_ptr<Player, Registry>>>);
 
     using fight = method<
-        BOOST_OPENMETHOD_NAME(fight)(
+        BOOST_OPENMETHOD_NAME(fight),
+        auto(
             shared_virtual_ptr<Player, Registry>,
             shared_virtual_ptr<Object, Registry>,
-            shared_virtual_ptr<Player, Registry>),
-        std::string, Registry>;
+            shared_virtual_ptr<Player, Registry>)
+            ->std::string,
+        Registry>;
 
     BOOST_OPENMETHOD_REGISTER(
         typename fight::template override<fight_bear<

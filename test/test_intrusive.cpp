@@ -50,8 +50,8 @@ struct DomesticCat : Cat, Pet, bom::with_vptr<DomesticCat, Cat, Pet> {
 };
 
 BOOST_OPENMETHOD(
-    speak, (virtual_<const Animal&> animal, std::ostream& os), void);
-BOOST_OPENMETHOD(describe, (virtual_<const Pet&> pet, std::ostream& os), void);
+    speak, (virtual_<const Animal&> animal, std::ostream& os)->void);
+BOOST_OPENMETHOD(describe, (virtual_<const Pet&> pet, std::ostream& os)->void);
 
 Animal::Animal() {
     speak(*this, std::cout);
@@ -87,30 +87,30 @@ DomesticCat::~DomesticCat() {
     describe(*this, std::cout);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(speak, (const Animal&, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(speak, (const Animal&, std::ostream& os)->void) {
     os << "???\n";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(speak, (const Cat&, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(speak, (const Cat&, std::ostream& os)->void) {
     os << "meow\n";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(describe, (const Pet&, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(describe, (const Pet&, std::ostream& os)->void) {
     os << "I am a pet\n";
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    describe, (const DomesticCat& pet, std::ostream& os), void) {
+    describe, (const DomesticCat& pet, std::ostream& os)->void) {
     os << "I am " << pet.name << " the cat\n";
 }
 
 // Check that we pick one of the vptrs in presence of MI, dodging ambiguity
 // issues.
 BOOST_OPENMETHOD(
-    cat_influencer, (virtual_<const DomesticCat&> cat, std::ostream& os), void);
+    cat_influencer, (virtual_<const DomesticCat&> cat, std::ostream& os)->void);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    cat_influencer, (const DomesticCat& cat, std::ostream& os), void) {
+    cat_influencer, (const DomesticCat& cat, std::ostream& os)->void) {
     os << "Follow " << cat.name << " the cat on YouTube\n";
 }
 
@@ -176,9 +176,9 @@ struct Indirect : bom::with_vptr<Indirect, indirect_policy> {
     using bom::with_vptr<Indirect, indirect_policy>::boost_openmethod_vptr;
 };
 
-BOOST_OPENMETHOD(whatever, (virtual_<Indirect&>), void, indirect_policy);
+BOOST_OPENMETHOD(whatever, (virtual_<Indirect&>)->void, indirect_policy);
 
-BOOST_OPENMETHOD_OVERRIDE(whatever, (Indirect&), void) {
+BOOST_OPENMETHOD_OVERRIDE(whatever, (Indirect&)->void) {
 }
 
 BOOST_AUTO_TEST_CASE(core_intrusive_vptr) {

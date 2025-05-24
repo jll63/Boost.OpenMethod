@@ -33,7 +33,7 @@ template<class Class>
 using dyn_vptr = boost::openmethod::virtual_ptr<Class, dynamic_policy>;
 
 BOOST_OPENMETHOD(
-    encounter, (dyn_vptr<Animal>, dyn_vptr<Animal>), std::string,
+    encounter, (dyn_vptr<Animal>, dyn_vptr<Animal>)->std::string,
     dynamic_policy);
 
 // end::header[]

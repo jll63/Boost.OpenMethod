@@ -40,17 +40,17 @@ struct Negate : Node {
     unique_virtual_ptr<Node> child;
 };
 
-BOOST_OPENMETHOD(value, (virtual_ptr<Node>), int);
+BOOST_OPENMETHOD(value, (virtual_ptr<Node>)->int);
 
-BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<Literal> node), int) {
+BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<Literal> node)->int) {
     return node->value;
 }
 
-BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<Plus> node), int) {
+BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<Plus> node)->int) {
     return value(node->left) + value(node->right);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<Negate> node), int) {
+BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<Negate> node)->int) {
     return -value(node->child);
 }
 

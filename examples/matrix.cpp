@@ -40,30 +40,33 @@ struct diagonal_matrix : matrix {
 
 BOOST_OPENMETHOD_CLASSES(matrix, dense_matrix, diagonal_matrix);
 
-BOOST_OPENMETHOD(to_json, (virtual_ptr<const matrix>), string);
+BOOST_OPENMETHOD(to_json, (virtual_ptr<const matrix>)->string);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    to_json, (virtual_ptr<const dense_matrix> m), string) {
+    to_json, (virtual_ptr<const dense_matrix> m)->string) {
     return "json for dense matrix...";
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    to_json, (virtual_ptr<const diagonal_matrix> m), string) {
+    to_json, (virtual_ptr<const diagonal_matrix> m)->string) {
     return "json for diagonal matrix...";
 }
 
 // -----------------------------------------------------------------------------
 // matrix * matrix
 
+// NOTE: the decltype trick below works around a MSVC bug.
+
 BOOST_OPENMETHOD(
-    times, (shared_virtual_ptr<const matrix>, shared_virtual_ptr<const matrix>),
-    shared_virtual_ptr<const matrix>);
+    times,
+    (shared_virtual_ptr<const matrix>, shared_virtual_ptr<const matrix>)
+        ->decltype(shared_virtual_ptr<const matrix>()));
 
 // catch-all matrix * matrix -> dense_matrix
 BOOST_OPENMETHOD_OVERRIDE(
     times,
-    (shared_virtual_ptr<const matrix> a, shared_virtual_ptr<const matrix> b),
-    shared_virtual_ptr<const dense_matrix>) {
+    (shared_virtual_ptr<const matrix> a, shared_virtual_ptr<const matrix> b)
+        ->decltype(shared_virtual_ptr<const dense_matrix>())) {
     return make_shared<const dense_matrix>();
 }
 
@@ -71,8 +74,8 @@ BOOST_OPENMETHOD_OVERRIDE(
 BOOST_OPENMETHOD_OVERRIDE(
     times,
     (shared_virtual_ptr<const diagonal_matrix> a,
-     shared_virtual_ptr<const diagonal_matrix> b),
-    shared_virtual_ptr<const diagonal_matrix>) {
+     shared_virtual_ptr<const diagonal_matrix> b)
+        ->decltype(shared_virtual_ptr<const diagonal_matrix>())) {
     return make_shared_virtual<diagonal_matrix>();
 }
 
@@ -85,19 +88,22 @@ inline auto operator*(shared_ptr<const matrix> a, shared_ptr<const matrix> b)
 // scalar * matrix
 
 BOOST_OPENMETHOD(
-    times, (double, shared_virtual_ptr<const matrix>),
-    shared_virtual_ptr<const matrix>);
+    times,
+    (double, shared_virtual_ptr<const matrix>)
+        ->decltype(shared_virtual_ptr<const matrix>()));
 
 // catch-all matrix * scalar -> dense_matrix
 BOOST_OPENMETHOD_OVERRIDE(
-    times, (double a, shared_virtual_ptr<const matrix> b),
-    shared_virtual_ptr<const dense_matrix>) {
+    times,
+    (double a, shared_virtual_ptr<const matrix> b)
+        ->decltype(shared_virtual_ptr<const dense_matrix>())) {
     return make_shared_virtual<dense_matrix>();
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    times, (double a, shared_virtual_ptr<const diagonal_matrix> b),
-    shared_virtual_ptr<const diagonal_matrix>) {
+    times,
+    (double a, shared_virtual_ptr<const diagonal_matrix> b)
+        ->decltype(shared_virtual_ptr<const diagonal_matrix>())) {
     return make_shared_virtual<diagonal_matrix>();
 }
 

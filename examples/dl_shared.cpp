@@ -12,7 +12,7 @@
 #include "dl.hpp"
 
 BOOST_OPENMETHOD_OVERRIDE(
-    encounter, (dyn_vptr<Herbivore>, dyn_vptr<Carnivore>), std::string) {
+    encounter, (dyn_vptr<Herbivore>, dyn_vptr<Carnivore>)->std::string) {
     return "run\n";
 }
 
@@ -25,7 +25,7 @@ extern "C" auto make_tiger() -> Tiger* {
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    encounter, (dyn_vptr<Carnivore>, dyn_vptr<Herbivore>), std::string) {
+    encounter, (dyn_vptr<Carnivore>, dyn_vptr<Herbivore>)->std::string) {
     return "hunt\n";
 }
 // end::dl_shared[]

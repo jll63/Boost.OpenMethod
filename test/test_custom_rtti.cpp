@@ -80,13 +80,13 @@ struct test_registry : test_registry_<__COUNTER__>::with<custom_rtti> {};
 
 BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_registry);
 
-BOOST_OPENMETHOD(poke, (virtual_<Animal&>, std::ostream&), void, test_registry);
+BOOST_OPENMETHOD(poke, (virtual_<Animal&>, std::ostream&)->void, test_registry);
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (Dog & dog, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (Dog & dog, std::ostream& os)->void) {
     os << dog.name << " barks.";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (Cat & cat, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (Cat & cat, std::ostream& os)->void) {
     os << cat.name << " hisses.";
 }
 
@@ -178,13 +178,13 @@ struct test_registry : test_registry_<__COUNTER__>::with<custom_rtti>::without<
 
 BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_registry);
 
-BOOST_OPENMETHOD(poke, (virtual_<Animal&>, std::ostream&), void, test_registry);
+BOOST_OPENMETHOD(poke, (virtual_<Animal&>, std::ostream&)->void, test_registry);
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (Dog & dog, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (Dog & dog, std::ostream& os)->void) {
     os << dog.name << " barks.";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (Cat & cat, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (Cat & cat, std::ostream& os)->void) {
     os << cat.name << " hisses.";
 }
 
@@ -224,13 +224,13 @@ namespace using_vptr {
 template<class C>
 using vptr = virtual_ptr<C, test_registry>;
 
-BOOST_OPENMETHOD(poke, (vptr<Animal>, std::ostream&), void, test_registry);
+BOOST_OPENMETHOD(poke, (vptr<Animal>, std::ostream&)->void, test_registry);
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (vptr<Dog> dog, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (vptr<Dog> dog, std::ostream& os)->void) {
     os << dog->name << " barks.";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (vptr<Cat> cat, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (vptr<Cat> cat, std::ostream& os)->void) {
     os << cat->name << " hisses.";
 }
 
@@ -339,13 +339,13 @@ struct test_registry : test_registry_<__COUNTER__>::with<custom_rtti>::without<
 
 BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_registry);
 
-BOOST_OPENMETHOD(poke, (virtual_<Animal&>, std::ostream&), void, test_registry);
+BOOST_OPENMETHOD(poke, (virtual_<Animal&>, std::ostream&)->void, test_registry);
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (Dog & dog, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (Dog & dog, std::ostream& os)->void) {
     os << dog.name << " barks.";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (Cat & cat, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (Cat & cat, std::ostream& os)->void) {
     os << cat.name << " hisses.";
 }
 
@@ -385,13 +385,13 @@ namespace using_vptr {
 template<class C>
 using vptr = virtual_ptr<C, test_registry>;
 
-BOOST_OPENMETHOD(poke, (vptr<Animal>, std::ostream&), void, test_registry);
+BOOST_OPENMETHOD(poke, (vptr<Animal>, std::ostream&)->void, test_registry);
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (vptr<Dog> dog, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (vptr<Dog> dog, std::ostream& os)->void) {
     os << dog->name << " barks.";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (vptr<Cat> cat, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (vptr<Cat> cat, std::ostream& os)->void) {
     os << cat->name << " hisses.";
 }
 
@@ -480,21 +480,21 @@ struct test_registry : test_registry_<__COUNTER__>::with<custom_rtti>::without<
 
 BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_registry);
 
-BOOST_OPENMETHOD(poke, (virtual_<Animal&>, std::ostream&), void, test_registry);
+BOOST_OPENMETHOD(poke, (virtual_<Animal&>, std::ostream&)->void, test_registry);
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (Dog & dog, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (Dog & dog, std::ostream& os)->void) {
     os << dog.name << " barks.";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (Cat & cat, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (Cat & cat, std::ostream& os)->void) {
     os << cat.name << " hisses.";
 }
 
 BOOST_OPENMETHOD(
-    meet, (virtual_<Animal&>, virtual_<Animal&>, std::ostream&), void,
+    meet, (virtual_<Animal&>, virtual_<Animal&>, std::ostream&)->void,
     test_registry);
 
-BOOST_OPENMETHOD_OVERRIDE(meet, (Dog&, Dog&, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(meet, (Dog&, Dog&, std::ostream& os)->void) {
     os << "Both wag tails.";
 }
 

@@ -24,9 +24,9 @@ struct Cat : Animal {};
 
 using boost::openmethod::virtual_;
 
-BOOST_OPENMETHOD(poke, (std::ostream&, virtual_<Animal&>), void);
+BOOST_OPENMETHOD(poke, (std::ostream&, virtual_<Animal&>)->void);
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, Cat& cat), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, Cat& cat)->void) {
     os << "hiss";
 }
 
@@ -58,9 +58,9 @@ class Cat : public Animal {
     }
 };
 
-BOOST_OPENMETHOD(poke, (std::ostream&, virtual_<Animal&>), void);
+BOOST_OPENMETHOD(poke, (std::ostream&, virtual_<Animal&>)->void);
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, Cat& cat), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, Cat& cat)->void) {
     os << "hiss\n";
 }
 
@@ -80,9 +80,9 @@ class Animal : public boost::openmethod::with_vptr<Animal> {
 class Cat : public Animal, public boost::openmethod::with_vptr<Cat, Animal> {
 };
 
-BOOST_OPENMETHOD(poke, (std::ostream&, virtual_<Animal&>), void);
+BOOST_OPENMETHOD(poke, (std::ostream&, virtual_<Animal&>)->void);
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, Cat& cat), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, Cat& cat)->void) {
     os << "hiss\n";
 }
 // end::with_vptr[]

@@ -13,10 +13,10 @@ struct Bulldog : canines::Dog {
 BOOST_OPENMETHOD_CLASSES(canines::Dog, Bulldog);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    poke, (std::ostream & os, virtual_ptr<Bulldog> dog), void) {
+    poke, (std::ostream & os, virtual_ptr<Bulldog> dog)->void) {
     canines::BOOST_OPENMETHOD_OVERRIDER(
-        poke, (std::ostream & os, virtual_ptr<canines::Dog> dog),
-        void)::fn(os, dog);
+        poke,
+        (std::ostream & os, virtual_ptr<canines::Dog> dog)->void)::fn(os, dog);
     os << " and bites back";
 }
 

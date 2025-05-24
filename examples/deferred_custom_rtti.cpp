@@ -127,15 +127,15 @@ struct custom_policy : bom::registry<
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/compiler.hpp>
 
-BOOST_OPENMETHOD(poke, (std::ostream&, virtual_ptr<Animal>), void);
+BOOST_OPENMETHOD(poke, (std::ostream&, virtual_ptr<Animal>)->void);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    poke, (std::ostream & os, virtual_ptr<Cat> cat), void) {
+    poke, (std::ostream & os, virtual_ptr<Cat> cat)->void) {
     os << "hiss";
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    poke, (std::ostream & os, virtual_ptr<Dog> dog), void) {
+    poke, (std::ostream & os, virtual_ptr<Dog> dog)->void) {
     os << "bark";
 }
 

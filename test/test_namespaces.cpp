@@ -36,40 +36,41 @@ BOOST_OPENMETHOD_CLASSES(
     delphinus::Dolphin);
 
 // open method with single virtual argument <=> virtual function "from outside"
-BOOST_OPENMETHOD(poke, (virtual_<interfaces::Animal&>), std::string);
+BOOST_OPENMETHOD(poke, (virtual_<interfaces::Animal&>)->std::string);
 
 namespace canis {
 // implement 'poke' for dogs
-BOOST_OPENMETHOD_OVERRIDE(poke, (Dog&), std::string) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (Dog&)->std::string) {
     return "bark";
 }
 
 // implement 'poke' for bulldogs
-BOOST_OPENMETHOD_OVERRIDE(poke, (Bulldog & dog), std::string) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (Bulldog & dog)->std::string) {
     return next(dog) + " and bite";
 }
 } // namespace canis
 
 // multi-method
 BOOST_OPENMETHOD(
-    meet, (virtual_<interfaces::Animal&>, virtual_<interfaces::Animal&>),
-    std::string);
+    meet,
+    (virtual_<interfaces::Animal&>, virtual_<interfaces::Animal&>)
+        ->std::string);
 
 // 'meet' catch-all implementation
 BOOST_OPENMETHOD_OVERRIDE(
-    meet, (interfaces::Animal&, interfaces::Animal&), std::string) {
+    meet, (interfaces::Animal&, interfaces::Animal&)->std::string) {
     return "ignore";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(meet, (canis::Dog&, canis::Dog&), std::string) {
+BOOST_OPENMETHOD_OVERRIDE(meet, (canis::Dog&, canis::Dog&)->std::string) {
     return "wag tail";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(meet, (canis::Dog&, felis::Cat&), std::string) {
+BOOST_OPENMETHOD_OVERRIDE(meet, (canis::Dog&, felis::Cat&)->std::string) {
     return "chase";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(meet, (felis::Cat&, canis::Dog&), std::string) {
+BOOST_OPENMETHOD_OVERRIDE(meet, (felis::Cat&, canis::Dog&)->std::string) {
     return "run";
 }
 

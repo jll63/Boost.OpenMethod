@@ -136,31 +136,31 @@ using namespace nodes;
 
 BOOST_OPENMETHOD_CLASSES(Node, Number, Plus, Times);
 
-BOOST_OPENMETHOD(to_rpn, (virtual_ptr<const Node>), string);
+BOOST_OPENMETHOD(to_rpn, (virtual_ptr<const Node>)->string);
 
-BOOST_OPENMETHOD_OVERRIDE(to_rpn, (virtual_ptr<const Number> expr), string) {
+BOOST_OPENMETHOD_OVERRIDE(to_rpn, (virtual_ptr<const Number> expr)->string) {
   return std::to_string(expr->val);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(to_rpn, (virtual_ptr<const Plus> expr), string) {
+BOOST_OPENMETHOD_OVERRIDE(to_rpn, (virtual_ptr<const Plus> expr)->string) {
   return to_rpn(expr->left) + " " + to_rpn(expr->right) + " +";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(to_rpn, (virtual_ptr<const Times> expr), string) {
+BOOST_OPENMETHOD_OVERRIDE(to_rpn, (virtual_ptr<const Times> expr)->string) {
   return to_rpn(expr->left) + " " + to_rpn(expr->right) + " *";
 }
 
-BOOST_OPENMETHOD(value, (virtual_ptr<const Node>), int);
+BOOST_OPENMETHOD(value, (virtual_ptr<const Node>)->int);
 
-BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<const Number> expr), int) {
+BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<const Number> expr)->int) {
   return expr->val;
 }
 
-BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<const Plus> expr), int) {
+BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<const Plus> expr)->int) {
   return value(expr->left) + value(expr->right);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<const Times> expr), int) {
+BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<const Times> expr)->int) {
   return value(expr->left) * value(expr->right);
 }
 
@@ -171,13 +171,13 @@ namespace virtual_ptr_demo {
 using namespace boost::openmethod;
 using namespace nodes;
 
-BOOST_OPENMETHOD(value, (virtual_ptr<const Node>), int);
+BOOST_OPENMETHOD(value, (virtual_ptr<const Node>)->int);
 
 auto call_via_vptr(virtual_ptr<const Node> node) -> int {
   return value(node);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<const Plus> expr), int) {
+BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<const Plus> expr)->int) {
   return value(expr->left) + value(expr->right);
 }
 
@@ -222,31 +222,31 @@ struct Times : Node {
 
 BOOST_OPENMETHOD_CLASSES(Node, Number, Plus, Times);
 
-BOOST_OPENMETHOD(value, (virtual_ptr<Node>), int);
+BOOST_OPENMETHOD(value, (virtual_ptr<Node>)->int);
 
-BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<Plus> expr), int) {
+BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<Plus> expr)->int) {
   return value(expr->left) + value(expr->right);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<Number> expr), int) {
+BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<Number> expr)->int) {
   return expr->val;
 }
 
-BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<Times> expr), int) {
+BOOST_OPENMETHOD_OVERRIDE(value, (virtual_ptr<Times> expr)->int) {
   return value(expr->left) * value(expr->right);
 }
 
-BOOST_OPENMETHOD(to_rpn, (virtual_ptr<Node>), string);
+BOOST_OPENMETHOD(to_rpn, (virtual_ptr<Node>)->string);
 
-BOOST_OPENMETHOD_OVERRIDE(to_rpn, (virtual_ptr<Number> expr), string) {
+BOOST_OPENMETHOD_OVERRIDE(to_rpn, (virtual_ptr<Number> expr)->string) {
   return std::to_string(expr->val);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(to_rpn, (virtual_ptr<Plus> expr), string) {
+BOOST_OPENMETHOD_OVERRIDE(to_rpn, (virtual_ptr<Plus> expr)->string) {
   return to_rpn(expr->left) + " " + to_rpn(expr->right) + " +";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(to_rpn, (virtual_ptr<Times> expr), string) {
+BOOST_OPENMETHOD_OVERRIDE(to_rpn, (virtual_ptr<Times> expr)->string) {
   return to_rpn(expr->left) + " " + to_rpn(expr->right) + " *";
 }
 

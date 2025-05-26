@@ -1046,6 +1046,9 @@ class method<Name, auto(Parameters...)->ReturnType, Registry>
     template<auto>
     static function_type next;
 
+    template<auto>
+    static bool has_next();
+
     static BOOST_NORETURN auto
     not_implemented_handler(detail::remove_virtual<Parameters>... args)
         -> ReturnType;
@@ -1353,6 +1356,14 @@ auto error_type_id(const Class& obj) {
 }
 
 } // namespace detail
+
+template<
+    typename Name, typename... Parameters, typename ReturnType, class Registry>
+template<auto Fn>
+inline auto method<Name, auto(Parameters...)->ReturnType, Registry>::has_next()
+    -> bool {
+    return next<Fn> != not_implemented_handler;
+}
 
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>

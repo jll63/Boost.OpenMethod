@@ -86,7 +86,7 @@ struct custom_rtti : bom::policies::rtti {
         template<typename T>
         static auto static_type() -> bom::type_id {
             if constexpr (std::is_base_of_v<Animal, T>) {
-                return T::type_info.id;
+                return reinterpret_cast<bom::type_id>(T::type_info.id);
             } else {
                 return 0;
             }
@@ -95,9 +95,9 @@ struct custom_rtti : bom::policies::rtti {
         template<typename T>
         static auto dynamic_type(const T& obj) -> bom::type_id {
             if constexpr (std::is_base_of_v<Animal, T>) {
-                return obj.type;
+                return reinterpret_cast<bom::type_id>(obj.type);
             } else {
-                return 0;
+                return nullptr;
             }
         }
 

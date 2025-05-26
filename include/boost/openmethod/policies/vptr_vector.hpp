@@ -44,7 +44,7 @@ struct vptr_vector : extern_vptr {
                 for (auto iter = first; iter != last; ++iter) {
                     for (auto type_iter = iter->type_id_begin();
                          type_iter != iter->type_id_end(); ++type_iter) {
-                        size = (std::max)(size, *type_iter);
+                        size = (std::max)(size, std::size_t(*type_iter));
                     }
                 }
 
@@ -60,11 +60,13 @@ struct vptr_vector : extern_vptr {
             for (auto iter = first; iter != last; ++iter) {
                 for (auto type_iter = iter->type_id_begin();
                      type_iter != iter->type_id_end(); ++type_iter) {
-                    auto index = *type_iter;
+                    std::size_t index;
 
                     if constexpr (Registry::template has_policy<type_hash>) {
-                        index =
-                            Registry::template policy<type_hash>::hash(index);
+                        index = Registry::template policy<type_hash>::hash(
+                            *type_iter);
+                    } else {
+                        index = std::size_t(*type_iter);
                     }
 
                     if constexpr (Registry::template has_policy<
@@ -81,10 +83,15 @@ struct vptr_vector : extern_vptr {
 
         template<class Class>
         static auto dynamic_vptr(const Class& arg) -> const vptr_type& {
-            auto index = Registry::template policy<rtti>::dynamic_type(arg);
+            auto dynamic_type =
+                Registry::template policy<rtti>::dynamic_type(arg);
+            std::size_t index;
 
             if constexpr (Registry::template has_policy<type_hash>) {
-                index = Registry::template policy<type_hash>::hash(index);
+                index =
+                    Registry::template policy<type_hash>::hash(dynamic_type);
+            } else {
+                index = std::size_t(dynamic_type);
             }
 
             if constexpr (Registry::template has_policy<indirect_vptr>) {

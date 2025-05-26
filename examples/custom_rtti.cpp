@@ -42,18 +42,18 @@ struct custom_rtti : bom::policies::rtti {
         template<typename T>
         static auto static_type() -> bom::type_id {
             if constexpr (is_polymorphic<T>) {
-                return T::static_type;
+                return reinterpret_cast<bom::type_id>(T::static_type);
             } else {
-                return 0;
+                return nullptr;
             }
         }
 
         template<typename T>
         static auto dynamic_type(const T& obj) -> bom::type_id {
             if constexpr (is_polymorphic<T>) {
-                return obj.type;
+                return reinterpret_cast<bom::type_id>(obj.type);
             } else {
-                return 0;
+                return nullptr;
             }
         }
     };

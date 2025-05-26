@@ -239,7 +239,6 @@ struct compiler : detail::generic_compiler {
     auto initialize();
     void install_global_tables();
 
-    void resolve_static_type_ids();
     void augment_classes();
     void collect_transitive_bases(class_* cls, class_* base);
     void calculate_transitive_derived(class_& cls);
@@ -283,7 +282,6 @@ void compiler<Registry>::install_global_tables() {
 
 template<class Registry>
 auto compiler<Registry>::compile() {
-    resolve_static_type_ids();
     augment_classes();
     augment_methods();
     assign_slots();
@@ -304,52 +302,6 @@ auto compiler<Registry>::initialize() {
 
 template<class Registry>
 compiler<Registry>::compiler() {
-}
-
-template<class Registry>
-void compiler<Registry>::resolve_static_type_ids() {
-    if constexpr (Registry::template has_policy<
-                      policies::deferred_static_rtti>) {
-        using namespace detail;
-
-        auto resolve = [](type_id* p) {
-            auto pf = reinterpret_cast<type_id (*)()>(*p);
-            *p = pf();
-        };
-
-        for (auto& ci : Registry::classes) {
-            resolve(&ci.type);
-
-            if (*ci.last_base == 0) {
-                for (auto& ti : range{ci.first_base, ci.last_base}) {
-                    resolve(&ti);
-                }
-
-                *ci.last_base = 1;
-            }
-        }
-
-        for (auto& method : Registry::methods) {
-            for (auto& ti : range{method.vp_begin, method.vp_end}) {
-                if (*method.vp_end == 0) {
-                    resolve(&ti);
-                }
-
-                for (auto& overrider : method.specs) {
-                    if (*overrider.vp_end == 0) {
-                        for (auto& ti :
-                             range{overrider.vp_begin, overrider.vp_end}) {
-                            resolve(&ti);
-                        }
-
-                        *overrider.vp_end = 1;
-                    }
-                }
-            }
-
-            *method.vp_end = 1;
-        }
-    }
 }
 
 template<class Registry>
@@ -378,6 +330,10 @@ void compiler<Registry>::augment_classes() {
         // type_info object per class. However, it guarantees that the
         // type_index for a class has a unique value.
         for (auto& cr : Registry::classes) {
+            if constexpr (Registry::deferred_static_rtti) {
+                static_cast<deferred_class_info&>(cr).resolve_type_ids();
+            }
+
             {
                 indent _(trace);
                 ++trace << type_name(cr.type) << ": "
@@ -394,11 +350,6 @@ void compiler<Registry>::augment_classes() {
                 rtc->static_vptr = cr.static_vptr;
             }
 
-            // In the unlikely case that a class does have more than one
-            // associated  ti*, collect them in a vector. We don't use an
-            // unordered_set because, again, this situation is highly
-            // unlikely, and, were it to occur, the number of distinct ti*s
-            // would probably be small.
             if (std::find(
                     rtc->type_ids.begin(), rtc->type_ids.end(), cr.type) ==
                 rtc->type_ids.end()) {
@@ -550,7 +501,11 @@ void compiler<Registry>::augment_methods() {
     auto meth_iter = methods.begin();
 
     for (auto& meth_info : Registry::methods) {
-        ++trace << type_name(meth_info.method_type) << " "
+        if constexpr (Registry::deferred_static_rtti) {
+            static_cast<deferred_method_info&>(meth_info).resolve_type_ids();
+        }
+
+        ++trace << type_name(meth_info.method_type_id) << " "
                 << range{meth_info.vp_begin, meth_info.vp_end} << "\n";
 
         indent _(trace);
@@ -583,13 +538,13 @@ void compiler<Registry>::augment_methods() {
         }
 
         if (Registry::template policy<policies::rtti>::type_index(
-                meth_info.return_type) !=
+                meth_info.return_type_id) !=
             Registry::template policy<policies::rtti>::type_index(
                 Registry::template policy<policies::rtti>::template static_type<
                     void>())) {
             auto covariant_return_iter = class_map.find(
                 Registry::template policy<policies::rtti>::type_index(
-                    meth_info.return_type));
+                    meth_info.return_type_id));
 
             if (covariant_return_iter != class_map.end()) {
                 meth_iter->covariant_return_type =
@@ -609,6 +564,11 @@ void compiler<Registry>::augment_methods() {
         auto spec_iter = meth_iter->specs.begin();
 
         for (auto& overrider_info : meth_info.specs) {
+            if constexpr (Registry::deferred_static_rtti) {
+                static_cast<deferred_overrider_info&>(overrider_info)
+                    .resolve_type_ids();
+            }
+
             spec_iter->method_index = meth_iter - methods.begin();
             spec_iter->spec_index = spec_iter - meth_iter->specs.begin();
 
@@ -733,7 +693,7 @@ void compiler<Registry>::assign_tree_slots(class_& cls, std::size_t base_slot) {
 
     for (const auto& mp : cls.used_by_vp) {
         ++trace << " in " << cls << " for "
-                << type_name(mp.method->info->method_type) << " parameter "
+                << type_name(mp.method->info->method_type_id) << " parameter "
                 << mp.param << ": " << next_slot << "\n";
         mp.method->slots[mp.param] = next_slot++;
     }
@@ -759,8 +719,8 @@ void compiler<Registry>::assign_lattice_slots(class_& cls) {
     if (!cls.used_by_vp.empty()) {
         for (const auto& mp : cls.used_by_vp) {
             ++trace << " in " << cls << " for "
-                    << type_name(mp.method->info->method_type) << " parameter "
-                    << mp.param << "\n";
+                    << type_name(mp.method->info->method_type_id)
+                    << " parameter " << mp.param << "\n";
 
             indent _(trace);
 
@@ -828,7 +788,7 @@ void compiler<Registry>::build_dispatch_tables() {
 
     for (auto& m : methods) {
         ++trace << "Building dispatch table for "
-                << type_name(m.info->method_type) << "\n";
+                << type_name(m.info->method_type_id) << "\n";
         indent _(trace);
 
         auto dims = m.arity();
@@ -1119,7 +1079,7 @@ void compiler<Registry>::write_global_data() {
             if constexpr (trace_enabled) {
                 ++trace << rflush(4, Registry::dispatch_data.size()) << " "
                         << " method #" << m.dispatch_table[0]->method_index
-                        << " " << type_name(m.info->method_type) << "\n";
+                        << " " << type_name(m.info->method_type_id) << "\n";
                 indent _(trace);
 
                 for (auto& entry : m.dispatch_table) {
@@ -1141,7 +1101,7 @@ void compiler<Registry>::write_global_data() {
     for (auto& m : methods) {
         indent _(trace);
         ++trace << "method #"
-                << " " << type_name(m.info->method_type) << "\n";
+                << " " << type_name(m.info->method_type_id) << "\n";
 
         for (auto& overrider : m.specs) {
             if (overrider.next) {
@@ -1184,7 +1144,7 @@ void compiler<Registry>::write_global_data() {
                 auto spec = method.dispatch_table[entry.group_index];
                 trace << "spec #" << spec->spec_index << "\n";
                 indent _(trace);
-                ++trace << type_name(method.info->method_type) << "\n";
+                ++trace << type_name(method.info->method_type_id) << "\n";
                 ++trace << spec_name(method, spec);
                 BOOST_ASSERT(gv_iter + 1 <= gv_last);
                 *gv_iter++ = spec->pf;
@@ -1192,7 +1152,7 @@ void compiler<Registry>::write_global_data() {
                 trace << "vp #" << entry.vp_index << " group #"
                       << entry.group_index << "\n";
                 indent _(trace);
-                ++trace << type_name(method.info->method_type);
+                ++trace << type_name(method.info->method_type_id);
                 BOOST_ASSERT(gv_iter + 1 <= gv_last);
 
                 if (entry.vp_index == 0) {

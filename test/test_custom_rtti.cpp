@@ -49,29 +49,31 @@ struct custom_rtti : policies::rtti {
         template<typename T>
         static auto static_type() {
             if constexpr (is_polymorphic<T>) {
-                return reinterpret_cast<type_id>(T::static_type);
+                return T::static_type;
             } else {
-                return 0;
+                return nullptr;
             }
         }
 
         template<typename T>
         static auto dynamic_type(const T& obj) {
             if constexpr (is_polymorphic<T>) {
-                return reinterpret_cast<type_id>(obj.type);
+                return obj.type;
             } else {
-                return 0;
+                return nullptr;
             }
         }
 
         template<class Stream>
         static void type_name(type_id type, Stream& stream) {
-            stream << (type == 0 ? "?" : reinterpret_cast<const char*>(type));
+            stream
+                << (type == nullptr ? "?"
+                                    : reinterpret_cast<const char*>(type));
         }
 
         static auto type_index(type_id type) {
             return std::string_view(
-                (type == 0 ? "?" : reinterpret_cast<const char*>(type)));
+                (type == nullptr ? "?" : reinterpret_cast<const char*>(type)));
         }
     };
 };
@@ -140,31 +142,31 @@ struct custom_rtti : policies::rtti {
         template<class T>
         static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
 
-        static constexpr auto invalid_type =
-            (std::numeric_limits<std::size_t>::max)();
+        inline static auto invalid_type_id = type_id(0xFFFFFF);
 
         template<typename T>
         static auto static_type() {
             if constexpr (is_polymorphic<T>) {
-                return T::static_type;
+                return type_id(T::static_type);
             } else {
-                return invalid_type;
+                return invalid_type_id;
             }
         }
 
         template<typename T>
         static auto dynamic_type(const T& obj) {
             if constexpr (is_polymorphic<T>) {
-                return obj.type;
+                return type_id(obj.type);
             } else {
-                return invalid_type;
+                return invalid_type_id;
             }
         }
 
         template<class Stream>
         static void type_name(type_id type, Stream& stream) {
             static const char* name[] = {"Animal", "Dog", "Cat"};
-            stream << (type == invalid_type ? "?" : name[type]);
+            stream
+                << (type == invalid_type_id ? "?" : name[std::size_t(type)]);
         }
 
         static auto type_index(type_id type) {
@@ -296,31 +298,28 @@ struct custom_rtti : policies::rtti {
         template<class T>
         static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
 
-        static constexpr auto invalid_type =
-            (std::numeric_limits<std::size_t>::max)();
-
         template<typename T>
         static auto static_type() {
             if constexpr (is_polymorphic<T>) {
-                return T::static_type;
+                return type_id(T::static_type);
             } else {
-                return invalid_type;
+                return type_id(0xFFFF);
             }
         }
 
         template<typename T>
         static auto dynamic_type(const T& obj) {
             if constexpr (is_polymorphic<T>) {
-                return obj.type;
+                return type_id(obj.type);
             } else {
-                return invalid_type;
+                return type_id(0xFFFF);
             }
         }
 
         template<class Stream>
         static void type_name(type_id type, Stream& stream) {
             static const char* name[] = {"Animal", "Dog", "Cat"};
-            stream << (type == invalid_type ? "?" : name[type]);
+            stream << (type == type_id(0xFFFF) ? "?" : name[std::size_t(type)]);
         }
 
         static auto type_index(type_id type) {
@@ -405,7 +404,7 @@ void call_poke(vptr<Animal> a, std::ostream& os) {
 } // namespace using_vptr
 } // namespace virtual_base
 
-namespace defered_type_id {
+namespace deferred_type_id {
 
 struct Animal {
     const char* name;
@@ -448,25 +447,25 @@ struct custom_rtti : policies::deferred_static_rtti {
         template<typename T>
         static auto static_type() {
             if constexpr (is_polymorphic<T>) {
-                return T::static_type;
+                return type_id(T::static_type);
             } else {
-                return 0;
+                return nullptr;
             }
         }
 
         template<typename T>
         static auto dynamic_type(const T& obj) {
             if constexpr (is_polymorphic<T>) {
-                return obj.type;
+                return type_id(obj.type);
             } else {
-                return 0;
+                return nullptr;
             }
         }
 
         template<class Stream>
         static void type_name(type_id type, Stream& stream) {
             static const char* name[] = {"Animal", "Dog", "Cat"};
-            stream << (type == 0 ? "?" : name[type]);
+            stream << (type == nullptr ? "?" : name[std::size_t(type)]);
         }
 
         static auto type_index(type_id type) {
@@ -522,4 +521,4 @@ BOOST_AUTO_TEST_CASE(custom_rtti_deferred) {
     }
 }
 
-} // namespace defered_type_id
+} // namespace deferred_type_id

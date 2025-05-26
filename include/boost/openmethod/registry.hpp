@@ -185,6 +185,8 @@ struct registry : detail::registry_base {
     using rtti = policy<policies::rtti>;
     using error_handler = policy<policies::error_handler>;
     static constexpr auto runtime_checks = has_policy<policies::runtime_checks>;
+    static constexpr auto deferred_static_rtti =
+        has_policy<policies::deferred_static_rtti>;
     static constexpr auto trace = has_policy<policies::trace>;
 };
 

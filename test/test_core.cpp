@@ -149,12 +149,12 @@ static_assert(detail::is_registry<default_registry>);
 struct not_a_policy {};
 static_assert(!detail::is_registry<not_a_policy>);
 
-BOOST_AUTO_TEST_CASE(test_type_id_list) {
-    auto iter = type_id_list<mp11::mp_list<a&, b&>, default_registry>::begin;
-    auto last = type_id_list<mp11::mp_list<a&, b&>, default_registry>::end;
-    BOOST_TEST_REQUIRE(last - iter == 2);
-    BOOST_TEST_REQUIRE(*iter++ == type_id(&typeid(a)));
-    BOOST_TEST_REQUIRE(*iter++ == type_id(&typeid(b)));
+BOOST_AUTO_TEST_CASE(test_init_type_ids) {
+    type_id ids[2];
+    auto last = init_type_ids<default_registry, mp11::mp_list<a&, b&>>::fn(ids);
+    BOOST_TEST_REQUIRE(last - ids == 2);
+    BOOST_TEST_REQUIRE(ids[0] == type_id(&typeid(a)));
+    BOOST_TEST_REQUIRE(ids[1] == type_id(&typeid(b)));
 }
 
 } // namespace test_virtual
@@ -263,15 +263,12 @@ static_assert(
     std::is_same_v<
         use_classes<Animal, Dog, Bulldog, Cat, Dolphin>::tuple_type,
         std::tuple<
-            class_declaration_aux<
-                default_registry, mp11::mp_list<Animal, Animal>>,
-            class_declaration_aux<
-                default_registry, mp11::mp_list<Dog, Animal, Dog>>,
-            class_declaration_aux<
+            use_class_aux<default_registry, mp11::mp_list<Animal, Animal>>,
+            use_class_aux<default_registry, mp11::mp_list<Dog, Animal, Dog>>,
+            use_class_aux<
                 default_registry, mp11::mp_list<Bulldog, Animal, Dog, Bulldog>>,
-            class_declaration_aux<
-                default_registry, mp11::mp_list<Cat, Animal, Cat>>,
-            class_declaration_aux<
+            use_class_aux<default_registry, mp11::mp_list<Cat, Animal, Cat>>,
+            use_class_aux<
                 default_registry, mp11::mp_list<Dolphin, Animal, Dolphin>>>>);
 
 } // namespace test_use_classes

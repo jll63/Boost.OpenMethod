@@ -156,7 +156,7 @@ struct registry : detail::registry_base {
     inline static detail::method_catalog methods;
     template<class Class>
     inline static vptr_type static_vptr;
-    inline static std::vector<std::uintptr_t> dispatch_data;
+    inline static std::vector<detail::word> dispatch_data;
 
     using policy_list = mp11::mp_list<Policies...>;
 

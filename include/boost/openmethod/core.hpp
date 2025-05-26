@@ -1005,26 +1005,22 @@ class method<Name, auto(Parameters...)->ReturnType, Registry>
 
     template<typename MethodArgList, typename ArgType, typename... MoreArgTypes>
     auto resolve_uni(const ArgType& arg, const MoreArgTypes&... more_args) const
-        -> std::uintptr_t;
+        -> detail::word;
 
     template<typename MethodArgList, typename ArgType, typename... MoreArgTypes>
     auto resolve_multi_first(
         const ArgType& arg, const MoreArgTypes&... more_args) const
-        -> std::uintptr_t;
+        -> detail::word;
 
     template<
         std::size_t VirtualArg, typename MethodArgList, typename ArgType,
         typename... MoreArgTypes>
     auto resolve_multi_next(
         vptr_type dispatch, const ArgType& arg,
-        const MoreArgTypes&... more_args) const -> std::uintptr_t;
+        const MoreArgTypes&... more_args) const -> detail::word;
 
     template<typename... ArgType>
     FunctionPointer resolve(const ArgType&... args) const;
-
-    static BOOST_NORETURN auto
-    not_implemented_handler(detail::remove_virtual<Parameters>... args)
-        -> ReturnType;
 
     template<auto, typename>
     struct thunk;
@@ -1049,6 +1045,10 @@ class method<Name, auto(Parameters...)->ReturnType, Registry>
 
     template<auto>
     static function_type next;
+
+    static BOOST_NORETURN auto
+    not_implemented_handler(detail::remove_virtual<Parameters>... args)
+        -> ReturnType;
 
   private:
     template<
@@ -1135,7 +1135,8 @@ method<Name, auto(Parameters...)->ReturnType, Registry>::method() {
         Registry>;
     method_info::vp_begin = virtual_type_ids::begin;
     method_info::vp_end = virtual_type_ids::end;
-    method_info::not_implemented = (void*)not_implemented_handler;
+    method_info::not_implemented =
+        reinterpret_cast<void (*)()>(not_implemented_handler);
     method_info::method_type = rtti::template static_type<method>();
     method_info::return_type = rtti::template static_type<
         typename virtual_traits<ReturnType, Registry>::virtual_type>();
@@ -1199,13 +1200,14 @@ method<Name, auto(Parameters...)->ReturnType, Registry>::resolve(
     const ArgType&... args) const {
     using namespace detail;
 
-    std::uintptr_t pf;
+    void (*pf)();
 
     if constexpr (Arity == 1) {
-        pf = resolve_uni<mp11::mp_list<Parameters...>, ArgType...>(args...);
+        pf = resolve_uni<mp11::mp_list<Parameters...>, ArgType...>(args...).pf;
     } else {
         pf = resolve_multi_first<mp11::mp_list<Parameters...>, ArgType...>(
-            args...);
+                 args...)
+                 .pf;
     }
 
     return reinterpret_cast<FunctionPointer>(pf);
@@ -1230,7 +1232,7 @@ template<typename MethodArgList, typename ArgType, typename... MoreArgTypes>
 BOOST_FORCEINLINE auto
 method<Name, auto(Parameters...)->ReturnType, Registry>::resolve_uni(
     const ArgType& arg, const MoreArgTypes&... more_args) const
-    -> std::uintptr_t {
+    -> detail::word {
 
     using namespace detail;
     using namespace boost::mp11;
@@ -1259,7 +1261,7 @@ template<typename MethodArgList, typename ArgType, typename... MoreArgTypes>
 BOOST_FORCEINLINE auto
 method<Name, auto(Parameters...)->ReturnType, Registry>::resolve_multi_first(
     const ArgType& arg, const MoreArgTypes&... more_args) const
-    -> std::uintptr_t {
+    -> detail::word {
 
     using namespace detail;
     using namespace boost::mp11;
@@ -1283,7 +1285,7 @@ method<Name, auto(Parameters...)->ReturnType, Registry>::resolve_multi_first(
         // 1, there is no need to store it. Also, the method table
         // contains a pointer into the multi-dimensional dispatch table,
         // already resolved to the appropriate group.
-        auto dispatch = reinterpret_cast<vptr_type>(vtbl[slot]);
+        auto dispatch = vtbl[slot].pw;
         return resolve_multi_next<1, mp_rest<MethodArgList>, MoreArgTypes...>(
             dispatch, more_args...);
     } else {
@@ -1300,7 +1302,7 @@ template<
 BOOST_FORCEINLINE auto
 method<Name, auto(Parameters...)->ReturnType, Registry>::resolve_multi_next(
     vptr_type dispatch, const ArgType& arg,
-    const MoreArgTypes&... more_args) const -> std::uintptr_t {
+    const MoreArgTypes&... more_args) const -> detail::word {
 
     using namespace detail;
     using namespace boost::mp11;
@@ -1324,7 +1326,7 @@ method<Name, auto(Parameters...)->ReturnType, Registry>::resolve_multi_next(
             stride = this->slots_strides[Arity + VirtualArg - 1];
         }
 
-        dispatch = dispatch + vtbl[slot] * stride;
+        dispatch = dispatch + vtbl[slot].i * stride;
     }
 
     if constexpr (VirtualArg + 1 == Arity) {
@@ -1430,9 +1432,9 @@ method<Name, auto(Parameters...)->ReturnType, Registry>::override_impl<
     info.return_type = Registry::rtti::template static_type<
         typename virtual_traits<FnReturnType, Registry>::virtual_type>();
     info.type = Registry::rtti::template static_type<decltype(Function)>();
-    info.next = reinterpret_cast<void**>(p_next);
+    info.next = reinterpret_cast<void (**)()>(p_next);
     using Thunk = thunk<Function, decltype(Function)>;
-    info.pf = (void*)Thunk::fn;
+    info.pf = reinterpret_cast<void (*)()>(Thunk::fn);
     info.vp_begin = Thunk::OverriderParameterTypeIds::begin;
     info.vp_end = Thunk::OverriderParameterTypeIds::end;
     fn.specs.push_back(info);

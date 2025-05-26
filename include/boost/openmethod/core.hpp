@@ -35,12 +35,9 @@
 namespace boost::openmethod {
 
 // =============================================================================
-// Registering classes
+// Helpers
 
 namespace detail {
-
-// =============================================================================
-// Helpers
 
 template<class Registry, class Class>
 constexpr bool is_polymorphic = Registry::rtti::template is_polymorphic<Class>;
@@ -72,67 +69,46 @@ struct extract_registry<Type1, Type2, MoreTypes...> {
         typename extract_registry<Type2, MoreTypes...>::others, Type1>;
 };
 
-template<class Registry, class Class>
-auto collect_static_type_id() -> type_id {
-    using rtti = typename Registry::rtti;
+template<class Registry, class... Class>
+struct init_type_ids;
 
-    if constexpr (Registry::template has_policy<
-                      policies::deferred_static_rtti>) {
-        return reinterpret_cast<type_id>(rtti::template static_type<Class>);
-    } else {
-        return rtti::template static_type<Class>();
+template<class Registry, class... Class>
+struct init_type_ids<Registry, mp11::mp_list<Class...>> {
+    static auto fn(type_id* ids) {
+        (..., (*ids++ = Registry::rtti::template static_type<Class>()));
+        return ids;
     }
-}
-
-template<class TypeList, class Registry>
-struct type_id_list;
-
-template<typename... T, class Registry>
-struct type_id_list<mp11::mp_list<T...>, Registry> {
-    // If using deferred 'static_type', add an extra element in 'value',
-    // default-initialized to zero, indicating the ids need to be resolved. Set
-    // to 1 after this is done.
-    static constexpr std::size_t values = sizeof...(T) +
-        Registry::template has_policy<policies::deferred_static_rtti>;
-    static type_id value[values];
-    static type_id* begin;
-    static type_id* end;
-};
-
-template<typename... T, class Registry>
-type_id type_id_list<mp11::mp_list<T...>, Registry>::value[values] = {
-    collect_static_type_id<Registry, T>()...};
-
-template<typename... T, class Registry>
-type_id* type_id_list<mp11::mp_list<T...>, Registry>::begin = value;
-
-template<typename... T, class Registry>
-type_id* type_id_list<mp11::mp_list<T...>, Registry>::end =
-    value + sizeof...(T);
-
-template<class Registry>
-struct type_id_list<mp11::mp_list<>, Registry> {
-    static constexpr type_id* const begin = nullptr;
-    static constexpr auto end = begin;
 };
 
 template<class...>
-struct class_declaration_aux;
+struct use_class_aux;
 
 template<class Registry, class Class, typename... Bases>
-struct class_declaration_aux<Registry, mp11::mp_list<Class, Bases...>>
-    : class_info {
-    class_declaration_aux() {
-        this->type = collect_static_type_id<Registry, Class>();
-        this->first_base =
-            type_id_list<mp11::mp_list<Bases...>, Registry>::begin;
-        this->last_base = type_id_list<mp11::mp_list<Bases...>, Registry>::end;
-        Registry::classes.push_back(*this);
+struct use_class_aux<Registry, mp11::mp_list<Class, Bases...>>
+    : std::conditional_t<
+          Registry::deferred_static_rtti, detail::deferred_class_info,
+          detail::class_info> {
+    inline static type_id bases[sizeof...(Bases)];
+    use_class_aux() {
+        this->first_base = bases;
+        this->last_base = bases + sizeof...(Bases);
         this->is_abstract = std::is_abstract_v<Class>;
         this->static_vptr = &Registry::template static_vptr<Class>;
+
+        if constexpr (!Registry::deferred_static_rtti) {
+            resolve_type_ids();
+        }
+
+        Registry::classes.push_back(*this);
     }
 
-    ~class_declaration_aux() {
+    void resolve_type_ids() {
+        this->type = Registry::rtti::template static_type<Class>();
+        auto iter = bases;
+        (..., (*iter++ = Registry::rtti::template static_type<Bases>()));
+    }
+
+    ~use_class_aux() {
         Registry::classes.remove(*this);
     }
 };
@@ -291,7 +267,7 @@ struct use_classes {
         std::tuple,
         boost::mp11::mp_transform_q<
             boost::mp11::mp_bind_front<
-                detail::class_declaration_aux,
+                detail::use_class_aux,
                 typename detail::extract_registry<Classes...>::registry>,
             boost::mp11::mp_apply<
                 detail::inheritance_map,
@@ -965,7 +941,9 @@ class method;
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 class method<Name, auto(Parameters...)->ReturnType, Registry>
-    : public detail::method_info {
+    : public std::conditional_t<
+          Registry::deferred_static_rtti, detail::deferred_method_info,
+          detail::method_info> {
     // Aliases used in implementation only. Everything extracted from template
     // arguments is capitalized like the arguments themselves.
     using RegistryType = Registry;
@@ -987,6 +965,8 @@ class method<Name, auto(Parameters...)->ReturnType, Registry>
         (true && ... &&
          detail::using_same_registry<Registry, Parameters>::value));
 
+    inline static type_id vp_type_ids[Arity];
+
     static std::size_t slots_strides[2 * Arity - 1];
     // Slots followed by strides. No stride for first virtual argument.
     // For 1-method: the offset of the method in the method table, which
@@ -995,6 +975,8 @@ class method<Name, auto(Parameters...)->ReturnType, Registry>
     // method table, which contains a pointer to the corresponding cell in
     // the dispatch table, followed by the offset of the second argument and
     // the stride in the second dimension, etc.
+
+    void resolve_type_ids();
 
     template<typename ArgType>
     auto vptr(const ArgType& arg) const -> vptr_type;
@@ -1032,6 +1014,8 @@ class method<Name, auto(Parameters...)->ReturnType, Registry>
     method(method&&) = delete;
     ~method();
 
+    void resolve(); // perhaps virtual, perhaps not
+
   public:
     // Public aliases.
     using name_type = Name;
@@ -1059,16 +1043,20 @@ class method<Name, auto(Parameters...)->ReturnType, Registry>
         typename... OverriderParameters>
     struct thunk<Overrider, OverriderReturn (*)(OverriderParameters...)> {
         static auto fn(detail::remove_virtual<Parameters>... arg) -> ReturnType;
-        using OverriderParameterTypeIds = detail::type_id_list<
-            detail::overrider_virtual_types<
-                DeclaredParameters, mp11::mp_list<OverriderParameters...>,
-                Registry>,
+        using OverriderVirtualParameters = detail::overrider_virtual_types<
+            DeclaredParameters, mp11::mp_list<OverriderParameters...>,
             Registry>;
     };
 
     template<auto Function, typename FnReturnType>
-    struct override_impl {
+    struct override_impl
+        : std::conditional_t<
+              Registry::deferred_static_rtti, detail::deferred_overrider_info,
+              detail::overrider_info> {
         explicit override_impl(FunctionPointer* next = nullptr);
+        void resolve_type_ids();
+
+        inline static type_id vp_type_ids[Arity];
     };
 
     template<auto Function, typename FunctionType>
@@ -1129,21 +1117,33 @@ constexpr bool is_method = std::is_base_of_v<detail::method_info, T>;
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 method<Name, auto(Parameters...)->ReturnType, Registry>::method() {
-    method_info::slots_strides_ptr = slots_strides;
+    this->slots_strides_ptr = slots_strides;
 
-    using virtual_type_ids = detail::type_id_list<
-        boost::mp11::mp_transform_q<
-            boost::mp11::mp_bind_back<detail::virtual_type, Registry>,
-            VirtualParameters>,
-        Registry>;
-    method_info::vp_begin = virtual_type_ids::begin;
-    method_info::vp_end = virtual_type_ids::end;
-    method_info::not_implemented =
+    if constexpr (!Registry::deferred_static_rtti) {
+        resolve_type_ids();
+    }
+
+    this->vp_begin = vp_type_ids;
+    this->vp_end = vp_type_ids + Arity;
+    this->not_implemented =
         reinterpret_cast<void (*)()>(not_implemented_handler);
-    method_info::method_type = rtti::template static_type<method>();
-    method_info::return_type = rtti::template static_type<
-        typename virtual_traits<ReturnType, Registry>::virtual_type>();
+
     Registry::methods.push_back(*this);
+}
+
+template<
+    typename Name, typename... Parameters, typename ReturnType, class Registry>
+void method<
+    Name, auto(Parameters...)->ReturnType, Registry>::resolve_type_ids() {
+    using namespace detail;
+    this->method_type_id = rtti::template static_type<method>();
+    this->return_type_id = rtti::template static_type<
+        typename virtual_traits<ReturnType, Registry>::virtual_type>();
+    init_type_ids<
+        Registry,
+        mp11::mp_transform_q<
+            mp11::mp_bind_back<virtual_type, Registry>,
+            VirtualParameters>>::fn(this->vp_type_ids);
 }
 
 template<
@@ -1422,33 +1422,47 @@ auto method<Name, auto(Parameters...)->ReturnType, Registry>::
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 template<auto Function, typename FnReturnType>
-method<Name, auto(Parameters...)->ReturnType, Registry>::override_impl<
+method<Name, ReturnType(Parameters...), Registry>::override_impl<
     Function, FnReturnType>::override_impl(FunctionPointer* p_next) {
     using namespace detail;
 
-    // Work around MSVC bug: using &next<Function> as a default value
-    // for 'next' confuses it about Parameters not being expanded.
-    if (!p_next) {
-        p_next = &next<Function>;
-    }
-
-    static overrider_info info;
-
-    if (info.method) {
-        BOOST_ASSERT(info.method == &fn);
+    if (this->method) {
+        BOOST_ASSERT(this->method == &fn);
         return;
     }
 
-    info.method = &fn;
-    info.return_type = Registry::rtti::template static_type<
-        typename virtual_traits<FnReturnType, Registry>::virtual_type>();
-    info.type = Registry::rtti::template static_type<decltype(Function)>();
-    info.next = reinterpret_cast<void (**)()>(p_next);
+    this->method = &fn;
+
+    if constexpr (!Registry::deferred_static_rtti) {
+        resolve_type_ids();
+    }
+
+    this->next = reinterpret_cast<void (**)()>(
+        p_next ? p_next : &method::next<Function>);
+
     using Thunk = thunk<Function, decltype(Function)>;
-    info.pf = reinterpret_cast<void (*)()>(Thunk::fn);
-    info.vp_begin = Thunk::OverriderParameterTypeIds::begin;
-    info.vp_end = Thunk::OverriderParameterTypeIds::end;
-    fn.specs.push_back(info);
+    this->pf = reinterpret_cast<void (*)()>(Thunk::fn);
+
+    this->vp_begin = vp_type_ids;
+    this->vp_end = vp_type_ids + Arity;
+
+    fn.specs.push_back(*this);
+}
+
+template<
+    typename Name, typename... Parameters, typename ReturnType, class Registry>
+template<auto Function, typename FnReturnType>
+void method<Name, auto(Parameters...)->ReturnType, Registry>::override_impl<
+    Function, FnReturnType>::resolve_type_ids() {
+    using namespace detail;
+
+    this->return_type = Registry::rtti::template static_type<
+        typename virtual_traits<FnReturnType, Registry>::virtual_type>();
+    this->type = Registry::rtti::template static_type<decltype(Function)>();
+    using Thunk = thunk<Function, decltype(Function)>;
+    detail::
+        init_type_ids<Registry, typename Thunk::OverriderVirtualParameters>::fn(
+            this->vp_type_ids);
 }
 
 } // namespace boost::openmethod

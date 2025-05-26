@@ -26,7 +26,7 @@ struct fast_perfect_hash : type_hash {
     template<class Registry>
     struct fn {
 
-        inline static type_id hash_mult;
+        inline static std::size_t hash_mult;
         inline static std::size_t hash_shift;
         inline static std::size_t hash_min;
         inline static std::size_t hash_max;
@@ -38,8 +38,10 @@ struct fast_perfect_hash : type_hash {
         };
 
         BOOST_FORCEINLINE
-        static auto hash(type_id type) -> type_id {
-            auto index = (hash_mult * type) >> hash_shift;
+        static auto hash(type_id type) -> std::size_t {
+            auto index =
+                (hash_mult * reinterpret_cast<detail::uintptr>(type)) >>
+                hash_shift;
 
             if constexpr (Registry::template has_policy<runtime_checks>) {
                 check(index, type);
@@ -97,7 +99,7 @@ void fast_perfect_hash::fn<Registry>::initialize(
         ++M;
     }
 
-    std::uniform_int_distribution<type_id> uniform_dist;
+    std::uniform_int_distribution<std::size_t> uniform_dist;
 
     for (std::size_t pass = 0; pass < 4; ++pass, ++M) {
         hash_shift = 8 * sizeof(type_id) - M;
@@ -117,7 +119,8 @@ void fast_perfect_hash::fn<Registry>::initialize(
         buckets.resize(hash_size);
 
         while (attempts < 100000) {
-            std::fill(buckets.begin(), buckets.end(), static_cast<type_id>(-1));
+            std::fill(
+                buckets.begin(), buckets.end(), type_id(detail::uintptr_max));
             ++attempts;
             ++total_attempts;
             hash_mult = uniform_dist(rnd) | 1;
@@ -126,11 +129,13 @@ void fast_perfect_hash::fn<Registry>::initialize(
                 for (auto type_iter = iter->type_id_begin();
                      type_iter != iter->type_id_end(); ++type_iter) {
                     auto type = *type_iter;
-                    auto index = (type * hash_mult) >> hash_shift;
+                    auto index =
+                        (detail::uintptr(type) * hash_mult) >> hash_shift;
                     hash_min = (std::min)(hash_min, index);
                     hash_max = (std::max)(hash_max, index);
 
-                    if (buckets[index] != static_cast<type_id>(-1)) {
+                    if (detail::uintptr(buckets[index]) !=
+                        detail::uintptr_max) {
                         goto collision;
                     }
 

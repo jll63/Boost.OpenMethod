@@ -26,14 +26,12 @@ struct std_rtti : rtti {
 
         template<class Class>
         static auto static_type() -> type_id {
-            auto tip = &typeid(Class);
-            return reinterpret_cast<type_id>(tip);
+            return &typeid(Class);
         }
 
         template<class Class>
         static auto dynamic_type(const Class& obj) -> type_id {
-            auto tip = &typeid(obj);
-            return reinterpret_cast<type_id>(tip);
+            return &typeid(obj);
         }
 
         template<typename Stream>

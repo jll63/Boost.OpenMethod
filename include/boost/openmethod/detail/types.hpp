@@ -12,8 +12,28 @@
 
 namespace boost::openmethod {
 
+namespace detail {
+
+union word {
+    word() {
+    } // undefined
+    word(void (*pf)()) : pf(pf) {
+    }
+    word(word* pw) : pw(pw) {
+    }
+    word(std::size_t i) : i(i) {
+    }
+
+    void (*pf)();
+    std::size_t i;
+    word* pw;
+};
+
+} // namespace detail
+
 using type_id = std::uintptr_t;
-using vptr_type = const std::uintptr_t*;
+
+using vptr_type = const detail::word*;
 
 template<typename T>
 struct virtual_;
@@ -108,7 +128,7 @@ struct method_info : static_list<method_info>::static_link {
     type_id* vp_begin;
     type_id* vp_end;
     static_list<overrider_info> specs;
-    void* not_implemented;
+    void (*not_implemented)();
     type_id method_type;
     type_id return_type;
     std::size_t* slots_strides_ptr;
@@ -126,9 +146,9 @@ struct overrider_info : static_list<overrider_info>::static_link {
     method_info* method; // for the destructor, to remove definition
     type_id return_type; // for N2216 disambiguation
     type_id type;        // of the function, for trace
-    void** next;
+    void (**next)();
     type_id *vp_begin, *vp_end;
-    void* pf;
+    void (*pf)();
 };
 
 } // namespace detail

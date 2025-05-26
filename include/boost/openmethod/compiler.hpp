@@ -122,7 +122,7 @@ struct generic_compiler {
         overrider* next = nullptr;
         std::vector<class_*> vp;
         class_* covariant_return_type = nullptr;
-        std::uintptr_t pf;
+        void (*pf)();
         std::size_t method_index, spec_index;
     };
 
@@ -601,8 +601,7 @@ void compiler<Registry>::augment_methods() {
         // overrider
         const auto method_index = meth_iter - methods.begin();
         auto spec_size = meth_info.specs.size();
-        meth_iter->not_implemented.pf =
-            reinterpret_cast<uintptr_t>(meth_iter->info->not_implemented);
+        meth_iter->not_implemented.pf = meth_iter->info->not_implemented;
         meth_iter->not_implemented.method_index = method_index;
         meth_iter->not_implemented.spec_index = spec_size;
 
@@ -639,8 +638,7 @@ void compiler<Registry>::augment_methods() {
 
                     abort();
                 }
-                spec_iter->pf =
-                    reinterpret_cast<uintptr_t>(spec_iter->info->pf);
+                spec_iter->pf = spec_iter->info->pf;
                 spec_iter->vp.push_back(class_);
             }
 
@@ -1152,7 +1150,8 @@ void compiler<Registry>::write_global_data() {
 
                 trace << "#" << overrider.next->spec_index << " "
                       << spec_name(m, overrider.next);
-                *overrider.info->next = (void*)overrider.next->pf;
+                *overrider.info->next =
+                    reinterpret_cast<void (*)()>(overrider.next->pf);
             } else {
                 trace << "none";
             }

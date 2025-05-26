@@ -117,7 +117,7 @@ struct va_args<ReturnType> {
         NAME)<__VA_ARGS__ ARGS>::has_next() -> bool {                          \
         using method_type =                                                    \
             boost_openmethod_detail_locate_method_aux<void ARGS>::type;        \
-        return method_type::next<fn> != method_type::fn.not_implemented;       \
+        return method_type::next<fn> != method_type::not_implemented_handler;  \
     }                                                                          \
     template<typename... Args>                                                 \
     inline auto BOOST_OPENMETHOD_OVERRIDERS(NAME)<__VA_ARGS__ ARGS>::next(     \

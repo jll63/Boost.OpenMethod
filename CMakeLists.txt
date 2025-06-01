@@ -29,7 +29,7 @@ find_package(Boost COMPONENTS)
 target_link_libraries(boost_openmethod INTERFACE Boost::boost)
 
 if(MSVC)
-  add_compile_options(/EHsc /FAs)
+  add_compile_options(/EHsc /FAs /bigobj)
 endif()
 
 if(GCC)

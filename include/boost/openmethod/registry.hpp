@@ -6,6 +6,7 @@
 #include <boost/mp11/algorithm.hpp>
 #include <boost/mp11/bind.hpp>
 
+#include <stdlib.h>
 #include <vector>
 
 namespace boost::openmethod {
@@ -61,8 +62,18 @@ struct trace : policy {
     template<class Registry>
     struct fn {
         inline static bool trace_enabled = []() {
+#ifdef _MSC_VER
+            char* env;
+            std::size_t len;
+            auto result =
+                _dupenv_s(&env, &len, "BOOST_OPENMETHOD_TRACE") == 0 && env &&
+                len == 2 && *env == '1';
+            free(env);
+            return result;
+#else
             auto env = getenv("BOOST_OPENMETHOD_TRACE");
             return env && *env++ == '1' && *env++ == 0;
+#endif
         }();
     };
 };

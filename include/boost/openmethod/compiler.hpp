@@ -95,7 +95,7 @@ struct generic_compiler {
         std::vector<parameter> used_by_vp;
         boost::dynamic_bitset<> used_slots;
         boost::dynamic_bitset<> reserved_slots;
-        int first_slot = 0;
+        std::size_t first_slot = 0;
         std::size_t mark = 0; // temporary mark to detect cycles
         std::vector<vtbl_entry> vtbl;
         vptr_type* static_vptr;

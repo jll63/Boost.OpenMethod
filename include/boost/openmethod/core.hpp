@@ -909,6 +909,38 @@ using overrider_virtual_types = boost::mp11::mp_remove<
         MethodParameters, OverriderParameters>,
     void>;
 
+template<class Method, class Rtti, std::size_t Index>
+struct init_call_error {
+    template<typename Arg, typename... Args>
+    static auto fn(call_error& error, const Arg& arg, const Args&... args) {
+        if constexpr (Index == 0u) {
+            error.method = Rtti::template static_type<Method>();
+            error.arity = sizeof...(args);
+        }
+
+        type_id arg_type_id;
+
+        if constexpr (Rtti::template is_polymorphic<Arg>) {
+            arg_type_id = Rtti::template dynamic_type<Arg>(arg);
+        } else {
+            arg_type_id = Rtti::template static_type<Arg>();
+        }
+
+        error.types[Index] = arg_type_id;
+
+        init_call_error<Method, Rtti, Index + 1>::fn(error, args...);
+    }
+
+    static auto fn(call_error&) {
+    }
+};
+
+template<class Method, class Rtti>
+struct init_call_error<Method, Rtti, call_error::max_types> {
+    static auto fn(call_error&) {
+    }
+};
+
 template<class Method>
 struct static_offsets;
 
@@ -965,7 +997,7 @@ class method<Name, auto(Parameters...)->ReturnType, Registry>
         (true && ... &&
          detail::using_same_registry<Registry, Parameters>::value));
 
-    inline static type_id vp_type_ids[Arity];
+    type_id vp_type_ids[Arity];
 
     static std::size_t slots_strides[2 * Arity - 1];
     // Slots followed by strides. No stride for first virtual argument.
@@ -1034,8 +1066,10 @@ class method<Name, auto(Parameters...)->ReturnType, Registry>
     static bool has_next();
 
     static BOOST_NORETURN auto
-    not_implemented_handler(detail::remove_virtual<Parameters>... args)
+    fn_not_implemented(detail::remove_virtual<Parameters>... args)
         -> ReturnType;
+    static BOOST_NORETURN auto
+    fn_ambiguous(detail::remove_virtual<Parameters>... args) -> ReturnType;
 
   private:
     template<
@@ -1063,18 +1097,27 @@ class method<Name, auto(Parameters...)->ReturnType, Registry>
     struct override_aux;
 
     template<auto Function, typename FnReturnType, typename... FnParameters>
-    struct override_aux<Function, FnReturnType (*)(FnParameters...)>
-        : override_impl<Function, FnReturnType> {};
+    struct override_aux<Function, FnReturnType (*)(FnParameters...)> {
+        override_aux() {
+            (void)&impl;
+        }
+
+        inline static override_impl<Function, FnReturnType> impl;
+    };
 
     template<
         auto Function, class FnClass, typename FnReturnType,
         typename... FnParameters>
     struct override_aux<Function, FnReturnType (FnClass::*)(FnParameters...)> {
+        override_aux() {
+            (void)&impl;
+        }
+
         static auto fn(FnClass* this_, FnParameters&&... args) -> FnReturnType {
             return (this_->*Function)(std::forward<FnParameters>(args)...);
         }
 
-        override_impl<fn, FnReturnType> impl{&next<Function>};
+        inline static override_impl<fn, FnReturnType> impl{&next<Function>};
     };
 
   public:
@@ -1125,8 +1168,13 @@ method<Name, auto(Parameters...)->ReturnType, Registry>::method() {
 
     this->vp_begin = vp_type_ids;
     this->vp_end = vp_type_ids + Arity;
-    this->not_implemented =
-        reinterpret_cast<void (*)()>(not_implemented_handler);
+    this->not_implemented = reinterpret_cast<void (*)()>(fn_not_implemented);
+
+    if constexpr (Registry::template has_policy<policies::n2216>) {
+        this->ambiguous = nullptr;
+    } else {
+        this->ambiguous = reinterpret_cast<void (*)()>(fn_ambiguous);
+    }
 
     Registry::methods.push_back(*this);
 }
@@ -1344,45 +1392,50 @@ method<Name, auto(Parameters...)->ReturnType, Registry>::resolve_multi_next(
 // -----------------------------------------------------------------------------
 // Error handling
 
-namespace detail {
-
-template<class Registry, class Class>
-auto error_type_id(const Class& obj) {
-    if constexpr (Registry::rtti::template is_polymorphic<Class>) {
-        return Registry::rtti::template dynamic_type<Class>(obj);
-    } else {
-        return Registry::rtti::template static_type<void>();
-    }
-}
-
-} // namespace detail
-
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 template<auto Fn>
 inline auto method<Name, auto(Parameters...)->ReturnType, Registry>::has_next()
     -> bool {
-    return next<Fn> != not_implemented_handler;
+    if (next<Fn> == fn_not_implemented) {
+        return false;
+    }
+
+    if constexpr (!Registry::template has_policy<policies::n2216>) {
+        if (next<Fn> == fn_ambiguous) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
-BOOST_NORETURN auto method<Name, auto(Parameters...)->ReturnType, Registry>::
-    not_implemented_handler(detail::remove_virtual<Parameters>... args)
-        -> ReturnType {
+BOOST_NORETURN auto
+method<Name, auto(Parameters...)->ReturnType, Registry>::fn_not_implemented(
+    detail::remove_virtual<Parameters>... args) -> ReturnType {
     if constexpr (Registry::template has_policy<policies::error_handler>) {
         not_implemented_error error;
-        error.method = Registry::rtti::template static_type<method>();
-        error.arity = Arity;
-        type_id types[sizeof...(args)];
-        auto ti_iter = types;
-        (...,
-         (*ti_iter++ = detail::error_type_id<Registry>(
-              detail::parameter_traits<Parameters, Registry>::peek(args))));
-        std::copy_n(
-            types,
-            (std::min)(sizeof...(args), not_implemented_error::max_types),
-            &error.types[0]);
+        detail::init_call_error<method, rtti, 0u>::fn(
+            error,
+            detail::parameter_traits<Parameters, Registry>::peek(args)...);
+        Registry::template policy<policies::error_handler>::error(error);
+    }
+
+    abort(); // in case user handler "forgets" to abort
+}
+
+template<
+    typename Name, typename... Parameters, typename ReturnType, class Registry>
+BOOST_NORETURN auto
+method<Name, auto(Parameters...)->ReturnType, Registry>::fn_ambiguous(
+    detail::remove_virtual<Parameters>... args) -> ReturnType {
+    if constexpr (Registry::template has_policy<policies::error_handler>) {
+        ambiguous_error error;
+        detail::init_call_error<method, rtti, 0u>::fn(
+            error,
+            detail::parameter_traits<Parameters, Registry>::peek(args)...);
         Registry::template policy<policies::error_handler>::error(error);
     }
 

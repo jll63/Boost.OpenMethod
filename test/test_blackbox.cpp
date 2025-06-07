@@ -14,6 +14,7 @@
 #include <boost/openmethod/unique_ptr.hpp>
 #include <boost/openmethod/compiler.hpp>
 #include <boost/openmethod/policies/vptr_vector.hpp>
+#include <boost/openmethod/policies/throw_error_handler.hpp>
 
 #include "test_util.hpp"
 
@@ -271,96 +272,66 @@ BOOST_AUTO_TEST_CASE(cast_args_unique_ptr) {
 }
 } // namespace TEST_NS
 
-namespace matrices {
-
-using test_registry = test_registry_<__COUNTER__>;
-
-#define TYPES                                                                  \
-    NONE, MATRIX, DIAGONAL, SCALAR_MATRIX, SCALAR_DIAGONAL, MATRIX_SCALAR,     \
-        DIAGONAL_SCALAR, MATRIX_MATRIX, MATRIX_DIAGONAL, DIAGONAL_DIAGONAL,    \
-        DIAGONAL_MATRIX, MATRIX_DENSE, DENSE_MATRIX
-
-enum Type { TYPES };
-
-using Types = std::pair<Type, Type>;
-
-auto operator<<(std::ostream& os, Type t) -> std::ostream& {
-#define TYPE_TO_STRING(r, data, elem) BOOST_PP_STRINGIZE(elem),
-    static const char* names[] = {BOOST_PP_SEQ_FOR_EACH(
-        TYPE_TO_STRING, _, BOOST_PP_VARIADIC_TO_SEQ(TYPES))};
-    return os << names[t];
-}
-
-auto operator<<(std::ostream& os, Types o) -> std::ostream& {
-    os << o.first << ", " << o.second;
-    return os;
-}
-
-struct matrix {
-    virtual ~matrix() {
-    }
-
-    Type type;
-};
-
-struct dense_matrix : matrix {};
-struct diagonal_matrix : matrix {};
-
-} // namespace matrices
-
 namespace TEST_NS {
 
-using namespace matrices;
+using namespace test_matrices;
 
 BOOST_OPENMETHOD_CLASSES(matrix, dense_matrix, diagonal_matrix, test_registry);
 
 BOOST_OPENMETHOD(
-    times, (virtual_<const matrix&>, virtual_<const matrix&>), Types,
+    times, (virtual_<const matrix&>, virtual_<const matrix&>), string_pair,
     test_registry);
-BOOST_OPENMETHOD(
-    times, (double, virtual_<const matrix&>), Types, test_registry);
-BOOST_OPENMETHOD(
-    times, (virtual_<const matrix&>, double), Types, test_registry);
 
-BOOST_OPENMETHOD_OVERRIDE(times, (const matrix&, const matrix&), Types) {
-    return Types(MATRIX_MATRIX, NONE);
+BOOST_OPENMETHOD(
+    times, (double, virtual_<const matrix&>), string_pair, test_registry);
+
+BOOST_OPENMETHOD(
+    times, (virtual_<const matrix&>, double), string_pair, test_registry);
+
+BOOST_OPENMETHOD_OVERRIDE(times, (const matrix&, const matrix&), string_pair) {
+    return string_pair(MATRIX_MATRIX, NONE);
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    times, (const diagonal_matrix&, const diagonal_matrix&), Types) {
-    return Types(DIAGONAL_DIAGONAL, MATRIX_MATRIX);
+    times, (const diagonal_matrix&, const diagonal_matrix&), string_pair) {
+    return string_pair(DIAGONAL_DIAGONAL, MATRIX_MATRIX);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(times, (double, const matrix&), Types) {
-    return Types(SCALAR_MATRIX, NONE);
+BOOST_OPENMETHOD_OVERRIDE(times, (double, const matrix&), string_pair) {
+    return string_pair(SCALAR_MATRIX, NONE);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(times, (double, const diagonal_matrix&), Types) {
-    return Types(SCALAR_DIAGONAL, SCALAR_MATRIX);
+BOOST_OPENMETHOD_OVERRIDE(
+    times, (double, const diagonal_matrix&), string_pair) {
+    return string_pair(SCALAR_DIAGONAL, SCALAR_MATRIX);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(times, (const diagonal_matrix&, double), Types) {
-    return Types(DIAGONAL_SCALAR, MATRIX_SCALAR);
+BOOST_OPENMETHOD_OVERRIDE(
+    times, (const diagonal_matrix&, double), string_pair) {
+    return string_pair(DIAGONAL_SCALAR, MATRIX_SCALAR);
 }
 
-BOOST_OPENMETHOD_OVERRIDE(times, (const matrix&, double), Types) {
-    return Types(MATRIX_SCALAR, NONE);
+BOOST_OPENMETHOD_OVERRIDE(times, (const matrix&, double), string_pair) {
+    return string_pair(MATRIX_SCALAR, NONE);
 }
 
 BOOST_AUTO_TEST_CASE(simple) {
-    auto report = initialize<test_registry>();
+    auto report = initialize<test_registry>().report;
+    BOOST_TEST(report.not_implemented == 0);
+    BOOST_TEST(report.ambiguous == 0);
 
     {
         // pass by const ref
         const matrix& dense = dense_matrix();
         const matrix& diag = diagonal_matrix();
-        BOOST_TEST(times(dense, dense) == Types(MATRIX_MATRIX, NONE));
+        BOOST_TEST(times(dense, dense) == string_pair(MATRIX_MATRIX, NONE));
         BOOST_TEST(
-            times(diag, diag) == Types(DIAGONAL_DIAGONAL, MATRIX_MATRIX));
-        BOOST_TEST(times(diag, dense) == Types(MATRIX_MATRIX, NONE));
-        BOOST_TEST(times(2, dense) == Types(SCALAR_MATRIX, NONE));
-        BOOST_TEST(times(dense, 2) == Types(MATRIX_SCALAR, NONE));
-        BOOST_TEST(times(diag, 2) == Types(DIAGONAL_SCALAR, MATRIX_SCALAR));
+            times(diag, diag) == string_pair(DIAGONAL_DIAGONAL, MATRIX_MATRIX));
+        BOOST_TEST(times(diag, dense) == string_pair(MATRIX_MATRIX, NONE));
+        BOOST_TEST(times(2, dense) == string_pair(SCALAR_MATRIX, NONE));
+        BOOST_TEST(times(dense, 2) == string_pair(MATRIX_SCALAR, NONE));
+        BOOST_TEST(
+            times(diag, 2) == string_pair(DIAGONAL_SCALAR, MATRIX_SCALAR));
     }
 
     if constexpr (test_registry::has_policy<policies::vptr_vector>) {
@@ -380,87 +351,30 @@ BOOST_AUTO_TEST_CASE(simple) {
 
 namespace TEST_NS {
 
-using namespace matrices;
-
-using test_registry = test_registry_<__COUNTER__>;
+using namespace test_matrices;
+struct test_registry
+    : test_registry_<__COUNTER__>::with<policies::throw_error_handler> {};
 
 BOOST_OPENMETHOD_CLASSES(matrix, dense_matrix, diagonal_matrix, test_registry);
 
 BOOST_OPENMETHOD(
-    times, (virtual_<const matrix&>, virtual_<const matrix&>), Types,
+    times, (virtual_<const matrix&>, virtual_<const matrix&>), void,
     test_registry);
 
-BOOST_OPENMETHOD_OVERRIDE(times, (const matrix&, const matrix&), Types) {
-    BOOST_TEST(!has_next());
-    return Types(MATRIX_MATRIX, NONE);
+BOOST_OPENMETHOD_OVERRIDE(
+    times, (const matrix&, const diagonal_matrix&), void) {
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    times, (const matrix& a, const diagonal_matrix& b), Types) {
-    BOOST_TEST(has_next());
-    return Types(MATRIX_DIAGONAL, next(a, b).first);
-}
-
-BOOST_OPENMETHOD_OVERRIDE(
-    times, (const diagonal_matrix& a, const matrix& b), Types) {
-    BOOST_TEST(has_next());
-    return Types(DIAGONAL_MATRIX, next(a, b).first);
+    times, (const diagonal_matrix&, const matrix&), void) {
 }
 
 BOOST_AUTO_TEST_CASE(ambiguity) {
-    auto compiler = initialize<test_registry>();
-    BOOST_TEST(compiler.report.ambiguous == 1u);
-
-    // N2216: in case of ambiguity, pick one.
-    diagonal_matrix diag1, diag2;
-    auto result1 = times(diag1, diag2);
-    BOOST_TEST(result1.first == DIAGONAL_MATRIX);
-    // Which overrider is picked is NOT documented! However, I know that it is
-    // the last in registration order. This is important for the test for
-    // ambiguity resolution using covariant return types.
-    BOOST_TEST(result1.second == MATRIX_MATRIX);
-
-    // but always the same
-    auto result2 = times(diag1, diag2);
-    BOOST_TEST((result1 == result2));
-}
-
-} // namespace TEST_NS
-
-namespace TEST_NS {
-
-using namespace matrices;
-
-using test_registry = test_registry_<__COUNTER__>;
-
-BOOST_OPENMETHOD_CLASSES(matrix, dense_matrix, test_registry);
-
-BOOST_OPENMETHOD(
-    times, (virtual_<const matrix&>, virtual_<const matrix&>), matrix*,
-    test_registry);
-
-BOOST_OPENMETHOD_OVERRIDE(
-    times, (const matrix&, const dense_matrix&), matrix*) {
-    auto result = new dense_matrix;
-    result->type = MATRIX_DENSE;
-    return result;
-}
-
-BOOST_OPENMETHOD_OVERRIDE(
-    times, (const dense_matrix&, const matrix&), dense_matrix*) {
-    auto result = new dense_matrix;
-    result->type = DENSE_MATRIX;
-    return result;
-}
-
-BOOST_AUTO_TEST_CASE(covariant_return_type) {
-    auto compiler = initialize<test_registry>();
-    BOOST_TEST(compiler.report.ambiguous == 0u);
-
-    // N2216: use covariant return types to resolve ambiguity.
-    dense_matrix left, right;
-    std::unique_ptr<matrix> result(times(left, right));
-    BOOST_TEST(result->type == DENSE_MATRIX);
+    auto report = initialize<test_registry>().report;
+    BOOST_TEST(report.not_implemented == 1);
+    BOOST_TEST(report.ambiguous == 1u);
+    BOOST_CHECK_THROW(
+        times(diagonal_matrix(), diagonal_matrix()), ambiguous_error);
 }
 
 } // namespace TEST_NS
@@ -507,7 +421,7 @@ BOOST_AUTO_TEST_CASE(test_next_fn) {
 
 namespace errors {
 
-using namespace matrices;
+using namespace test_matrices;
 
 BOOST_OPENMETHOD_CLASSES(matrix, dense_matrix, diagonal_matrix, matrix);
 
@@ -608,78 +522,6 @@ BOOST_AUTO_TEST_CASE(across_namespaces) {
 
 } // namespace across_namespaces
 
-namespace report {
-
-using test_registry = test_registry_<__COUNTER__>;
-
-struct Animal {
-    virtual void foo() = 0;
-};
-
-struct Dog : Animal {
-    void foo() override {
-    }
-};
-
-struct Cat : Animal {
-    void foo() override {
-    }
-};
-
-struct poke_;
-struct pet_;
-struct meet_;
-
-template<class... Class>
-void fn(Class&...) {
-}
-
-BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, test_registry);
-
-BOOST_AUTO_TEST_CASE(initialize_report) {
-    using poke = method<poke_, auto(virtual_<Animal&>)->void, test_registry>;
-    using pet = method<pet_, auto(virtual_<Animal&>)->void, test_registry>;
-    using meet = method<
-        meet_, auto(virtual_<Animal&>, virtual_<Animal&>)->void, test_registry>;
-
-    auto report = initialize<test_registry>().report;
-    BOOST_TEST(report.not_implemented == 3u);
-    BOOST_TEST(report.ambiguous == 0u);
-    // 'meet' dispatch table is one cell, containing 'not_implemented'
-    BOOST_TEST(report.cells == 1u);
-
-    BOOST_OPENMETHOD_REGISTER(poke::override<fn<Animal>>);
-    report = initialize<test_registry>().report;
-    BOOST_TEST(report.not_implemented == 2u);
-
-    BOOST_OPENMETHOD_REGISTER(pet::override<fn<Cat>>);
-    BOOST_OPENMETHOD_REGISTER(pet::override<fn<Dog>>);
-    report = initialize<test_registry>().report;
-    BOOST_TEST(report.not_implemented == 2u);
-
-    // create ambiguity
-    BOOST_OPENMETHOD_REGISTER(meet::override<fn<Animal, Cat>>);
-    BOOST_OPENMETHOD_REGISTER(meet::override<fn<Dog, Animal>>);
-    report = initialize<test_registry>().report;
-    BOOST_TEST(report.cells == 4u);
-    BOOST_TEST(report.ambiguous == 1u);
-
-    BOOST_OPENMETHOD_REGISTER(meet::override<fn<Cat, Cat>>);
-    report = initialize<test_registry>().report;
-    BOOST_TEST(report.cells == 6u);
-    BOOST_TEST(report.ambiguous == 1u);
-
-    // shadow ambiguity
-    BOOST_OPENMETHOD_REGISTER(meet::override<fn<Dog, Dog>>);
-    BOOST_OPENMETHOD_REGISTER(meet::override<fn<Dog, Cat>>);
-    BOOST_OPENMETHOD_REGISTER(meet::override<fn<Cat, Dog>>);
-    report = initialize<test_registry>().report;
-    BOOST_TEST(report.cells == 9u);
-    BOOST_TEST(report.ambiguous == 0u);
-}
-
-} // namespace report
-
 namespace test_comma_in_return_type {
 
 using test_registry = test_registry_<__COUNTER__>;
@@ -701,7 +543,7 @@ BOOST_AUTO_TEST_CASE(comma_in_return_type) {
 
     Test test;
 
-    BOOST_TEST((foo(test) == std::pair(1, 2)));
+    BOOST_CHECK(foo(test) == std::pair(1, 2));
 }
 
 } // namespace test_comma_in_return_type

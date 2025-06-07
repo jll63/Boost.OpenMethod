@@ -11,10 +11,13 @@
 namespace boost::openmethod::policies {
 
 struct throw_error_handler : error_handler {
-    template<class Error>
-    [[noreturn]] static auto error(const Error& error) -> void {
-        throw error;
-    }
+    template<class Registry>
+    struct fn {
+        template<class Error>
+        [[noreturn]] static auto error(const Error& error) -> void {
+            throw error;
+        }
+    };
 };
 
 } // namespace boost::openmethod::policies

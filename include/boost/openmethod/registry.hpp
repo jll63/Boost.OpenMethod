@@ -84,6 +84,12 @@ struct runtime_checks : policy {
     struct fn {};
 };
 
+struct n2216 : policy {
+    using category = n2216;
+    template<class Registry>
+    struct fn {};
+};
+
 template<typename Key>
 struct unique : policy {
     using category = unique;

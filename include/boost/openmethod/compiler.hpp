@@ -156,6 +156,7 @@ struct generic_compiler {
         // following two are dummies, when converting to a function pointer, we will
         // get the corresponding pointer from method_info
         overrider not_implemented;
+        overrider ambiguous;
         vptr_type gv_dispatch_table = nullptr;
         auto arity() const {
             return vp.size();
@@ -214,6 +215,8 @@ auto operator<<(trace_type<Registry>& trace, const spec_name& sn)
     -> trace_type<Registry>& {
     if (sn.def == &sn.method.not_implemented) {
         trace << "not implemented";
+    } else if (sn.def == &sn.method.ambiguous) {
+        trace << "ambiguous";
     } else {
         trace << type_name(sn.def->info->type);
     }
@@ -559,6 +562,9 @@ void compiler<Registry>::augment_methods() {
         meth_iter->not_implemented.pf = meth_iter->info->not_implemented;
         meth_iter->not_implemented.method_index = method_index;
         meth_iter->not_implemented.spec_index = spec_size;
+        meth_iter->ambiguous.pf = meth_iter->info->ambiguous;
+        meth_iter->ambiguous.method_index = method_index;
+        meth_iter->ambiguous.spec_index = spec_size + 1;
 
         meth_iter->specs.resize(spec_size);
         auto spec_iter = meth_iter->specs.begin();
@@ -569,7 +575,7 @@ void compiler<Registry>::augment_methods() {
                     .resolve_type_ids();
             }
 
-            spec_iter->method_index = meth_iter - methods.begin();
+            spec_iter->method_index = method_index;
             spec_iter->spec_index = spec_iter - meth_iter->specs.begin();
 
             ++trace << type_name(overrider_info.type) << " ("
@@ -598,6 +604,7 @@ void compiler<Registry>::augment_methods() {
 
                     abort();
                 }
+
                 spec_iter->pf = spec_iter->info->pf;
                 spec_iter->vp.push_back(class_);
             }
@@ -963,6 +970,15 @@ void compiler<Registry>::build_dispatch_table(
                 m.dispatch_table.push_back(&m.not_implemented);
                 ++m.report.not_implemented;
             } else {
+                if constexpr (!Registry::template has_policy<policies::n2216>) {
+                    if (remaining > 1) {
+                        ++trace << "ambiguous\n";
+                        m.dispatch_table.push_back(&m.ambiguous);
+                        ++m.report.ambiguous;
+                        continue;
+                    }
+                }
+
                 auto overrider = dominants[pick];
                 m.dispatch_table.push_back(overrider);
                 ++trace;
@@ -1014,6 +1030,15 @@ void compiler<Registry>::build_dispatch_table(
                     }
 
                     select_dominant_overriders(candidates, pick, remaining);
+
+                    if constexpr (!Registry::template has_policy<
+                                      policies::n2216>) {
+                        if (remaining > 1) {
+                            ++trace << "ambiguous 'next'\n";
+                            overrider->next = &m.ambiguous;
+                            continue;
+                        }
+                    }
 
                     auto next_overrider = candidates[pick];
                     overrider->next = next_overrider;
@@ -1204,7 +1229,15 @@ void compiler<Registry>::select_dominant_overriders(
         }
     }
 
-    if (remaining <= 1 || !candidates[pick]->covariant_return_type) {
+    if (remaining <= 1) {
+        return;
+    }
+
+    if constexpr (!Registry::template has_policy<policies::n2216>) {
+        return;
+    }
+
+    if (!candidates[pick]->covariant_return_type) {
         return;
     }
 

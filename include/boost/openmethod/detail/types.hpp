@@ -60,13 +60,6 @@ struct virtual_traits;
 
 struct openmethod_error {};
 
-struct not_implemented_error : openmethod_error {
-    type_id method;
-    std::size_t arity;
-    static constexpr std::size_t max_types = 16;
-    type_id types[max_types];
-};
-
 struct unknown_class_error : openmethod_error {
     type_id type;
 };
@@ -75,6 +68,17 @@ struct hash_search_error : openmethod_error {
     std::size_t attempts;
     std::size_t buckets;
 };
+
+struct call_error : openmethod_error {
+    type_id method;
+    std::size_t arity;
+    static constexpr std::size_t max_types = 16;
+    type_id types[max_types];
+};
+
+struct not_implemented_error : call_error {};
+
+struct ambiguous_error : call_error {};
 
 struct type_mismatch_error : openmethod_error {
     type_id type;
@@ -144,6 +148,7 @@ struct method_info : static_list<method_info>::static_link {
     type_id* vp_end;
     static_list<overrider_info> specs;
     void (*not_implemented)();
+    void (*ambiguous)();
     type_id method_type_id;
     type_id return_type_id;
     std::size_t* slots_strides_ptr;

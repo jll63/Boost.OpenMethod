@@ -31,4 +31,58 @@ struct capture_cout {
     std::streambuf* old;
 };
 
+#define MAKE_STRING_CONSTANT(ID) static const std::string ID = #ID;
+
+struct string_pair : std::pair<std::string, std::string> {
+    using std::pair<std::string, std::string>::pair;
+};
+
+inline std::ostream& operator<<(std::ostream& os, const string_pair& pair) {
+    return os << "(" << pair.first << ", " << pair.second << ")";
+}
+
+namespace test_matrices {
+
+using test_registry = test_registry_<__COUNTER__>;
+
+MAKE_STRING_CONSTANT(NONE)
+MAKE_STRING_CONSTANT(MATRIX)
+MAKE_STRING_CONSTANT(DIAGONAL)
+MAKE_STRING_CONSTANT(SCALAR_MATRIX)
+MAKE_STRING_CONSTANT(SCALAR_DIAGONAL)
+MAKE_STRING_CONSTANT(MATRIX_SCALAR)
+MAKE_STRING_CONSTANT(DIAGONAL_SCALAR)
+MAKE_STRING_CONSTANT(MATRIX_MATRIX)
+MAKE_STRING_CONSTANT(MATRIX_DIAGONAL)
+MAKE_STRING_CONSTANT(DIAGONAL_DIAGONAL)
+MAKE_STRING_CONSTANT(DIAGONAL_MATRIX)
+MAKE_STRING_CONSTANT(MATRIX_DENSE)
+MAKE_STRING_CONSTANT(DENSE_MATRIX)
+
+struct matrix {
+    matrix() : type(MATRIX) {
+    }
+
+    virtual ~matrix() {
+    }
+
+    std::string type;
+
+  protected:
+    matrix(std::string type) : type(std::move(type)) {
+    }
+};
+
+struct dense_matrix : matrix {
+    dense_matrix() : matrix(DENSE_MATRIX) {
+    }
+};
+
+struct diagonal_matrix : matrix {
+    diagonal_matrix() : matrix(DIAGONAL_MATRIX) {
+    }
+};
+
+} // namespace test_matrices
+
 #endif

@@ -31,6 +31,8 @@ struct Bulldog : Dog {
 #include <iostream>
 #include <boost/openmethod.hpp>
 
+using boost::openmethod::virtual_ptr;
+
 BOOST_OPENMETHOD(
     poke,                                       // method name
     (std::ostream&, virtual_ptr<Animal>),       // method signature

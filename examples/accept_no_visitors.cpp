@@ -11,8 +11,7 @@
 #include <boost/openmethod/shared_ptr.hpp>
 #include <boost/openmethod/compiler.hpp>
 
-using boost::openmethod::make_shared_virtual;
-using boost::openmethod::shared_virtual_ptr;
+using namespace boost::openmethod::aliases;
 
 using std::cout;
 using std::string;

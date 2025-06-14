@@ -28,6 +28,8 @@ class Dolphin : public Animal {};
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/compiler.hpp>
 
+using boost::openmethod::virtual_ptr;
+
 // Classes must be registered:
 BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat, Dolphin);
 

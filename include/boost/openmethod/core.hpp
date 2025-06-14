@@ -1518,6 +1518,14 @@ void method<Name, auto(Parameters...)->ReturnType, Registry>::override_impl<
             this->vp_type_ids);
 }
 
+namespace aliases {
+
+using boost::openmethod::final_virtual_ptr;
+using boost::openmethod::virtual_;
+using boost::openmethod::virtual_ptr;
+
+} // namespace aliases
+
 } // namespace boost::openmethod
 
 #ifdef _MSC_VER

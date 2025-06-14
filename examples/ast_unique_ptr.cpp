@@ -14,8 +14,7 @@
 #include <boost/openmethod/unique_ptr.hpp>
 #include <boost/openmethod/compiler.hpp>
 
-using boost::openmethod::unique_virtual_ptr;
-using boost::openmethod::make_unique_virtual;
+using namespace boost::openmethod::aliases;
 
 struct Node {
     virtual ~Node() {}

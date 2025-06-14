@@ -9,8 +9,4 @@
 #include <boost/openmethod/core.hpp>
 #include <boost/openmethod/macros.hpp>
 
-#ifndef BOOST_OPENMETHOD_DISABLE_GLOBAL_VIRTUAL_PTR
-using boost::openmethod::virtual_ptr;
-#endif
-
 #endif // BOOST_OPENMETHOD_HPP

@@ -5,6 +5,8 @@
 
 #include "cat.hpp"
 
+using boost::openmethod::virtual_ptr;
+
 namespace felines {
 
 BOOST_OPENMETHOD_CLASSES(animals::Animal, Cat, Cheetah);

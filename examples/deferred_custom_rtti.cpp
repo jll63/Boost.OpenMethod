@@ -131,6 +131,8 @@ struct custom_policy : bom::registry<
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/compiler.hpp>
 
+using boost::openmethod::virtual_ptr;
+
 BOOST_OPENMETHOD(poke, (std::ostream&, virtual_ptr<Animal>), void);
 
 BOOST_OPENMETHOD_OVERRIDE(

@@ -6,6 +6,8 @@
 #include "cat.hpp"
 #include "dog.hpp"
 
+using boost::openmethod::virtual_ptr;
+
 struct Bulldog : canines::Dog {
     using Dog::Dog;
 };

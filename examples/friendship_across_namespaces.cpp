@@ -9,6 +9,8 @@
 #include <string>
 #include <boost/openmethod.hpp>
 
+using boost::openmethod::virtual_ptr;
+
 #ifdef FRIEND_ALL
 
 // tag::friend_all[]

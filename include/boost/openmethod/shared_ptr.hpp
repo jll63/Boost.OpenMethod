@@ -125,6 +125,11 @@ inline auto make_shared_virtual(T&&... args)
         std::make_shared<Class>(std::forward<T>(args)...));
 }
 
+namespace aliases {
+    using boost::openmethod::shared_virtual_ptr;
+    using boost::openmethod::make_shared_virtual;
+}
+
 } // namespace boost::openmethod
 
 #endif

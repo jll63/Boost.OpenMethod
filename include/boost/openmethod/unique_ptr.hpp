@@ -47,6 +47,11 @@ inline auto make_unique_virtual(T&&... args)
         std::make_unique<Class>(std::forward<T>(args)...));
 }
 
+namespace aliases {
+    using boost::openmethod::unique_virtual_ptr;
+    using boost::openmethod::make_unique_virtual;
+}
+
 } // namespace boost::openmethod
 
 #endif

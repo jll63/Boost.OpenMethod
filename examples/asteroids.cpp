@@ -9,6 +9,8 @@
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/compiler.hpp>
 
+using boost::openmethod::virtual_ptr;
+
 class Thing {
   public:
     virtual ~Thing() {

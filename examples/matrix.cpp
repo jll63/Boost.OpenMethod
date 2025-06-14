@@ -16,6 +16,7 @@ using std::make_shared;
 using std::shared_ptr;
 using std::string;
 
+using boost::openmethod::virtual_ptr;
 using boost::openmethod::make_shared_virtual;
 using boost::openmethod::shared_virtual_ptr;
 

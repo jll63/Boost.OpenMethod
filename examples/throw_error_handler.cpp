@@ -37,6 +37,8 @@ struct custom_registry : bom::default_registry::with<throw_if_not_implemented> {
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/compiler.hpp>
 
+using boost::openmethod::virtual_ptr;
+
 BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog);
 
 BOOST_OPENMETHOD(trick, (std::ostream&, virtual_ptr<Animal>), void);

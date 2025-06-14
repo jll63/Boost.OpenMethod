@@ -133,6 +133,7 @@ struct Init {
 namespace openmethods {
 
 using namespace nodes;
+using boost::openmethod::virtual_ptr;
 
 BOOST_OPENMETHOD_CLASSES(Node, Number, Plus, Times);
 

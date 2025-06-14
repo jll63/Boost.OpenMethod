@@ -12,6 +12,8 @@
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/compiler.hpp>
 
+using boost::openmethod::virtual_ptr;
+
 using namespace std;
 
 struct Vehicle {

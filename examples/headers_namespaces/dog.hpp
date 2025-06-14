@@ -13,7 +13,7 @@ struct Dog : animals::Animal {
 };
 
 BOOST_OPENMETHOD_DECLARE_OVERRIDER(
-    poke, (std::ostream & os, virtual_ptr<Dog> dog), void);
+    poke, (std::ostream & os, boost::openmethod::virtual_ptr<Dog> dog), void);
 
 } // namespace canines
 

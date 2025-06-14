@@ -103,6 +103,8 @@ jobs:
         run: |
           sudo apt-get install asciidoctor
           asciidoctor doc/openmethod.adoc -o build_outputs_folder/index.html
+      - name: Build flat headers
+        run: dev/flatten.sh
       - name: Upload static files as artifact
         uses: actions/upload-pages-artifact@v3
         with:

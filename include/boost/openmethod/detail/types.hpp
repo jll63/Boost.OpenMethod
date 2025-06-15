@@ -60,6 +60,9 @@ struct virtual_traits;
 
 struct openmethod_error {};
 
+struct not_initialized_error : openmethod_error {
+};
+
 struct unknown_class_error : openmethod_error {
     type_id type;
 };

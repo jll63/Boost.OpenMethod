@@ -15,9 +15,9 @@ namespace boost::openmethod::policies {
 
 struct default_error_handler : error_handler {
     using error_variant = std::variant<
-        openmethod_error, not_implemented_error, unknown_class_error,
-        hash_search_error, type_mismatch_error, static_slot_error,
-        static_stride_error>;
+        openmethod_error, not_initialized_error, not_implemented_error,
+        unknown_class_error, hash_search_error, type_mismatch_error,
+        static_slot_error, static_stride_error>;
 
     using function_type = std::function<void(const error_variant& error)>;
 
@@ -29,21 +29,24 @@ struct default_error_handler : error_handler {
             handler(error_variant(error));
         }
 
-        static auto set(function_type handler) -> function_type {
+        static auto set(function_type new_handler) -> function_type {
             auto prev = handler;
-            fn::handler = handler;
+            handler = new_handler;
 
             return prev;
         }
 
-        static auto default_handler(const error_variant& error_v) {
+        static auto default_handler(const error_variant& error_v) -> void {
             using namespace detail;
             using namespace policies;
 
             if constexpr (Registry::template has_policy<output>) {
                 auto& os = Registry::template policy<policies::output>::os;
 
-                if (auto error = std::get_if<not_implemented_error>(&error_v)) {
+                if (std::get_if<not_initialized_error>(&error_v)) {
+                    os << "not initialized\n";
+                } else if (
+                    auto error = std::get_if<not_implemented_error>(&error_v)) {
                     os << "no applicable overrider for ";
                     Registry::template policy<policies::rtti>::type_name(
                         error->method, os);

@@ -307,6 +307,8 @@ constexpr bool has_vptr_fn = std::is_same_v<
 
 template<class Registry, class ArgType>
 decltype(auto) acquire_vptr(const ArgType& arg) {
+    Registry::check_initialized();
+
     if constexpr (detail::has_vptr_fn<ArgType>) {
         return boost_openmethod_vptr(arg);
     } else {
@@ -1257,6 +1259,8 @@ BOOST_FORCEINLINE typename method<
 method<Name, auto(Parameters...)->ReturnType, Registry>::resolve(
     const ArgType&... args) const {
     using namespace detail;
+
+    Registry::check_initialized();
 
     void (*pf)();
 

@@ -300,6 +300,8 @@ auto compiler<Registry>::initialize() {
     compile();
     install_global_tables();
 
+    Registry::initialized = true;
+
     return *this;
 }
 

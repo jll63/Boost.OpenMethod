@@ -169,6 +169,9 @@ struct without_aux<Policies, Policy, MorePolicies...> {
 
 template<class... Policies>
 struct registry : detail::registry_base {
+    using registry_type = registry;
+
+    inline static bool initialized;
     inline static detail::class_catalog classes;
     inline static detail::method_catalog methods;
     template<class Class>
@@ -179,7 +182,7 @@ struct registry : detail::registry_base {
 
     template<class PolicyCategory>
     using policy = typename detail::get_policy_aux<
-        registry,
+        registry_type,
         mp11::mp_find_if_q<
             policy_list,
             mp11::mp_bind_front_q<
@@ -198,14 +201,32 @@ struct registry : detail::registry_base {
         registry,
         typename detail::without_aux<policy_list, RemovePolicies...>::type>;
 
-    using registry_type = registry;
     using rtti = policy<policies::rtti>;
     using error_handler = policy<policies::error_handler>;
+    using output = policy<policies::output>;
+
     static constexpr auto runtime_checks = has_policy<policies::runtime_checks>;
     static constexpr auto deferred_static_rtti =
         has_policy<policies::deferred_static_rtti>;
     static constexpr auto trace = has_policy<policies::trace>;
+
+    static void check_initialized();
 };
+
+template<class... Policies>
+inline void registry<Policies...>::check_initialized() {
+    if constexpr (has_policy<policies::runtime_checks>) {
+        if (!initialized) {
+            using error_handler = policy<policies::error_handler>;
+
+            if constexpr (detail::is_not_void<error_handler>) {
+                error_handler::error(not_initialized_error());
+            }
+
+            abort();
+        }
+    }
+}
 
 } // namespace boost::openmethod
 

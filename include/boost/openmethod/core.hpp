@@ -798,6 +798,13 @@ class virtual_ptr : public detail::virtual_ptr_impl<Class, Registry> {
 template<class Class>
 virtual_ptr(Class&) -> virtual_ptr<Class, BOOST_OPENMETHOD_DEFAULT_REGISTRY>;
 
+template<class Class>
+virtual_ptr(Class&&) -> virtual_ptr<Class, BOOST_OPENMETHOD_DEFAULT_REGISTRY>;
+
+// Alas this is not allowed:
+// template<class Registry, class Class>
+// virtual_ptr<Registry>(Class&) -> virtual_ptr<Class, Registry>;
+
 template<class Registry, class Class>
 inline auto final_virtual_ptr(Class&& obj) {
     return virtual_ptr<std::remove_reference_t<Class>, Registry>::final(

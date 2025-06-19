@@ -16,8 +16,7 @@ namespace boost::openmethod::policies {
 struct default_error_handler : error_handler {
     using error_variant = std::variant<
         openmethod_error, not_implemented_error, unknown_class_error,
-        hash_search_error, type_mismatch_error, static_slot_error,
-        static_stride_error>;
+        hash_search_error, final_error, static_slot_error, static_stride_error>;
 
     using function_type = std::function<void(const error_variant& error)>;
 
@@ -65,8 +64,7 @@ struct default_error_handler : error_handler {
                     Registry::template policy<policies::rtti>::type_name(
                         error->type, os);
                     os << "\n";
-                } else if (
-                    auto error = std::get_if<type_mismatch_error>(&error_v)) {
+                } else if (auto error = std::get_if<final_error>(&error_v)) {
                     os << "invalid method table for ";
                     Registry::template policy<policies::rtti>::type_name(
                         error->type, os);

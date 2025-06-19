@@ -126,9 +126,9 @@ inline auto make_shared_virtual(T&&... args)
 }
 
 namespace aliases {
-    using boost::openmethod::shared_virtual_ptr;
-    using boost::openmethod::make_shared_virtual;
-}
+using boost::openmethod::make_shared_virtual;
+using boost::openmethod::shared_virtual_ptr;
+} // namespace aliases
 
 } // namespace boost::openmethod
 

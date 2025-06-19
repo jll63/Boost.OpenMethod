@@ -58,18 +58,30 @@ struct virtual_traits;
 // -----------------------------------------------------------------------------
 // Error handling
 
-struct openmethod_error {};
+struct openmethod_error {
+    virtual ~openmethod_error() = default;
+};
 
 struct not_initialized_error : openmethod_error {
+    template<class Registry, class Stream>
+    auto write(Stream& os) const -> void {
+        os << "not initialized";
+    }
 };
 
 struct unknown_class_error : openmethod_error {
     type_id type;
+
+    template<class Registry, class Stream>
+    auto write(Stream& os) const -> void;
 };
 
 struct hash_search_error : openmethod_error {
     std::size_t attempts;
     std::size_t buckets;
+
+    template<class Registry, class Stream>
+    auto write(Stream& os) const -> void;
 };
 
 struct call_error : openmethod_error {
@@ -77,19 +89,39 @@ struct call_error : openmethod_error {
     std::size_t arity;
     static constexpr std::size_t max_types = 16;
     type_id types[max_types];
+
+  protected:
+    template<class Registry, class Stream>
+    auto write_aux(Stream& os, const char* subtype) const -> void;
 };
 
-struct not_implemented_error : call_error {};
+struct not_implemented_error : call_error {
+    template<class Registry, class Stream>
+    auto write(Stream& os) const -> void {
+        write_aux<Registry>(os, "not implemented");
+    }
+};
 
-struct ambiguous_error : call_error {};
+struct ambiguous_error : call_error {
+    template<class Registry, class Stream>
+    auto write(Stream& os) const -> void {
+        write_aux<Registry>(os, "ambiguous");
+    }
+};
 
-struct type_mismatch_error : openmethod_error {
-    type_id type;
+struct final_error : openmethod_error {
+    type_id static_type, dynamic_type;
+
+    template<class Registry, class Stream>
+    auto write(Stream& os) const -> void;
 };
 
 struct static_offset_error : openmethod_error {
     type_id method;
     int actual, expected;
+
+    template<class Registry, class Stream>
+    auto write(Stream& os) const -> void;
 };
 
 struct static_slot_error : static_offset_error {};

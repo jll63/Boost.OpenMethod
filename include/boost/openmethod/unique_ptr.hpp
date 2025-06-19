@@ -48,9 +48,9 @@ inline auto make_unique_virtual(T&&... args)
 }
 
 namespace aliases {
-    using boost::openmethod::unique_virtual_ptr;
-    using boost::openmethod::make_unique_virtual;
-}
+using boost::openmethod::make_unique_virtual;
+using boost::openmethod::unique_virtual_ptr;
+} // namespace aliases
 
 } // namespace boost::openmethod
 

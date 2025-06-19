@@ -15,9 +15,9 @@ namespace boost::openmethod::policies {
 
 struct default_error_handler : error_handler {
     using error_variant = std::variant<
-        openmethod_error, not_initialized_error, not_implemented_error,
-        unknown_class_error, hash_search_error, type_mismatch_error,
-        static_slot_error, static_stride_error>;
+        not_initialized_error, not_implemented_error, ambiguous_error,
+        unknown_class_error, hash_search_error, final_error, static_slot_error,
+        static_stride_error>;
 
     using function_type = std::function<void(const error_variant& error)>;
 
@@ -36,50 +36,14 @@ struct default_error_handler : error_handler {
             return prev;
         }
 
-        static auto default_handler(const error_variant& error_v) -> void {
-            using namespace detail;
-            using namespace policies;
-
+        static auto default_handler(const error_variant& error) -> void {
             if constexpr (Registry::template has_policy<output>) {
-                auto& os = Registry::template policy<policies::output>::os;
-
-                if (std::get_if<not_initialized_error>(&error_v)) {
-                    os << "not initialized\n";
-                } else if (
-                    auto error = std::get_if<not_implemented_error>(&error_v)) {
-                    os << "no applicable overrider for ";
-                    Registry::template policy<policies::rtti>::type_name(
-                        error->method, os);
-                    os << "(";
-                    auto comma = "";
-
-                    for (auto ti :
-                         range{error->types, error->types + error->arity}) {
-                        os << comma;
-                        Registry::template policy<policies::rtti>::type_name(
-                            ti, os);
-                        comma = ", ";
-                    }
-
-                    os << ")\n";
-                } else if (
-                    auto error = std::get_if<unknown_class_error>(&error_v)) {
-                    os << "unknown class ";
-                    Registry::template policy<policies::rtti>::type_name(
-                        error->type, os);
-                    os << "\n";
-                } else if (
-                    auto error = std::get_if<type_mismatch_error>(&error_v)) {
-                    os << "invalid method table for ";
-                    Registry::template policy<policies::rtti>::type_name(
-                        error->type, os);
-                    os << "\n";
-                } else if (
-                    auto error = std::get_if<hash_search_error>(&error_v)) {
-                    os << "could not find hash factors after "
-                       << error->attempts << "s using " << error->buckets
-                       << " buckets\n";
-                }
+                std::visit(
+                    [](auto&& error) {
+                        error.template write<Registry>(Registry::output::os);
+                    },
+                    error);
+                Registry::output::os << "\n";
             }
         }
 

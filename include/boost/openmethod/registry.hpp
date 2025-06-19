@@ -232,6 +232,52 @@ inline void registry<Policies...>::check_initialized() {
     }
 }
 
+template<class Registry, class Stream>
+auto call_error::write_aux(Stream& os, const char* subtype) const -> void {
+    using namespace detail;
+    using namespace policies;
+
+    os << "invalid call to ";
+    Registry::template policy<rtti>::type_name(method, os);
+    os << "(";
+    auto comma = "";
+
+    for (auto ti : range{types, types + arity}) {
+        os << comma;
+        Registry::template policy<rtti>::type_name(ti, os);
+        comma = ", ";
+    }
+
+    os << "): " << subtype;
+}
+
+template<class Registry, class Stream>
+auto unknown_class_error::write(Stream& os) const -> void {
+    os << "unknown class ";
+    Registry::rtti::type_name(type, os);
+}
+
+template<class Registry, class Stream>
+auto final_error::write(Stream& os) const -> void {
+    os << "invalid call to final construct: static type = ";
+    Registry::rtti::type_name(static_type, os);
+    os << ", dynamic type = ";
+    Registry::rtti::type_name(dynamic_type, os);
+}
+
+template<class Registry, class Stream>
+auto hash_search_error::write(Stream& os) const -> void {
+    os << "could not find hash factors after " << attempts << "s using "
+       << buckets << " buckets\n";
+}
+
+template<class Registry, class Stream>
+auto static_offset_error::write(Stream& os) const -> void {
+    os << "static offset error in ";
+    Registry::rtti::type_name(method, os);
+    os << ": expected " << expected << ", got " << actual;
+}
+
 } // namespace boost::openmethod
 
 #endif // BOOST_OPENMETHOD_REGISTRY_HPP

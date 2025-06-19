@@ -165,8 +165,7 @@ struct custom_rtti : policies::rtti {
         template<class Stream>
         static void type_name(type_id type, Stream& stream) {
             static const char* name[] = {"Animal", "Dog", "Cat"};
-            stream
-                << (type == invalid_type_id ? "?" : name[std::size_t(type)]);
+            stream << (type == invalid_type_id ? "?" : name[std::size_t(type)]);
         }
 
         static auto type_index(type_id type) {

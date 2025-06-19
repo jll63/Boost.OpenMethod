@@ -758,7 +758,6 @@ class virtual_ptr : public detail::virtual_ptr_impl<Class, Registry> {
         using namespace detail;
         using other_traits = virtual_traits<Other, Registry>;
         using other_class = typename other_traits::virtual_type;
-        using rtti = typename Registry::rtti;
 
         static_assert(
             std::is_base_of_v<element_type, other_class> ||
@@ -770,16 +769,17 @@ class virtual_ptr : public detail::virtual_ptr_impl<Class, Registry> {
             is_polymorphic<Registry, other_class>) {
 
             // check that dynamic type == static type
-            auto static_type = rtti::template static_type<other_class>();
-            type_id dynamic_type = rtti::dynamic_type(other_traits::peek(obj));
+            auto static_type =
+                Registry::rtti::template static_type<other_class>();
+            type_id dynamic_type =
+                Registry::rtti::dynamic_type(other_traits::peek(obj));
 
             if (dynamic_type != static_type) {
-                type_mismatch_error error;
-                error.type = dynamic_type;
-                using error_handler = typename Registry::error_handler;
-
-                if constexpr (is_not_void<error_handler>) {
-                    error_handler::error(error);
+                if constexpr (is_not_void<typename Registry::error_handler>) {
+                    final_error error;
+                    error.static_type = static_type;
+                    error.dynamic_type = dynamic_type;
+                    Registry::error_handler::error(error);
                 }
 
                 abort();

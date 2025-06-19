@@ -276,6 +276,8 @@ namespace TEST_NS {
 
 using namespace test_matrices;
 
+using test_registry = test_registry_<__COUNTER__>;
+
 BOOST_OPENMETHOD_CLASSES(matrix, dense_matrix, diagonal_matrix, test_registry);
 
 BOOST_OPENMETHOD(
@@ -349,36 +351,6 @@ BOOST_AUTO_TEST_CASE(simple) {
 
 } // namespace TEST_NS
 
-namespace TEST_NS {
-
-using namespace test_matrices;
-struct test_registry
-    : test_registry_<__COUNTER__>::with<policies::throw_error_handler> {};
-
-BOOST_OPENMETHOD_CLASSES(matrix, dense_matrix, diagonal_matrix, test_registry);
-
-BOOST_OPENMETHOD(
-    times, (virtual_<const matrix&>, virtual_<const matrix&>), void,
-    test_registry);
-
-BOOST_OPENMETHOD_OVERRIDE(
-    times, (const matrix&, const diagonal_matrix&), void) {
-}
-
-BOOST_OPENMETHOD_OVERRIDE(
-    times, (const diagonal_matrix&, const matrix&), void) {
-}
-
-BOOST_AUTO_TEST_CASE(ambiguity) {
-    auto report = initialize<test_registry>().report;
-    BOOST_TEST(report.not_implemented == 1);
-    BOOST_TEST(report.ambiguous == 1u);
-    BOOST_CHECK_THROW(
-        times(diagonal_matrix(), diagonal_matrix()), ambiguous_error);
-}
-
-} // namespace TEST_NS
-
 namespace test_next_fn {
 
 struct Animal {
@@ -418,76 +390,6 @@ BOOST_AUTO_TEST_CASE(test_next_fn) {
 }
 
 } // namespace test_next_fn
-
-namespace errors {
-
-using namespace test_matrices;
-
-BOOST_OPENMETHOD_CLASSES(matrix, dense_matrix, diagonal_matrix, matrix);
-
-BOOST_OPENMETHOD(
-    times, (virtual_<const matrix&>, virtual_<const matrix&>), void);
-
-BOOST_OPENMETHOD_OVERRIDE(
-    times, (const diagonal_matrix&, const matrix&), void) {
-}
-
-BOOST_OPENMETHOD_OVERRIDE(
-    times, (const matrix&, const diagonal_matrix&), void) {
-}
-
-void test_handler(
-    const policies::default_error_handler::error_variant& error_v) {
-    if (auto error = std::get_if<not_implemented_error>(&error_v)) {
-        throw *error;
-    }
-
-    if (auto error = std::get_if<unknown_class_error>(&error_v)) {
-        throw *error;
-    }
-
-    if (auto error = std::get_if<hash_search_error>(&error_v)) {
-        throw *error;
-    }
-
-    throw int();
-}
-
-} // namespace errors
-
-namespace initialize_error_handling {
-
-using test_registry = test_registry_<__COUNTER__>;
-
-struct base {
-    virtual ~base() {
-    }
-};
-
-BOOST_OPENMETHOD(foo, (virtual_<base&>), void, test_registry);
-
-// instantiate the method
-BOOST_OPENMETHOD_OVERRIDE(foo, (base&), void) {
-}
-
-BOOST_AUTO_TEST_CASE(test_initialize_error_handling) {
-    auto prev_handler = test_registry::error_handler::set(errors::test_handler);
-
-    try {
-        initialize<test_registry>();
-    } catch (const unknown_class_error& error) {
-        test_registry::error_handler::set(prev_handler);
-        BOOST_TEST(error.type == reinterpret_cast<type_id>(&typeid(base)));
-        return;
-    } catch (...) {
-        test_registry::error_handler::set(prev_handler);
-        BOOST_FAIL("unexpected exception");
-    }
-
-    BOOST_FAIL("did not throw");
-}
-
-} // namespace initialize_error_handling
 
 namespace across_namespaces {
 

@@ -44,8 +44,6 @@ inline std::ostream& operator<<(std::ostream& os, const string_pair& pair) {
 
 namespace test_matrices {
 
-using test_registry = test_registry_<__COUNTER__>;
-
 MAKE_STRING_CONSTANT(NONE)
 MAKE_STRING_CONSTANT(MATRIX)
 MAKE_STRING_CONSTANT(DIAGONAL)

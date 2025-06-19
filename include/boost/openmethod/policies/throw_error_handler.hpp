@@ -8,14 +8,26 @@
 
 #include <boost/openmethod/registry.hpp>
 
+#include <sstream>
+#include <stdexcept>
+#include <string>
+
 namespace boost::openmethod::policies {
 
 struct throw_error_handler : error_handler {
     template<class Registry>
-    struct fn {
+    class fn {
+      public:
         template<class Error>
         [[noreturn]] static auto error(const Error& error) -> void {
-            throw error;
+            struct wrapper : Error, std::runtime_error {
+                using std::runtime_error::runtime_error;
+            };
+
+            std::ostringstream os;
+            error.template write<Registry>(os);
+
+            throw wrapper(os.str());
         }
     };
 };

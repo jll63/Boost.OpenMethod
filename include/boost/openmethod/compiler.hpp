@@ -186,7 +186,7 @@ auto operator<<(
     trace_type<Registry>& trace,
     Container<generic_compiler::class_*, T...>& classes)
     -> trace_type<Registry>& {
-    if constexpr (Registry::template has_policy<policies::trace>) {
+    if constexpr (Registry::has_trace) {
         trace << "(";
         const char* sep = "";
         for (auto cls : classes) {

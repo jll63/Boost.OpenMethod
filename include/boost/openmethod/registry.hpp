@@ -201,14 +201,18 @@ struct registry : detail::registry_base {
         registry,
         typename detail::without_aux<policy_list, RemovePolicies...>::type>;
 
+    static constexpr auto has_error_handler =
+        has_policy<policies::error_handler>;
+    static constexpr auto has_output = has_policy<policies::output>;
+    static constexpr auto has_trace = has_policy<policies::trace>;
+    static constexpr auto deferred_static_rtti =
+        has_policy<policies::deferred_static_rtti>;
+    static constexpr auto runtime_checks = has_policy<policies::runtime_checks>;
+
     using rtti = policy<policies::rtti>;
     using error_handler = policy<policies::error_handler>;
     using output = policy<policies::output>;
-
-    static constexpr auto runtime_checks = has_policy<policies::runtime_checks>;
-    static constexpr auto deferred_static_rtti =
-        has_policy<policies::deferred_static_rtti>;
-    static constexpr auto trace = has_policy<policies::trace>;
+    using trace = policy<policies::trace>;
 
     static void check_initialized();
 };

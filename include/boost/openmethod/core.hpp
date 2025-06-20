@@ -301,16 +301,18 @@ constexpr bool is_virtual_ptr = detail::is_virtual_ptr_aux<T>::value;
 
 void boost_openmethod_vptr(...);
 
-template<class Class>
+template<class Registry, class Class>
 constexpr bool has_vptr_fn = std::is_same_v<
-    decltype(boost_openmethod_vptr(std::declval<const Class&>())), vptr_type>;
+    decltype(boost_openmethod_vptr(
+        std::declval<const Class&>(), std::declval<Registry*>())),
+    vptr_type>;
 
 template<class Registry, class ArgType>
 decltype(auto) acquire_vptr(const ArgType& arg) {
     Registry::check_initialized();
 
-    if constexpr (detail::has_vptr_fn<ArgType>) {
-        return boost_openmethod_vptr(arg);
+    if constexpr (detail::has_vptr_fn<Registry, ArgType>) {
+        return boost_openmethod_vptr(arg, static_cast<Registry*>(nullptr));
     } else {
         return Registry::template policy<policies::vptr>::dynamic_vptr(arg);
     }

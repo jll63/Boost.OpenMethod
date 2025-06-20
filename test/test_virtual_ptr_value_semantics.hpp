@@ -72,8 +72,8 @@ struct check_illegal_smart_ops {
 
     // policies must be the same
     static_assert(!std::is_constructible_v<
-                  virtual_ptr<smart_ptr<Animal>, policies::debug>,
-                  virtual_ptr<smart_ptr<Animal>, policies::release>>);
+                  virtual_ptr<smart_ptr<Animal>, debug_registry>,
+                  virtual_ptr<smart_ptr<Animal>, release_registry>>);
 
     // a smart virtual_ptr cannot be constructed from a plain reference or
     // pointer

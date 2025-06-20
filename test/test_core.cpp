@@ -307,3 +307,35 @@ using meet = method<void, void(virtual_<Animal&>, virtual_<Animal&>)>;
 static_assert(has_static_offsets<meet>::value);
 
 } // namespace test_static_slots
+
+namespace TEST_NS {
+
+struct Animal {
+    friend auto boost_openmethod_vptr(const Animal&, void*) -> vptr_type;
+};
+
+static_assert(detail::has_vptr_fn<default_registry, Animal>);
+
+} // namespace TEST_NS
+
+namespace TEST_NS {
+
+using test_registry = test_registry_<__COUNTER__>;
+
+const detail::word value;
+
+struct Animal {
+    friend auto boost_openmethod_vptr(const Animal&, test_registry*) {
+        return &value;
+    }
+};
+
+static_assert(detail::has_vptr_fn<test_registry, Animal>);
+static_assert(!detail::has_vptr_fn<default_registry, Animal>);
+
+BOOST_AUTO_TEST_CASE(vptr_from_function) {
+    initialize<test_registry>();
+    BOOST_TEST(detail::acquire_vptr<test_registry>(Animal{}) == &value);
+}
+
+} // namespace TEST_NS

@@ -15,23 +15,23 @@
 
 namespace boost::openmethod {
 
-namespace policies {
-
-struct release : registry<
-                     std_rtti, fast_perfect_hash, vptr_vector,
-                     default_error_handler, stderr_output> {};
-
-struct debug
+struct release_registry
     : registry<
-          std_rtti, fast_perfect_hash, vptr_vector, default_error_handler,
-          runtime_checks, stderr_output, trace> {};
+          policies::std_rtti, policies::fast_perfect_hash,
+          policies::vptr_vector, policies::default_error_handler,
+          policies::stderr_output> {};
 
-} // namespace policies
+struct debug_registry
+    : registry<
+          policies::std_rtti, policies::fast_perfect_hash,
+          policies::vptr_vector, policies::default_error_handler,
+          policies::runtime_checks, policies::stderr_output, policies::trace> {
+};
 
 #ifdef NDEBUG
-using default_registry = policies::release;
+using default_registry = release_registry;
 #else
-using default_registry = policies::debug;
+using default_registry = debug_registry;
 #endif // BOOST_OPENMETHOD_DEFAULT_REGISTRY_HPP
 
 } // namespace boost::openmethod

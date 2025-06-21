@@ -5,12 +5,12 @@ A method can have more than one `virtual_ptr` parameter. For example:
 
 [source,c++]
 ----
-include::{examplesdir}/hello_world.cpp[tag=multi]
+include::{exampledir}/hello_world.cpp[tag=multi]
 ----
 
 [source,c++]
 ----
-include::{examplesdir}/hello_world.cpp[tag=multi_call,indent=0]
+include::{exampledir}/hello_world.cpp[tag=multi_call,indent=0]
 ----
 
 The appropriate overrider is selected using a process similar to overload

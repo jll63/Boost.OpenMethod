@@ -11,7 +11,7 @@ Let's break the Animals example into headers and namespaces. First we put
 
 [source,c++]
 ----
-include::{examplesdir}/headers_namespaces/animal.hpp[]
+include::{exampledir}/headers_namespaces/animal.hpp[]
 ----
 
 `BOOST_OPENMETHOD` can be placed in a header file. It adds several constructs to
@@ -32,12 +32,12 @@ Next, let's implement the `Cat` class, and a derived class, `Cheetah`, in the
 
 [source,c++]
 ----
-include::{examplesdir}/headers_namespaces/cat.hpp[]
+include::{exampledir}/headers_namespaces/cat.hpp[]
 ----
 
 [source,c++]
 ----
-include::{examplesdir}/headers_namespaces/cat.cpp[]
+include::{exampledir}/headers_namespaces/cat.cpp[]
 ----
 
 `BOOST_OPENMETHOD_CLASSES` should be placed in an implementation file. It can
@@ -83,7 +83,7 @@ the static function `fn` just yet.
 
 [source,c++]
 ----
-include::{examplesdir}/headers_namespaces/dog.hpp[]
+include::{exampledir}/headers_namespaces/dog.hpp[]
 ----
 
 Unlike function declarations, which can occur multiple times in a TU, an
@@ -101,7 +101,7 @@ Now we use `BOOST_OPENMETHOD_DEFINE_OVERRIDER` to define the overrider:
 
 [source,c++]
 ----
-include::{examplesdir}/headers_namespaces/dog.cpp[]
+include::{exampledir}/headers_namespaces/dog.cpp[]
 ----
 
 Let's look at the main program now. It derived `Bulldog` from `Dog` and provides
@@ -109,7 +109,7 @@ an overrider for the new class:
 
 [source,c++]
 ----
-include::{examplesdir}/headers_namespaces/main.cpp[]
+include::{exampledir}/headers_namespaces/main.cpp[]
 ----
 
 Again ADL plays a role: it helps the overrider (and `main`) to locate the `poke`

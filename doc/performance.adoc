@@ -8,7 +8,7 @@ clang compiles the following code:
 
 [source,c++]
 ----
-include::{examplesdir}/hello_world.cpp[tag=call_poke_via_ref]
+include::{exampledir}/hello_world.cpp[tag=call_poke_via_ref]
 ----
 
 ...to this on the x64 architecture (variable names have been shortened for
@@ -48,7 +48,7 @@ Let's look at another example: an AST for an arithmetic calculator:
 
 [source,c++]
 ----
-include::{examplesdir}/ast.cpp[tag=ast]
+include::{exampledir}/ast.cpp[tag=ast]
 ----
 
 The `Negate` overrider compiles to:
@@ -79,7 +79,7 @@ instruction. For example:
 
 [source,c++]
 ----
-include::{examplesdir}/ast.cpp[tag=final,indent=0]
+include::{exampledir}/ast.cpp[tag=final,indent=0]
 ----
 
 ...compiles to:

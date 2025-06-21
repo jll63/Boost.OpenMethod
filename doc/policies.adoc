@@ -38,7 +38,7 @@ The `release` policy contains the following facets:
 | hash type id to an index in a vector
 
 | error_handler
-| vectored_error_handler
+| default_error_handler
 | handles errors
 
 |===

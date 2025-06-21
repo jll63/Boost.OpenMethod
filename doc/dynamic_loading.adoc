@@ -21,7 +21,7 @@ Here is an example:
 
 [source,c++]
 ----
-include::{examplesdir}/dl.hpp[tag=header]
+include::{exampledir}/dl.hpp[tag=header]
 ----
 
 NOTE: The policy must be passed to the method as well as the
@@ -35,7 +35,7 @@ We can now register the classes and and provide an overrider:
 
 [source,c++]
 ----
-include::{examplesdir}/dl_main.cpp[tag=main]
+include::{exampledir}/dl_main.cpp[tag=main]
 ----
 
 At this point we only have one overrider. Animals of all species ignore one
@@ -43,26 +43,26 @@ another:
 
 [source,c++]
 ----
-include::{examplesdir}/dl_main.cpp[tag=before_dlopen]
+include::{exampledir}/dl_main.cpp[tag=before_dlopen]
 ----
 
 Let's load a dynamic library containing this code:
 
 [source,c++]
 ----
-include::{examplesdir}/dl_shared.cpp[tag=dl_shared]
+include::{exampledir}/dl_shared.cpp[tag=dl_shared]
 ----
 
 Now back to `main`:
 
 [source,c++]
 ----
-include::{examplesdir}/dl_main.cpp[tag=dlopen]
+include::{exampledir}/dl_main.cpp[tag=dlopen]
 ----
 
 After unloading the library, we must call `initialize` again:
 
 [source,c++]
 ----
-include::{examplesdir}/dl_main.cpp[tag=after_dlclose]
+include::{exampledir}/dl_main.cpp[tag=after_dlclose]
 ----

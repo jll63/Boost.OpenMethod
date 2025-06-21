@@ -5,14 +5,14 @@ When an error is encountered, the program is terminated by a call to `abort`. If
 the policy contains an `error_handler` facet, it provides an `error` member
 function (or overloaded functions) to be called with an object identifying the
 error. The `release` and `debug` policies implement the error facet with
-`vectored_error_handler`, which wraps the error object in a variant, and calls a
+`default_error_handler`, which wraps the error object in a variant, and calls a
 handler via a `std::function`. By default, it prints a description of the error
 to `stderr` in the `debug` policy, and does nothing in the `release` policy. The
 handler can be set with `set_error_handler`:
 
 [source,c++]
 ----
-include::{examplesdir}/vectored_error_handler.cpp[tag=example]
+include::{exampledir}/default_error_handler.cpp[tag=example]
 ----
 
 Output:
@@ -29,7 +29,7 @@ We can also replace the `error_handler` facet with our own. For example:
 
 [source,c++]
 ----
-include::{examplesdir}/throw_error_handler.cpp[tag=example]
+include::{exampledir}/throw_error_handler.cpp[tag=example]
 ----
 
 [source,console]

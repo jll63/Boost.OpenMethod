@@ -124,7 +124,7 @@ Implements the `extern_vptr` facet using a map of pointers.
 
 Implements the `type_hash` facet using a perfect hash function.
 
-#### <boost/openmethod/policies/vectored_error_handler.hpp>
+#### <boost/openmethod/policies/default_error_handler.hpp>
 
 Implements the `error_handler` facet by routing the error through a
 `std::function`.

@@ -719,7 +719,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#virtual_ptr_requirements_5">Requirements</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_vectored_error_handler">vectored_error_handler</a>
+<li><a href="#virtual_ptr_default_error_handler">default_error_handler</a>
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_synopsis_21">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_21">Description</a></li>
@@ -733,37 +733,23 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#virtual_ptr_members_14">Members</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_error_output">output</a>
+<li><a href="#virtual_ptr_basic_error_output">basic_error_output</a>
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_synopsis_23">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_23">Description</a></li>
-<li><a href="#virtual_ptr_requirements_6">Requirements</a></li>
-</ul>
-</li>
-<li><a href="#virtual_ptr_basic_error_output">basic_error_output</a>
-<ul class="sectlevel3">
-<li><a href="#virtual_ptr_synopsis_24">Synopsis</a></li>
-<li><a href="#virtual_ptr_description_24">Description</a></li>
 <li><a href="#virtual_ptr_members_15">Members</a></li>
-</ul>
-</li>
-<li><a href="#virtual_ptr_trace_output">trace</a>
-<ul class="sectlevel3">
-<li><a href="#virtual_ptr_synopsis_25">Synopsis</a></li>
-<li><a href="#virtual_ptr_description_25">Description</a></li>
-<li><a href="#virtual_ptr_requirements_7">Requirements</a></li>
 </ul>
 </li>
 <li><a href="#virtual_ptr_basic_trace_output">basic_trace_output</a>
 <ul class="sectlevel3">
-<li><a href="#virtual_ptr_synopsis_26">Synopsis</a></li>
-<li><a href="#virtual_ptr_description_26">Description</a></li>
+<li><a href="#virtual_ptr_synopsis_24">Synopsis</a></li>
+<li><a href="#virtual_ptr_description_24">Description</a></li>
 <li><a href="#virtual_ptr_members_16">Members</a></li>
 </ul>
 </li>
 <li><a href="#virtual_ptr_restrictedoutputstream">RestrictedOutputStream</a>
 <ul class="sectlevel3">
-<li><a href="#virtual_ptr_description_27">Description</a></li>
+<li><a href="#virtual_ptr_description_25">Description</a></li>
 </ul>
 </li>
 </ul>
@@ -984,6 +970,8 @@ namespace.</p>
 <pre class="rouge highlight"><code data-lang="c++">#include &lt;iostream&gt;
 #include &lt;boost/openmethod.hpp&gt;
 
+using boost::openmethod::virtual_ptr;
+
 BOOST_OPENMETHOD(
     poke,                                       // method name
     (std::ostream&amp;, virtual_ptr&lt;Animal&gt;),       // method signature
@@ -1115,7 +1103,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 // Add definitions for specific pairs of animals.
 BOOST_OPENMETHOD_OVERRIDE(
     encounter,
-    (std::ostream &amp; os, virtual_ptr&lt;Dog&gt; dog1, virtual_ptr&lt;Dog&gt; dog2), void) {
+    (std::ostream &amp; os, virtual_ptr&lt;Dog&gt; /*dog1*/, virtual_ptr&lt;Dog&gt; /*dog2*/), void) {
     os &lt;&lt; "Both wag tails";
 }
 
@@ -1191,7 +1179,8 @@ struct Animal {
     virtual ~Animal() = default;
 };
 
-BOOST_OPENMETHOD(poke, (std::ostream&amp;, virtual_ptr&lt;Animal&gt;), void);
+BOOST_OPENMETHOD(
+    poke, (std::ostream&amp;, boost::openmethod::virtual_ptr&lt;Animal&gt;), void);
 
 } // namespace animals
 
@@ -1220,7 +1209,7 @@ method (with the <code>virtual_</code> decorators stripped).</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>Next, let&#8217;s implement the <code>Cat</code> class, and a derived class, <code>Chhetah</code>, in the
+<p>Next, let&#8217;s implement the <code>Cat</code> class, and a derived class, <code>Cheetah</code>, in the
 <code>felines</code> namespace:</p>
 </div>
 <div class="listingblock">
@@ -1255,6 +1244,8 @@ struct Cheetah : Cat {
 #include &lt;boost/openmethod.hpp&gt;
 
 #include "cat.hpp"
+
+using boost::openmethod::virtual_ptr;
 
 namespace felines {
 
@@ -1355,7 +1346,7 @@ struct Dog : animals::Animal {
 };
 
 BOOST_OPENMETHOD_DECLARE_OVERRIDER(
-    poke, (std::ostream &amp; os, virtual_ptr&lt;Dog&gt; dog), void);
+    poke, (std::ostream &amp; os, boost::openmethod::virtual_ptr&lt;Dog&gt; dog), void);
 
 } // namespace canines
 
@@ -1390,7 +1381,7 @@ namespace canines {
 BOOST_OPENMETHOD_CLASSES(animals::Animal, Dog);
 
 BOOST_OPENMETHOD_DEFINE_OVERRIDER(
-    poke, (std::ostream &amp; os, virtual_ptr&lt;Dog&gt; dog), void) {
+    poke, (std::ostream &amp; os, boost::openmethod::virtual_ptr&lt;Dog&gt; dog), void) {
     os &lt;&lt; dog-&gt;name &lt;&lt; " barks";
 }
 
@@ -1410,6 +1401,8 @@ an overrider for the new class:</p>
 #include "animal.hpp"
 #include "cat.hpp"
 #include "dog.hpp"
+
+using boost::openmethod::virtual_ptr;
 
 struct Bulldog : canines::Dog {
     using Dog::Dog;
@@ -1482,7 +1475,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 <div class="paragraph">
 <p>&#8230;&#8203;will fail to compile, with an error like "reference to
 'poke_boost_openmethod_overriders' is ambiguous". That is because the overrider
-containers exist in both the canines and felides namespaces, with the same name.</p>
+containers exist in both the canines and felines namespaces, with the same name.</p>
 </div>
 <div class="paragraph">
 <p>Finally, the names passed as first arguments to the BOOST_OPENMETHOD and
@@ -1662,6 +1655,8 @@ stored in variables in place of plain pointers.</p>
 #include &lt;boost/openmethod.hpp&gt;
 #include &lt;boost/openmethod/compiler.hpp&gt;
 
+using boost::openmethod::virtual_ptr;
+
 struct Node {
     virtual ~Node() {}
 };
@@ -1799,8 +1794,7 @@ pointers:</p>
 #include &lt;boost/openmethod/unique_ptr.hpp&gt;
 #include &lt;boost/openmethod/compiler.hpp&gt;
 
-using boost::openmethod::unique_virtual_ptr;
-using boost::openmethod::make_unique_virtual;
+using namespace boost::openmethod::aliases;
 
 struct Node {
     virtual ~Node() {}
@@ -1878,7 +1872,7 @@ using boost::openmethod::virtual_;
 
 BOOST_OPENMETHOD(poke, (std::ostream&amp;, virtual_&lt;Animal&amp;&gt;), void);
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream &amp; os, Cat&amp; cat), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream &amp; os, Cat&amp; /*cat*/), void) {
     os &lt;&lt; "hiss";
 }
 
@@ -1919,7 +1913,7 @@ native virtual functions:</p>
 <pre class="rouge highlight"><code data-lang="c++">class Animal {
   protected:
     boost::openmethod::vptr_type vptr;
-    friend auto boost_openmethod_vptr(const Animal&amp; a) {
+    friend auto boost_openmethod_vptr(const Animal&amp; a, void*) {
         return a.vptr;
     }
 
@@ -1938,7 +1932,7 @@ class Cat : public Animal {
 
 BOOST_OPENMETHOD(poke, (std::ostream&amp;, virtual_&lt;Animal&amp;&gt;), void);
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream &amp; os, Cat&amp; cat), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream &amp; os, Cat&amp; /*cat*/), void) {
     os &lt;&lt; "hiss\n";
 }
 
@@ -1982,7 +1976,7 @@ class Cat : public Animal, public boost::openmethod::with_vptr&lt;Cat, Animal&gt
 
 BOOST_OPENMETHOD(poke, (std::ostream&amp;, virtual_&lt;Animal&amp;&gt;), void);
 
-BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream &amp; os, Cat&amp; cat), void) {
+BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream &amp; os, Cat&amp; /*cat*/), void) {
     os &lt;&lt; "hiss\n";
 }
 
@@ -2039,7 +2033,8 @@ name can get tedious, so OpenMethod provides a macro for that:</p>
 class BOOST_OPENMETHOD_NAME(poke);
 
 using poke = method&lt;
-    BOOST_OPENMETHOD_NAME(poke)(std::ostream&amp;, virtual_ptr&lt;Animal&gt;), void&gt;;</code></pre>
+    BOOST_OPENMETHOD_NAME(poke),
+    auto(std::ostream&amp;, virtual_ptr&lt;Animal&gt;)-&gt;void&gt;;</code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -2070,7 +2065,7 @@ styles.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++">auto poke_cat(std::ostream&amp; os, virtual_ptr&lt;Cat&gt; cat) {
+<pre class="rouge highlight"><code data-lang="c++">auto poke_cat(std::ostream&amp; os, virtual_ptr&lt;Cat&gt; /*cat*/) {
     os &lt;&lt; "hiss";
 }
 
@@ -2097,7 +2092,7 @@ identifier. In the meantime, OpenMethod provides a small convenience macro:</p>
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++">#include &lt;boost/openmethod/macros.hpp&gt;
 
-auto poke_dog(std::ostream&amp; os, virtual_ptr&lt;Dog&gt; dog) {
+auto poke_dog(std::ostream&amp; os, virtual_ptr&lt;Dog&gt; /*dog*/) {
     os &lt;&lt; "bark";
 }
 
@@ -2226,7 +2221,7 @@ library: <code>release</code> and <code>debug</code>.</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">error_handler</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">vectored_error_handler</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">default_error_handler</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">handles errors</p></td>
 </tr>
 </tbody>
@@ -2303,7 +2298,7 @@ has no effect.</p>
 the policy contains an <code>error_handler</code> facet, it provides an <code>error</code> member
 function (or overloaded functions) to be called with an object identifying the
 error. The <code>release</code> and <code>debug</code> policies implement the error facet with
-<code>vectored_error_handler</code>, which wraps the error object in a variant, and calls a
+<code>default_error_handler</code>, which wraps the error object in a variant, and calls a
 handler via a <code>std::function</code>. By default, it prints a description of the error
 to <code>stderr</code> in the <code>debug</code> policy, and does nothing in the <code>release</code> policy. The
 handler can be set with <code>set_error_handler</code>:</p>
@@ -2315,6 +2310,8 @@ handler can be set with <code>set_error_handler</code>:</p>
 
 #include &lt;boost/openmethod.hpp&gt;
 #include &lt;boost/openmethod/compiler.hpp&gt;
+
+using boost::openmethod::virtual_ptr;
 
 struct Animal {
     virtual ~Animal() = default;
@@ -2328,7 +2325,7 @@ BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog);
 BOOST_OPENMETHOD(trick, (std::ostream&amp;, virtual_ptr&lt;Animal&gt;), void);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    trick, (std::ostream &amp; os, virtual_ptr&lt;Dog&gt; dog), void) {
+    trick, (std::ostream &amp; os, virtual_ptr&lt;Dog&gt; /*dog*/), void) {
     os &lt;&lt; "spin\n";
 }
 
@@ -2336,12 +2333,11 @@ auto main() -&gt; int {
     namespace bom = boost::openmethod;
     bom::initialize();
 
-    bom::default_registry::set_error_handler(
-        [](const bom::default_registry::error_variant&amp; error) {
-            if (std::holds_alternative&lt;bom::not_implemented_error&gt;(error)) {
-                throw std::runtime_error("not implemented");
-            }
-        });
+    bom::default_registry::error_handler::set([](const auto&amp; error) {
+        if (std::holds_alternative&lt;bom::not_implemented_error&gt;(error)) {
+            throw std::runtime_error("not implemented");
+        }
+    });
 
     Cat felix;
     Dog hector, snoopy;
@@ -2376,7 +2372,7 @@ spin</code></pre>
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++">#include &lt;iostream&gt;
 
-#include &lt;boost/openmethod/policies.hpp&gt;
+#include &lt;boost/openmethod/default_registry.hpp&gt;
 
 struct Animal {
     virtual ~Animal() = default;
@@ -2388,28 +2384,33 @@ struct Dog : Animal {};
 namespace bom = boost::openmethod;
 
 struct throw_if_not_implemented : bom::policies::error_handler {
-    static auto error(const bom::openmethod_error&amp;) -&gt; void {
-    }
+    template&lt;class Registry&gt;
+    struct fn {
+        static auto error(const bom::openmethod_error&amp;) -&gt; void {
+        }
 
-    static auto error(const bom::not_implemented_error&amp; err) -&gt; void {
-        throw err;
-    }
+        static auto error(const bom::not_implemented_error&amp; err) -&gt; void {
+            throw err;
+        }
+    };
 };
 
-struct throwing_policy : bom::default_registry::fork&lt;throwing_policy&gt;::with&lt;
-                             throw_if_not_implemented&gt; {};
+struct custom_registry : bom::default_registry::with&lt;throw_if_not_implemented&gt; {
+};
 
-#define BOOST_OPENMETHOD_DEFAULT_REGISTRY throwing_policy
+#define BOOST_OPENMETHOD_DEFAULT_REGISTRY custom_registry
 
 #include &lt;boost/openmethod.hpp&gt;
 #include &lt;boost/openmethod/compiler.hpp&gt;
+
+using boost::openmethod::virtual_ptr;
 
 BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog);
 
 BOOST_OPENMETHOD(trick, (std::ostream&amp;, virtual_ptr&lt;Animal&gt;), void);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    trick, (std::ostream &amp; os, virtual_ptr&lt;Dog&gt; dog), void) {
+    trick, (std::ostream &amp; os, virtual_ptr&lt;Dog&gt; /*dog*/), void) {
     os &lt;&lt; "spin\n";
 }
 
@@ -2423,7 +2424,7 @@ auto main() -&gt; int {
     for (auto animal : animals) {
         try {
             trick(std::cout, *animal);
-        } catch (bom::not_implemented_error) {
+        } catch (bom::not_implemented_error&amp;) {
             std::cout &lt;&lt; "not implemented\n";
         }
     }
@@ -2577,26 +2578,29 @@ define the custom RTTI facet. We must <em>not</em> include
 <pre class="rouge highlight"><code data-lang="c++">namespace bom = boost::openmethod;
 
 struct custom_rtti : bom::policies::rtti {
-    template&lt;class T&gt;
-    static constexpr bool is_polymorphic = std::is_base_of_v&lt;Animal, T&gt;;
+    template&lt;class Registry&gt;
+    struct fn : bom::policies::rtti::fn&lt;Registry&gt; {
+        template&lt;class T&gt;
+        static constexpr bool is_polymorphic = std::is_base_of_v&lt;Animal, T&gt;;
 
-    template&lt;typename T&gt;
-    static auto static_type() -&gt; bom::type_id {
-        if constexpr (is_polymorphic&lt;T&gt;) {
-            return T::static_type;
-        } else {
-            return 0;
+        template&lt;typename T&gt;
+        static auto static_type() -&gt; bom::type_id {
+            if constexpr (is_polymorphic&lt;T&gt;) {
+                return reinterpret_cast&lt;bom::type_id&gt;(T::static_type);
+            } else {
+                return nullptr;
+            }
         }
-    }
 
-    template&lt;typename T&gt;
-    static auto dynamic_type(const T&amp; obj) -&gt; bom::type_id {
-        if constexpr (is_polymorphic&lt;T&gt;) {
-            return obj.type;
-        } else {
-            return 0;
+        template&lt;typename T&gt;
+        static auto dynamic_type(const T&amp; obj) -&gt; bom::type_id {
+            if constexpr (is_polymorphic&lt;T&gt;) {
+                return reinterpret_cast&lt;bom::type_id&gt;(obj.type);
+            } else {
+                return nullptr;
+            }
         }
-    }
+    };
 };</code></pre>
 </div>
 </div>
@@ -2611,9 +2615,8 @@ CRTP template:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++">struct custom_policy : bom::policies::basic_policy&lt;
-                           custom_policy, custom_rtti,
-                           bom::policies::vptr_vector&lt;custom_policy&gt;&gt; {};
+<pre class="rouge highlight"><code data-lang="c++">struct custom_policy : bom::registry&lt;custom_rtti, bom::policies::vptr_vector&gt; {
+};
 
 #define BOOST_OPENMETHOD_DEFAULT_REGISTRY custom_policy</code></pre>
 </div>
@@ -2629,15 +2632,17 @@ defined, its value is used for the default policy. Then comes the usual example.
 #include &lt;boost/openmethod.hpp&gt;
 #include &lt;boost/openmethod/compiler.hpp&gt;
 
+using boost::openmethod::virtual_ptr;
+
 BOOST_OPENMETHOD(poke, (std::ostream&amp;, virtual_ptr&lt;Animal&gt;), void);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    poke, (std::ostream &amp; os, virtual_ptr&lt;Cat&gt; cat), void) {
+    poke, (std::ostream &amp; os, virtual_ptr&lt;Cat&gt; /*cat*/), void) {
     os &lt;&lt; "hiss";
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    poke, (std::ostream &amp; os, virtual_ptr&lt;Dog&gt; dog), void) {
+    poke, (std::ostream &amp; os, virtual_ptr&lt;Dog&gt; /*dog*/), void) {
     os &lt;&lt; "bark";
 }
 
@@ -2742,16 +2747,16 @@ custom_type_info Cat::type_info;
 <pre class="rouge highlight"><code data-lang="c++">struct custom_rtti : bom::policies::rtti {
     // as before
 
-    // to support virtual inheritance:
-    template&lt;typename Derived, typename Base&gt;
-    static auto dynamic_cast_ref(Base&amp;&amp; obj) -&gt; Derived {
-        using base_type = std::remove_reference_t&lt;Base&gt;;
-        if constexpr (std::is_base_of_v&lt;Animal, base_type&gt;) {
-            return *obj.template cast&lt;std::remove_reference_t&lt;Derived&gt;&gt;();
-        } else {
-            abort(); // not supported
+        // to support virtual inheritance:
+        template&lt;typename Derived, typename Base&gt;
+        static auto dynamic_cast_ref(Base&amp;&amp; obj) -&gt; Derived {
+            using base_type = std::remove_reference_t&lt;Base&gt;;
+            if constexpr (std::is_base_of_v&lt;Animal, base_type&gt;) {
+                return *obj.template cast&lt;std::remove_reference_t&lt;Derived&gt;&gt;();
+            } else {
+                abort(); // not supported
+            }
         }
-    }
 };</code></pre>
 </div>
 </div>
@@ -2823,9 +2828,8 @@ struct Carnivore : Animal {};
 struct Cow : Herbivore {};
 struct Wolf : Carnivore {};
 
-struct dynamic_policy
-    : boost::openmethod::default_registry::fork&lt;dynamic_policy&gt;::with&lt;
-          boost::openmethod::policies::indirect_vptr&gt; {};
+struct dynamic_policy : boost::openmethod::default_registry::with&lt;
+                            boost::openmethod::policies::indirect_vptr&gt; {};
 
 template&lt;class Class&gt;
 using dyn_vptr = boost::openmethod::virtual_ptr&lt;Class, dynamic_policy&gt;;
@@ -3185,7 +3189,7 @@ etc).</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="ref_boostopenmethodpoliciesvectored_error_handler_hpp">&lt;boost/openmethod/policies/vectored_error_handler.hpp&gt;</h5>
+<h5 id="ref_boostopenmethodpoliciesdefault_error_handler_hpp">&lt;boost/openmethod/policies/default_error_handler.hpp&gt;</h5>
 <div class="paragraph">
 <p>Implements the <code>error_handler</code> facet by routing the error through a
 <code>std::function</code>.</p>
@@ -5156,7 +5160,7 @@ will not be used.</p>
 </div>
 <div class="paragraph">
 <p>A policy that contains facets <code>std_rtti</code>, <code>fast_perfect_hash</code>, <code>vptr_vector</code> and
-<code>vectored_error_handler</code>.</p>
+<code>default_error_handler</code>.</p>
 </div>
 </div>
 <div class="sect4">
@@ -5968,18 +5972,18 @@ termination by throwing an exception.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="virtual_ptr_vectored_error_handler">vectored_error_handler</h3>
+<h3 id="virtual_ptr_default_error_handler">default_error_handler</h3>
 <div class="sect3">
 <h4 id="virtual_ptr_synopsis_21">Synopsis</h4>
 <div class="paragraph">
-<p>Defined in &lt;boost/openmethod/policies/vectored_error_handler.hpp&gt;.</p>
+<p>Defined in &lt;boost/openmethod/policies/default_error_handler.hpp&gt;.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++">namespace boost::openmethod::policies {
 
 template&lt;class Policy&gt;
-class vectored_error_handler : public error_handler {
+class default_error_handler : public error_handler {
   public:
     using error_variant = std::variant&lt;
         openmethod_error, not_implemented_error, unknown_class_error,
@@ -5999,7 +6003,7 @@ class vectored_error_handler : public error_handler {
 <div class="sect3">
 <h4 id="virtual_ptr_description_21">Description</h4>
 <div class="paragraph">
-<p><code>vectored_error_handler</code> is an implementation of <code>error_handler</code> that calls a
+<p><code>default_error_handler</code> is an implementation of <code>error_handler</code> that calls a
 <code>std::function</code> to handle the error.</p>
 </div>
 </div>
@@ -6076,47 +6080,9 @@ throws the error as an exception.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="virtual_ptr_error_output">output</h3>
-<div class="sect3">
-<h4 id="virtual_ptr_synopsis_23">Synopsis</h4>
-<div class="paragraph">
-<p>Defined in &lt;boost/openmethod/policies/basic_policy.hpp&gt;.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++">namespace boost::openmethod::policies {
-
-struct output : facet {};
-
-} // boost::openmethod::policies</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="virtual_ptr_description_23">Description</h4>
-<div class="paragraph">
-<p><code>output</code> is a facet that provides a stream for writing error messages.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="virtual_ptr_requirements_6">Requirements</h4>
-<div class="sect4">
-<h5 id="virtual_ptr_error_stream">error_stream</h5>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++">static RestrictedOutputStream error_stream;</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>A static variable that satisfies the requirements of <code>RestrictedOutputStream</code>.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
 <h3 id="virtual_ptr_basic_error_output">basic_error_output</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_synopsis_24">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_23">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/basic_error_output.hpp&gt;.</p>
 </div>
@@ -6134,7 +6100,7 @@ struct basic_error_output : output {
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_description_24">Description</h4>
+<h4 id="virtual_ptr_description_23">Description</h4>
 <div class="paragraph">
 <p><code>basic_error_output</code> is an implementation of <code>output</code> that writes error
 messages to a <code>RestrictedOutputStream</code>.</p>
@@ -6143,7 +6109,7 @@ messages to a <code>RestrictedOutputStream</code>.</p>
 <div class="sect3">
 <h4 id="virtual_ptr_members_15">Members</h4>
 <div class="sect4">
-<h5 id="virtual_ptr_error_stream_2">error_stream</h5>
+<h5 id="virtual_ptr_error_stream">error_stream</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++">Stream  error_stream;</code></pre>
@@ -6158,67 +6124,9 @@ it.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="virtual_ptr_trace_output">trace</h3>
-<div class="sect3">
-<h4 id="virtual_ptr_synopsis_25">Synopsis</h4>
-<div class="paragraph">
-<p>Defined in &lt;boost/openmethod/policies/basic_policy.hpp&gt;.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++">namespace boost::openmethod::policies {
-
-struct trace : facet {};
-
-}</code></pre>
-</div>
-</div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="virtual_ptr_description_25">Description</h4>
-<div class="paragraph">
-<p><code>trace</code> is a facet used to write trace messages.</p>
-</div>
-<div class="paragraph">
-<p><code>initialize</code> can be directed to describe the classes and methods in a policy,
-and how the dispatch tables are built, by including this facet in the policy,
-and setting <code>trace_enabled</code> to <code>true</code>. The content and the format of the
-description is not documented, beyond the guarantee that it provides an
-exhaustive account of table construction, and may change between major, minor
-and patch versions.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="virtual_ptr_requirements_7">Requirements</h4>
-<div class="sect4">
-<h5 id="virtual_ptr_trace_enabled">trace_enabled</h5>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++">static bool trace_enabled;</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p><code>true</code> if tracing is enabled, <code>false</code> otherwise.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="virtual_ptr_trace_stream">trace_stream</h5>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="c++">static RestrictedOutputStream trace_stream;</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>A static variable that satisfies the requirements of <code>RestrictedOutputStream</code>.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
 <h3 id="virtual_ptr_basic_trace_output">basic_trace_output</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_synopsis_26">Synopsis</h4>
+<h4 id="virtual_ptr_synopsis_24">Synopsis</h4>
 <div class="paragraph">
 <p>Defined in &lt;boost/openmethod/policies/basic_trace_output.hpp&gt;.</p>
 </div>
@@ -6237,7 +6145,7 @@ struct basic_trace_output : trace {
 </div>
 </div>
 <div class="sect3">
-<h4 id="virtual_ptr_description_26">Description</h4>
+<h4 id="virtual_ptr_description_24">Description</h4>
 <div class="paragraph">
 <p><code>basic_error_output</code> is an implementation of <code>trace</code> that writes error
 messages to a <code>RestrictedOutputStream</code>.</p>
@@ -6246,7 +6154,7 @@ messages to a <code>RestrictedOutputStream</code>.</p>
 <div class="sect3">
 <h4 id="virtual_ptr_members_16">Members</h4>
 <div class="sect4">
-<h5 id="virtual_ptr_trace_enabled_2">trace_enabled</h5>
+<h5 id="virtual_ptr_trace_enabled">trace_enabled</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++">static bool trace_enabled;</code></pre>
@@ -6257,7 +6165,7 @@ messages to a <code>RestrictedOutputStream</code>.</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="virtual_ptr_trace_stream_2">trace_stream</h5>
+<h5 id="virtual_ptr_trace_stream">trace_stream</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++">static Stream trace_stream;</code></pre>
@@ -6274,7 +6182,7 @@ open it.</p>
 <div class="sect2">
 <h3 id="virtual_ptr_restrictedoutputstream">RestrictedOutputStream</h3>
 <div class="sect3">
-<h4 id="virtual_ptr_description_27">Description</h4>
+<h4 id="virtual_ptr_description_25">Description</h4>
 <div class="paragraph">
 <p>RestrictedOutputStream is a concept describing a <code>std::ostream</code>-like class with
 a reduced set of operations.</p>

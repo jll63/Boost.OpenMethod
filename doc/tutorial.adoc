@@ -4,7 +4,7 @@
 :toc:
 :toc-title:
 :idprefix: tutorials_
-:examplesdir: ../examples
+:exampledir: ../example
 
 include::hello_world.adoc[]
 include::multiple_dispatch.adoc[]

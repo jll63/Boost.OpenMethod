@@ -17,5 +17,5 @@ pointers:
 
 [source,c++]
 ----
-include::{examplesdir}/ast_unique_ptr.cpp[tag=ast,indent=0]
+include::{exampledir}/ast_unique_ptr.cpp[tag=ast,indent=0]
 ----

@@ -17,7 +17,7 @@ We can thus grant friendship to all the overriders of `poke`:
 
 [source,c++]
 ----
-include::{examplesdir}/friendship.cpp[tag=friend_all]
+include::{exampledir}/friendship.cpp[tag=friend_all]
 ----
 
 Be aware, though, that the overriders of _any_ method called `poke` - with any
@@ -27,5 +27,5 @@ We can also befriend individual overriders:
 
 [source,c++]
 ----
-include::{examplesdir}/friendship.cpp[tag=friend]
+include::{exampledir}/friendship.cpp[tag=friend]
 ----

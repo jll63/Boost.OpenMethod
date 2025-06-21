@@ -49,5 +49,5 @@ endif()
 
 if(BUILD_EXAMPLES)
   message(STATUS "Building examples")
-  add_subdirectory(examples)
+  add_subdirectory(example)
 endif()

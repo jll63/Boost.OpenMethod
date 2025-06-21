@@ -101,7 +101,7 @@ Here is the facet implementation:
 
 [source,c++]
 ----
-include::{examplesdir}/custom_rtti.cpp[tag=facet]
+include::{exampledir}/custom_rtti.cpp[tag=facet]
 ----
 
 This facet is quite minimal. It does not support virtual inheritance. It would
@@ -113,7 +113,7 @@ CRTP template:
 
 [source,c++]
 ----
-include::{examplesdir}/custom_rtti.cpp[tag=policy]
+include::{exampledir}/custom_rtti.cpp[tag=policy]
 ----
 
 Next, we include the main header. Because `BOOST_OPENMETHOD_DEFAULT_REGISTRY` is
@@ -121,7 +121,7 @@ defined, its value is used for the default policy. Then comes the usual example.
 
 [source,c++]
 ----
-include::{examplesdir}/custom_rtti.cpp[tag=example]
+include::{exampledir}/custom_rtti.cpp[tag=example]
 ----
 
 This programs works even if standard RTTI is disabled.
@@ -141,7 +141,7 @@ This time let's support virtual inheritance as well. First the domain classes:
 
 [source,c++]
 ----
-include::{examplesdir}/deferred_custom_rtti.cpp[tag=classes]
+include::{exampledir}/deferred_custom_rtti.cpp[tag=classes]
 // ditto for Dog
 ----
 
@@ -152,7 +152,7 @@ The rtti facet is the same, with one more function:
 struct custom_rtti : bom::policies::rtti {
     // as before
 
-include::{examplesdir}/deferred_custom_rtti.cpp[tag=dynamic_cast_ref]
+include::{exampledir}/deferred_custom_rtti.cpp[tag=dynamic_cast_ref]
 };
 ----
 

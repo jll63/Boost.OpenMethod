@@ -1,15 +1,15 @@
 
-## vectored_error_handler
+## default_error_handler
 
 ### Synopsis
 
-Defined in <boost/openmethod/policies/vectored_error_handler.hpp>.
+Defined in <boost/openmethod/policies/default_error_handler.hpp>.
 
 ```c++
 namespace boost::openmethod::policies {
 
 template<class Policy>
-class vectored_error_handler : public error_handler {
+class default_error_handler : public error_handler {
   public:
     using error_variant = std::variant<
         openmethod_error, not_implemented_error, unknown_class_error,
@@ -27,7 +27,7 @@ class vectored_error_handler : public error_handler {
 
 ### Description
 
-`vectored_error_handler` is an implementation of `error_handler` that calls a
+`default_error_handler` is an implementation of `error_handler` that calls a
 `std::function` to handle the error.
 
 ### Members

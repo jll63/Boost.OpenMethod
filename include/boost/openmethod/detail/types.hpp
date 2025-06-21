@@ -58,9 +58,7 @@ struct virtual_traits;
 // -----------------------------------------------------------------------------
 // Error handling
 
-struct openmethod_error {
-    virtual ~openmethod_error() = default;
-};
+struct openmethod_error {};
 
 struct not_initialized_error : openmethod_error {
     template<class Registry, class Stream>

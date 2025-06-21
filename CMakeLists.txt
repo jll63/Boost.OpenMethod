@@ -32,8 +32,12 @@ if(MSVC)
   add_compile_options(/EHsc /FAs /bigobj)
 endif()
 
-if(GCC)
-  add_compile_options(-fPIC -fvisibility=hidden -Wno-deprecated-declarations -Wall -Wextra)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  message(STATUS "Enabling sanitizers")
+  add_compile_options(
+    -fPIC -Wno-deprecated-declarations -Wall -Wextra -Werror
+    -fsanitize=undefined -fsanitize=address -fsanitize=leak)
+  add_link_options(-fsanitize=undefined -fsanitize=address -fsanitize=leak)
 endif()
 
 if(BUILD_TESTING)

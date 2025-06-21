@@ -10,12 +10,12 @@ namespace boost::openmethod {
 
 namespace detail {
 
-void boost_openmethod_policy(...);
+void boost_openmethod_registry(...);
 void boost_openmethod_bases(...);
 
 template<class Class>
-using with_vptr_policy =
-    decltype(boost_openmethod_policy(std::declval<Class*>()));
+using with_vptr_registry =
+    decltype(boost_openmethod_registry(std::declval<Class*>()));
 
 template<class>
 struct update_vptr_bases;
@@ -33,14 +33,14 @@ struct update_vptr_bases<mp11::mp_list<Bases...>> {
 
 template<class To, class Class>
 void update_vptr(Class* obj) {
-    using policy = with_vptr_policy<Class>;
+    using registry = with_vptr_registry<Class>;
     using bases = decltype(boost_openmethod_bases(obj));
 
     if constexpr (mp11::mp_size<bases>::value == 0) {
-        if constexpr (policy::template has_policy<policies::indirect_vptr>) {
-            obj->boost_openmethod_vptr = &policy::template static_vptr<To>;
+        if constexpr (registry::indirect_vptr) {
+            obj->boost_openmethod_vptr = &registry::template static_vptr<To>;
         } else {
-            obj->boost_openmethod_vptr = policy::template static_vptr<To>;
+            obj->boost_openmethod_vptr = registry::template static_vptr<To>;
         }
     } else {
         update_vptr_bases<bases>::template fn<To, Class>(obj);
@@ -64,7 +64,7 @@ class with_vptr_aux<Class, Registry, true> {
   protected:
     template<class To, class Other>
     friend void update_vptr(Other*);
-    friend auto boost_openmethod_policy(Class*) -> Registry;
+    friend auto boost_openmethod_registry(Class*) -> Registry;
     friend auto boost_openmethod_bases(Class*) -> mp11::mp_list<>;
 
     with_vptr_aux() {
@@ -76,19 +76,18 @@ class with_vptr_aux<Class, Registry, true> {
         boost_openmethod_vptr = nullptr;
     }
 
-    friend auto boost_openmethod_vptr(const Class& obj, void*) -> vptr_type {
-        if constexpr (Registry::template has_policy<policies::indirect_vptr>) {
+    friend auto boost_openmethod_vptr(const Class& obj, Registry*)
+        -> vptr_type {
+        if constexpr (Registry::indirect_vptr) {
             return *obj.boost_openmethod_vptr;
         } else {
             return obj.boost_openmethod_vptr;
         }
     }
 
-    friend auto boost_openmethod_policy(Class*) -> Registry;
+    friend auto boost_openmethod_registry(Class*) -> Registry;
 
-    std::conditional_t<
-        Registry::template has_policy<policies::indirect_vptr>,
-        const vptr_type*, vptr_type>
+    std::conditional_t<Registry::indirect_vptr, const vptr_type*, vptr_type>
         boost_openmethod_vptr = nullptr;
 };
 
@@ -98,7 +97,7 @@ class with_vptr_aux<Class, Base, false> : with_vptr_derived {
     friend void update_vptr(Class*);
 
     with_vptr_aux() {
-        (void)&with_vptr_use_classes<Class, Base, with_vptr_policy<Class>>;
+        (void)&with_vptr_use_classes<Class, Base, with_vptr_registry<Class>>;
         detail::update_vptr<Class>(static_cast<Class*>(this));
     }
 
@@ -129,12 +128,13 @@ class with_vptr<Class, Base1, Base2, MoreBases...> : detail::with_vptr_derived {
     static_assert(
         !detail::is_registry<Base1> && !detail::is_registry<Base2> &&
             (!detail::is_registry<MoreBases> && ...),
-        "policy can be specified only for root classes");
+        "registry can be specified only for root classes");
 
   protected:
     with_vptr() {
         (void)&detail::with_vptr_use_classes<
-            Class, Base1, Base2, MoreBases..., detail::with_vptr_policy<Base1>>;
+            Class, Base1, Base2, MoreBases...,
+            detail::with_vptr_registry<Base1>>;
         detail::update_vptr<Class>(static_cast<Class*>(this));
     }
 
@@ -145,11 +145,12 @@ class with_vptr<Class, Base1, Base2, MoreBases...> : detail::with_vptr_derived {
         (detail::update_vptr<MoreBases>(static_cast<Base2*>(obj)), ...);
     }
 
-    friend auto boost_openmethod_policy(Class*)
-        -> detail::with_vptr_policy<Base1>;
+    friend auto boost_openmethod_registry(Class*)
+        -> detail::with_vptr_registry<Base1>;
     friend auto boost_openmethod_bases(Class*)
         -> mp11::mp_list<Base1, Base2, MoreBases...>;
-    friend auto boost_openmethod_vptr(const Class& obj, void* registry)
+    friend auto boost_openmethod_vptr(
+        const Class& obj, detail::with_vptr_registry<Base1>* registry)
         -> vptr_type {
         return boost_openmethod_vptr(static_cast<const Base1&>(obj), registry);
     }

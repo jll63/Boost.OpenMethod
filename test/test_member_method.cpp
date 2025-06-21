@@ -32,10 +32,9 @@ struct Payroll {
     }
 
   private:
-    struct BOOST_OPENMETHOD_NAME(pay);
+    struct BOOST_OPENMETHOD_ID(pay);
     using pay_method = method<
-        BOOST_OPENMETHOD_NAME(pay),
-        auto(Payroll*, virtual_<const Role&>)->void>;
+        BOOST_OPENMETHOD_ID(pay), auto(Payroll*, virtual_<const Role&>)->void>;
 
     void pay_employee(const Employee&) {
         balance -= 2000;

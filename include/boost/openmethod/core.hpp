@@ -1492,8 +1492,8 @@ method<Name, ReturnType(Parameters...), Registry>::override_impl<
     Function, FnReturnType>::override_impl(FunctionPointer* p_next) {
     using namespace detail;
 
-// static variable this->method below is zero-initialized but gcc and clang
-// don't always see that.
+    // static variable this->method below is zero-initialized but gcc and clang
+    // don't always see that.
 
 #ifdef BOOST_CLANG
 #pragma clang diagnostic push

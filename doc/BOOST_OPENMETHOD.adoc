@@ -20,20 +20,20 @@ The macro expands to several constructs:
 * A `struct` forward declaration that acts as the method's identifier:
 
 ```c++
-struct BOOST_OPENMETHOD_NAME(NAME);
+struct BOOST_OPENMETHOD_ID(NAME);
 ```
 
 * An inline function template, constrained to take the same `PARAMETERS`,
   without the `virtual_` decorators, returning a `RETURN_TYPE`. The function
   forwards to +
-  `method<BOOST_OPENMETHOD_NAME(NAME)(PARAMETERS...), RETURN_TYPE, POLICY>::fn`.
+  `method<BOOST_OPENMETHOD_ID(NAME)(PARAMETERS...), RETURN_TYPE, POLICY>::fn`.
 
 * A guide function used to match overriders with the method:
 
 ```c++
-auto BOOST_OPENMETHOD_NAME(NAME)_guide(...)
+auto BOOST_OPENMETHOD_ID(NAME)_guide(...)
     -> ::boost::openmethod::method<
-        BOOST_OPENMETHOD_NAME(NAME)(PARAMETERS...), RETURN_TYPE [, POLICY]>;
+        BOOST_OPENMETHOD_ID(NAME)(PARAMETERS...), RETURN_TYPE [, POLICY]>;
 ```
 
 NOTE: `NAME` must be an *identifier*. Qualified names are not allowed.

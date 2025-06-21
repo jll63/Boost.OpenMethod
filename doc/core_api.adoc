@@ -32,7 +32,7 @@ name can get tedious, so OpenMethod provides a macro for that:
 include::{exampledir}/core_api.cpp[tag=method]
 ----
 
-NOTE: BOOST_OPENMETHOD and associated macros use `BOOST_OPENMETHOD_NAME` in
+NOTE: BOOST_OPENMETHOD and associated macros use `BOOST_OPENMETHOD_ID` in
 their implementation. This makes it possible to mix the "macro" and "core"
 styles.
 

@@ -24,10 +24,10 @@ using namespace boost::openmethod;
 
 #include <boost/openmethod/macros.hpp>
 
-class BOOST_OPENMETHOD_NAME(poke);
+class BOOST_OPENMETHOD_ID(poke);
 
 using poke = method<
-    BOOST_OPENMETHOD_NAME(poke),
+    BOOST_OPENMETHOD_ID(poke),
     auto(std::ostream&, virtual_ptr<Animal>)->void>;
 // end::method[]
 
@@ -58,7 +58,7 @@ auto poke_bulldog(std::ostream& os, virtual_ptr<Bulldog> dog) -> void {
 BOOST_OPENMETHOD_REGISTER(poke::override<poke_bulldog>);
 // end::poke_bulldog[]
 
-class BOOST_OPENMETHOD_NAME(pet);
+class BOOST_OPENMETHOD_ID(pet);
 
 auto pet_cat(std::ostream& os, virtual_ptr<Cat> /*cat*/) {
     os << "purr";
@@ -69,7 +69,7 @@ auto pet_dog(std::ostream& os, virtual_ptr<Dog> /*dog*/) {
 }
 
 using pet = method<
-    BOOST_OPENMETHOD_NAME(pet), auto(std::ostream&, virtual_ptr<Animal>)->void>;
+    BOOST_OPENMETHOD_ID(pet), auto(std::ostream&, virtual_ptr<Animal>)->void>;
 
 BOOST_OPENMETHOD_REGISTER(pet::override<pet_cat, pet_dog>);
 

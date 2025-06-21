@@ -1,14 +1,14 @@
 
-[#BOOST_OPENMETHOD_NAME]
+[#BOOST_OPENMETHOD_ID]
 
-## BOOST_OPENMETHOD_NAME
+## BOOST_OPENMETHOD_ID
 
 ### Synopsis
 
 Defined in <boost/openmethod/macros.hpp>.
 
 ```c++
-#define BOOST_OPENMETHOD_NAME(NAME) /* unspecified */
+#define BOOST_OPENMETHOD_ID(NAME) /* unspecified */
 ```
 
 ### Description

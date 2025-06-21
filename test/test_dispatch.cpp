@@ -363,9 +363,9 @@ struct Bulldog : Dog {};
 
 BOOST_OPENMETHOD_CLASSES(Animal, Dog, Bulldog);
 
-struct BOOST_OPENMETHOD_NAME(poke);
+struct BOOST_OPENMETHOD_ID(poke);
 using poke =
-    method<BOOST_OPENMETHOD_NAME(poke), auto(virtual_<Animal&>)->std::string>;
+    method<BOOST_OPENMETHOD_ID(poke), auto(virtual_<Animal&>)->std::string>;
 
 auto poke_dog(Dog&) -> std::string {
     return "bark";

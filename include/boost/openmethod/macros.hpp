@@ -44,26 +44,26 @@ struct va_args<ReturnType> {
 #define BOOST_OPENMETHOD_REGISTER(...)                                         \
     static __VA_ARGS__ BOOST_OPENMETHOD_GENSYM
 
-#define BOOST_OPENMETHOD_NAME(NAME) NAME##_boost_openmethod
+#define BOOST_OPENMETHOD_ID(NAME) NAME##_boost_openmethod
 
 #define BOOST_OPENMETHOD_OVERRIDERS(NAME)                                      \
-    BOOST_PP_CAT(BOOST_OPENMETHOD_NAME(NAME), _overriders)
+    BOOST_PP_CAT(BOOST_OPENMETHOD_ID(NAME), _overriders)
 
 #define BOOST_OPENMETHOD_GUIDE(NAME)                                           \
-    BOOST_PP_CAT(BOOST_OPENMETHOD_NAME(NAME), _guide)
+    BOOST_PP_CAT(BOOST_OPENMETHOD_ID(NAME), _guide)
 
 #define BOOST_OPENMETHOD(NAME, ARGS, ...)                                      \
-    struct BOOST_OPENMETHOD_NAME(NAME);                                        \
+    struct BOOST_OPENMETHOD_ID(NAME);                                          \
     template<typename... ForwarderParameters>                                  \
     typename ::boost::openmethod::detail::enable_forwarder<                    \
         void,                                                                  \
         ::boost::openmethod::method<                                           \
-            BOOST_OPENMETHOD_NAME(NAME),                                       \
+            BOOST_OPENMETHOD_ID(NAME),                                         \
             ::boost::openmethod::detail::va_args<__VA_ARGS__>::return_type     \
                 ARGS,                                                          \
             ::boost::openmethod::detail::va_args<__VA_ARGS__>::registry>,      \
         typename ::boost::openmethod::method<                                  \
-            BOOST_OPENMETHOD_NAME(NAME),                                       \
+            BOOST_OPENMETHOD_ID(NAME),                                         \
             ::boost::openmethod::detail::va_args<__VA_ARGS__>::return_type     \
                 ARGS,                                                          \
             ::boost::openmethod::detail::va_args<__VA_ARGS__>::registry>,      \
@@ -74,19 +74,19 @@ struct va_args<ReturnType> {
         typename ::boost::openmethod::detail::enable_forwarder<                \
             void,                                                              \
             ::boost::openmethod::method<                                       \
-                BOOST_OPENMETHOD_NAME(NAME),                                   \
+                BOOST_OPENMETHOD_ID(NAME),                                     \
                 ::boost::openmethod::detail::va_args<__VA_ARGS__>::return_type \
                     ARGS,                                                      \
                 ::boost::openmethod::detail::va_args<__VA_ARGS__>::registry>,  \
             typename ::boost::openmethod::method<                              \
-                BOOST_OPENMETHOD_NAME(NAME),                                   \
+                BOOST_OPENMETHOD_ID(NAME),                                     \
                 ::boost::openmethod::detail::va_args<__VA_ARGS__>::return_type \
                     ARGS,                                                      \
                 ::boost::openmethod::detail::va_args<__VA_ARGS__>::registry>:: \
                 return_type,                                                   \
             ForwarderParameters...>::type {                                    \
         return ::boost::openmethod::method<                                    \
-            BOOST_OPENMETHOD_NAME(NAME),                                       \
+            BOOST_OPENMETHOD_ID(NAME),                                         \
             ::boost::openmethod::detail::va_args<__VA_ARGS__>::return_type     \
                 ARGS,                                                          \
             ::boost::openmethod::detail::va_args<__VA_ARGS__>::registry>::     \

@@ -204,8 +204,8 @@ template<int N>
 using policy_types =
     boost::mp11::mp_list<test_registry_<N>, indirect_test_registry<N>>;
 
-struct BOOST_OPENMETHOD_NAME(poke);
-struct BOOST_OPENMETHOD_NAME(fight);
+struct BOOST_OPENMETHOD_ID(poke);
+struct BOOST_OPENMETHOD_ID(fight);
 
 namespace BOOST_OPENMETHOD_GENSYM {
 
@@ -215,7 +215,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
     BOOST_OPENMETHOD_REGISTER(
         use_classes<Player, Warrior, Object, Axe, Bear, Registry>);
     using poke = method<
-        BOOST_OPENMETHOD_NAME(poke),
+        BOOST_OPENMETHOD_ID(poke),
         auto(virtual_ptr<Player, Registry>)->std::string, Registry>;
     BOOST_OPENMETHOD_REGISTER(
         typename poke::template override<
@@ -274,14 +274,14 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
         use_classes<Player, Warrior, Object, Axe, Bear, Registry>);
 
     using poke = method<
-        BOOST_OPENMETHOD_NAME(poke),
+        BOOST_OPENMETHOD_ID(poke),
         auto(virtual_ptr<Player, Registry>)->std::string, Registry>;
     BOOST_OPENMETHOD_REGISTER(
         typename poke::template override<
             poke_bear<virtual_ptr<Player, Registry>>>);
 
     using fight = method<
-        BOOST_OPENMETHOD_NAME(fight),
+        BOOST_OPENMETHOD_ID(fight),
         auto(
             virtual_ptr<Player, Registry>, virtual_ptr<Object, Registry>,
             virtual_ptr<Player, Registry>)
@@ -317,7 +317,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
         use_classes<Player, Warrior, Object, Axe, Bear, Registry>);
 
     using poke = method<
-        BOOST_OPENMETHOD_NAME(poke),
+        BOOST_OPENMETHOD_ID(poke),
         auto(shared_virtual_ptr<Player, Registry>)->std::string, Registry>;
 
     BOOST_OPENMETHOD_REGISTER(
@@ -325,7 +325,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
             poke_bear<shared_virtual_ptr<Player, Registry>>>);
 
     using fight = method<
-        BOOST_OPENMETHOD_NAME(fight),
+        BOOST_OPENMETHOD_ID(fight),
         auto(
             shared_virtual_ptr<Player, Registry>,
             shared_virtual_ptr<Object, Registry>,

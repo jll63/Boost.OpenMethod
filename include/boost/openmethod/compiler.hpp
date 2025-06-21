@@ -1150,12 +1150,6 @@ void compiler<Registry>::write_global_data() {
     ++trace << "Initializing v-tables at " << gv_iter << "\n";
 
     for (auto& cls : classes) {
-        if (cls.first_slot == -1) {
-            // corner case: no methods for this class
-            *cls.static_vptr = gv_iter;
-            continue;
-        }
-
         *cls.static_vptr = gv_iter - cls.first_slot;
 
         ++trace << rflush(4, gv_iter - gv_first) << " " << gv_iter

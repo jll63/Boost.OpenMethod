@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(not_initialized) {
     } else {
         try {
             registry::check_initialized();
-        } catch (not_initialized_error) {
+        } catch (not_initialized_error&) {
             BOOST_TEST_FAIL("should have not thrown in release variant");
         }
     }

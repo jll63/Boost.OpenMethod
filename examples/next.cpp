@@ -39,8 +39,7 @@ BOOST_OPENMETHOD(
     inspect, (virtual_ptr<const Vehicle>, virtual_ptr<const Inspector>), void);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    inspect, (virtual_ptr<const Vehicle> v, virtual_ptr<const Inspector> i),
-    void) {
+    inspect, (virtual_ptr<const Vehicle>, virtual_ptr<const Inspector>), void) {
     cout << "Inspect vehicle.\n";
 }
 

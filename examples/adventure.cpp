@@ -44,35 +44,31 @@ BOOST_OPENMETHOD(
     std::string);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    fight,
-    (virtual_ptr<Character> x, virtual_ptr<Creature> y, virtual_ptr<Banana> z),
+    fight, (virtual_ptr<Character>, virtual_ptr<Creature>, virtual_ptr<Banana>),
     std::string) {
     return "are you insane?";
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    fight,
-    (virtual_ptr<Character> x, virtual_ptr<Creature> y, virtual_ptr<Axe> z),
+    fight, (virtual_ptr<Character>, virtual_ptr<Creature>, virtual_ptr<Axe>),
     std::string) {
     return "not agile enough to wield";
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    fight,
-    (virtual_ptr<Warrior> x, virtual_ptr<Creature> y, virtual_ptr<Axe> z),
+    fight, (virtual_ptr<Warrior>, virtual_ptr<Creature>, virtual_ptr<Axe>),
     std::string) {
     return "and cuts it into pieces";
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    fight, (virtual_ptr<Warrior> x, virtual_ptr<Dragon> y, virtual_ptr<Axe> z),
+    fight, (virtual_ptr<Warrior>, virtual_ptr<Dragon>, virtual_ptr<Axe>),
     std::string) {
     return "and dies a honorable death";
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    fight,
-    (virtual_ptr<Character> x, virtual_ptr<Dragon> y, virtual_ptr<Hands> z),
+    fight, (virtual_ptr<Character>, virtual_ptr<Dragon>, virtual_ptr<Hands>),
     std::string) {
     return "Congratulations! You have just vainquished a dragon with your bare "
            "hands"

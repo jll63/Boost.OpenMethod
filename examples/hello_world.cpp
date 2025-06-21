@@ -79,7 +79,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 // Add definitions for specific pairs of animals.
 BOOST_OPENMETHOD_OVERRIDE(
     encounter,
-    (std::ostream & os, virtual_ptr<Dog> dog1, virtual_ptr<Dog> dog2), void) {
+    (std::ostream & os, virtual_ptr<Dog> /*dog1*/, virtual_ptr<Dog> /*dog2*/), void) {
     os << "Both wag tails";
 }
 

@@ -1492,12 +1492,34 @@ method<Name, ReturnType(Parameters...), Registry>::override_impl<
     Function, FnReturnType>::override_impl(FunctionPointer* p_next) {
     using namespace detail;
 
-    if (this->method) {
-        BOOST_ASSERT(this->method == &fn);
+// static variable this->method below is zero-initialized but gcc and clang
+// don't always see that.
+
+#ifdef BOOST_CLANG
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wuninitialized"
+#endif
+
+#ifdef BOOST_GCC
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuninitialized"
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
+
+    if (overrider_info::method) {
+        BOOST_ASSERT(overrider_info::method == &fn);
         return;
     }
 
-    this->method = &fn;
+#ifdef BOOST_CLANG
+#pragma clang diagnostic pop
+#endif
+
+#ifdef BOOST_GCC
+#pragma GCC diagnostic pop
+#endif
+
+    overrider_info::method = &fn;
 
     if constexpr (!Registry::deferred_static_rtti) {
         resolve_type_ids();

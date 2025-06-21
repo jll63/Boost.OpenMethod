@@ -28,13 +28,13 @@ struct matrix {
 };
 
 struct dense_matrix : matrix {
-    virtual auto at(int row, int col) const -> double {
+    virtual auto at(int /*row*/, int /*col*/) const -> double {
         return 0;
     }
 };
 
 struct diagonal_matrix : matrix {
-    virtual auto at(int row, int col) const -> double {
+    virtual auto at(int /*row*/, int /*col*/) const -> double {
         return 0;
     }
 };
@@ -43,13 +43,12 @@ BOOST_OPENMETHOD_CLASSES(matrix, dense_matrix, diagonal_matrix);
 
 BOOST_OPENMETHOD(to_json, (virtual_ptr<const matrix>), string);
 
-BOOST_OPENMETHOD_OVERRIDE(
-    to_json, (virtual_ptr<const dense_matrix> m), string) {
+BOOST_OPENMETHOD_OVERRIDE(to_json, (virtual_ptr<const dense_matrix>), string) {
     return "json for dense matrix...";
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    to_json, (virtual_ptr<const diagonal_matrix> m), string) {
+    to_json, (virtual_ptr<const diagonal_matrix>), string) {
     return "json for diagonal matrix...";
 }
 
@@ -63,7 +62,8 @@ BOOST_OPENMETHOD(
 // catch-all matrix * matrix -> dense_matrix
 BOOST_OPENMETHOD_OVERRIDE(
     times,
-    (shared_virtual_ptr<const matrix> a, shared_virtual_ptr<const matrix> b),
+    (shared_virtual_ptr<const matrix> /*a*/,
+     shared_virtual_ptr<const matrix> /*b*/),
     shared_virtual_ptr<const dense_matrix>) {
     return make_shared<const dense_matrix>();
 }
@@ -71,8 +71,8 @@ BOOST_OPENMETHOD_OVERRIDE(
 // diagonal_matrix * diagonal_matrix -> diagonal_matrix
 BOOST_OPENMETHOD_OVERRIDE(
     times,
-    (shared_virtual_ptr<const diagonal_matrix> a,
-     shared_virtual_ptr<const diagonal_matrix> b),
+    (shared_virtual_ptr<const diagonal_matrix> /*a*/,
+     shared_virtual_ptr<const diagonal_matrix> /*b*/),
     shared_virtual_ptr<const diagonal_matrix>) {
     return make_shared_virtual<diagonal_matrix>();
 }
@@ -91,13 +91,13 @@ BOOST_OPENMETHOD(
 
 // catch-all matrix * scalar -> dense_matrix
 BOOST_OPENMETHOD_OVERRIDE(
-    times, (double a, shared_virtual_ptr<const matrix> b),
+    times, (double /*a*/, shared_virtual_ptr<const matrix> /*b*/),
     shared_virtual_ptr<const dense_matrix>) {
     return make_shared_virtual<dense_matrix>();
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    times, (double a, shared_virtual_ptr<const diagonal_matrix> b),
+    times, (double /*a*/, shared_virtual_ptr<const diagonal_matrix> /*b*/),
     shared_virtual_ptr<const diagonal_matrix>) {
     return make_shared_virtual<diagonal_matrix>();
 }
@@ -131,7 +131,7 @@ auto main() -> int {
     shared_ptr<const matrix> b = make_shared<diagonal_matrix>();
     double s = 1;
 
-#ifndef _MSC_VER
+#ifdef BOOST_CLANG
 #pragma clang diagnostic ignored "-Wpotentially-evaluated-expression"
 #endif
 

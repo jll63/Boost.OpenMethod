@@ -22,12 +22,12 @@ BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog);
 BOOST_OPENMETHOD(yell, (std::ostream&, virtual_ptr<Animal>), void);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    yell, (std::ostream & os, virtual_ptr<Cat> cat), void) {
+    yell, (std::ostream & os, virtual_ptr<Cat> /*cat*/), void) {
     os << "hiss";
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    yell, (std::ostream & os, virtual_ptr<Dog> dog), void) {
+    yell, (std::ostream & os, virtual_ptr<Dog> /*dog*/), void) {
     os << "bark";
 }
 
@@ -35,15 +35,15 @@ BOOST_OPENMETHOD(
     encounter, (std::ostream&, virtual_ptr<Animal>, virtual_ptr<Animal>), void);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    encounter, (std::ostream & os, virtual_ptr<Dog> dog, virtual_ptr<Cat> cat),
-    void) {
+    encounter,
+    (std::ostream & os, virtual_ptr<Dog> dog, virtual_ptr<Cat> /*cat*/), void) {
     yell(os, dog);
     os << " and chase";
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    encounter, (std::ostream & os, virtual_ptr<Cat> cat, virtual_ptr<Dog> dog),
-    void) {
+    encounter,
+    (std::ostream & os, virtual_ptr<Cat> cat, virtual_ptr<Dog> /*dog*/), void) {
     yell(os, cat);
     os << " and run";
 }

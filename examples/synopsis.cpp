@@ -3,8 +3,6 @@
 // See accompanying file LICENSE_1_0.txt
 // or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-// clang-format off
-
 // NOTE: No actual animals were hurt while designing, coding, compiling and
 // running this example.
 
@@ -43,35 +41,48 @@ BOOST_OPENMETHOD_CLASSES(Dog, Bulldog);
 BOOST_OPENMETHOD(poke, (virtual_ptr<Animal>, std::ostream&), void);
 
 // Implement 'poke' for dogs.
-BOOST_OPENMETHOD_OVERRIDE(poke, (virtual_ptr<Dog> dog, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(
+    poke, (virtual_ptr<Dog> /*dog*/, std::ostream& os), void) {
     os << "bark";
 }
 
 // Implement 'poke' for bulldogs. They behave like Dogs, but, in addition, they
 // fight back.
-BOOST_OPENMETHOD_OVERRIDE(poke, (virtual_ptr<Bulldog> dog, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(
+    poke, (virtual_ptr<Bulldog> dog, std::ostream& os), void) {
     next(dog, os); // calls "base" method, i.e. definition for Dog
     os << " and bite";
 }
 
 // A multi-method with two virtual arguments...
-BOOST_OPENMETHOD(meet, (virtual_ptr<Animal>, virtual_ptr<Animal>, std::ostream&), void);
+BOOST_OPENMETHOD(
+    meet, (virtual_ptr<Animal>, virtual_ptr<Animal>, std::ostream&), void);
 
 // 'meet' catch-all implementation.
-BOOST_OPENMETHOD_OVERRIDE(meet, (virtual_ptr<Animal>, virtual_ptr<Animal>, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(
+    meet, (virtual_ptr<Animal>, virtual_ptr<Animal>, std::ostream& os), void) {
     os << "ignore";
 }
 
 // Add definitions for specific pairs of animals.
-BOOST_OPENMETHOD_OVERRIDE(meet, (virtual_ptr<Dog> dog1, virtual_ptr<Dog> dog2, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(
+    meet,
+    (virtual_ptr<Dog> /*dog1*/, virtual_ptr<Dog> /*dog2*/, std::ostream& os),
+    void) {
     os << "wag tail";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(meet, (virtual_ptr<Dog> dog, virtual_ptr<Cat> cat, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(
+    meet,
+    (virtual_ptr<Dog> /*dog*/, virtual_ptr<Cat> /*cat*/, std::ostream& os),
+    void) {
     os << "chase";
 }
 
-BOOST_OPENMETHOD_OVERRIDE(meet, (virtual_ptr<Cat> cat, virtual_ptr<Dog> dog, std::ostream& os), void) {
+BOOST_OPENMETHOD_OVERRIDE(
+    meet,
+    (virtual_ptr<Cat> /*cat*/, virtual_ptr<Dog> /*dog*/, std::ostream& os),
+    void) {
     os << "run";
 }
 
@@ -88,11 +99,10 @@ auto main() -> int {
 
     // Create a few objects.
     // Note that the actual classes are type-erased to base class Animal!
-    std::unique_ptr<Animal>
-        hector = std::make_unique<Bulldog>(),
-        snoopy = std::make_unique<Dog>(),
-        sylvester = std::make_unique<Cat>(),
-        flipper = std::make_unique<Dolphin>();
+    std::unique_ptr<Animal> hector = std::make_unique<Bulldog>(),
+                            snoopy = std::make_unique<Dog>(),
+                            sylvester = std::make_unique<Cat>(),
+                            flipper = std::make_unique<Dolphin>();
 
     // Call 'poke'.
     std::cout << "poke snoopy: ";
@@ -129,23 +139,23 @@ void call_poke(Animal& a, std::ostream& os) {
     // Instructions in the same paragraph are independent, thus they can be
     // executed in parallel.
 
-	// mov	rax, qword ptr [rdi]                ; read vptr
-	// mov	rdx, qword ptr [rip + global+24]    ; M hash factor (multiply)
+    // mov	rax, qword ptr [rdi]                ; read vptr
+    // mov	rdx, qword ptr [rip + global+24]    ; M hash factor (multiply)
 
-	// imul	rdx, qword ptr [rax - 8]            ; multiply vptr[-1] (&typeid(a)) by M
-	// mov	cl, byte ptr [rip + global+32]      ; S hash factor (shift)
+    // imul	rdx, qword ptr [rax - 8]            ; multiply vptr[-1] (&typeid(a)) by M
+    // mov	cl, byte ptr [rip + global+32]      ; S hash factor (shift)
 
-	// shr	rdx, cl                             ; shift by S: this is the position of
+    // shr	rdx, cl                             ; shift by S: this is the position of
     //                                          ; the method table for the dynamic class of 'a'
     //                                          ; in the global hash table
-	// mov	rax, qword ptr [rip + global+40]    ; address of global hash table
+    // mov	rax, qword ptr [rip + global+40]    ; address of global hash table
 
-	// mov	rax, qword ptr [rax + 8*rdx]        ; method table for the class
-	// mov	rcx, qword ptr [rip + method+96]    ; offset of the 'poke' in method table
+    // mov	rax, qword ptr [rax + 8*rdx]        ; method table for the class
+    // mov	rcx, qword ptr [rip + method+96]    ; offset of the 'poke' in method table
 
-	// mov	rax, qword ptr [rax + 8*rcx]        ; read function pointer at offset
+    // mov	rax, qword ptr [rax + 8*rcx]        ; read function pointer at offset
 
-	// jmp	rax                                 ; tail call
+    // jmp	rax                                 ; tail call
 }
 
 void call_meet(Animal& a, Animal& b, std::ostream& os) {
@@ -154,33 +164,33 @@ void call_meet(Animal& a, Animal& b, std::ostream& os) {
     // Instructions in the same paragraph are independent, thus they can be
     // executed in parallel.
 
-	// mov	r8, qword ptr [rdi]                 ; vptr of 'a'
-	// mov	r9, qword ptr [rip + global+24]     ; M hash factor (multiply)
-	// mov	cl, byte ptr [rip + global+32]      ; S hash factor (shift)
+    // mov	r8, qword ptr [rdi]                 ; vptr of 'a'
+    // mov	r9, qword ptr [rip + global+24]     ; M hash factor (multiply)
+    // mov	cl, byte ptr [rip + global+32]      ; S hash factor (shift)
 
-	// mov	r10, qword ptr [r8 - 8]             ; read a.vptr[-1] (&a)
+    // mov	r10, qword ptr [r8 - 8]             ; read a.vptr[-1] (&a)
 
-	// imul	r10, r9                             ; multiply by M
+    // imul	r10, r9                             ; multiply by M
 
-	// shr	r10, cl                             ; index of method table for 'a'
-	// mov	r8, qword ptr [rip + global+40]     ; address of global hash table
-	// mov	rax, qword ptr [rsi]                ; read vptr of 'b'
-	// imul	r9, qword ptr [rax - 8]             ; multiply b.vptr[-1] (&typeid(b)) by M
+    // shr	r10, cl                             ; index of method table for 'a'
+    // mov	r8, qword ptr [rip + global+40]     ; address of global hash table
+    // mov	rax, qword ptr [rsi]                ; read vptr of 'b'
+    // imul	r9, qword ptr [rax - 8]             ; multiply b.vptr[-1] (&typeid(b)) by M
 
-	// mov	rax, qword ptr [r8 + 8*r10]         ; method table for 'a'
-	// shr	r9, cl                              ; index of method table for 'b'
+    // mov	rax, qword ptr [r8 + 8*r10]         ; method table for 'a'
+    // shr	r9, cl                              ; index of method table for 'b'
 
-	// mov	rcx, qword ptr [rip + method+96]    ; offset of 'meet' in method table for 'a'
+    // mov	rcx, qword ptr [rip + method+96]    ; offset of 'meet' in method table for 'a'
 
-	// mov	r10, qword ptr [rax + 8*rcx]        ; pointer to row for 'a' in dispatch table
-	// mov	rcx, qword ptr [r8 + 8*r9]          ; method table for 'b'
-	// mov	rax, qword ptr [rip + method+104]   ; offset of 'meet' in method table for 'b'
+    // mov	r10, qword ptr [rax + 8*rcx]        ; pointer to row for 'a' in dispatch table
+    // mov	rcx, qword ptr [r8 + 8*r9]          ; method table for 'b'
+    // mov	rax, qword ptr [rip + method+104]   ; offset of 'meet' in method table for 'b'
 
-	// mov	rax, qword ptr [rcx + 8*rax]        ; column of 'b' in dispatch table
+    // mov	rax, qword ptr [rcx + 8*rax]        ; column of 'b' in dispatch table
 
-	// imul	rax, qword ptr [rip + method+112]   ; multiply by # of lines in dispatch table
+    // imul	rax, qword ptr [rip + method+112]   ; multiply by # of lines in dispatch table
 
-	// mov	rax, qword ptr [r10 + 8*rax]        ; pointer to function, at dispatch[a][b]
+    // mov	rax, qword ptr [r10 + 8*rax]        ; pointer to function, at dispatch[a][b]
 
-	// jmp	rax                                 ; tail call
+    // jmp	rax                                 ; tail call
 }

@@ -26,31 +26,32 @@ BOOST_OPENMETHOD_CLASSES(Thing, Spaceship, Asteroid);
 BOOST_OPENMETHOD(collideWith, (virtual_ptr<Thing>, virtual_ptr<Thing>), void);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    collideWith, (virtual_ptr<Thing> left, virtual_ptr<Thing> right), void) {
+    collideWith, (virtual_ptr<Thing> /*left*/, virtual_ptr<Thing> /*right*/),
+    void) {
     // default collision handling
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    collideWith, (virtual_ptr<Asteroid> left, virtual_ptr<Asteroid> right),
-    void) {
+    collideWith,
+    (virtual_ptr<Asteroid> /*left*/, virtual_ptr<Asteroid> /*right*/), void) {
     // handle Asteroid-Asteroid collision
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    collideWith, (virtual_ptr<Asteroid> left, virtual_ptr<Spaceship> right),
-    void) {
+    collideWith,
+    (virtual_ptr<Asteroid> /*left*/, virtual_ptr<Spaceship> /*right*/), void) {
     // handle Asteroid-Spaceship collision
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    collideWith, (virtual_ptr<Spaceship> left, virtual_ptr<Asteroid> right),
-    void) {
+    collideWith,
+    (virtual_ptr<Spaceship> /*left*/, virtual_ptr<Asteroid> /*right*/), void) {
     // handle Spaceship-Asteroid collision
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    collideWith, (virtual_ptr<Spaceship> left, virtual_ptr<Spaceship> right),
-    void) {
+    collideWith,
+    (virtual_ptr<Spaceship> /*left*/, virtual_ptr<Spaceship> /*right*/), void) {
     // handle Spaceship-Spaceship collision
 }
 

@@ -24,7 +24,7 @@ BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog);
 BOOST_OPENMETHOD(trick, (std::ostream&, virtual_ptr<Animal>), void);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    trick, (std::ostream & os, virtual_ptr<Dog> dog), void) {
+    trick, (std::ostream & os, virtual_ptr<Dog> /*dog*/), void) {
     os << "spin\n";
 }
 

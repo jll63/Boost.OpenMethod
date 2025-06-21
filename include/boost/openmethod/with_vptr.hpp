@@ -149,7 +149,8 @@ class with_vptr<Class, Base1, Base2, MoreBases...> : detail::with_vptr_derived {
         -> detail::with_vptr_policy<Base1>;
     friend auto boost_openmethod_bases(Class*)
         -> mp11::mp_list<Base1, Base2, MoreBases...>;
-    friend auto boost_openmethod_vptr(const Class& obj, void* registry) -> vptr_type {
+    friend auto boost_openmethod_vptr(const Class& obj, void* registry)
+        -> vptr_type {
         return boost_openmethod_vptr(static_cast<const Base1&>(obj), registry);
     }
 };

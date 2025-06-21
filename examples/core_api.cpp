@@ -32,7 +32,7 @@ using poke = method<
 // end::method[]
 
 // tag::poke_cat[]
-auto poke_cat(std::ostream& os, virtual_ptr<Cat> cat) {
+auto poke_cat(std::ostream& os, virtual_ptr<Cat> /*cat*/) {
     os << "hiss";
 }
 
@@ -42,7 +42,7 @@ static poke::override<poke_cat> override_poke_cat;
 // tag::poke_dog[]
 #include <boost/openmethod/macros.hpp>
 
-auto poke_dog(std::ostream& os, virtual_ptr<Dog> dog) {
+auto poke_dog(std::ostream& os, virtual_ptr<Dog> /*dog*/) {
     os << "bark";
 }
 
@@ -60,11 +60,11 @@ BOOST_OPENMETHOD_REGISTER(poke::override<poke_bulldog>);
 
 class BOOST_OPENMETHOD_NAME(pet);
 
-auto pet_cat(std::ostream& os, virtual_ptr<Cat> cat) {
+auto pet_cat(std::ostream& os, virtual_ptr<Cat> /*cat*/) {
     os << "purr";
 }
 
-auto pet_dog(std::ostream& os, virtual_ptr<Dog> dog) {
+auto pet_dog(std::ostream& os, virtual_ptr<Dog> /*dog*/) {
     os << "wag tail";
 }
 

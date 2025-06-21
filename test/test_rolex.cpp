@@ -37,7 +37,6 @@ struct Jet : Expense {};
 BOOST_OPENMETHOD_CLASSES(
     Role, Employee, Manager, Founder, Expense, Public, Bus, Metro, Taxi, Jet);
 
-//static_assert(!virtual_ptr<Role>::IsSmartPtr);
 BOOST_OPENMETHOD(pay, (virtual_ptr<Employee>), double);
 BOOST_OPENMETHOD(
     approve, (virtual_ptr<const Role>, virtual_ptr<const Expense>, double),

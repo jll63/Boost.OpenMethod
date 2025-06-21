@@ -418,6 +418,6 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a1_c1_b1) {
 
     BOOST_TEST_REQUIRE(get_method(comp, m_B).slots.size() == 1u);
     BOOST_TEST(get_method(comp, m_B).slots[0] == 2u);
-    BOOST_TEST(get_class<B>(comp)->first_slot == 2);
+    BOOST_TEST(get_class<B>(comp)->first_slot == 2u);
     BOOST_TEST(get_class<B>(comp)->vtbl.size() == 1u);
 }

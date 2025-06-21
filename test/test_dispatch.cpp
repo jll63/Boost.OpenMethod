@@ -319,8 +319,8 @@ BOOST_OPENMETHOD_OVERRIDE(times, (const matrix&, double), string_pair) {
 
 BOOST_AUTO_TEST_CASE(simple) {
     auto report = initialize<test_registry>().report;
-    BOOST_TEST(report.not_implemented == 0);
-    BOOST_TEST(report.ambiguous == 0);
+    BOOST_TEST(report.not_implemented == 0u);
+    BOOST_TEST(report.ambiguous == 0u);
 
     {
         // pass by const ref

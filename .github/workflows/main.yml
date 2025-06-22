@@ -8,16 +8,18 @@
 ---
 name: CI
 
-on:
-  pull_request:
-  push:
-    branches:
-      - master
-      - develop
-      - bugfix/**
-      - feature/**
-      - fix/**
-      - pr/**
+on: [push, pull_request, workflow_dispatch]
+
+# on:
+#   pull_request:
+#   push:
+#     branches:
+#       - master
+#       - develop
+#       - bugfix/**
+#       - feature/**
+#       - fix/**
+#       - pr/**
 
 concurrency:
   group: ${{format('{0}:{1}', github.repository, github.ref)}}

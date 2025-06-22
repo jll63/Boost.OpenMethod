@@ -4,7 +4,7 @@
 // or q at http://www.boost.org/LICENSE_1_0.txt)
 
 #define BOOST_TEST_MODULE openmethod
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 
 #include "test_virtual_ptr_value_semantics.hpp"
 

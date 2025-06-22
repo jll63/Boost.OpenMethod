@@ -12,7 +12,7 @@
 #include "test_util.hpp"
 
 #define BOOST_TEST_MODULE compiler
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 
 using namespace boost::openmethod;
 

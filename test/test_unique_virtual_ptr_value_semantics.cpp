@@ -6,7 +6,7 @@
 #include <boost/openmethod/unique_ptr.hpp>
 
 #define BOOST_TEST_MODULE openmethod
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 
 #include "test_virtual_ptr_value_semantics.hpp"
 

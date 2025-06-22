@@ -3,10 +3,11 @@
 // See accompanying file LICENSE_1_0.txt
 // or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#include "boost/openmethod/detail/static_list.hpp"
 
-#define BOOST_TEST_MODULE openmethod
-#include <boost/test/included/unit_test.hpp>
+#define BOOST_TEST_MODULE static_list
+#include <boost/test/unit_test.hpp>
+
+#include "boost/openmethod/detail/static_list.hpp"
 
 using boost::openmethod::detail::static_list;
 

@@ -7,7 +7,7 @@
 #include <type_traits>
 
 #define BOOST_TEST_MODULE core
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 
 #include <boost/openmethod/registry.hpp>
 

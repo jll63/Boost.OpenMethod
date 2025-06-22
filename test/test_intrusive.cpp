@@ -19,8 +19,8 @@ struct test_registry
 #include <boost/openmethod/with_vptr.hpp>
 #include <boost/openmethod/compiler.hpp>
 
-#define BOOST_TEST_MODULE instrusive
-#include <boost/test/included/unit_test.hpp>
+#define BOOST_TEST_MODULE intrusive
+#include <boost/test/unit_test.hpp>
 #include <boost/test/tools/output_test_stream.hpp>
 
 #include "test_util.hpp"

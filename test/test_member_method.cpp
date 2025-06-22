@@ -52,7 +52,7 @@ struct Payroll {
 BOOST_OPENMETHOD_REGISTER(Payroll::pay_functions);
 
 #define BOOST_TEST_MODULE openmethod
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 
 BOOST_AUTO_TEST_CASE(member_method) {
     initialize();

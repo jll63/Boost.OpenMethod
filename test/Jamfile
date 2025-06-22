@@ -25,12 +25,21 @@ project
     # <toolset>clang:<warnings-as-errors>on
   ;
 
-# list
+alias unit_test_framework
+    : # sources
+        /boost/test//boost_unit_test_framework
+    ;
+
 for local src in [ glob test_*.cpp ]
 {
-  run $(src) ;
+  run $(src) unit_test_framework ;
+}
+
+for local src in [ glob compile_fail_*.cpp ]
+{
+  compile-fail $(src) ;
 }
 
 # quick (for CI)
-alias quick : test_blackbox ;
+alias quick : test_dispatch ;
 explicit quick ;

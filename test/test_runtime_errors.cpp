@@ -14,7 +14,7 @@
 #include <sstream>
 
 #define BOOST_TEST_MODULE openmethod
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 
 using namespace boost::openmethod;
 using namespace test_matrices;
@@ -168,8 +168,8 @@ BOOST_OPENMETHOD_OVERRIDE(
 
 BOOST_AUTO_TEST_CASE(call_error) {
     auto report = initialize<registry>().report;
-    BOOST_TEST(report.not_implemented == 1);
-    BOOST_TEST(report.ambiguous == 1);
+    BOOST_TEST(report.not_implemented == 1u);
+    BOOST_TEST(report.ambiguous == 1u);
 
     {
         registry::capture capture;

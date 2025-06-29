@@ -63,7 +63,7 @@ jobs:
           - { compiler: clang-13,  cxxstd: '20',    os: ubuntu-latest, container: 'ubuntu:22.04' }
           - { compiler: clang-14,  cxxstd: '20',    os: ubuntu-latest, container: 'ubuntu:22.04' }
           - { compiler: clang-15,  cxxstd: '20',    os: ubuntu-latest, container: 'ubuntu:22.04' }
-          - { compiler: clang-16,  cxxstd: '17,20,2b', os: ubuntu-24.04 }
+          - { compiler: clang-16,  cxxstd: '17,20', os: ubuntu-24.04 } # removed 2b: error: no matching function for call to 'get'
           - { compiler: clang-17,  cxxstd: '17,20,23', os: ubuntu-latest, container: 'ubuntu:24.04' }
           - { compiler: clang-18,  cxxstd: '17,20,23,2c', os: ubuntu-24.04 }
 

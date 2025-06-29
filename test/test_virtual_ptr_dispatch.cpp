@@ -13,7 +13,7 @@
 #include <string>
 
 #define BOOST_TEST_MODULE openmethod
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 #include <boost/test/tools/output_test_stream.hpp>
 
 #include "test_util.hpp"

@@ -4,7 +4,7 @@
 // or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #define BOOST_TEST_MODULE openmethod
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 #include <boost/utility/identity_type.hpp>
 
 #include <boost/openmethod.hpp>
@@ -448,7 +448,7 @@ struct custom_rtti : policies::deferred_static_rtti {
             if constexpr (is_polymorphic<T>) {
                 return type_id(T::static_type);
             } else {
-                return nullptr;
+                return type_id(0);
             }
         }
 
@@ -457,14 +457,14 @@ struct custom_rtti : policies::deferred_static_rtti {
             if constexpr (is_polymorphic<T>) {
                 return type_id(obj.type);
             } else {
-                return nullptr;
+                return type_id(0);
             }
         }
 
         template<class Stream>
         static void type_name(type_id type, Stream& stream) {
-            static const char* name[] = {"Animal", "Dog", "Cat"};
-            stream << (type == nullptr ? "?" : name[std::size_t(type)]);
+            static const char* name[] = {"?", "Animal", "Dog", "Cat"};
+            stream << name[std::size_t(type)];
         }
 
         static auto type_index(type_id type) {

@@ -6,8 +6,8 @@
 #include <iostream>
 #include <type_traits>
 
-#define BOOST_TEST_MODULE core
-#include <boost/test/included/unit_test.hpp>
+#define BOOST_TEST_MODULE policies
+#include <boost/test/unit_test.hpp>
 
 #include <boost/openmethod/default_registry.hpp>
 

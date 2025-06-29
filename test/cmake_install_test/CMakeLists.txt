@@ -8,8 +8,6 @@ project(cmake_install_test LANGUAGES CXX)
 
 find_package(boost_openmethod REQUIRED)
 
-target_compile_features(boost_openmethod INTERFACE cxx_std_17)
-
 add_executable(main main.cpp)
 target_link_libraries(main Boost::openmethod)
 

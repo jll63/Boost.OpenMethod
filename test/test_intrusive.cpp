@@ -17,74 +17,87 @@ struct test_registry
 
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/with_vptr.hpp>
+#include <boost/openmethod/shared_ptr.hpp>
 #include <boost/openmethod/compiler.hpp>
 
 #define BOOST_TEST_MODULE intrusive
 #include <boost/test/unit_test.hpp>
-#include <boost/test/tools/output_test_stream.hpp>
-
-#include "test_util.hpp"
 
 namespace bom = boost::openmethod;
 using bom::virtual_;
 
 struct Animal : bom::with_vptr<Animal> {
-    Animal();
+    explicit Animal(std::ostream& os);
     ~Animal();
+    std::ostream& os;
 };
 
 struct Cat : Animal, bom::with_vptr<Cat, Animal> {
-    Cat();
+    explicit Cat(std::ostream& os);
     ~Cat();
 };
 
 struct Pet : bom::with_vptr<Pet> {
-    Pet();
+    explicit Pet(std::ostream& os);
     ~Pet();
     std::string name;
+    std::ostream& os;
 };
 
 struct DomesticCat : Cat, Pet, bom::with_vptr<DomesticCat, Cat, Pet> {
-    DomesticCat();
+    explicit DomesticCat(std::ostream& os);
     ~DomesticCat();
 };
 
 BOOST_OPENMETHOD(
     speak, (virtual_<const Animal&> animal, std::ostream& os), void);
+
 BOOST_OPENMETHOD(describe, (virtual_<const Pet&> pet, std::ostream& os), void);
 
-Animal::Animal() {
-    speak(*this, std::cout);
+BOOST_OPENMETHOD(
+    meet,
+    (virtual_<std::shared_ptr<Animal>>,
+     virtual_<const std::shared_ptr<Animal>&>, std::ostream& os),
+    void);
+
+BOOST_OPENMETHOD_OVERRIDE(
+    meet,
+    (std::shared_ptr<Animal>, const std::shared_ptr<Animal>&, std::ostream& os),
+    void) {
+    os << "ignore\n";
+}
+
+Animal::Animal(std::ostream& os) : os(os) {
+    speak(*this, os);
 }
 
 Animal::~Animal() {
-    speak(*this, std::cout);
+    speak(*this, os);
 }
 
-Cat::Cat() {
-    speak(*this, std::cout);
+Cat::Cat(std::ostream& os) : Animal(os) {
+    speak(*this, os);
 }
 
 Cat::~Cat() {
-    speak(*this, std::cout);
+    speak(*this, os);
 }
 
-Pet::Pet() {
-    describe(*this, std::cout);
+Pet::Pet(std::ostream& os) : os(os) {
+    describe(*this, os);
 }
 
 Pet::~Pet() {
-    describe(*this, std::cout);
+    describe(*this, os);
 }
 
-DomesticCat::DomesticCat() {
+DomesticCat::DomesticCat(std::ostream& os) : Cat(os), Pet(os) {
     name = "Felix";
-    describe(*this, std::cout);
+    describe(*this, os);
 }
 
 DomesticCat::~DomesticCat() {
-    name = "Felix";
-    describe(*this, std::cout);
+    describe(*this, Cat::os);
 }
 
 BOOST_OPENMETHOD_OVERRIDE(speak, (const Animal&, std::ostream& os), void) {
@@ -117,56 +130,53 @@ BOOST_OPENMETHOD_OVERRIDE(
 BOOST_AUTO_TEST_CASE(intrusive_mode) {
     bom::initialize();
 
-    std::unique_ptr<DomesticCat> cat;
+    std::shared_ptr<DomesticCat> cat;
+    std::ostringstream cd_output;
 
     {
-        boost::test_tools::output_test_stream output;
-        {
-            capture_cout capture(output.rdbuf());
-            cat = std::make_unique<DomesticCat>();
-        }
+        std::ostringstream output;
+        cat = std::make_shared<DomesticCat>(cd_output);
 
-        BOOST_CHECK(output.is_equal(
+        BOOST_TEST(
+            cd_output.str() ==
             "???\n"
             "meow\n"
             "I am a pet\n"
-            "I am Felix the cat\n"));
+            "I am Felix the cat\n");
     }
 
     {
-        boost::test_tools::output_test_stream output;
-
-        {
-            capture_cout capture(output.rdbuf());
-            describe(*cat, std::cout);
-        }
-
-        BOOST_CHECK(output.is_equal("I am Felix the cat\n"));
+        std::ostringstream output;
+        describe(*cat, output);
+        BOOST_TEST(output.str() == "I am Felix the cat\n");
     }
 
     {
-        boost::test_tools::output_test_stream output;
-
-        {
-            capture_cout capture(output.rdbuf());
-            cat_influencer(*cat, std::cout);
-        }
-
-        BOOST_CHECK(output.is_equal("Follow Felix the cat on YouTube\n"));
+        std::ostringstream output;
+        cat_influencer(*cat, output);
+        BOOST_TEST(output.str() == "Follow Felix the cat on YouTube\n");
     }
 
     {
-        boost::test_tools::output_test_stream output;
-        {
-            capture_cout capture(output.rdbuf());
-            cat.reset();
-        }
+        cd_output.str("");
+        cat.reset();
 
-        BOOST_CHECK(output.is_equal(
+        BOOST_TEST(
+            cd_output.str() ==
             "I am Felix the cat\n"
             "I am a pet\n"
             "meow\n"
-            "???\n"));
+            "???\n");
+    }
+
+    {
+        auto felix = std::make_shared<Cat>(cd_output),
+             sylvester = std::make_shared<Cat>(cd_output);
+
+        std::ostringstream output;
+        meet(felix, sylvester, output);
+
+        BOOST_TEST(output.str() == "ignore\n");
     }
 }
 

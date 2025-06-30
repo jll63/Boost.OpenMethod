@@ -231,7 +231,9 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a_b1_c) {
     B1  C
     */
 
-    struct A {};
+    struct A {
+        virtual ~A() = default;
+    };
     struct B : A {};
     struct C : A {};
 
@@ -258,7 +260,9 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_c1) {
     B1  C1
     */
 
-    struct A {};
+    struct A {
+        virtual ~A() = default;
+    };
     struct B : A {};
     struct C : A {};
 
@@ -294,7 +298,9 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_d1_c1_d1) {
       D1
     */
 
-    struct A {};
+    struct A {
+        virtual ~A() = default;
+    };
     struct B : virtual A {};
     struct C : virtual A {};
     struct D : B, C {};
@@ -338,7 +344,9 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_d1_c1_d1_e2) {
       D1  E2 but E can use them
     */
 
-    struct A {};
+    struct A {
+        virtual ~A() = default;
+    };
     struct B : virtual A {};
     struct C : virtual A {};
     struct E : C {};
@@ -396,8 +404,12 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a1_c1_b1) {
       C1
     */
 
-    struct A {};
-    struct B {};
+    struct A {
+        virtual ~A() = default;
+    };
+    struct B {
+        virtual ~B() = default;
+    };
     struct C : A, B {};
 
     BOOST_OPENMETHOD_REGISTER(use_classes<A, test_registry>);

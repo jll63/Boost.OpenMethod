@@ -16,6 +16,7 @@ using namespace boost::openmethod::detail;
 namespace mp11 = boost::mp11;
 
 #include <boost/openmethod.hpp>
+#include <boost/openmethod/with_vptr.hpp>
 #include <boost/openmethod/shared_ptr.hpp>
 
 #include "test_util.hpp"
@@ -137,6 +138,28 @@ static_assert(
 static_assert(detail::using_same_registry<registry1, int>::value);
 static_assert(
     !detail::using_same_registry<registry1, virtual_ptr<a, registry2>>::value);
+
+static_assert(valid_method_parameter<default_registry, virtual_<a&>>::value);
+static_assert(
+    valid_method_parameter<default_registry, virtual_<const a&>>::value);
+static_assert(valid_method_parameter<default_registry, int>::value);
+
+struct non_polymorphic {};
+
+static_assert(!valid_method_parameter<
+              virtual_<non_polymorphic&>, default_registry>::value);
+
+struct non_polymorphic_with_vptr {};
+
+auto boost_openmethod_vptr(const non_polymorphic_with_vptr&, void*)
+    -> vptr_type;
+
+static_assert(valid_method_parameter<
+              virtual_<non_polymorphic_with_vptr&>, default_registry>::value);
+
+static_assert(
+    valid_method_parameter<
+        virtual_<const non_polymorphic_with_vptr&>, default_registry>::value);
 
 // clang-format on
 
@@ -314,7 +337,7 @@ struct Animal {
     friend auto boost_openmethod_vptr(const Animal&, void*) -> vptr_type;
 };
 
-static_assert(detail::has_vptr_fn<default_registry, Animal>);
+static_assert(detail::has_vptr_fn<Animal, default_registry>);
 
 } // namespace TEST_NS
 
@@ -330,8 +353,8 @@ struct Animal {
     }
 };
 
-static_assert(detail::has_vptr_fn<test_registry, Animal>);
-static_assert(!detail::has_vptr_fn<default_registry, Animal>);
+static_assert(detail::has_vptr_fn<Animal, test_registry>);
+static_assert(!detail::has_vptr_fn<Animal, default_registry>);
 
 BOOST_AUTO_TEST_CASE(vptr_from_function) {
     initialize<test_registry>();

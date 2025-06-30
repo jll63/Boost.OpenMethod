@@ -301,7 +301,7 @@ constexpr bool is_virtual_ptr = detail::is_virtual_ptr_aux<T>::value;
 
 void boost_openmethod_vptr(...);
 
-template<class Registry, class Class>
+template<class Class, class Registry>
 constexpr bool has_vptr_fn = std::is_same_v<
     decltype(boost_openmethod_vptr(
         std::declval<const Class&>(), std::declval<Registry*>())),
@@ -311,7 +311,7 @@ template<class Registry, class ArgType>
 decltype(auto) acquire_vptr(const ArgType& arg) {
     Registry::check_initialized();
 
-    if constexpr (detail::has_vptr_fn<Registry, ArgType>) {
+    if constexpr (detail::has_vptr_fn<ArgType, Registry>) {
         return boost_openmethod_vptr(arg, static_cast<Registry*>(nullptr));
     } else {
         return Registry::template policy<policies::vptr>::dynamic_vptr(arg);
@@ -974,6 +974,16 @@ template<class Registry, typename Type, class OtherRegistry>
 struct using_same_registry<Registry, const virtual_ptr<Type, OtherRegistry>&>
     : std::is_same<Registry, OtherRegistry> {};
 
+template<typename, class>
+struct valid_method_parameter : std::true_type {};
+
+template<typename T, class Registry>
+struct valid_method_parameter<virtual_<T>, Registry>
+    : std::bool_constant<
+          has_vptr_fn<virtual_type<T, Registry>, Registry> ||
+          Registry::rtti::template is_polymorphic<
+              virtual_type<T, Registry>>> {};
+
 } // namespace detail
 
 template<
@@ -1003,10 +1013,15 @@ class method<Name, auto(Parameters...)->ReturnType, Registry>
         mp11::mp_list<Parameters...>, detail::is_virtual>::value;
 
     // sanity checks
-    static_assert(Arity > 0, "method must have at least one virtual argument");
+    static_assert(Arity > 0, "method has no virtual parameters");
     static_assert(
-        (true && ... &&
-         detail::using_same_registry<Registry, Parameters>::value));
+        (... && detail::using_same_registry<Registry, Parameters>::value),
+        "method and parameters use different registries");
+    static_assert(
+        (... && detail::valid_method_parameter<Parameters, Registry>::value),
+        "virtual_<> parameter is not polymorphic and no boost_openmethod_vptr "
+        "function is available");
+    //static_assert()
 
     type_id vp_type_ids[Arity];
 

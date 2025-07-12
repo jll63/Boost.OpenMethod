@@ -6,7 +6,7 @@
 #include <iostream>
 
 #include <boost/openmethod.hpp>
-#include <boost/openmethod/with_vptr.hpp>
+#include <boost/openmethod/inplace_vptr.hpp>
 #include <boost/openmethod/compiler.hpp>
 
 using boost::openmethod::virtual_;
@@ -68,16 +68,16 @@ BOOST_OPENMETHOD_CLASSES(Animal, Cat);
 // end::virtual_intrusive[]
 } // namespace virtual_intrusive
 
-namespace with_vptr {
+namespace inplace_vptr {
 
-// tag::with_vptr[]
+// tag::inplace_vptr[]
 
-#include <boost/openmethod/with_vptr.hpp>
+#include <boost/openmethod/inplace_vptr.hpp>
 
-class Animal : public boost::openmethod::with_vptr<Animal> {
+class Animal : public boost::openmethod::inplace_vptr<Animal> {
 };
 
-class Cat : public Animal, public boost::openmethod::with_vptr<Cat, Animal> {
+class Cat : public Animal, public boost::openmethod::inplace_vptr<Cat, Animal> {
 };
 
 BOOST_OPENMETHOD(poke, (std::ostream&, virtual_<Animal&>), void);
@@ -85,9 +85,9 @@ BOOST_OPENMETHOD(poke, (std::ostream&, virtual_<Animal&>), void);
 BOOST_OPENMETHOD_OVERRIDE(poke, (std::ostream & os, Cat& /*cat*/), void) {
     os << "hiss\n";
 }
-// end::with_vptr[]
+// end::inplace_vptr[]
 
-} // namespace with_vptr
+} // namespace inplace_vptr
 
 auto main() -> int {
     boost::openmethod::initialize();
@@ -105,7 +105,7 @@ auto main() -> int {
     }
 
     {
-        using namespace with_vptr;
+        using namespace inplace_vptr;
         Cat cat;
         poke(std::cout, cat); // hiss
     }

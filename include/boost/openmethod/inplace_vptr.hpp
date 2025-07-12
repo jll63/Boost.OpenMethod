@@ -1,10 +1,10 @@
-#ifndef BOOST_OPENMETHOD_WITH_VPTR_HPP
-#define BOOST_OPENMETHOD_WITH_VPTR_HPP
+#ifndef BOOST_OPENMETHOD_inplace_vptr_HPP
+#define BOOST_OPENMETHOD_inplace_vptr_HPP
 
 #include <boost/openmethod/core.hpp>
 
 // =============================================================================
-// with_vptr
+// inplace_vptr
 
 namespace boost::openmethod {
 
@@ -14,7 +14,7 @@ void boost_openmethod_registry(...);
 void boost_openmethod_bases(...);
 
 template<class Class>
-using with_vptr_registry =
+using inplace_vptr_registry =
     decltype(boost_openmethod_registry(std::declval<Class*>()));
 
 template<class>
@@ -33,7 +33,7 @@ struct update_vptr_bases<mp11::mp_list<Bases...>> {
 
 template<class To, class Class>
 void update_vptr(Class* obj) {
-    using registry = with_vptr_registry<Class>;
+    using registry = inplace_vptr_registry<Class>;
     using bases = decltype(boost_openmethod_bases(obj));
 
     if constexpr (mp11::mp_size<bases>::value == 0) {
@@ -47,32 +47,32 @@ void update_vptr(Class* obj) {
     }
 }
 
-struct with_vptr_derived {};
+struct inplace_vptr_derived {};
 
 template<class, class, bool>
-class with_vptr_aux;
+class inplace_vptr_aux;
 
 #if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic ignored "-Wnon-template-friend"
 #endif
 
 template<class... Classes>
-inline use_classes<Classes...> with_vptr_use_classes;
+inline use_classes<Classes...> inplace_vptr_use_classes;
 
 template<class Class, class Registry>
-class with_vptr_aux<Class, Registry, true> {
+class inplace_vptr_aux<Class, Registry, true> {
   protected:
     template<class To, class Other>
     friend void update_vptr(Other*);
     friend auto boost_openmethod_registry(Class*) -> Registry;
     friend auto boost_openmethod_bases(Class*) -> mp11::mp_list<>;
 
-    with_vptr_aux() {
-        (void)&with_vptr_use_classes<Class, Registry>;
+    inplace_vptr_aux() {
+        (void)&inplace_vptr_use_classes<Class, Registry>;
         detail::update_vptr<Class>(static_cast<Class*>(this));
     }
 
-    ~with_vptr_aux() {
+    ~inplace_vptr_aux() {
         boost_openmethod_vptr = nullptr;
     }
 
@@ -92,16 +92,17 @@ class with_vptr_aux<Class, Registry, true> {
 };
 
 template<class Class, class Base>
-class with_vptr_aux<Class, Base, false> : with_vptr_derived {
+class inplace_vptr_aux<Class, Base, false> : inplace_vptr_derived {
   protected:
     friend void update_vptr(Class*);
 
-    with_vptr_aux() {
-        (void)&with_vptr_use_classes<Class, Base, with_vptr_registry<Class>>;
+    inplace_vptr_aux() {
+        (void)&inplace_vptr_use_classes<
+            Class, Base, inplace_vptr_registry<Class>>;
         detail::update_vptr<Class>(static_cast<Class*>(this));
     }
 
-    ~with_vptr_aux() {
+    ~inplace_vptr_aux() {
         detail::update_vptr<Base>(
             static_cast<Base*>(static_cast<Class*>(this)));
     }
@@ -112,18 +113,21 @@ class with_vptr_aux<Class, Base, false> : with_vptr_derived {
 } // namespace detail
 
 template<typename...>
-class with_vptr;
+class inplace_vptr;
 
 template<class Class>
-class with_vptr<Class> : public detail::with_vptr_aux<
-                             Class, BOOST_OPENMETHOD_DEFAULT_REGISTRY, true> {};
+class inplace_vptr<Class>
+    : public detail::inplace_vptr_aux<
+          Class, BOOST_OPENMETHOD_DEFAULT_REGISTRY, true> {};
 
 template<class Class, class Other>
-class with_vptr<Class, Other>
-    : public detail::with_vptr_aux<Class, Other, detail::is_registry<Other>> {};
+class inplace_vptr<Class, Other>
+    : public detail::inplace_vptr_aux<
+          Class, Other, detail::is_registry<Other>> {};
 
 template<class Class, class Base1, class Base2, class... MoreBases>
-class with_vptr<Class, Base1, Base2, MoreBases...> : detail::with_vptr_derived {
+class inplace_vptr<Class, Base1, Base2, MoreBases...>
+    : detail::inplace_vptr_derived {
 
     static_assert(
         !detail::is_registry<Base1> && !detail::is_registry<Base2> &&
@@ -131,14 +135,14 @@ class with_vptr<Class, Base1, Base2, MoreBases...> : detail::with_vptr_derived {
         "registry can be specified only for root classes");
 
   protected:
-    with_vptr() {
-        (void)&detail::with_vptr_use_classes<
+    inplace_vptr() {
+        (void)&detail::inplace_vptr_use_classes<
             Class, Base1, Base2, MoreBases...,
-            detail::with_vptr_registry<Base1>>;
+            detail::inplace_vptr_registry<Base1>>;
         detail::update_vptr<Class>(static_cast<Class*>(this));
     }
 
-    ~with_vptr() {
+    ~inplace_vptr() {
         auto obj = static_cast<Class*>(this);
         detail::update_vptr<Base1>(static_cast<Base1*>(obj));
         detail::update_vptr<Base2>(static_cast<Base2*>(obj));
@@ -146,11 +150,11 @@ class with_vptr<Class, Base1, Base2, MoreBases...> : detail::with_vptr_derived {
     }
 
     friend auto boost_openmethod_registry(Class*)
-        -> detail::with_vptr_registry<Base1>;
+        -> detail::inplace_vptr_registry<Base1>;
     friend auto boost_openmethod_bases(Class*)
         -> mp11::mp_list<Base1, Base2, MoreBases...>;
     friend auto boost_openmethod_vptr(
-        const Class& obj, detail::with_vptr_registry<Base1>* registry)
+        const Class& obj, detail::inplace_vptr_registry<Base1>* registry)
         -> vptr_type {
         return boost_openmethod_vptr(static_cast<const Base1&>(obj), registry);
     }
@@ -158,4 +162,4 @@ class with_vptr<Class, Base1, Base2, MoreBases...> : detail::with_vptr_derived {
 
 } // namespace boost::openmethod
 
-#endif // BOOST_OPENMETHOD_WITH_VPTR_HPP
+#endif // BOOST_OPENMETHOD_inplace_vptr_HPP

@@ -981,8 +981,8 @@ template<typename T, class Registry>
 struct valid_method_parameter<virtual_<T>, Registry>
     : std::bool_constant<
           has_vptr_fn<virtual_type<T, Registry>, Registry> ||
-          Registry::rtti::template is_polymorphic<
-              virtual_type<T, Registry>>> {};
+          Registry::rtti::template is_polymorphic<virtual_type<T, Registry>>> {
+};
 
 } // namespace detail
 

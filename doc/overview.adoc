@@ -83,7 +83,7 @@ virtual parameters.
 Provides support for using `std::unique_ptr` in place of plain pointers in
 virtual parameters.
 
-#### <boost/openmethod/with_vptr.hpp>
+#### <boost/openmethod/inplace_vptr.hpp>
 
 Provides support for storing v-table pointers directly in objects, in the same
 manner as native virtual functions.

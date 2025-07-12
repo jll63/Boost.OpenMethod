@@ -8,7 +8,7 @@ called to rebuild the dispatch tables.
 
 This leads to a problem: any `virtual_ptr` in existence before `initialize` is
 called again becomes invalid. This also applies to vptrs that are stored inside
-objects by `with_vptr`.
+objects by `inplace_vptr`.
 
 NOTE: This applies only to cases where a dynamic library adds to an _existing_
 policy. Even if the dynamic library itself uses open-methods, for example as an

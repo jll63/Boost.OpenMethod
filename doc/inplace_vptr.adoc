@@ -1,26 +1,26 @@
 
-## with_vptr
+## inplace_vptr
 
 ### Synopsis
 
-Defined in <boost/openmethod/with_vptr.hpp>.
+Defined in <boost/openmethod/inplace_vptr.hpp>.
 
 ```c++
 namespace boost::openmethod {
 
 template<class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
-class with_vptr {
+class inplace_vptr {
   protected:
-    with_vptr();
-    ~with_vptr();
+    inplace_vptr();
+    ~inplace_vptr();
     friend auto boost_openmethod_vptr(const Class& obj) -> vptr_type;
 };
 
 template<class Class, class Base, class... MoreBases>
-class with_vptr {
+class inplace_vptr {
   protected:
-    with_vptr();
-    ~with_vptr();
+    inplace_vptr();
+    ~inplace_vptr();
     friend auto boost_openmethod_vptr(const Class& obj) -> vptr_type;
         // if sizeof(MoreBases...) > 0
 };
@@ -30,10 +30,10 @@ class with_vptr {
 
 ### Description
 
-`with_vptr` is a CRTP class template that embeds and manages a vptr across a
+`inplace_vptr` is a CRTP class template that embeds and manages a vptr across a
 class hierarchy.
 
-If `Class` has no `Bases`, `with_vptr` adds a `boost_openmethod_vptr` private
+If `Class` has no `Bases`, `inplace_vptr` adds a `boost_openmethod_vptr` private
 member to `Class`. In either case, it sets the vptr to the v-table of `Class`
 from `Policy`. It also creates a `boost_openmethod_vptr` friend function that
 takes a a `const Class&` and returns the embedded vptr.
@@ -43,7 +43,7 @@ function is also created. It returns one of the embedded vptrs (it doesn't
 matter which one, as they all have the same value). This is to resolve
 ambiguities
 
-As part of its implementation, `with_vptr` may also declare one or two free
+As part of its implementation, `inplace_vptr` may also declare one or two free
 functions (`boost_openmethod_policy` and `boost_openmethod_bases`) at certain
 levels of the hierarchy.
 
@@ -52,7 +52,7 @@ levels of the hierarchy.
 #### constructor
 
 ```c++
-with_vptr();
+inplace_vptr();
 ```
 
 Sets the vptr to the v-table for Class, obtained from `Policy`. If `Policy`
@@ -63,7 +63,7 @@ preserving the validity of the pointer across calls to `initialize`.
 #### destructor
 
 ```c++
-~with_vptr();
+~inplace_vptr();
 ```
 
 For each `Base`, sets the vptr to the v-table for that base.

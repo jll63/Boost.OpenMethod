@@ -9,4 +9,5 @@ using namespace boost::openmethod;
 
 struct Cat {};
 
-BOOST_OPENMETHOD(poke, (virtual_ptr<Cat, release_registry>), void, debug_registry);
+BOOST_OPENMETHOD(
+    poke, (virtual_ptr<Cat, release_registry>), void, debug_registry);

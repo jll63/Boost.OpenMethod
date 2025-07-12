@@ -16,7 +16,7 @@ using namespace boost::openmethod::detail;
 namespace mp11 = boost::mp11;
 
 #include <boost/openmethod.hpp>
-#include <boost/openmethod/with_vptr.hpp>
+#include <boost/openmethod/inplace_vptr.hpp>
 #include <boost/openmethod/shared_ptr.hpp>
 
 #include "test_util.hpp"
@@ -149,17 +149,18 @@ struct non_polymorphic {};
 static_assert(!valid_method_parameter<
               virtual_<non_polymorphic&>, default_registry>::value);
 
-struct non_polymorphic_with_vptr {};
+struct non_polymorphic_inplace_vptr {};
 
-auto boost_openmethod_vptr(const non_polymorphic_with_vptr&, void*)
+auto boost_openmethod_vptr(const non_polymorphic_inplace_vptr&, void*)
     -> vptr_type;
-
-static_assert(valid_method_parameter<
-              virtual_<non_polymorphic_with_vptr&>, default_registry>::value);
 
 static_assert(
     valid_method_parameter<
-        virtual_<const non_polymorphic_with_vptr&>, default_registry>::value);
+        virtual_<non_polymorphic_inplace_vptr&>, default_registry>::value);
+
+static_assert(valid_method_parameter<
+              virtual_<const non_polymorphic_inplace_vptr&>,
+              default_registry>::value);
 
 // clang-format on
 

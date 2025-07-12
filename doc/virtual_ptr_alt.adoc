@@ -53,12 +53,12 @@ NOTE: With this approach, classes need not be polymorphic. A virtual
 destructor might be needed for correct destruction of objects, but it is not
 required by the library.
 
-The `with_vptr` CRTP class automates the creation and management of embedded
+The `inplace_vptr` CRTP class automates the creation and management of embedded
 vptrs.
 
 [source,c++]
 ----
-include::{exampledir}/virtual_.cpp[tag=with_vptr,indent=0]
+include::{exampledir}/virtual_.cpp[tag=inplace_vptr,indent=0]
 
 int main() {
     boost::openmethod::initialize();
@@ -68,9 +68,9 @@ int main() {
 }
 ----
 
-If `with_vptr` is passed only the class being defined, it adds a vptr to it, and
+If `inplace_vptr` is passed only the class being defined, it adds a vptr to it, and
 defines a `boost_openmethod_vptr` friend function. If more classes are passed,
 they must be the direct bases of the class potentially involved in open-method
 calls. Its constructor and destructor set the vptr to point to the v-table for
-the class. `with_vptr` also takes care of registering the classes, so this time
+the class. `inplace_vptr` also takes care of registering the classes, so this time
 the call to `BOOST_OPENMETHOD_CLASSES` is not needed.

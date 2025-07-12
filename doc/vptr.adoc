@@ -55,7 +55,7 @@ struct indirect_vptr : facet {};
 
 ### Description
 
-`indirect_vptr` is a facet that makes `virtual_ptr`{empty}s and `with_vptr` use
+`indirect_vptr` is a facet that makes `virtual_ptr`{empty}s and `inplace_vptr` use
 pointers to pointers to v-tables, instead of straight pointers. As a
 consequence, they remain valid after a call to `initialize`.
 

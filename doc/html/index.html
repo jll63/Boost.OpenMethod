@@ -610,7 +610,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#virtual_ptr_description_4">Description</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_with_vptr">with_vptr</a>
+<li><a href="#virtual_ptr_inplace_vptr">inplace_vptr</a>
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_synopsis_5">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_5">Description</a></li>
@@ -1961,17 +1961,17 @@ required by the library.
 </table>
 </div>
 <div class="paragraph">
-<p>The <code>with_vptr</code> CRTP class automates the creation and management of embedded
+<p>The <code>inplace_vptr</code> CRTP class automates the creation and management of embedded
 vptrs.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++">#include &lt;boost/openmethod/with_vptr.hpp&gt;
+<pre class="rouge highlight"><code data-lang="c++">#include &lt;boost/openmethod/inplace_vptr.hpp&gt;
 
-class Animal : public boost::openmethod::with_vptr&lt;Animal&gt; {
+class Animal : public boost::openmethod::inplace_vptr&lt;Animal&gt; {
 };
 
-class Cat : public Animal, public boost::openmethod::with_vptr&lt;Cat, Animal&gt; {
+class Cat : public Animal, public boost::openmethod::inplace_vptr&lt;Cat, Animal&gt; {
 };
 
 BOOST_OPENMETHOD(poke, (std::ostream&amp;, virtual_&lt;Animal&amp;&gt;), void);
@@ -1989,11 +1989,11 @@ int main() {
 </div>
 </div>
 <div class="paragraph">
-<p>If <code>with_vptr</code> is passed only the class being defined, it adds a vptr to it, and
+<p>If <code>inplace_vptr</code> is passed only the class being defined, it adds a vptr to it, and
 defines a <code>boost_openmethod_vptr</code> friend function. If more classes are passed,
 they must be the direct bases of the class potentially involved in open-method
 calls. Its constructor and destructor set the vptr to point to the v-table for
-the class. <code>with_vptr</code> also takes care of registering the classes, so this time
+the class. <code>inplace_vptr</code> also takes care of registering the classes, so this time
 the call to <code>BOOST_OPENMETHOD_CLASSES</code> is not needed.</p>
 </div>
 </div>
@@ -2787,7 +2787,7 @@ called to rebuild the dispatch tables.</p>
 <div class="paragraph">
 <p>This leads to a problem: any <code>virtual_ptr</code> in existence before <code>initialize</code> is
 called again becomes invalid. This also applies to vptrs that are stored inside
-objects by <code>with_vptr</code>.</p>
+objects by <code>inplace_vptr</code>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -3131,7 +3131,7 @@ virtual parameters.</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="ref_boostopenmethodwith_vptr_hpp">&lt;boost/openmethod/with_vptr.hpp&gt;</h5>
+<h5 id="ref_boostopenmethodinplace_vptr_hpp">&lt;boost/openmethod/inplace_vptr.hpp&gt;</h5>
 <div class="paragraph">
 <p>Provides support for storing v-table pointers directly in objects, in the same
 manner as native virtual functions.</p>
@@ -4811,29 +4811,29 @@ more information.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="virtual_ptr_with_vptr">with_vptr</h3>
+<h3 id="virtual_ptr_inplace_vptr">inplace_vptr</h3>
 <div class="sect3">
 <h4 id="virtual_ptr_synopsis_5">Synopsis</h4>
 <div class="paragraph">
-<p>Defined in &lt;boost/openmethod/with_vptr.hpp&gt;.</p>
+<p>Defined in &lt;boost/openmethod/inplace_vptr.hpp&gt;.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++">namespace boost::openmethod {
 
 template&lt;class Class, class Policy = BOOST_OPENMETHOD_DEFAULT_REGISTRY&gt;
-class with_vptr {
+class inplace_vptr {
   protected:
-    with_vptr();
-    ~with_vptr();
+    inplace_vptr();
+    ~inplace_vptr();
     friend auto boost_openmethod_vptr(const Class&amp; obj) -&gt; vptr_type;
 };
 
 template&lt;class Class, class Base, class... MoreBases&gt;
-class with_vptr {
+class inplace_vptr {
   protected:
-    with_vptr();
-    ~with_vptr();
+    inplace_vptr();
+    ~inplace_vptr();
     friend auto boost_openmethod_vptr(const Class&amp; obj) -&gt; vptr_type;
         // if sizeof(MoreBases...) &gt; 0
 };
@@ -4845,11 +4845,11 @@ class with_vptr {
 <div class="sect3">
 <h4 id="virtual_ptr_description_5">Description</h4>
 <div class="paragraph">
-<p><code>with_vptr</code> is a CRTP class template that embeds and manages a vptr across a
+<p><code>inplace_vptr</code> is a CRTP class template that embeds and manages a vptr across a
 class hierarchy.</p>
 </div>
 <div class="paragraph">
-<p>If <code>Class</code> has no <code>Bases</code>, <code>with_vptr</code> adds a <code>boost_openmethod_vptr</code> private
+<p>If <code>Class</code> has no <code>Bases</code>, <code>inplace_vptr</code> adds a <code>boost_openmethod_vptr</code> private
 member to <code>Class</code>. In either case, it sets the vptr to the v-table of <code>Class</code>
 from <code>Policy</code>. It also creates a <code>boost_openmethod_vptr</code> friend function that
 takes a a <code>const Class&amp;</code> and returns the embedded vptr.</p>
@@ -4861,7 +4861,7 @@ matter which one, as they all have the same value). This is to resolve
 ambiguities</p>
 </div>
 <div class="paragraph">
-<p>As part of its implementation, <code>with_vptr</code> may also declare one or two free
+<p>As part of its implementation, <code>inplace_vptr</code> may also declare one or two free
 functions (<code>boost_openmethod_policy</code> and <code>boost_openmethod_bases</code>) at certain
 levels of the hierarchy.</p>
 </div>
@@ -4872,7 +4872,7 @@ levels of the hierarchy.</p>
 <h5 id="virtual_ptr_constructor_2">constructor</h5>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++">with_vptr();</code></pre>
+<pre class="rouge highlight"><code data-lang="c++">inplace_vptr();</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -4885,7 +4885,7 @@ preserving the validity of the pointer across calls to <code>initialize</code>.<
 <h5 id="virtual_ptr_destructor_2">destructor</h5>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++">~with_vptr();</code></pre>
+<pre class="rouge highlight"><code data-lang="c++">~inplace_vptr();</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5612,7 +5612,7 @@ the same.</p>
 <div class="sect3">
 <h4 id="virtual_ptr_description_15">Description</h4>
 <div class="paragraph">
-<p><code>indirect_vptr</code> is a facet that makes <code>virtual_ptr</code>s and <code>with_vptr</code> use
+<p><code>indirect_vptr</code> is a facet that makes <code>virtual_ptr</code>s and <code>inplace_vptr</code> use
 pointers to pointers to v-tables, instead of straight pointers. As a
 consequence, they remain valid after a call to <code>initialize</code>.</p>
 </div>
@@ -6249,7 +6249,7 @@ the library uses a lightweight implementation based on the C stream functions.</
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-08 15:24:21 -0500
+Last updated 2025-06-22 13:38:14 -0400
 </div>
 </div>
 </body>

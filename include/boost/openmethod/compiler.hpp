@@ -267,6 +267,23 @@ struct compiler : detail::generic_compiler {
     static constexpr bool trace_enabled =
         Registry::template has_policy<policies::trace>;
     using indent = typename detail::trace_type<Registry>::indent;
+
+    template<typename Id, typename Signature>
+    const method*
+    operator[](const openmethod::method<Id, Signature, Registry>& fn) const {
+        auto type_id = Registry::rtti::template static_type<
+            openmethod::method<Id, Signature, Registry>>();
+        auto iter = std::find_if(
+            methods.begin(), methods.end(), [type_id](const method& m) {
+                return m.info->method_type_id == type_id;
+            });
+
+        if (iter != methods.end()) {
+            return &*iter;
+        }
+
+        return nullptr;
+    }
 };
 
 compiler() -> compiler<default_registry>;

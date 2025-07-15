@@ -197,18 +197,15 @@ BOOST_AUTO_TEST_CASE(test_use_classes_diamond) {
 /// ============================================================================
 // Test assign_slots.
 
-template<typename Compiler>
-auto get_method(const Compiler& comp, const detail::method_info& info) -> const
-    auto& {
-    for (const auto& m : comp.methods) {
-        if (m.info == &info) {
-            return m;
-        }
+auto check(const detail::generic_compiler::method* method)
+    -> const detail::generic_compiler::method* {
+    if (method) {
+        return method;
     }
 
     BOOST_FAIL("method not found");
 
-    return comp.methods.front();
+    return nullptr;
 }
 
 template<int>
@@ -244,8 +241,8 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a_b1_c) {
 
     auto comp = initialize<test_registry>();
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_B).slots.size() == 1u);
-    BOOST_TEST(get_method(comp, m_B).slots[0] == 0u);
+    BOOST_TEST_REQUIRE(check(comp[m_B])->slots.size() == 1u);
+    BOOST_TEST(check(comp[m_B])->slots[0] == 0u);
     BOOST_TEST(get_class<A>(comp)->vtbl.size() == 0u);
     BOOST_TEST(get_class<B>(comp)->vtbl.size() == 1u);
     BOOST_TEST(get_class<C>(comp)->vtbl.size() == 0u);
@@ -274,16 +271,16 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_c1) {
     ADD_METHOD(C);
     auto comp = initialize<test_registry>();
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_A).slots.size() == 1u);
-    BOOST_TEST(get_method(comp, m_A).slots[0] == 0u);
+    BOOST_TEST_REQUIRE(check(comp[m_A])->slots.size() == 1u);
+    BOOST_TEST(check(comp[m_A])->slots[0] == 0u);
     BOOST_TEST(get_class<A>(comp)->vtbl.size() == 1u);
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_B).slots.size() == 1u);
-    BOOST_TEST(get_method(comp, m_B).slots[0] == 1u);
+    BOOST_TEST_REQUIRE(check(comp[m_B])->slots.size() == 1u);
+    BOOST_TEST(check(comp[m_B])->slots[0] == 1u);
     BOOST_TEST(get_class<B>(comp)->vtbl.size() == 2u);
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_C).slots.size() == 1u);
-    BOOST_TEST(get_method(comp, m_C).slots[0] == 1u);
+    BOOST_TEST_REQUIRE(check(comp[m_C])->slots.size() == 1u);
+    BOOST_TEST(check(comp[m_C])->slots[0] == 1u);
     BOOST_TEST(get_class<C>(comp)->vtbl.size() == 2u);
 }
 
@@ -315,20 +312,20 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_d1_c1_d1) {
     ADD_METHOD(D);
     auto comp = initialize<test_registry>();
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_A).slots.size() == 1u);
-    BOOST_TEST(get_method(comp, m_A).slots[0] == 0u);
+    BOOST_TEST_REQUIRE(check(comp[m_A])->slots.size() == 1u);
+    BOOST_TEST(check(comp[m_A])->slots[0] == 0u);
     BOOST_TEST(get_class<A>(comp)->vtbl.size() == 1u);
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_B).slots.size() == 1u);
-    BOOST_TEST(get_method(comp, m_B).slots[0] == 1u);
+    BOOST_TEST_REQUIRE(check(comp[m_B])->slots.size() == 1u);
+    BOOST_TEST(check(comp[m_B])->slots[0] == 1u);
     BOOST_TEST(get_class<B>(comp)->vtbl.size() == 2u);
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_D).slots.size() == 1u);
-    BOOST_TEST(get_method(comp, m_D).slots[0] == 2u);
+    BOOST_TEST_REQUIRE(check(comp[m_D])->slots.size() == 1u);
+    BOOST_TEST(check(comp[m_D])->slots[0] == 2u);
     BOOST_TEST(get_class<D>(comp)->vtbl.size() == 4u);
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_C).slots.size() == 1u);
-    BOOST_TEST(get_method(comp, m_C).slots[0] == 3u);
+    BOOST_TEST_REQUIRE(check(comp[m_C])->slots.size() == 1u);
+    BOOST_TEST(check(comp[m_C])->slots[0] == 3u);
     BOOST_TEST(get_class<C>(comp)->vtbl.size() == 4u);
     // slots 0-2 in C are wasted, to make room for methods in B and D
 }
@@ -366,31 +363,31 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_d1_c1_d1_e2) {
     ADD_METHOD_N(E, 3);
     auto comp = initialize<test_registry>();
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_A).slots.size() == 1u);
-    BOOST_TEST(get_method(comp, m_A).slots[0] == 0u);
+    BOOST_TEST_REQUIRE(check(comp[m_A])->slots.size() == 1u);
+    BOOST_TEST(check(comp[m_A])->slots[0] == 0u);
     BOOST_TEST(get_class<A>(comp)->vtbl.size() == 1u);
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_B).slots.size() == 1u);
-    BOOST_TEST(get_method(comp, m_B).slots[0] == 1u);
+    BOOST_TEST_REQUIRE(check(comp[m_B])->slots.size() == 1u);
+    BOOST_TEST(check(comp[m_B])->slots[0] == 1u);
     BOOST_TEST(get_class<B>(comp)->vtbl.size() == 2u);
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_D).slots.size() == 1u);
-    BOOST_TEST(get_method(comp, m_D).slots[0] == 2u);
+    BOOST_TEST_REQUIRE(check(comp[m_D])->slots.size() == 1u);
+    BOOST_TEST(check(comp[m_D])->slots[0] == 2u);
     BOOST_TEST(get_class<D>(comp)->vtbl.size() == 4u);
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_C).slots.size() == 1u);
-    BOOST_TEST(get_method(comp, m_C).slots[0] == 3u);
+    BOOST_TEST_REQUIRE(check(comp[m_C])->slots.size() == 1u);
+    BOOST_TEST(check(comp[m_C])->slots[0] == 3u);
     BOOST_TEST(get_class<C>(comp)->vtbl.size() == 4u);
     // slots 0-2 in C are wasted, to make room for methods in B and D
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_E1).slots.size() == 1u);
-    BOOST_TEST(get_method(comp, m_E1).slots[0] == 1u);
+    BOOST_TEST_REQUIRE(check(comp[m_E1])->slots.size() == 1u);
+    BOOST_TEST(check(comp[m_E1])->slots[0] == 1u);
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_E2).slots.size() == 1u);
-    BOOST_TEST(get_method(comp, m_E2).slots[0] == 2u);
+    BOOST_TEST_REQUIRE(check(comp[m_E2])->slots.size() == 1u);
+    BOOST_TEST(check(comp[m_E2])->slots[0] == 2u);
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_E3).slots.size() == 1u);
-    BOOST_TEST(get_method(comp, m_E3).slots[0] == 4u);
+    BOOST_TEST_REQUIRE(check(comp[m_E3])->slots.size() == 1u);
+    BOOST_TEST(check(comp[m_E3])->slots[0] == 4u);
 
     BOOST_TEST(get_class<E>(comp)->vtbl.size() == 5u);
 }
@@ -420,16 +417,16 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a1_c1_b1) {
     ADD_METHOD(C);
     auto comp = initialize<test_registry>();
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_A).slots.size() == 1u);
-    BOOST_TEST(get_method(comp, m_A).slots[0] == 0u);
+    BOOST_TEST_REQUIRE(check(comp[m_A])->slots.size() == 1u);
+    BOOST_TEST(check(comp[m_A])->slots[0] == 0u);
     BOOST_TEST(get_class<A>(comp)->vtbl.size() == 1u);
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_C).slots.size() == 1u);
-    BOOST_TEST(get_method(comp, m_C).slots[0] == 1u);
+    BOOST_TEST_REQUIRE(check(comp[m_C])->slots.size() == 1u);
+    BOOST_TEST(check(comp[m_C])->slots[0] == 1u);
     BOOST_TEST(get_class<C>(comp)->vtbl.size() == 3u);
 
-    BOOST_TEST_REQUIRE(get_method(comp, m_B).slots.size() == 1u);
-    BOOST_TEST(get_method(comp, m_B).slots[0] == 2u);
+    BOOST_TEST_REQUIRE(check(comp[m_B])->slots.size() == 1u);
+    BOOST_TEST(check(comp[m_B])->slots[0] == 2u);
     BOOST_TEST(get_class<B>(comp)->first_slot == 2u);
     BOOST_TEST(get_class<B>(comp)->vtbl.size() == 1u);
 }

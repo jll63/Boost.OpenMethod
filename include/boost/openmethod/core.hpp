@@ -987,14 +987,14 @@ struct valid_method_parameter<virtual_<T>, Registry>
 } // namespace detail
 
 template<
-    typename Method, typename ReturnType,
+    typename Name, typename ReturnType,
     class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
 class method;
 
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
-class method<Name, auto(Parameters...)->ReturnType, Registry>
-    : public std::conditional_t<
+class method<Name, ReturnType(Parameters...), Registry>
+    : std::conditional_t<
           Registry::deferred_static_rtti, detail::deferred_method_info,
           detail::method_info> {
     // Aliases used in implementation only. Everything extracted from template
@@ -1065,7 +1065,8 @@ class method<Name, auto(Parameters...)->ReturnType, Registry>
     template<auto, typename>
     struct thunk;
 
-    friend class generator;
+    template<auto, typename>
+    struct thunk;
 
     method();
     method(const method&) = delete;
@@ -1170,22 +1171,22 @@ class method<Name, auto(Parameters...)->ReturnType, Registry>
 
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
-method<Name, auto(Parameters...)->ReturnType, Registry>
-    method<Name, auto(Parameters...)->ReturnType, Registry>::fn;
+method<Name, ReturnType(Parameters...), Registry>
+    method<Name, ReturnType(Parameters...), Registry>::fn;
 
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 template<auto>
 typename method<
-    Name, auto(Parameters...)->ReturnType, Registry>::FunctionPointer
-    method<Name, auto(Parameters...)->ReturnType, Registry>::next;
+    Name, ReturnType(Parameters...), Registry>::FunctionPointer
+    method<Name, ReturnType(Parameters...), Registry>::next;
 
 template<typename T>
 constexpr bool is_method = std::is_base_of_v<detail::method_info, T>;
 
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
-method<Name, auto(Parameters...)->ReturnType, Registry>::method() {
+method<Name, ReturnType(Parameters...), Registry>::method() {
     this->slots_strides_ptr = slots_strides;
 
     if constexpr (!Registry::deferred_static_rtti) {
@@ -1208,7 +1209,7 @@ method<Name, auto(Parameters...)->ReturnType, Registry>::method() {
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 void method<
-    Name, auto(Parameters...)->ReturnType, Registry>::resolve_type_ids() {
+    Name, ReturnType(Parameters...), Registry>::resolve_type_ids() {
     using namespace detail;
     this->method_type_id = rtti::template static_type<method>();
     this->return_type_id = rtti::template static_type<
@@ -1222,19 +1223,19 @@ void method<
 
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
-std::size_t method<Name, auto(Parameters...)->ReturnType, Registry>::
+std::size_t method<Name, ReturnType(Parameters...), Registry>::
     slots_strides[2 * Arity - 1];
 
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
-method<Name, auto(Parameters...)->ReturnType, Registry>::~method() {
+method<Name, ReturnType(Parameters...), Registry>::~method() {
     Registry::methods.remove(*this);
 }
 
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 template<class Error>
-auto method<Name, auto(Parameters...)->ReturnType, Registry>::
+auto method<Name, ReturnType(Parameters...), Registry>::
     check_static_offset(std::size_t actual, std::size_t expected) const
     -> void {
     using namespace detail;
@@ -1260,7 +1261,7 @@ auto method<Name, auto(Parameters...)->ReturnType, Registry>::
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 BOOST_FORCEINLINE auto
-method<Name, auto(Parameters...)->ReturnType, Registry>::operator()(
+method<Name, ReturnType(Parameters...), Registry>::operator()(
     detail::remove_virtual<Parameters>... args) const -> ReturnType {
     using namespace detail;
     auto pf = resolve(parameter_traits<Parameters, Registry>::peek(args)...);
@@ -1272,8 +1273,8 @@ template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 template<typename... ArgType>
 BOOST_FORCEINLINE typename method<
-    Name, auto(Parameters...)->ReturnType, Registry>::FunctionPointer
-method<Name, auto(Parameters...)->ReturnType, Registry>::resolve(
+    Name, ReturnType(Parameters...), Registry>::FunctionPointer
+method<Name, ReturnType(Parameters...), Registry>::resolve(
     const ArgType&... args) const {
     using namespace detail;
 
@@ -1296,7 +1297,7 @@ template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 template<typename ArgType>
 BOOST_FORCEINLINE auto
-method<Name, auto(Parameters...)->ReturnType, Registry>::vptr(
+method<Name, ReturnType(Parameters...), Registry>::vptr(
     const ArgType& arg) const -> vptr_type {
     if constexpr (detail::is_virtual_ptr<ArgType>) {
         return arg.vptr();
@@ -1309,7 +1310,7 @@ template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 template<typename MethodArgList, typename ArgType, typename... MoreArgTypes>
 BOOST_FORCEINLINE auto
-method<Name, auto(Parameters...)->ReturnType, Registry>::resolve_uni(
+method<Name, ReturnType(Parameters...), Registry>::resolve_uni(
     const ArgType& arg, const MoreArgTypes&... more_args) const
     -> detail::word {
 
@@ -1338,7 +1339,7 @@ template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 template<typename MethodArgList, typename ArgType, typename... MoreArgTypes>
 BOOST_FORCEINLINE auto
-method<Name, auto(Parameters...)->ReturnType, Registry>::resolve_multi_first(
+method<Name, ReturnType(Parameters...), Registry>::resolve_multi_first(
     const ArgType& arg, const MoreArgTypes&... more_args) const
     -> detail::word {
 
@@ -1379,7 +1380,7 @@ template<
     std::size_t VirtualArg, typename MethodArgList, typename ArgType,
     typename... MoreArgTypes>
 BOOST_FORCEINLINE auto
-method<Name, auto(Parameters...)->ReturnType, Registry>::resolve_multi_next(
+method<Name, ReturnType(Parameters...), Registry>::resolve_multi_next(
     vptr_type dispatch, const ArgType& arg,
     const MoreArgTypes&... more_args) const -> detail::word {
 
@@ -1423,7 +1424,7 @@ method<Name, auto(Parameters...)->ReturnType, Registry>::resolve_multi_next(
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 template<auto Fn>
-inline auto method<Name, auto(Parameters...)->ReturnType, Registry>::has_next()
+inline auto method<Name, ReturnType(Parameters...), Registry>::has_next()
     -> bool {
     if (next<Fn> == fn_not_implemented) {
         return false;
@@ -1441,7 +1442,7 @@ inline auto method<Name, auto(Parameters...)->ReturnType, Registry>::has_next()
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 BOOST_NORETURN auto
-method<Name, auto(Parameters...)->ReturnType, Registry>::fn_not_implemented(
+method<Name, ReturnType(Parameters...), Registry>::fn_not_implemented(
     detail::remove_virtual<Parameters>... args) -> ReturnType {
     if constexpr (Registry::template has_policy<policies::error_handler>) {
         not_implemented_error error;
@@ -1457,7 +1458,7 @@ method<Name, auto(Parameters...)->ReturnType, Registry>::fn_not_implemented(
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 BOOST_NORETURN auto
-method<Name, auto(Parameters...)->ReturnType, Registry>::fn_ambiguous(
+method<Name, ReturnType(Parameters...), Registry>::fn_ambiguous(
     detail::remove_virtual<Parameters>... args) -> ReturnType {
     if constexpr (Registry::template has_policy<policies::error_handler>) {
         ambiguous_error error;
@@ -1483,7 +1484,7 @@ template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 template<
     auto Overrider, typename OverriderReturn, typename... OverriderParameters>
-auto method<Name, auto(Parameters...)->ReturnType, Registry>::
+auto method<Name, ReturnType(Parameters...), Registry>::
     thunk<Overrider, OverriderReturn (*)(OverriderParameters...)>::fn(
         detail::remove_virtual<Parameters>... arg) -> ReturnType {
     using namespace detail;
@@ -1555,7 +1556,7 @@ method<Name, ReturnType(Parameters...), Registry>::override_impl<
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 template<auto Function, typename FnReturnType>
-void method<Name, auto(Parameters...)->ReturnType, Registry>::override_impl<
+void method<Name, ReturnType(Parameters...), Registry>::override_impl<
     Function, FnReturnType>::resolve_type_ids() {
     using namespace detail;
 

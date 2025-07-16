@@ -339,12 +339,16 @@ inline vptr_type null_vptr = nullptr;
 
 template<class Class, class Registry, typename = void>
 class virtual_ptr_impl {
-  protected:
+    //protected:
+  public:
     static constexpr bool use_indirect_vptrs =
         Registry::template has_policy<policies::indirect_vptr>;
 
     std::conditional_t<use_indirect_vptrs, const vptr_type*, vptr_type> vp;
     Class* obj;
+
+    template<class, class Other>
+    friend auto final_virtual_ptr(Other&&) -> virtual_ptr<Other, Registry>;
 
   public:
     using traits = virtual_traits<Class&, Registry>;
@@ -507,17 +511,19 @@ class virtual_ptr_impl<
     using traits = virtual_traits<Class, Registry>;
     using element_type = typename Class::element_type;
 
+    static constexpr bool use_indirect_vptrs =
+        Registry::template has_policy<policies::indirect_vptr>;
+
     template<class, class>
     friend class virtual_ptr;
     template<class, class, typename>
     friend class virtual_ptr_impl;
     template<class, class>
     friend struct virtual_traits;
+    template<class, class, class Other>
+    friend auto final_virtual_ptr(Other&&);
 
   protected:
-    static constexpr bool use_indirect_vptrs =
-        Registry::template has_policy<policies::indirect_vptr>;
-
     std::conditional_t<use_indirect_vptrs, const vptr_type*, vptr_type> vp;
     Class obj;
 
@@ -736,6 +742,43 @@ class virtual_ptr_impl<
 
 } // namespace detail
 
+template<class Registry, typename Argype>
+inline auto final_virtual_ptr(Argype&& obj) {
+    using namespace detail;
+    using VirtualPtr = virtual_ptr<std::remove_reference_t<Argype>, Registry>;
+    using Class = typename VirtualPtr::element_type;
+    using Traits = virtual_traits<Argype, Registry>;
+
+    if constexpr (Registry::runtime_checks && is_polymorphic<Registry, Class>) {
+
+        // check that dynamic type == static type
+        auto static_type = Registry::rtti::template static_type<Class>();
+        auto dynamic_type = Registry::rtti::dynamic_type(Traits::peek(obj));
+
+        if (dynamic_type != static_type) {
+            if constexpr (is_not_void<typename Registry::error_handler>) {
+                final_error error;
+                error.static_type = static_type;
+                error.dynamic_type = dynamic_type;
+                Registry::error_handler::error(error);
+            }
+
+            abort();
+        }
+    }
+
+    return VirtualPtr(
+        std::forward<Argype>(obj),
+        box_vptr<VirtualPtr::use_indirect_vptrs>(
+            Registry::template static_vptr<Class>));
+}
+
+template<class Class>
+inline auto final_virtual_ptr(Class&& obj) {
+    return final_virtual_ptr<BOOST_OPENMETHOD_DEFAULT_REGISTRY, Class>(
+        std::forward<Class>(obj));
+}
+
 template<class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
 class virtual_ptr : public detail::virtual_ptr_impl<Class, Registry> {
     using impl = detail::virtual_ptr_impl<Class, Registry>;
@@ -757,41 +800,7 @@ class virtual_ptr : public detail::virtual_ptr_impl<Class, Registry> {
 
     template<class Other>
     static auto final(Other&& obj) {
-        using namespace detail;
-        using other_traits = virtual_traits<Other, Registry>;
-        using other_class = typename other_traits::virtual_type;
-
-        static_assert(
-            std::is_base_of_v<element_type, other_class> ||
-            std::is_base_of_v<other_class, element_type>);
-
-        if constexpr (
-            Registry::runtime_checks &&
-            is_polymorphic<Registry, typename impl::traits::virtual_type> &&
-            is_polymorphic<Registry, other_class>) {
-
-            // check that dynamic type == static type
-            auto static_type =
-                Registry::rtti::template static_type<other_class>();
-            type_id dynamic_type =
-                Registry::rtti::dynamic_type(other_traits::peek(obj));
-
-            if (dynamic_type != static_type) {
-                if constexpr (is_not_void<typename Registry::error_handler>) {
-                    final_error error;
-                    error.static_type = static_type;
-                    error.dynamic_type = dynamic_type;
-                    Registry::error_handler::error(error);
-                }
-
-                abort();
-            }
-        }
-
-        return virtual_ptr(
-            std::forward<Other>(obj),
-            box_vptr<impl::use_indirect_vptrs>(
-                Registry::template static_vptr<other_class>));
+        return final_virtual_ptr<Registry>(std::forward<Other>(obj));
     }
 
     auto vptr() const {
@@ -808,18 +817,6 @@ virtual_ptr(Class&&) -> virtual_ptr<Class, BOOST_OPENMETHOD_DEFAULT_REGISTRY>;
 // Alas this is not allowed:
 // template<class Registry, class Class>
 // virtual_ptr<Registry>(Class&) -> virtual_ptr<Class, Registry>;
-
-template<class Registry, class Class>
-inline auto final_virtual_ptr(Class&& obj) {
-    return virtual_ptr<std::remove_reference_t<Class>, Registry>::final(
-        std::forward<Class>(obj));
-}
-
-template<class Class>
-inline auto final_virtual_ptr(Class&& obj) {
-    return virtual_ptr<std::remove_reference_t<Class>>::final(
-        std::forward<Class>(obj));
-}
 
 template<class Left, class Right, class Registry>
 auto operator==(
@@ -1177,8 +1174,7 @@ method<Name, ReturnType(Parameters...), Registry>
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 template<auto>
-typename method<
-    Name, ReturnType(Parameters...), Registry>::FunctionPointer
+typename method<Name, ReturnType(Parameters...), Registry>::FunctionPointer
     method<Name, ReturnType(Parameters...), Registry>::next;
 
 template<typename T>
@@ -1208,8 +1204,7 @@ method<Name, ReturnType(Parameters...), Registry>::method() {
 
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
-void method<
-    Name, ReturnType(Parameters...), Registry>::resolve_type_ids() {
+void method<Name, ReturnType(Parameters...), Registry>::resolve_type_ids() {
     using namespace detail;
     this->method_type_id = rtti::template static_type<method>();
     this->return_type_id = rtti::template static_type<
@@ -1223,8 +1218,8 @@ void method<
 
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
-std::size_t method<Name, ReturnType(Parameters...), Registry>::
-    slots_strides[2 * Arity - 1];
+std::size_t method<
+    Name, ReturnType(Parameters...), Registry>::slots_strides[2 * Arity - 1];
 
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
@@ -1235,9 +1230,8 @@ method<Name, ReturnType(Parameters...), Registry>::~method() {
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 template<class Error>
-auto method<Name, ReturnType(Parameters...), Registry>::
-    check_static_offset(std::size_t actual, std::size_t expected) const
-    -> void {
+auto method<Name, ReturnType(Parameters...), Registry>::check_static_offset(
+    std::size_t actual, std::size_t expected) const -> void {
     using namespace detail;
     using error_handler =
         typename Registry::template policy<policies::error_handler>;
@@ -1272,10 +1266,10 @@ method<Name, ReturnType(Parameters...), Registry>::operator()(
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 template<typename... ArgType>
-BOOST_FORCEINLINE typename method<
-    Name, ReturnType(Parameters...), Registry>::FunctionPointer
-method<Name, ReturnType(Parameters...), Registry>::resolve(
-    const ArgType&... args) const {
+BOOST_FORCEINLINE
+    typename method<Name, ReturnType(Parameters...), Registry>::FunctionPointer
+    method<Name, ReturnType(Parameters...), Registry>::resolve(
+        const ArgType&... args) const {
     using namespace detail;
 
     Registry::check_initialized();
@@ -1296,8 +1290,7 @@ method<Name, ReturnType(Parameters...), Registry>::resolve(
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 template<typename ArgType>
-BOOST_FORCEINLINE auto
-method<Name, ReturnType(Parameters...), Registry>::vptr(
+BOOST_FORCEINLINE auto method<Name, ReturnType(Parameters...), Registry>::vptr(
     const ArgType& arg) const -> vptr_type {
     if constexpr (detail::is_virtual_ptr<ArgType>) {
         return arg.vptr();

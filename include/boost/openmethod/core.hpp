@@ -34,13 +34,13 @@
 
 namespace boost::openmethod {
 
+template<class Registry, class Class>
+constexpr bool is_polymorphic = Registry::rtti::template is_polymorphic<Class>;
+
 // =============================================================================
 // Helpers
 
 namespace detail {
-
-template<class Registry, class Class>
-constexpr bool is_polymorphic = Registry::rtti::template is_polymorphic<Class>;
 
 using macro_default_registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY;
 
@@ -278,6 +278,9 @@ struct use_classes {
 // =============================================================================
 // virtual_ptr
 
+template<class Registry, typename Argype>
+inline auto final_virtual_ptr(Argype&& obj);
+
 namespace detail {
 
 template<class Class, class Registry>
@@ -337,18 +340,17 @@ inline auto unbox_vptr(const vptr_type* vpp) {
 
 inline vptr_type null_vptr = nullptr;
 
+} // namespace detail
+
 template<class Class, class Registry, typename = void>
 class virtual_ptr_impl {
-    //protected:
   public:
     static constexpr bool use_indirect_vptrs =
         Registry::template has_policy<policies::indirect_vptr>;
 
+  protected:
     std::conditional_t<use_indirect_vptrs, const vptr_type*, vptr_type> vp;
     Class* obj;
-
-    template<class, class Other>
-    friend auto final_virtual_ptr(Other&&) -> virtual_ptr<Other, Registry>;
 
   public:
     using traits = virtual_traits<Class&, Registry>;
@@ -358,7 +360,8 @@ class virtual_ptr_impl {
     virtual_ptr_impl() = default;
 
     explicit virtual_ptr_impl(std::nullptr_t)
-        : vp(box_vptr<use_indirect_vptrs>(null_vptr)), obj(nullptr) {
+        : vp(detail::box_vptr<use_indirect_vptrs>(detail::null_vptr)),
+          obj(nullptr) {
     }
 
     template<
@@ -367,7 +370,8 @@ class virtual_ptr_impl {
             std::is_constructible_v<Class*, Other*> &&
             is_polymorphic<Registry, Class>>>
     virtual_ptr_impl(Other& other)
-        : vp(box_vptr<use_indirect_vptrs>(acquire_vptr<Registry>(other))),
+        : vp(detail::box_vptr<use_indirect_vptrs>(
+              detail::acquire_vptr<Registry>(other))),
           obj(&other) {
     }
 
@@ -379,7 +383,8 @@ class virtual_ptr_impl {
                 decltype(std::declval<virtual_ptr<Other, Registry>>().get())> &&
             is_polymorphic<Registry, Class>>>
     virtual_ptr_impl(Other* other)
-        : vp(box_vptr<use_indirect_vptrs>(acquire_vptr<Registry>(*other))),
+        : vp(detail::box_vptr<use_indirect_vptrs>(
+              detail::acquire_vptr<Registry>(*other))),
           obj(other) {
     }
 
@@ -422,7 +427,8 @@ class virtual_ptr_impl {
             is_polymorphic<Registry, Class>>>
     virtual_ptr_impl& operator=(Other& other) {
         obj = &other;
-        vp = box_vptr<use_indirect_vptrs>(acquire_vptr<Registry>(other));
+        vp = detail::box_vptr<use_indirect_vptrs>(
+            detail::acquire_vptr<Registry>(other));
         return *this;
     }
 
@@ -433,7 +439,8 @@ class virtual_ptr_impl {
             is_polymorphic<Registry, Class>>>
     virtual_ptr_impl& operator=(Other* other) {
         obj = other;
-        vp = box_vptr<use_indirect_vptrs>(acquire_vptr<Registry>(*other));
+        vp = detail::box_vptr<use_indirect_vptrs>(
+            detail::acquire_vptr<Registry>(*other));
         return *this;
     }
 
@@ -451,7 +458,7 @@ class virtual_ptr_impl {
 
     virtual_ptr_impl& operator=(std::nullptr_t) {
         obj = nullptr;
-        vp = box_vptr<use_indirect_vptrs>(null_vptr);
+        vp = detail::box_vptr<use_indirect_vptrs>(detail::null_vptr);
         return *this;
     }
 
@@ -482,6 +489,15 @@ class virtual_ptr_impl {
 
     template<class, class>
     friend struct virtual_traits;
+
+    template<class Other>
+    static auto final(Other&& obj) {
+        return final_virtual_ptr<Registry>(std::forward<Other>(obj));
+    }
+
+    auto vptr() const {
+        return detail::unbox_vptr(this->vp);
+    }
 };
 
 template<class Class, class Other, class Registry, typename = void>
@@ -520,8 +536,6 @@ class virtual_ptr_impl<
     friend class virtual_ptr_impl;
     template<class, class>
     friend struct virtual_traits;
-    template<class, class, class Other>
-    friend auto final_virtual_ptr(Other&&);
 
   protected:
     std::conditional_t<use_indirect_vptrs, const vptr_type*, vptr_type> vp;
@@ -530,11 +544,13 @@ class virtual_ptr_impl<
   public:
     static constexpr bool is_smart_ptr = true;
 
-    virtual_ptr_impl() : vp(box_vptr<use_indirect_vptrs>(null_vptr)) {
+    virtual_ptr_impl()
+        : vp(detail::box_vptr<use_indirect_vptrs>(detail::null_vptr)) {
     }
 
     explicit virtual_ptr_impl(std::nullptr_t)
-        : vp(box_vptr<use_indirect_vptrs>(null_vptr)), obj(nullptr) {
+        : vp(detail::box_vptr<use_indirect_vptrs>(detail::null_vptr)),
+          obj(nullptr) {
     }
 
     virtual_ptr_impl(const virtual_ptr_impl& other) = default;
@@ -546,8 +562,9 @@ class virtual_ptr_impl<
             std::is_constructible_v<Class, const Other&> &&
             is_polymorphic<Registry, element_type>>>
     virtual_ptr_impl(const Other& other)
-        : vp(box_vptr<use_indirect_vptrs>(
-              other ? acquire_vptr<Registry>(*other) : null_vptr)),
+        : vp(detail::box_vptr<use_indirect_vptrs>(
+              other ? detail::acquire_vptr<Registry>(*other)
+                    : detail::null_vptr)),
           obj(other) {
     }
 
@@ -558,8 +575,9 @@ class virtual_ptr_impl<
             std::is_constructible_v<Class, Other&> &&
             is_polymorphic<Registry, element_type>>>
     virtual_ptr_impl(Other& other)
-        : vp(box_vptr<use_indirect_vptrs>(
-              other ? acquire_vptr<Registry>(*other) : null_vptr)),
+        : vp(detail::box_vptr<use_indirect_vptrs>(
+              other ? detail::acquire_vptr<Registry>(*other)
+                    : detail::null_vptr)),
           obj(other) {
     }
 
@@ -576,8 +594,9 @@ class virtual_ptr_impl<
             std::is_constructible_v<Class, Other&&> &&
             is_polymorphic<Registry, element_type>>>
     virtual_ptr_impl(Other&& other)
-        : vp(box_vptr<use_indirect_vptrs>(
-              other ? acquire_vptr<Registry>(*other) : null_vptr)),
+        : vp(detail::box_vptr<use_indirect_vptrs>(
+              other ? detail::acquire_vptr<Registry>(*other)
+                    : detail::null_vptr)),
           obj(std::move(other)) {
     }
 
@@ -601,7 +620,7 @@ class virtual_ptr_impl<
 
     virtual_ptr_impl(virtual_ptr_impl&& other)
         : vp(other.vp), obj(std::move(other.obj)) {
-        other.vp = box_vptr<use_indirect_vptrs>(null_vptr);
+        other.vp = detail::box_vptr<use_indirect_vptrs>(detail::null_vptr);
     }
 
     template<
@@ -611,7 +630,7 @@ class virtual_ptr_impl<
             std::is_constructible_v<Class, Other&&>>>
     virtual_ptr_impl(virtual_ptr_impl<Other, Registry>&& other)
         : vp(other.vp), obj(std::move(other.obj)) {
-        other.vp = box_vptr<use_indirect_vptrs>(null_vptr);
+        other.vp = detail::box_vptr<use_indirect_vptrs>(detail::null_vptr);
     }
 
     template<typename Arg>
@@ -621,7 +640,7 @@ class virtual_ptr_impl<
 
     virtual_ptr_impl& operator=(std::nullptr_t) {
         obj = nullptr;
-        vp = box_vptr<use_indirect_vptrs>(null_vptr);
+        vp = detail::box_vptr<use_indirect_vptrs>(detail::null_vptr);
         return *this;
     }
 
@@ -633,7 +652,8 @@ class virtual_ptr_impl<
             is_polymorphic<Registry, element_type>>>
     virtual_ptr_impl& operator=(const Other& other) {
         obj = other;
-        vp = box_vptr<use_indirect_vptrs>(acquire_vptr<Registry>(*other));
+        vp = detail::box_vptr<use_indirect_vptrs>(
+            detail::acquire_vptr<Registry>(*other));
         return *this;
     }
 
@@ -644,8 +664,8 @@ class virtual_ptr_impl<
             std::is_assignable_v<Class, Other&&> &&
             is_polymorphic<Registry, element_type>>>
     virtual_ptr_impl& operator=(Other&& other) {
-        vp = box_vptr<use_indirect_vptrs>(
-            other ? acquire_vptr<Registry>(*other) : null_vptr);
+        vp = detail::box_vptr<use_indirect_vptrs>(
+            other ? detail::acquire_vptr<Registry>(*other) : detail::null_vptr);
         obj = std::move(other);
         return *this;
     }
@@ -683,7 +703,7 @@ class virtual_ptr_impl<
     virtual_ptr_impl& operator=(virtual_ptr_impl<Other, Registry>&& other) {
         obj = std::move(other.obj);
         vp = other.vp;
-        other.vp = box_vptr<use_indirect_vptrs>(null_vptr);
+        other.vp = detail::box_vptr<use_indirect_vptrs>(detail::null_vptr);
         return *this;
     }
 
@@ -738,9 +758,16 @@ class virtual_ptr_impl<
         return virtual_ptr<other_smart_ptr, Registry>(
             traits::template cast<other_smart_ptr>(std::move(obj)), vp);
     }
-};
 
-} // namespace detail
+    template<class Other>
+    static auto final(Other&& obj) {
+        return final_virtual_ptr<Registry>(std::forward<Other>(obj));
+    }
+
+    auto vptr() const {
+        return detail::unbox_vptr(this->vp);
+    }
+};
 
 template<class Registry, typename Argype>
 inline auto final_virtual_ptr(Argype&& obj) {
@@ -769,7 +796,7 @@ inline auto final_virtual_ptr(Argype&& obj) {
 
     return VirtualPtr(
         std::forward<Argype>(obj),
-        box_vptr<VirtualPtr::use_indirect_vptrs>(
+        detail::box_vptr<VirtualPtr::use_indirect_vptrs>(
             Registry::template static_vptr<Class>));
 }
 
@@ -780,15 +807,15 @@ inline auto final_virtual_ptr(Class&& obj) {
 }
 
 template<class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
-class virtual_ptr : public detail::virtual_ptr_impl<Class, Registry> {
-    using impl = detail::virtual_ptr_impl<Class, Registry>;
+class virtual_ptr : public virtual_ptr_impl<Class, Registry> {
+    using impl = virtual_ptr_impl<Class, Registry>;
 
   public:
-    using detail::virtual_ptr_impl<Class, Registry>::virtual_ptr_impl;
+    using virtual_ptr_impl<Class, Registry>::virtual_ptr_impl;
     using element_type = typename impl::element_type;
 
     template<class, class, typename>
-    friend class detail::virtual_ptr_impl;
+    friend class virtual_ptr_impl;
 
     template<
         typename Other,
@@ -796,15 +823,6 @@ class virtual_ptr : public detail::virtual_ptr_impl<Class, Registry> {
     virtual_ptr& operator=(Other&& other) {
         impl::operator=(std::forward<Other>(other));
         return *this;
-    }
-
-    template<class Other>
-    static auto final(Other&& obj) {
-        return final_virtual_ptr<Registry>(std::forward<Other>(obj));
-    }
-
-    auto vptr() const {
-        return detail::unbox_vptr(this->vp);
     }
 };
 

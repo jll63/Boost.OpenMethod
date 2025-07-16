@@ -12,13 +12,13 @@
 
 #include <memory>
 
-static_assert(detail::same_smart_ptr<
+static_assert(same_smart_ptr<
               std::shared_ptr<Animal>, std::shared_ptr<Dog>, default_registry>);
 
-static_assert(!detail::same_smart_ptr<
+static_assert(!same_smart_ptr<
               std::shared_ptr<Animal>, std::unique_ptr<Dog>, default_registry>);
 
-static_assert(!detail::same_smart_ptr<
+static_assert(!same_smart_ptr<
               std::shared_ptr<Animal>, shared_virtual_ptr<std::unique_ptr<Dog>>,
               default_registry>);
 

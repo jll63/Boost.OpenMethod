@@ -10,6 +10,14 @@
 
 #include <boost/openmethod/detail/static_list.hpp>
 
+#if BOOST_CXX_VERSION > 202002L
+#define BOOST_OPENMETHOD_DETAIL_CXX17(...)
+#define BOOST_OPENMETHOD_DETAIL_CXX20(...) __VA_ARGS__
+#else
+#define BOOST_OPENMETHOD_DETAIL_CXX17(...) __VA_ARGS__
+#define BOOST_OPENMETHOD_DETAIL_CXX20(...)
+#endif
+
 namespace boost::openmethod {
 
 namespace detail {

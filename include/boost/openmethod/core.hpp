@@ -37,6 +37,11 @@ namespace boost::openmethod {
 template<class Registry, class Class>
 constexpr bool is_polymorphic = Registry::rtti::template is_polymorphic<Class>;
 
+template<
+    class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY,
+    typename = void>
+class virtual_ptr;
+
 // =============================================================================
 // Helpers
 
@@ -191,6 +196,17 @@ struct parameter_traits {
     }
 };
 
+template<typename T, class Registry>
+struct parameter_traits<virtual_<T>, Registry> : virtual_traits<T, Registry> {};
+
+template<class Class, class Registry>
+struct parameter_traits<virtual_ptr<Class, Registry, void>, Registry>
+    : virtual_traits<virtual_ptr<Class, Registry, void>, Registry> {};
+
+template<class Class, class Registry>
+struct parameter_traits<const virtual_ptr<Class, Registry, void>&, Registry>
+    : virtual_traits<const virtual_ptr<Class, Registry, void>&, Registry> {};
+
 } // namespace detail
 
 // =============================================================================
@@ -264,16 +280,29 @@ struct use_classes {
     tuple_type tuple;
 };
 
+namespace detail {
+
+template<typename, class, typename = void>
+struct is_virtual_smart_ptr_aux : std::false_type {};
+
+template<typename Class, class Registry>
+struct is_virtual_smart_ptr_aux<
+    Class, Registry,
+    std::void_t<
+        typename virtual_traits<Class, Registry>::template rebind<Class>>>
+    : std::true_type {};
+
+} // namespace detail
+
+template<typename T, class Registry>
+constexpr bool is_virtual_smart_ptr =
+    detail::is_virtual_smart_ptr_aux<T, Registry>::value;
+
 // =============================================================================
 // virtual_ptr
 
 template<class Registry, typename Argype>
 inline auto final_virtual_ptr(Argype&& obj);
-
-template<
-    class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY,
-    typename = void>
-class virtual_ptr;
 
 namespace detail {
 
@@ -516,10 +545,12 @@ constexpr bool same_smart_ptr =
     same_smart_ptr_aux<Class, Other, Registry>::value;
 
 template<class Class, class Registry>
+BOOST_OPENMETHOD_DETAIL_CXX20(requires(is_virtual_smart_ptr<Class, Registry>))
 class virtual_ptr<
     Class, Registry,
-    std::void_t<
-        typename virtual_traits<Class, Registry>::template rebind<Class>>> {
+    BOOST_OPENMETHOD_DETAIL_CXX17(
+        std::void_t<typename virtual_traits<Class, Registry>::template rebind<
+            Class>>) BOOST_OPENMETHOD_DETAIL_CXX20(void)> {
 
     template<class, class, typename>
     friend class virtual_ptr;
@@ -1244,19 +1275,6 @@ auto method<Name, ReturnType(Parameters...), Registry>::check_static_offset(
 
 // -----------------------------------------------------------------------------
 // method dispatch
-
-namespace detail {
-template<typename T, class Registry>
-struct parameter_traits<virtual_<T>, Registry> : virtual_traits<T, Registry> {};
-
-template<class Class, class Registry>
-struct parameter_traits<virtual_ptr<Class, Registry, void>, Registry>
-    : virtual_traits<virtual_ptr<Class, Registry, void>, Registry> {};
-
-template<class Class, class Registry>
-struct parameter_traits<const virtual_ptr<Class, Registry, void>&, Registry>
-    : virtual_traits<const virtual_ptr<Class, Registry, void>&, Registry> {};
-} // namespace detail
 
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>

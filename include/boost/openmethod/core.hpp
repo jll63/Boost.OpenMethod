@@ -191,17 +191,6 @@ struct parameter_traits {
     }
 };
 
-template<typename T, class Registry>
-struct parameter_traits<virtual_<T>, Registry> : virtual_traits<T, Registry> {};
-
-template<class Class, class Registry>
-struct parameter_traits<virtual_ptr<Class, Registry>, Registry>
-    : virtual_traits<virtual_ptr<Class, Registry>, Registry> {};
-
-template<class Class, class Registry>
-struct parameter_traits<const virtual_ptr<Class, Registry>&, Registry>
-    : virtual_traits<const virtual_ptr<Class, Registry>&, Registry> {};
-
 } // namespace detail
 
 // =============================================================================
@@ -281,22 +270,29 @@ struct use_classes {
 template<class Registry, typename Argype>
 inline auto final_virtual_ptr(Argype&& obj);
 
+template<
+    class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY,
+    typename = void>
+class virtual_ptr;
+
 namespace detail {
 
 template<class Class, class Registry>
-struct is_virtual<virtual_ptr<Class, Registry>> : std::true_type {};
+struct is_virtual<virtual_ptr<Class, Registry, void>> : std::true_type {};
 
 template<class Class, class Registry>
-struct is_virtual<const virtual_ptr<Class, Registry>&> : std::true_type {};
+struct is_virtual<const virtual_ptr<Class, Registry, void>&> : std::true_type {
+};
 
 template<typename>
 struct is_virtual_ptr_aux : std::false_type {};
 
 template<class Class, class Registry>
-struct is_virtual_ptr_aux<virtual_ptr<Class, Registry>> : std::true_type {};
+struct is_virtual_ptr_aux<virtual_ptr<Class, Registry, void>> : std::true_type {
+};
 
 template<class Class, class Registry>
-struct is_virtual_ptr_aux<const virtual_ptr<Class, Registry>&>
+struct is_virtual_ptr_aux<const virtual_ptr<Class, Registry, void>&>
     : std::true_type {};
 
 template<typename T>
@@ -342,8 +338,11 @@ inline vptr_type null_vptr = nullptr;
 
 } // namespace detail
 
-template<class Class, class Registry, typename = void>
-class virtual_ptr_impl {
+template<class Class, class Registry, typename>
+class virtual_ptr {
+    template<class, class, typename>
+    friend class virtual_ptr;
+
   public:
     static constexpr bool use_indirect_vptrs =
         Registry::template has_policy<policies::indirect_vptr>;
@@ -357,9 +356,9 @@ class virtual_ptr_impl {
     using element_type = Class;
     static constexpr bool is_smart_ptr = false;
 
-    virtual_ptr_impl() = default;
+    virtual_ptr() = default;
 
-    explicit virtual_ptr_impl(std::nullptr_t)
+    explicit virtual_ptr(std::nullptr_t)
         : vp(detail::box_vptr<use_indirect_vptrs>(detail::null_vptr)),
           obj(nullptr) {
     }
@@ -369,7 +368,7 @@ class virtual_ptr_impl {
         typename = std::enable_if_t<
             std::is_constructible_v<Class*, Other*> &&
             is_polymorphic<Registry, Class>>>
-    virtual_ptr_impl(Other& other)
+    virtual_ptr(Other& other)
         : vp(detail::box_vptr<use_indirect_vptrs>(
               detail::acquire_vptr<Registry>(other))),
           obj(&other) {
@@ -382,7 +381,7 @@ class virtual_ptr_impl {
                 Class*,
                 decltype(std::declval<virtual_ptr<Other, Registry>>().get())> &&
             is_polymorphic<Registry, Class>>>
-    virtual_ptr_impl(Other* other)
+    virtual_ptr(Other* other)
         : vp(detail::box_vptr<use_indirect_vptrs>(
               detail::acquire_vptr<Registry>(*other))),
           obj(other) {
@@ -393,7 +392,7 @@ class virtual_ptr_impl {
         typename = std::enable_if_t<std::is_constructible_v<
             Class*,
             decltype(std::declval<virtual_ptr<Other, Registry>>().get())>>>
-    virtual_ptr_impl(const virtual_ptr<Other, Registry>& other)
+    virtual_ptr(const virtual_ptr<Other, Registry>& other)
         : vp(other.vp), obj(other.get()) {
     }
 
@@ -402,22 +401,22 @@ class virtual_ptr_impl {
         typename = std::enable_if_t<std::is_constructible_v<
             Class*,
             decltype(std::declval<virtual_ptr<Other, Registry>>().get())>>>
-    virtual_ptr_impl(virtual_ptr_impl<Other, Registry>& other)
+    virtual_ptr(virtual_ptr<Other, Registry>& other)
         : vp(other.vp), obj(other.get()) {
         // Why is this needed? Consider this conversion conversion from
         // smart to dumb pointer:
         //      virtual_ptr<std::shared_ptr<const Node>> p = ...;
         //      virtual_ptr<const Node> q = p;
         // Since 'p' is not const, in the absence of this ctor,
-        // virtual_ptr_impl(Other&) would be preferred to
-        // virtual_ptr_impl(const virtual_ptr<Other, Registry>& other), and
+        // virtual_ptr(Other&) would be preferred to
+        // virtual_ptr(const virtual_ptr<Other, Registry>& other), and
         // that is incorrect.
     }
 
     template<
         class Other,
         typename = std::enable_if_t<std::is_constructible_v<Class*, Other*>>>
-    virtual_ptr_impl(Other& other, decltype(vp) vp) : vp(vp), obj(&other) {
+    virtual_ptr(Other& other, decltype(vp) vp) : vp(vp), obj(&other) {
     }
 
     template<
@@ -425,7 +424,7 @@ class virtual_ptr_impl {
         typename = std::enable_if_t<
             std::is_assignable_v<Class*, Other*> &&
             is_polymorphic<Registry, Class>>>
-    virtual_ptr_impl& operator=(Other& other) {
+    virtual_ptr& operator=(Other& other) {
         obj = &other;
         vp = detail::box_vptr<use_indirect_vptrs>(
             detail::acquire_vptr<Registry>(other));
@@ -437,7 +436,7 @@ class virtual_ptr_impl {
         typename = std::enable_if_t<
             std::is_assignable_v<Class*, Other*> &&
             is_polymorphic<Registry, Class>>>
-    virtual_ptr_impl& operator=(Other* other) {
+    virtual_ptr& operator=(Other* other) {
         obj = other;
         vp = detail::box_vptr<use_indirect_vptrs>(
             detail::acquire_vptr<Registry>(*other));
@@ -449,14 +448,13 @@ class virtual_ptr_impl {
         typename = std::enable_if_t<std::is_assignable_v<
             Class*,
             decltype(std::declval<virtual_ptr<Other, Registry>>().get())>>>
-    virtual_ptr_impl&
-    operator=(const virtual_ptr_impl<Other, Registry>& other) {
+    virtual_ptr& operator=(const virtual_ptr<Other, Registry>& other) {
         obj = other.get();
         vp = other.vp;
         return *this;
     }
 
-    virtual_ptr_impl& operator=(std::nullptr_t) {
+    virtual_ptr& operator=(std::nullptr_t) {
         obj = nullptr;
         vp = detail::box_vptr<use_indirect_vptrs>(detail::null_vptr);
         return *this;
@@ -518,10 +516,16 @@ constexpr bool same_smart_ptr =
     same_smart_ptr_aux<Class, Other, Registry>::value;
 
 template<class Class, class Registry>
-class virtual_ptr_impl<
+class virtual_ptr<
     Class, Registry,
     std::void_t<
         typename virtual_traits<Class, Registry>::template rebind<Class>>> {
+
+    template<class, class, typename>
+    friend class virtual_ptr;
+
+    template<class, class>
+    friend struct virtual_traits;
 
   public:
     using traits = virtual_traits<Class, Registry>;
@@ -530,13 +534,6 @@ class virtual_ptr_impl<
     static constexpr bool use_indirect_vptrs =
         Registry::template has_policy<policies::indirect_vptr>;
 
-    template<class, class>
-    friend class virtual_ptr;
-    template<class, class, typename>
-    friend class virtual_ptr_impl;
-    template<class, class>
-    friend struct virtual_traits;
-
   protected:
     std::conditional_t<use_indirect_vptrs, const vptr_type*, vptr_type> vp;
     Class obj;
@@ -544,16 +541,16 @@ class virtual_ptr_impl<
   public:
     static constexpr bool is_smart_ptr = true;
 
-    virtual_ptr_impl()
+    virtual_ptr()
         : vp(detail::box_vptr<use_indirect_vptrs>(detail::null_vptr)) {
     }
 
-    explicit virtual_ptr_impl(std::nullptr_t)
+    explicit virtual_ptr(std::nullptr_t)
         : vp(detail::box_vptr<use_indirect_vptrs>(detail::null_vptr)),
           obj(nullptr) {
     }
 
-    virtual_ptr_impl(const virtual_ptr_impl& other) = default;
+    virtual_ptr(const virtual_ptr& other) = default;
 
     template<
         class Other,
@@ -561,7 +558,7 @@ class virtual_ptr_impl<
             same_smart_ptr<Class, Other, Registry> &&
             std::is_constructible_v<Class, const Other&> &&
             is_polymorphic<Registry, element_type>>>
-    virtual_ptr_impl(const Other& other)
+    virtual_ptr(const Other& other)
         : vp(detail::box_vptr<use_indirect_vptrs>(
               other ? detail::acquire_vptr<Registry>(*other)
                     : detail::null_vptr)),
@@ -574,7 +571,7 @@ class virtual_ptr_impl<
             same_smart_ptr<Class, Other, Registry> &&
             std::is_constructible_v<Class, Other&> &&
             is_polymorphic<Registry, element_type>>>
-    virtual_ptr_impl(Other& other)
+    virtual_ptr(Other& other)
         : vp(detail::box_vptr<use_indirect_vptrs>(
               other ? detail::acquire_vptr<Registry>(*other)
                     : detail::null_vptr)),
@@ -584,7 +581,7 @@ class virtual_ptr_impl<
     template<
         class Other,
         typename = std::enable_if_t<std::is_constructible_v<Class*, Other*>>>
-    virtual_ptr_impl(Other& other, decltype(vp) vp) : vp(vp), obj(&other) {
+    virtual_ptr(Other& other, decltype(vp) vp) : vp(vp), obj(&other) {
     }
 
     template<
@@ -593,7 +590,7 @@ class virtual_ptr_impl<
             same_smart_ptr<Class, Other, Registry> &&
             std::is_constructible_v<Class, Other&&> &&
             is_polymorphic<Registry, element_type>>>
-    virtual_ptr_impl(Other&& other)
+    virtual_ptr(Other&& other)
         : vp(detail::box_vptr<use_indirect_vptrs>(
               other ? detail::acquire_vptr<Registry>(*other)
                     : detail::null_vptr)),
@@ -605,7 +602,7 @@ class virtual_ptr_impl<
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Registry> &&
             std::is_constructible_v<Class, const Other&>>>
-    virtual_ptr_impl(const virtual_ptr_impl<Other, Registry>& other)
+    virtual_ptr(const virtual_ptr<Other, Registry>& other)
         : vp(other.vp), obj(other.obj) {
     }
 
@@ -614,12 +611,11 @@ class virtual_ptr_impl<
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Registry> &&
             std::is_constructible_v<Class, Other&>>>
-    virtual_ptr_impl(virtual_ptr_impl<Other, Registry>& other)
+    virtual_ptr(virtual_ptr<Other, Registry>& other)
         : vp(other.vp), obj(other.obj) {
     }
 
-    virtual_ptr_impl(virtual_ptr_impl&& other)
-        : vp(other.vp), obj(std::move(other.obj)) {
+    virtual_ptr(virtual_ptr&& other) : vp(other.vp), obj(std::move(other.obj)) {
         other.vp = detail::box_vptr<use_indirect_vptrs>(detail::null_vptr);
     }
 
@@ -628,17 +624,17 @@ class virtual_ptr_impl<
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Registry> &&
             std::is_constructible_v<Class, Other&&>>>
-    virtual_ptr_impl(virtual_ptr_impl<Other, Registry>&& other)
+    virtual_ptr(virtual_ptr<Other, Registry>&& other)
         : vp(other.vp), obj(std::move(other.obj)) {
         other.vp = detail::box_vptr<use_indirect_vptrs>(detail::null_vptr);
     }
 
     template<typename Arg>
-    virtual_ptr_impl(Arg&& obj, decltype(vp) vp)
+    virtual_ptr(Arg&& obj, decltype(vp) vp)
         : vp(vp), obj(std::forward<Arg>(obj)) {
     }
 
-    virtual_ptr_impl& operator=(std::nullptr_t) {
+    virtual_ptr& operator=(std::nullptr_t) {
         obj = nullptr;
         vp = detail::box_vptr<use_indirect_vptrs>(detail::null_vptr);
         return *this;
@@ -650,7 +646,7 @@ class virtual_ptr_impl<
             same_smart_ptr<Class, Other, Registry> &&
             std::is_assignable_v<Class, const Other&> &&
             is_polymorphic<Registry, element_type>>>
-    virtual_ptr_impl& operator=(const Other& other) {
+    virtual_ptr& operator=(const Other& other) {
         obj = other;
         vp = detail::box_vptr<use_indirect_vptrs>(
             detail::acquire_vptr<Registry>(*other));
@@ -663,7 +659,7 @@ class virtual_ptr_impl<
             same_smart_ptr<Class, Other, Registry> &&
             std::is_assignable_v<Class, Other&&> &&
             is_polymorphic<Registry, element_type>>>
-    virtual_ptr_impl& operator=(Other&& other) {
+    virtual_ptr& operator=(Other&& other) {
         vp = detail::box_vptr<use_indirect_vptrs>(
             other ? detail::acquire_vptr<Registry>(*other) : detail::null_vptr);
         obj = std::move(other);
@@ -675,21 +671,20 @@ class virtual_ptr_impl<
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Registry> &&
             std::is_assignable_v<Class, Other&>>>
-    virtual_ptr_impl& operator=(virtual_ptr_impl<Other, Registry>& other) {
+    virtual_ptr& operator=(virtual_ptr<Other, Registry>& other) {
         obj = other.obj;
         vp = other.vp;
         return *this;
     }
 
-    virtual_ptr_impl& operator=(const virtual_ptr_impl& other) = default;
+    virtual_ptr& operator=(const virtual_ptr& other) = default;
 
     template<
         class Other,
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Registry> &&
             std::is_assignable_v<Class, const Other&>>>
-    virtual_ptr_impl&
-    operator=(const virtual_ptr_impl<Other, Registry>& other) {
+    virtual_ptr& operator=(const virtual_ptr<Other, Registry>& other) {
         obj = other.obj;
         vp = other.vp;
         return *this;
@@ -700,7 +695,7 @@ class virtual_ptr_impl<
         typename = std::enable_if_t<
             same_smart_ptr<Class, Other, Registry> &&
             std::is_assignable_v<Class, Other&&>>>
-    virtual_ptr_impl& operator=(virtual_ptr_impl<Other, Registry>&& other) {
+    virtual_ptr& operator=(virtual_ptr<Other, Registry>&& other) {
         obj = std::move(other.obj);
         vp = other.vp;
         other.vp = detail::box_vptr<use_indirect_vptrs>(detail::null_vptr);
@@ -805,26 +800,6 @@ inline auto final_virtual_ptr(Class&& obj) {
     return final_virtual_ptr<BOOST_OPENMETHOD_DEFAULT_REGISTRY, Class>(
         std::forward<Class>(obj));
 }
-
-template<class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
-class virtual_ptr : public virtual_ptr_impl<Class, Registry> {
-    using impl = virtual_ptr_impl<Class, Registry>;
-
-  public:
-    using virtual_ptr_impl<Class, Registry>::virtual_ptr_impl;
-    using element_type = typename impl::element_type;
-
-    template<class, class, typename>
-    friend class virtual_ptr_impl;
-
-    template<
-        typename Other,
-        typename = std::enable_if_t<std::is_assignable_v<impl, Other>>>
-    virtual_ptr& operator=(Other&& other) {
-        impl::operator=(std::forward<Other>(other));
-        return *this;
-    }
-};
 
 template<class Class>
 virtual_ptr(Class&) -> virtual_ptr<Class, BOOST_OPENMETHOD_DEFAULT_REGISTRY>;
@@ -1269,6 +1244,19 @@ auto method<Name, ReturnType(Parameters...), Registry>::check_static_offset(
 
 // -----------------------------------------------------------------------------
 // method dispatch
+
+namespace detail {
+template<typename T, class Registry>
+struct parameter_traits<virtual_<T>, Registry> : virtual_traits<T, Registry> {};
+
+template<class Class, class Registry>
+struct parameter_traits<virtual_ptr<Class, Registry, void>, Registry>
+    : virtual_traits<virtual_ptr<Class, Registry, void>, Registry> {};
+
+template<class Class, class Registry>
+struct parameter_traits<const virtual_ptr<Class, Registry, void>&, Registry>
+    : virtual_traits<const virtual_ptr<Class, Registry, void>&, Registry> {};
+} // namespace detail
 
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>

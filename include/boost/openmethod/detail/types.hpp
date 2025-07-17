@@ -49,9 +49,6 @@ using type_id = const void*;
 template<typename T>
 struct virtual_;
 
-template<class Class, class Registry>
-class virtual_ptr;
-
 template<typename T, class Registry>
 struct virtual_traits;
 

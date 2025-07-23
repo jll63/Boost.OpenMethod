@@ -3,7 +3,7 @@
 # Distributed under the Boost Software License, Version 1.0.
 # https://www.boost.org/LICENSE_1_0.txt
 
-cmake_minimum_required(VERSION 3.5...3.20)
+cmake_minimum_required(VERSION 3.8...3.20)
 
 project(boost_openmethod VERSION "${BOOST_SUPERPROJECT_VERSION}" LANGUAGES CXX)
 
@@ -12,9 +12,6 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     set(BOOST_OPENMETHOD_IS_ROOT ON)
 endif()
 
-if(BOOST_OPENMETHOD_IS_ROOT)
-    include(CTest)
-endif()
 if(NOT BOOST_SUPERPROJECT_VERSION)
     option(BOOST_OPENMETHOD_INSTALL "Install boost::openmethod files" ON)
     option(BOOST_OPENMETHOD_BUILD_TESTS "Build boost::openmethod tests" ${BUILD_TESTING})
@@ -23,14 +20,26 @@ else()
     set(BOOST_OPENMETHOD_BUILD_TESTS ${BUILD_TESTING})
 endif()
 
+option(BOOST_OPENMETHOD_MRDOCS_BUILD "Build the target for MrDocs: see mrdocs.yml" OFF)
+
 if(BOOST_OPENMETHOD_IS_ROOT)
     #
     # Building inside Boost tree, but as a separate project e.g. on Travis or
     # other CI, or when producing Visual Studio Solution and Projects.
 
-    set(BOOST_INCLUDE_LIBRARIES openmethod)
+    include(CTest)
+
+    set(
+        BOOST_INCLUDE_LIBRARIES dynamic_bitset
+        mp11
+        preprocessor
+        assert
+        config
+        core)
     set(BOOST_EXCLUDE_LIBRARIES openmethod)
-    list(APPEND BOOST_INCLUDE_LIBRARIES test)
+    if (NOT BOOST_OPENMETHOD_MRDOCS_BUILD)
+        list(APPEND BOOST_INCLUDE_LIBRARIES test)
+    endif()
     if(BOOST_OPENMETHOD_BUILD_EXAMPLES)
         # list(APPEND BOOST_INCLUDE_LIBRARIES optional)
     endif()
@@ -58,11 +67,13 @@ target_link_libraries(
     Boost::preprocessor
 )
 
-if(BOOST_OPENMETHOD_BUILD_TESTS)
-  enable_testing()
-  add_subdirectory(test)
-endif()
+if (NOT BOOST_OPENMETHOD_MRDOCS_BUILD)
+    if(BOOST_OPENMETHOD_BUILD_TESTS)
+        enable_testing()
+        add_subdirectory(test)
+    endif()
 
-if(BOOST_OPENMETHOD_BUILD_EXAMPLES)
-  add_subdirectory(example)
+    if(BOOST_OPENMETHOD_BUILD_EXAMPLES)
+        add_subdirectory(example)
+    endif()
 endif()

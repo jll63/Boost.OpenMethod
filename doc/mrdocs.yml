@@ -6,48 +6,47 @@ input:
 # Patterns to filter out the source-files in the directories
 file-patterns:
   - '*.hpp'
-exclude:
-  - '../include/boost/url/impl'
-  - '../include/boost/url/grammar/impl'
-  - '../include/boost/url/rfc/impl'
+# exclude:
+#   - '../boost/libs/test'
+#   - '../include/boost/test/impl'
 
 # Filters
 include-symbols:
-  - 'boost::urls::**'
-see-below:
-  - 'boost::urls::format_arg'
-  - 'boost::urls::named_arg'
-  - 'boost::urls::see_below'
-  - 'boost::urls::*_t'
-  - 'boost::urls::grammar::see_below'
-  - 'boost::urls::string_token::see_below'
-  - 'boost::urls::decode_view::iterator'
-  - 'boost::urls::params_base::iterator'
-  - 'boost::urls::params_encoded_base::iterator'
-  - 'boost::urls::segments_base::iterator'
-  - 'boost::urls::segments_encoded_base::iterator'
-implementation-defined:
-  - 'boost::urls::detail'
-  - 'boost::urls::**::detail'
-  - 'boost::urls::*_unsafe'
-  - 'boost::urls::make_error_code'
-  - 'boost::urls::make_void'
-  - 'boost::urls::implementation_defined'
-  - 'boost::urls::grammar::implementation_defined'
-  - 'boost::urls::string_token::implementation_defined'
-  - 'boost::urls::grammar::*_t'
-  - 'boost::urls::grammar::make_error_*'
-  - 'boost::urls::grammar::operator_*'
-  - 'boost::urls::string_token::*_t'
-exclude-symbols:
-  - 'boost::urls::void_t'
+  - 'boost::openmethod::**'
+# see-below:
+#   - 'boost::urls::format_arg'
+#   - 'boost::urls::named_arg'
+#   - 'boost::urls::see_below'
+#   - 'boost::urls::*_t'
+#   - 'boost::urls::grammar::see_below'
+#   - 'boost::urls::string_token::see_below'
+#   - 'boost::urls::decode_view::iterator'
+#   - 'boost::urls::params_base::iterator'
+#   - 'boost::urls::params_encoded_base::iterator'
+#   - 'boost::urls::segments_base::iterator'
+#   - 'boost::urls::segments_encoded_base::iterator'
+# implementation-defined:
+#   - 'boost::urls::detail'
+#   - 'boost::urls::**::detail'
+#   - 'boost::urls::*_unsafe'
+#   - 'boost::urls::make_error_code'
+#   - 'boost::urls::make_void'
+#   - 'boost::urls::implementation_defined'
+#   - 'boost::urls::grammar::implementation_defined'
+#   - 'boost::urls::string_token::implementation_defined'
+#   - 'boost::urls::grammar::*_t'
+#   - 'boost::urls::grammar::make_error_*'
+#   - 'boost::urls::grammar::operator_*'
+#   - 'boost::urls::string_token::*_t'
+# exclude-symbols:
+#   - 'boost::urls::void_t'
 
 # Metadata Extraction
 private-bases: false
 
 # Generator
 generate: adoc
-base-url: https://www.github.com/boostorg/url/blob/develop/ # boost/url/url_view.hpp
+base-url: https://www.github.com/boostorg/openmethod/blob/develop/ # boost/url/url_view.hpp
 
 # Style
 verbose: true
@@ -55,7 +54,7 @@ multipage: true
 
 # The target for MrDocs simply includes all symbols defined in all
 # headers with the appropriate compilation options.
-# Nothing else should be included in the MrDocs configuration or 
+# Nothing else should be included in the MrDocs configuration or
 # would be useful to MrDocs.
 #
 # This single source file not only includes all symbols (the source
@@ -75,4 +74,4 @@ multipage: true
 # The other options are set just to ensure other targets are
 # ignored even if these options are set as ON in the cache.
 #
-cmake: '-D BOOST_URL_MRDOCS_BUILD=ON -D CMAKE_CXX_STANDARD=20 -D BOOST_URL_BUILD_FUZZERS=OFF -D BOOST_URL_BUILD_EXAMPLES=OFF -D BOOST_URL_BUILD_TESTS=OFF -D BUILD_TESTING=OFF'
+cmake: '-D BOOST_OPENMETHOD_MRDOCS_BUILD=ON -D CMAKE_CXX_STANDARD=20 -D BOOST_OPENMETHOD_BUILD_EXAMPLES=OFF -D BOOST_OPENMETHOD_BUILD_TESTS=OFF -D BUILD_TESTING=OFF'

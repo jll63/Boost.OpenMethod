@@ -37,9 +37,13 @@ namespace boost::openmethod {
 template<class Registry, class Class>
 constexpr bool is_polymorphic = Registry::rtti::template is_polymorphic<Class>;
 
+/** A virtual_ptr.
+*/
+
+
 template<
     class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY,
-    typename = void>
+    typename Void = void>
 class virtual_ptr;
 
 // =============================================================================

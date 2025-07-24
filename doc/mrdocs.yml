@@ -69,7 +69,7 @@ multipage: true
 # requires the user to clearly specify the targets via the
 # compilation database.
 #
-# The BOOST_URL_MRDOCS_BUILD=ON is the only option we usually need
+# The BOOST_OPENMETHOD_MRDOCS_BUILD=ON is the only option we usually need
 # here.
 # The other options are set just to ensure other targets are
 # ignored even if these options are set as ON in the cache.

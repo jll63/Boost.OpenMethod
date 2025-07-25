@@ -14,17 +14,23 @@
 # Project
 #
 #-------------------------------------------------
+
 cmake_minimum_required(VERSION 3.8...3.20)
+
 set(BOOST_OPENMETHOD_VERSION 1)
+
 if (BOOST_SUPERPROJECT_VERSION)
     set(BOOST_OPENMETHOD_VERSION ${BOOST_SUPERPROJECT_VERSION})
 endif ()
+
 project(boost_openmethod VERSION "${BOOST_OPENMETHOD_VERSION}" LANGUAGES CXX)
+
 set(BOOST_OPENMETHOD_IS_ROOT OFF)
+
 if (CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     set(BOOST_OPENMETHOD_IS_ROOT ON)
 endif ()
-#set(__ignore__ ${CMAKE_C_COMPILER})
+set(__ignore__ ${CMAKE_C_COMPILER})
 
 #-------------------------------------------------
 #
@@ -70,7 +76,7 @@ endforeach ()
 # Conditional dependencies
 if (NOT BOOST_OPENMETHOD_MRDOCS_BUILD)
     if (BUILD_TESTING OR BOOST_OPENMETHOD_BUILD_TESTS)
-        set(BOOST_OPENMETHOD_UNIT_TEST_LIBRARIES unit_test_framework)
+        set(BOOST_OPENMETHOD_UNIT_TEST_LIBRARIES test)
     endif()
     if (BOOST_OPENMETHOD_BUILD_EXAMPLES)
         #set(BOOST_OPENMETHOD_EXAMPLE_LIBRARIES json regex beast)
@@ -135,22 +141,24 @@ file(GLOB_RECURSE BOOST_OPENMETHOD_HEADERS CONFIGURE_DEPENDS include/boost/*.hpp
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/include/boost PREFIX "" FILES ${BOOST_OPENMETHOD_HEADERS})
 function(boost_openmethod_setup_properties target)
-    add_library(${target} INTERFACE ${BOOST_OPENMETHOD_HEADERS})
-    add_library(Boost::openmethod ALIAS boost_openmethod)
-    target_include_directories(${target} INTERFACE "${PROJECT_SOURCE_DIR}/include")
     target_link_libraries(${target} INTERFACE ${BOOST_OPENMETHOD_DEPENDENCIES})
 endfunction()
 
+add_library(boost_openmethod INTERFACE ${BOOST_OPENMETHOD_HEADERS})
+add_library(Boost::openmethod ALIAS boost_openmethod)
+target_include_directories(boost_openmethod INTERFACE "${PROJECT_SOURCE_DIR}/include")
 boost_openmethod_setup_properties(boost_openmethod)
+target_compile_features(boost_openmethod INTERFACE cxx_std_17)
 
 if (BOOST_OPENMETHOD_MRDOCS_BUILD)
     file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/mrdocs.cpp" "#include <boost/openmethod.hpp>\n")
     add_library(boost_openmethod_mrdocs "${CMAKE_CURRENT_BINARY_DIR}/mrdocs.cpp")
+    target_include_directories(boost_openmethod_mrdocs PUBLIC "${PROJECT_SOURCE_DIR}/include")
     boost_openmethod_setup_properties(boost_openmethod_mrdocs)
+    target_link_libraries(boost_openmethod_mrdocs PUBLIC Boost::openmethod)
     target_compile_definitions(boost_openmethod_mrdocs PUBLIC BOOST_OPENMETHOD_MRDOCS)
     return()
 endif()
-
 
 #-------------------------------------------------
 #

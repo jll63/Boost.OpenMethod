@@ -3,6 +3,8 @@
 # See accompanying file LICENSE_1_0.txt
 # or copy at http://www.boost.org/LICENSE_1_0.txt)
 
+message(STATUS "Building examples")
+
 if (CMAKE_BUILD_TYPE MATCHES "Release")
   if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-save-temps -masm=intel)

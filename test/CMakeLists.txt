@@ -8,6 +8,8 @@
 # Official repository: https://github.com/boostorg/url
 #
 
+message(STATUS "Building tests")
+
 # Custom target used by the boost super-project
 if(NOT TARGET tests)
     add_custom_target(tests)
@@ -53,8 +55,7 @@ foreach(test_cpp ${test_cpp_files})
     cmake_path(REMOVE_EXTENSION test_cpp LAST_ONLY OUTPUT_VARIABLE test)
     string(REGEX REPLACE ".*/" "" test ${test})
     add_executable(${test} ${test_cpp})
-    target_link_libraries(${test} PUBLIC Boost::openmethod)
-    target_link_libraries(${test} PUBLIC Boost::unit_test_framework)
+    target_link_libraries(${test} PUBLIC Boost::openmethod Boost::unit_test_framework)
     add_test(NAME ${test} COMMAND ${test})
     add_dependencies(tests ${test})
 endforeach()

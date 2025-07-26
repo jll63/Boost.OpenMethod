@@ -36,6 +36,10 @@ env:
   LCOV_BRANCH_COVERAGE: 0
   CODECOV_NAME: Github Actions
 
+permissions:
+  id-token: write
+  pages: write
+
 jobs:
   # posix:
   #   defaults:

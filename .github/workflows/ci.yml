@@ -455,6 +455,7 @@ jobs:
             ctest --output-on-failure --build-config ${{matrix.build_type}}
   antora:
     name: Antora Docs
+    runs-on: ubuntu-latest
     defaults:
       run:
         shell: bash

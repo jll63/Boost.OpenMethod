@@ -11,7 +11,7 @@
 # Introduction
 
 Open-methods are similar to virtual functions, but they are not required to be
-members of a class. By being both free and virtual, they provide a solution to
+members of a class. By being both free and virtual, tdoc/hello_world.adochey provide a solution to
 the Expression Problem:
 
 > Given a set of types, and a set of operations on these types, is it possible

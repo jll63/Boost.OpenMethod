@@ -13,6 +13,8 @@
 
 [width=100%]
 
+cpp:boost::openmethod[boost::openmethod]
+
 * Types
 
 cpp:boost::openmethod::not_implemented_error[not_implemented_error]

@@ -1,3 +1,4 @@
+:exampledir: ../example
 
 ## Hello World
 
@@ -6,7 +7,7 @@ functions:
 
 [source,c++]
 ----
-include::{exampledir}/virtual_func.cpp[tag=code]
+include::example$example/virtual_func.cpp[tag=code]
 ----
 
 We are going to rewrite this using open-methods.

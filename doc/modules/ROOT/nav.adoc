@@ -22,5 +22,7 @@
 // ** xref:examples/file-router.adoc[]
 // ** xref:examples/router.adoc[]
 // ** xref:examples/sanitize.adoc[]
-* xref:reference.adoc[Reference]
+* Tutorials
+** xref:hello_world.adoc[Hello World]
 // * xref:HelpCard.adoc[]
+* xref:reference:boost/openmethod.adoc[Reference]

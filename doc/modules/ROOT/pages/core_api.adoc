@@ -29,7 +29,7 @@ name can get tedious, so OpenMethod provides a macro for that:
 
 [source,c++]
 ----
-include::{exampledir}/core_api.cpp[tag=method]
+include::example$core_api.cpp[tag=method]
 ----
 
 NOTE: BOOST_OPENMETHOD and associated macros use `BOOST_OPENMETHOD_ID` in
@@ -48,7 +48,7 @@ Overriders are ordinary functions, added to a method using the nested template
 
 [source,c++]
 ----
-include::{exampledir}/core_api.cpp[tag=poke_cat]
+include::example$core_api.cpp[tag=poke_cat]
 ----
 
 NOTE: `override` can register multiple overriders.
@@ -58,14 +58,14 @@ identifier. In the meantime, OpenMethod provides a small convenience macro:
 
 [source,c++]
 ----
-include::{exampledir}/core_api.cpp[tag=poke_dog]
+include::example$core_api.cpp[tag=poke_dog]
 ----
 
 `next` is available from the method's nested `next` template:
 
 [source,c++]
 ----
-include::{exampledir}/core_api.cpp[tag=poke_bulldog]
+include::example$core_api.cpp[tag=poke_bulldog]
 ----
 
 NOTE: Since the function uses itself as a template argument in its body, its
@@ -81,12 +81,12 @@ We register the classes with `use_classes`:
 
 [source,c++]
 ----
-include::{exampledir}/core_api.cpp[tag=use_classes]
+include::example$core_api.cpp[tag=use_classes]
 ----
 
 Finally, we call the method via the static member of the method class `fn`:
 
 [source,c++]
 ----
-include::{exampledir}/core_api.cpp[tag=main]
+include::example$core_api.cpp[tag=main]
 ----

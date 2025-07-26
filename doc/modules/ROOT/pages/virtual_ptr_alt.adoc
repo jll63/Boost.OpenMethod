@@ -9,7 +9,7 @@ For example, the `poke` open-method in the Animals example can be rewritten as:
 
 [source,c++]
 ----
-include::{exampledir}/virtual_.cpp[tag=virtual_parameter,indent=0]
+include::example$virtual_.cpp[tag=virtual_parameter,indent=0]
 
 int main() {
     boost::openmethod::initialize();
@@ -39,7 +39,7 @@ native virtual functions:
 
 [source,c++]
 ----
-include::{exampledir}/virtual_.cpp[tag=virtual_intrusive,indent=0]
+include::example$virtual_.cpp[tag=virtual_intrusive,indent=0]
 
 int main() {
     boost::openmethod::initialize();
@@ -58,7 +58,7 @@ vptrs.
 
 [source,c++]
 ----
-include::{exampledir}/virtual_.cpp[tag=inplace_vptr,indent=0]
+include::example$virtual_.cpp[tag=inplace_vptr,indent=0]
 
 int main() {
     boost::openmethod::initialize();

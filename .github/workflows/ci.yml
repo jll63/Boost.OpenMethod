@@ -506,3 +506,13 @@ jobs:
         with:
           name: antora-docs-${{ matrix.name }}
           path: doc/build/site
+
+      - name: Upload static files as artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: doc/build/site
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
+        with:
+          folder: antora

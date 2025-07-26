@@ -7,7 +7,7 @@ functions:
 
 [source,c++]
 ----
-include::example$example/virtual_func.cpp[tag=code]
+include::example$virtual_func.cpp[tag=code]
 ----
 
 We are going to rewrite this using open-methods.
@@ -16,7 +16,7 @@ First we remove the `poke` virtual functions from the domain classes:
 
 [source,c++]
 ----
-include::example$example/hello_world.cpp[tag=domain_classes]
+include::example$hello_world.cpp[tag=domain_classes]
 ----
 
 Note that the Animal classes do not depend on iostreams anymore. This is a major
@@ -29,7 +29,7 @@ namespace.
 
 [source,c++]
 ----
-include::example$example/hello_world.cpp[tag=method]
+include::example$hello_world.cpp[tag=method]
 ----
 
 This defines a free function called `poke`, which takes two arguments. The first
@@ -46,7 +46,7 @@ Let's add overriders for `Cat` and `Dog`:
 
 [source,c++]
 ----
-include::example$example/hello_world.cpp[tag=overriders]
+include::example$hello_world.cpp[tag=overriders]
 ----
 
 `Bulldog::poke` calls the `poke` it overrides in its `Dog` base. The equivalent
@@ -56,7 +56,7 @@ been called if the overrider did not exist.
 
 [source,c++]
 ----
-include::example$example/hello_world.cpp[tag=next]
+include::example$hello_world.cpp[tag=next]
 ----
 
 All classes involved in open-method calls need to be registered using the
@@ -64,7 +64,7 @@ All classes involved in open-method calls need to be registered using the
 
 [source,c++]
 ----
-include::example$example/hello_world.cpp[tag=classes]
+include::example$hello_world.cpp[tag=classes]
 ----
 
 Classes can be registered incrementally, as long as all the direct bases of a
@@ -86,7 +86,7 @@ It builds the dispatch tables. Typically this is done in `main`:
 
 [source,c++]
 ----
-include::example$example/hello_world.cpp[tag=main,indent=0]
+include::example$hello_world.cpp[tag=main,indent=0]
 ----
 
 We call `poke` like any ordinary function. We can pass it the animals by
@@ -95,5 +95,5 @@ reference, because `virtual_ptr` has a conversion constructor for that:
 
 [source,c++]
 ----
-include::example$example/hello_world.cpp[tag=call]
+include::example$hello_world.cpp[tag=call]
 ----

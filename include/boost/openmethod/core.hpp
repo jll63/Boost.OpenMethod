@@ -40,7 +40,6 @@ constexpr bool is_polymorphic = Registry::rtti::template is_polymorphic<Class>;
 /** A virtual_ptr.
 */
 
-
 template<
     class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY,
     typename Void = void>
@@ -305,8 +304,8 @@ constexpr bool is_virtual_smart_ptr =
 // =============================================================================
 // virtual_ptr
 
-template<class Registry, typename Argype>
-inline auto final_virtual_ptr(Argype&& obj);
+template<class Registry, typename Arg>
+inline auto final_virtual_ptr(Arg&& obj);
 
 namespace detail {
 
@@ -371,7 +370,44 @@ inline vptr_type null_vptr = nullptr;
 
 } // namespace detail
 
-template<class Class, class Registry, typename>
+template<class Registry, typename Arg>
+inline auto final_virtual_ptr(Arg&& obj) {
+    using namespace detail;
+    using VirtualPtr = virtual_ptr<std::remove_reference_t<Arg>, Registry>;
+    using Class = typename VirtualPtr::element_type;
+    using Traits = virtual_traits<Arg, Registry>;
+
+    if constexpr (Registry::runtime_checks && is_polymorphic<Registry, Class>) {
+
+        // check that dynamic type == static type
+        auto static_type = Registry::rtti::template static_type<Class>();
+        auto dynamic_type = Registry::rtti::dynamic_type(Traits::peek(obj));
+
+        if (dynamic_type != static_type) {
+            if constexpr (is_not_void<typename Registry::error_handler>) {
+                final_error error;
+                error.static_type = static_type;
+                error.dynamic_type = dynamic_type;
+                Registry::error_handler::error(error);
+            }
+
+            abort();
+        }
+    }
+
+    return VirtualPtr(
+        std::forward<Arg>(obj),
+        detail::box_vptr<VirtualPtr::use_indirect_vptrs>(
+            Registry::template static_vptr<Class>));
+}
+
+template<class Arg>
+inline auto final_virtual_ptr(Arg&& obj) {
+    return final_virtual_ptr<BOOST_OPENMETHOD_DEFAULT_REGISTRY, Arg>(
+        std::forward<Arg>(obj));
+}
+
+template<class Class, class Registry, typename Void>
 class virtual_ptr {
     template<class, class, typename>
     friend class virtual_ptr;
@@ -798,43 +834,6 @@ class virtual_ptr<
         return detail::unbox_vptr(this->vp);
     }
 };
-
-template<class Registry, typename Argype>
-inline auto final_virtual_ptr(Argype&& obj) {
-    using namespace detail;
-    using VirtualPtr = virtual_ptr<std::remove_reference_t<Argype>, Registry>;
-    using Class = typename VirtualPtr::element_type;
-    using Traits = virtual_traits<Argype, Registry>;
-
-    if constexpr (Registry::runtime_checks && is_polymorphic<Registry, Class>) {
-
-        // check that dynamic type == static type
-        auto static_type = Registry::rtti::template static_type<Class>();
-        auto dynamic_type = Registry::rtti::dynamic_type(Traits::peek(obj));
-
-        if (dynamic_type != static_type) {
-            if constexpr (is_not_void<typename Registry::error_handler>) {
-                final_error error;
-                error.static_type = static_type;
-                error.dynamic_type = dynamic_type;
-                Registry::error_handler::error(error);
-            }
-
-            abort();
-        }
-    }
-
-    return VirtualPtr(
-        std::forward<Argype>(obj),
-        detail::box_vptr<VirtualPtr::use_indirect_vptrs>(
-            Registry::template static_vptr<Class>));
-}
-
-template<class Class>
-inline auto final_virtual_ptr(Class&& obj) {
-    return final_virtual_ptr<BOOST_OPENMETHOD_DEFAULT_REGISTRY, Class>(
-        std::forward<Class>(obj));
-}
 
 template<class Class>
 virtual_ptr(Class&) -> virtual_ptr<Class, BOOST_OPENMETHOD_DEFAULT_REGISTRY>;

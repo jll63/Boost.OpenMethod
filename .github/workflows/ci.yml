@@ -467,8 +467,6 @@ jobs:
 
       - name: Clone Boost.OpenMethod
         uses: actions/checkout@v4
-        with:
-          path: openmethod
 
       - name: Clone Boost
         uses: alandefreitas/cpp-actions/boost-clone@v1.8.10
@@ -492,8 +490,7 @@ jobs:
           cd ..
           BOOST_SRC_DIR="$(pwd)/boost-source"
           export BOOST_SRC_DIR
-          find .
-          cd openmethod
+          cd Boost.OpenMethod
 
           cd doc
           bash ./build_antora.sh

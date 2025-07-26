@@ -492,6 +492,7 @@ jobs:
           cd ..
           BOOST_SRC_DIR="$(pwd)/boost-source"
           export BOOST_SRC_DIR
+          find .
           cd openmethod
 
           cd doc

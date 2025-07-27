@@ -3,6 +3,13 @@
 <compound kind="namespace">
   <name>boost::openmethod</name>
   <filename>boost/openmethod.adoc</filename>
+  <member kind="function">
+    <type>bool</type>
+    <name>foo</name>
+    <anchorfile>boost/openmethod/operator_eq.adoc</anchorfile>
+    <anchor/>
+    <arglist>(const virtual_ptr&lt;Left, Registry&gt;&amp; left, const virtual_ptr&lt;Right, Registry&gt;&amp; right)</arglist>
+  </member>
   <class kind="class">boost::openmethod::default_registry</class>
   <class kind="class">boost::openmethod::type_id</class>
   <class kind="class">boost::openmethod::vptr_type</class>

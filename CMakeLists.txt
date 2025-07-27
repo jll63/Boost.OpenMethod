@@ -152,6 +152,15 @@ target_compile_features(boost_openmethod INTERFACE cxx_std_17)
 
 if (BOOST_OPENMETHOD_MRDOCS_BUILD)
     file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/mrdocs.cpp" "#include <boost/openmethod.hpp>\n")
+    foreach (HEADER ${BOOST_OPENMETHOD_HEADERS})
+        string(REPLACE "${PROJECT_SOURCE_DIR}/include/" "" HEADER "${HEADER}")
+        file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/mrdocs.cpp" "#include <${HEADER}>\n")
+    endforeach()
+    file(COPY
+        "${CMAKE_CURRENT_BINARY_DIR}/mrdocs.cpp"
+        DESTINATION "/tmp"
+    )
+    message(STATUS "Generating ${CMAKE_CURRENT_BINARY_DIR}/mrdocs.cpp for Boost.OpenMethod")
     add_library(boost_openmethod_mrdocs "${CMAKE_CURRENT_BINARY_DIR}/mrdocs.cpp")
     target_include_directories(boost_openmethod_mrdocs PUBLIC "${PROJECT_SOURCE_DIR}/include")
     boost_openmethod_setup_properties(boost_openmethod_mrdocs)

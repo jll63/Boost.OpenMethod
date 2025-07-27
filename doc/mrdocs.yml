@@ -15,38 +15,19 @@ include-symbols:
   - 'boost::openmethod::**'
 # see-below:
 #   - 'boost::urls::format_arg'
-#   - 'boost::urls::named_arg'
-#   - 'boost::urls::see_below'
-#   - 'boost::urls::*_t'
-#   - 'boost::urls::grammar::see_below'
-#   - 'boost::urls::string_token::see_below'
-#   - 'boost::urls::decode_view::iterator'
-#   - 'boost::urls::params_base::iterator'
-#   - 'boost::urls::params_encoded_base::iterator'
-#   - 'boost::urls::segments_base::iterator'
-#   - 'boost::urls::segments_encoded_base::iterator'
-# implementation-defined:
-#   - 'boost::urls::detail'
-#   - 'boost::urls::**::detail'
-#   - 'boost::urls::*_unsafe'
-#   - 'boost::urls::make_error_code'
-#   - 'boost::urls::make_void'
-#   - 'boost::urls::implementation_defined'
-#   - 'boost::urls::grammar::implementation_defined'
-#   - 'boost::urls::string_token::implementation_defined'
-#   - 'boost::urls::grammar::*_t'
-#   - 'boost::urls::grammar::make_error_*'
-#   - 'boost::urls::grammar::operator_*'
-#   - 'boost::urls::string_token::*_t'
-# exclude-symbols:
-#   - 'boost::urls::void_t'
+implementation-defined:
+  - 'boost::openmethod::detail::**'
+exclude-symbols:
+  - 'boost::openmethod::detail::**'
+  - 'boost::openmethod::boost_openmethod_bases'
+  - 'boost::openmethod::boost_openmethod_registry'
 
 # Metadata Extraction
 private-bases: false
 
 # Generator
 generate: adoc
-base-url: https://www.github.com/boostorg/openmethod/blob/develop/ # boost/url/url_view.hpp
+base-url: https://www.github.com/boostorg/openmethod/blob/develop/
 
 # Style
 verbose: true

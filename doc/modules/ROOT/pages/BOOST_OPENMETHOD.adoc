@@ -1,7 +1,5 @@
 
-[#BOOST_OPENMETHOD]
-
-## BOOST_OPENMETHOD
+= BOOST_OPENMETHOD
 
 ### Synopsis
 

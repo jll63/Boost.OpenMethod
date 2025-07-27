@@ -182,9 +182,7 @@ BOOST_AUTO_TEST_CASE(intrusive_mode) {
 
 struct indirect_policy : test_registry::with<bom::policies::indirect_vptr> {};
 
-struct Indirect : bom::inplace_vptr<Indirect, indirect_policy> {
-    using bom::inplace_vptr<Indirect, indirect_policy>::boost_openmethod_vptr;
-};
+struct Indirect : bom::inplace_vptr<Indirect, indirect_policy> {};
 
 BOOST_OPENMETHOD(whatever, (virtual_<Indirect&>), void, indirect_policy);
 
@@ -195,5 +193,8 @@ BOOST_AUTO_TEST_CASE(core_intrusive_vptr) {
     bom::initialize<indirect_policy>();
     Indirect i;
     BOOST_TEST(
-        i.boost_openmethod_vptr == &indirect_policy::static_vptr<Indirect>);
+        boost_openmethod_vptr(i, nullptr) ==
+        indirect_policy::static_vptr<Indirect>);
+    indirect_policy::static_vptr<Indirect> = nullptr;
+    BOOST_TEST(boost_openmethod_vptr(i, nullptr) == nullptr);
 }

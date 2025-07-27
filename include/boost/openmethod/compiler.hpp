@@ -286,8 +286,6 @@ struct compiler : detail::generic_compiler {
     }
 };
 
-compiler() -> compiler<default_registry>;
-
 template<class Registry>
 void compiler<Registry>::install_global_tables() {
     if (!compilation_done) {

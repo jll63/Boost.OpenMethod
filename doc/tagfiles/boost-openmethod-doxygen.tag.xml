@@ -49,7 +49,6 @@
   <class kind="class">boost::openmethod::is_polymorphic</class>
   <class kind="class">boost::openmethod::is_virtual_smart_ptr</class>
   <class kind="class">boost::openmethod::same_smart_ptr</class>
-  <class kind="class">boost::openmethod::compiler</class>
   <class kind="class">boost::openmethod::virtual_ptr</class>
   <class kind="class">boost::openmethod::virtual_ptr</class>
   <member kind="function">
@@ -322,144 +321,144 @@
 </compound>
 <compound kind="class">
   <name>boost::openmethod::compiler</name>
-  <filename>boost/openmethod/compiler-04.adoc</filename>
+  <filename>boost/openmethod/compiler.adoc</filename>
   <member kind="function">
     <type>void</type>
     <name>compiler</name>
-    <anchorfile>boost/openmethod/compiler-04/2constructor.adoc</anchorfile>
+    <anchorfile>boost/openmethod/compiler/2constructor.adoc</anchorfile>
     <anchor/>
     <arglist>()</arglist>
   </member>
   <member kind="function">
     <type>void</type>
     <name>assign_lattice_slots</name>
-    <anchorfile>boost/openmethod/compiler-04/assign_lattice_slots.adoc</anchorfile>
+    <anchorfile>boost/openmethod/compiler/assign_lattice_slots.adoc</anchorfile>
     <anchor/>
     <arglist>(class_&amp; cls)</arglist>
   </member>
   <member kind="function">
     <type>void</type>
     <name>assign_slots</name>
-    <anchorfile>boost/openmethod/compiler-04/assign_slots.adoc</anchorfile>
+    <anchorfile>boost/openmethod/compiler/assign_slots.adoc</anchorfile>
     <anchor/>
     <arglist>()</arglist>
   </member>
   <member kind="function">
     <type>void</type>
     <name>assign_tree_slots</name>
-    <anchorfile>boost/openmethod/compiler-04/assign_tree_slots.adoc</anchorfile>
+    <anchorfile>boost/openmethod/compiler/assign_tree_slots.adoc</anchorfile>
     <anchor/>
     <arglist>(class_&amp; cls, std::size_t base_slot)</arglist>
   </member>
   <member kind="function">
     <type>void</type>
     <name>augment_classes</name>
-    <anchorfile>boost/openmethod/compiler-04/augment_classes.adoc</anchorfile>
+    <anchorfile>boost/openmethod/compiler/augment_classes.adoc</anchorfile>
     <anchor/>
     <arglist>()</arglist>
   </member>
   <member kind="function">
     <type>void</type>
     <name>augment_methods</name>
-    <anchorfile>boost/openmethod/compiler-04/augment_methods.adoc</anchorfile>
+    <anchorfile>boost/openmethod/compiler/augment_methods.adoc</anchorfile>
     <anchor/>
     <arglist>()</arglist>
   </member>
   <member kind="function">
     <type>void</type>
     <name>build_dispatch_table</name>
-    <anchorfile>boost/openmethod/compiler-04/build_dispatch_table.adoc</anchorfile>
+    <anchorfile>boost/openmethod/compiler/build_dispatch_table.adoc</anchorfile>
     <anchor/>
     <arglist>(method&amp; m, std::size_t dim, std::vector&lt;group_map&gt;::const_iterator group, const bitvec&amp; candidates, bool concrete)</arglist>
   </member>
   <member kind="function">
     <type>void</type>
     <name>build_dispatch_tables</name>
-    <anchorfile>boost/openmethod/compiler-04/build_dispatch_tables.adoc</anchorfile>
+    <anchorfile>boost/openmethod/compiler/build_dispatch_tables.adoc</anchorfile>
     <anchor/>
     <arglist>()</arglist>
   </member>
   <member kind="function">
     <type>void</type>
     <name>calculate_transitive_derived</name>
-    <anchorfile>boost/openmethod/compiler-04/calculate_transitive_derived.adoc</anchorfile>
+    <anchorfile>boost/openmethod/compiler/calculate_transitive_derived.adoc</anchorfile>
     <anchor/>
     <arglist>(class_&amp; cls)</arglist>
   </member>
   <member kind="function">
     <type>void</type>
     <name>collect_transitive_bases</name>
-    <anchorfile>boost/openmethod/compiler-04/collect_transitive_bases.adoc</anchorfile>
+    <anchorfile>boost/openmethod/compiler/collect_transitive_bases.adoc</anchorfile>
     <anchor/>
     <arglist>(class_* cls, class_* base)</arglist>
   </member>
   <member kind="function">
     <type>auto</type>
     <name>compile</name>
-    <anchorfile>boost/openmethod/compiler-04/compile.adoc</anchorfile>
+    <anchorfile>boost/openmethod/compiler/compile.adoc</anchorfile>
     <anchor/>
     <arglist>()</arglist>
   </member>
   <member kind="function">
     <type>auto</type>
     <name>initialize</name>
-    <anchorfile>boost/openmethod/compiler-04/initialize.adoc</anchorfile>
+    <anchorfile>boost/openmethod/compiler/initialize.adoc</anchorfile>
     <anchor/>
     <arglist>()</arglist>
   </member>
   <member kind="function">
     <type>void</type>
     <name>install_global_tables</name>
-    <anchorfile>boost/openmethod/compiler-04/install_global_tables.adoc</anchorfile>
+    <anchorfile>boost/openmethod/compiler/install_global_tables.adoc</anchorfile>
     <anchor/>
     <arglist>()</arglist>
   </member>
   <member kind="function">
     <type>const method*</type>
     <name>operator[]</name>
-    <anchorfile>boost/openmethod/compiler-04/operator_subs.adoc</anchorfile>
+    <anchorfile>boost/openmethod/compiler/operator_subs.adoc</anchorfile>
     <anchor/>
     <arglist>(const openmethod::method&lt;Id, Signature, Registry&gt;&amp; fn)</arglist>
   </member>
   <member kind="function">
     <type>void</type>
     <name>print</name>
-    <anchorfile>boost/openmethod/compiler-04/print.adoc</anchorfile>
+    <anchorfile>boost/openmethod/compiler/print.adoc</anchorfile>
     <anchor/>
     <arglist>(const method_report&amp; report)</arglist>
   </member>
   <member kind="function">
     <type>void</type>
     <name>write_global_data</name>
-    <anchorfile>boost/openmethod/compiler-04/write_global_data.adoc</anchorfile>
+    <anchorfile>boost/openmethod/compiler/write_global_data.adoc</anchorfile>
     <anchor/>
     <arglist>()</arglist>
   </member>
   <member kind="function">
     <type>void</type>
     <name>accumulate</name>
-    <anchorfile>boost/openmethod/compiler-04/accumulate.adoc</anchorfile>
+    <anchorfile>boost/openmethod/compiler/accumulate.adoc</anchorfile>
     <anchor/>
     <arglist>(const method_report&amp; partial, report&amp; total)</arglist>
   </member>
   <member kind="function">
     <type>bool</type>
     <name>is_base</name>
-    <anchorfile>boost/openmethod/compiler-04/is_base.adoc</anchorfile>
+    <anchorfile>boost/openmethod/compiler/is_base.adoc</anchorfile>
     <anchor/>
     <arglist>(const overrider* a, const overrider* b)</arglist>
   </member>
   <member kind="function">
     <type>bool</type>
     <name>is_more_specific</name>
-    <anchorfile>boost/openmethod/compiler-04/is_more_specific.adoc</anchorfile>
+    <anchorfile>boost/openmethod/compiler/is_more_specific.adoc</anchorfile>
     <anchor/>
     <arglist>(const overrider* a, const overrider* b)</arglist>
   </member>
   <member kind="function">
     <type>void</type>
     <name>select_dominant_overriders</name>
-    <anchorfile>boost/openmethod/compiler-04/select_dominant_overriders.adoc</anchorfile>
+    <anchorfile>boost/openmethod/compiler/select_dominant_overriders.adoc</anchorfile>
     <anchor/>
     <arglist>(std::vector&lt;overrider*&gt;&amp; dominants, std::size_t&amp; pick, std::size_t&amp; remaining)</arglist>
   </member>
@@ -944,10 +943,6 @@
 <compound kind="class">
   <name>boost::openmethod::same_smart_ptr</name>
   <filename>boost/openmethod/same_smart_ptr.adoc</filename>
-</compound>
-<compound kind="class">
-  <name>boost::openmethod::compiler</name>
-  <filename>boost/openmethod/compiler-0e.adoc</filename>
 </compound>
 <compound kind="class">
   <name>boost::openmethod::virtual_ptr</name>

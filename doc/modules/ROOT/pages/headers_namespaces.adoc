@@ -43,8 +43,8 @@ include::example$headers_namespaces/cat.cpp[]
 `BOOST_OPENMETHOD_CLASSES` should be placed in an implementation file. It can
 also go in a header file, but this wastes space, as the same registrar will be
 created in every translation unit that includes the header. It doesn't matter
-which namespace the macro is called in. It can take be used with any class name
-in scope, or with qualified names.
+which namespace the macro is called in. It can be used with any class name in
+scope, or with qualified names.
 
 `BOOST_OPENMETHOD_OVERRIDE` uses the guide function declared by
 `BOOST_OPENMETHOD` to locate a method that can be called with the same arguments
@@ -104,7 +104,7 @@ Now we use `BOOST_OPENMETHOD_DEFINE_OVERRIDER` to define the overrider:
 include::example$headers_namespaces/dog.cpp[]
 ----
 
-Let's look at the main program now. It derived `Bulldog` from `Dog` and provides
+Let's look at the main program now. It derives `Bulldog` from `Dog` and provides
 an overrider for the new class:
 
 [source,c++]

@@ -11,7 +11,7 @@ smart virtual_ptr to it. Since the exact type of the object is known, the vptr
 is read from a static variable, without incuring the cost of a hash table
 lookup.
 
-Here is a variaton of the AST example that uses dynamic allocation and unique
+Here is a variation of the AST example that uses dynamic allocation and unique
 pointers:
 
 

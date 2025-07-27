@@ -18,7 +18,6 @@ include-symbols:
 implementation-defined:
   - 'boost::openmethod::detail::**'
 exclude-symbols:
-  - 'boost::openmethod::detail::**'
   - 'boost::openmethod::boost_openmethod_bases'
   - 'boost::openmethod::boost_openmethod_registry'
 

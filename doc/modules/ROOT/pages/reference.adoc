@@ -7,7 +7,7 @@
 |===
 | Name
 | Description
-| xref::BOOST_OPENMETHOD.adoc[BOOST_OPENMETHOD]
+| xref:BOOST_OPENMETHOD.adoc[BOOST_OPENMETHOD]
 | declares a method
 | xref:BOOST_OPENMETHOD_CLASSES.adoc[BOOST_OPENMETHOD_CLASSES]
 | registers classes
@@ -81,10 +81,6 @@
 |
 | xref:reference:boost/openmethod/release_registry.adoc[`release&lowbar;registry`]
 |
-| xref:reference:boost/openmethod/same_smart_ptr_aux-0f.adoc[`same&lowbar;smart&lowbar;ptr&lowbar;aux`]
-|
-| xref:reference:boost/openmethod/same_smart_ptr_aux-02.adoc[`same&lowbar;smart&lowbar;ptr&lowbar;aux&lt;Class, Other, Registry, std::void&lowbar;t&lt;virtual&lowbar;traits&lt;Class, Registry&gt;::rebind&lt;Other::element&lowbar;type&gt;&gt;&gt;`]
-|
 | xref:reference:boost/openmethod/static_offset_error.adoc[`static&lowbar;offset&lowbar;error`]
 |
 | xref:reference:boost/openmethod/static_slot_error.adoc[`static&lowbar;slot&lowbar;error`]
@@ -98,8 +94,8 @@
 | xref:reference:boost/openmethod/virtual_.adoc[`virtual&lowbar;`]
 |
 | xref:reference:boost/openmethod/virtual_ptr-0a.adoc[`virtual&lowbar;ptr`]
-| A virtual&lowbar;ptr&period;
-| xref:reference:boost/openmethod/virtual_ptr-02.adoc[`virtual&lowbar;ptr&lt;Class, Registry, void&gt;`]
+| A wide pointer combining a pointer to an object and a pointer to its v&hyphen;table&period;
+| xref:reference:boost/openmethod/virtual_ptr-02.adoc[`virtual&lowbar;ptr&lt;Class, Registry&gt;`]
 |
 | xref:reference:boost/openmethod/virtual_traits-0be.adoc[`virtual&lowbar;traits`]
 |
@@ -162,7 +158,7 @@
 | Name
 | xref:reference:boost/openmethod/is_method.adoc[`is&lowbar;method`]
 | xref:reference:boost/openmethod/is_polymorphic.adoc[`is&lowbar;polymorphic`]
-| xref:reference:boost/openmethod/is_virtual_smart_ptr.adoc[`is&lowbar;virtual&lowbar;smart&lowbar;ptr`]
+| xref:reference:boost/openmethod/is_smart_ptr.adoc[`is&lowbar;smart&lowbar;ptr`]
 | xref:reference:boost/openmethod/same_smart_ptr.adoc[`same&lowbar;smart&lowbar;ptr`]
 |===
 

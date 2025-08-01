@@ -25,8 +25,6 @@
   <class kind="class">boost::openmethod::openmethod_error</class>
   <class kind="class">boost::openmethod::registry</class>
   <class kind="class">boost::openmethod::release_registry</class>
-  <class kind="class">boost::openmethod::same_smart_ptr_aux</class>
-  <class kind="class">boost::openmethod::same_smart_ptr_aux</class>
   <class kind="class">boost::openmethod::static_offset_error</class>
   <class kind="class">boost::openmethod::static_slot_error</class>
   <class kind="class">boost::openmethod::static_stride_error</class>
@@ -47,7 +45,7 @@
   <class kind="class">boost::openmethod::final_virtual_ptr</class>
   <class kind="class">boost::openmethod::is_method</class>
   <class kind="class">boost::openmethod::is_polymorphic</class>
-  <class kind="class">boost::openmethod::is_virtual_smart_ptr</class>
+  <class kind="class">boost::openmethod::is_smart_ptr</class>
   <class kind="class">boost::openmethod::same_smart_ptr</class>
   <class kind="class">boost::openmethod::virtual_ptr</class>
   <class kind="class">boost::openmethod::virtual_ptr</class>
@@ -618,14 +616,6 @@
   </member>
 </compound>
 <compound kind="class">
-  <name>boost::openmethod::same_smart_ptr_aux</name>
-  <filename>boost/openmethod/same_smart_ptr_aux-0f.adoc</filename>
-</compound>
-<compound kind="class">
-  <name>boost::openmethod::same_smart_ptr_aux</name>
-  <filename>boost/openmethod/same_smart_ptr_aux-02.adoc</filename>
-</compound>
-<compound kind="class">
   <name>boost::openmethod::static_offset_error</name>
   <filename>boost/openmethod/static_offset_error.adoc</filename>
   <member kind="function">
@@ -937,8 +927,8 @@
   <filename>boost/openmethod/is_polymorphic.adoc</filename>
 </compound>
 <compound kind="class">
-  <name>boost::openmethod::is_virtual_smart_ptr</name>
-  <filename>boost/openmethod/is_virtual_smart_ptr.adoc</filename>
+  <name>boost::openmethod::is_smart_ptr</name>
+  <filename>boost/openmethod/is_smart_ptr.adoc</filename>
 </compound>
 <compound kind="class">
   <name>boost::openmethod::same_smart_ptr</name>

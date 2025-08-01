@@ -4,6 +4,7 @@ build/
 builds/
 **/#*#
 dependencies/*
+Dependencies/*
 extern/*
 tests/benchmarks_parameters.hpp
 **/vcpkg_installed

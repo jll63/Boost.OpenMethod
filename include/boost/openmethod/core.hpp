@@ -37,18 +37,6 @@ namespace boost::openmethod {
 template<class Registry, class Class>
 constexpr bool is_polymorphic = Registry::rtti::template is_polymorphic<Class>;
 
-
-//! The `virtual_ptr` template represents a set of bits.
-//!
-//! \par Template parameters
-//! - `Class`
-//!   A class registered in `Registry
-//!
-//! - `Registry`
-//!
-//! - `Void`
-//!
-
 template<
     class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY,
     typename Void = void>
@@ -416,6 +404,21 @@ inline auto final_virtual_ptr(Arg&& obj) {
         std::forward<Arg>(obj));
 }
 
+/**
+
+A wide pointer combining a pointer to an object and a pointer to its v-table.
+
+@par Template parameters
+- `Class`
+    The class of the object.
+
+- `Registry`
+    The registry in which `Class` is registered.
+
+- `Void`
+    Used for SFINAE in C++17. Not used in C++20 and later.
+*/
+
 template<class Class, class Registry, typename Void>
 class virtual_ptr {
     template<class, class, typename>
@@ -457,7 +460,7 @@ class virtual_ptr {
         typename = std::enable_if_t<
             std::is_constructible_v<
                 Class*,
-                decltype(std::declval<virtual_ptr<Other, Registry>>().get())> &&
+                typename virtual_ptr<Other, Registry>::element_type*> &&
             is_polymorphic<Registry, Class>>>
     virtual_ptr(Other* other)
         : vp(detail::box_vptr<use_indirect_vptrs>(
@@ -469,7 +472,7 @@ class virtual_ptr {
         class Other,
         typename = std::enable_if_t<std::is_constructible_v<
             Class*,
-            decltype(std::declval<virtual_ptr<Other, Registry>>().get())>>>
+            typename virtual_ptr<Other, Registry>::element_type*>>>
     virtual_ptr(const virtual_ptr<Other, Registry>& other)
         : vp(other.vp), obj(other.get()) {
     }
@@ -478,7 +481,7 @@ class virtual_ptr {
         class Other,
         typename = std::enable_if_t<std::is_constructible_v<
             Class*,
-            decltype(std::declval<virtual_ptr<Other, Registry>>().get())>>>
+            typename virtual_ptr<Other, Registry>::element_type*>>>
     virtual_ptr(virtual_ptr<Other, Registry>& other)
         : vp(other.vp), obj(other.get()) {
         // Why is this needed? Consider this conversion conversion from
@@ -525,7 +528,7 @@ class virtual_ptr {
         class Other,
         typename = std::enable_if_t<std::is_assignable_v<
             Class*,
-            decltype(std::declval<virtual_ptr<Other, Registry>>().get())>>>
+            typename virtual_ptr<Other, Registry>::element_type*>>>
     virtual_ptr& operator=(const virtual_ptr<Other, Registry>& other) {
         obj = other.get();
         vp = other.vp;
@@ -562,9 +565,6 @@ class virtual_ptr {
         return virtual_ptr<Other, Registry>(
             traits::template cast<Other&>(*obj), vp);
     }
-
-    template<class, class>
-    friend struct virtual_traits;
 
     template<class Other>
     static auto final(Other&& obj) {

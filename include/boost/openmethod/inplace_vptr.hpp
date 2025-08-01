@@ -116,25 +116,16 @@ template<typename...>
 class inplace_vptr;
 
 template<class Class>
-class inplace_vptr<Class>
+struct inplace_vptr<Class>
     : detail::inplace_vptr_aux<Class, BOOST_OPENMETHOD_DEFAULT_REGISTRY, true> {
-    template<class, class, bool>
-    friend class detail::inplace_vptr_aux;
-    template<class To, class From>
-    friend void detail::update_vptr(From* obj);
 };
 
 template<class Class, class Other>
-class inplace_vptr<Class, Other>
-    : detail::inplace_vptr_aux<Class, Other, detail::is_registry<Other>> {
-    template<class, class, bool>
-    friend class detail::inplace_vptr_aux;
-    template<class To, class From>
-    friend void detail::update_vptr(From* obj);
-};
+struct inplace_vptr<Class, Other>
+    : detail::inplace_vptr_aux<Class, Other, detail::is_registry<Other>> {};
 
 template<class Class, class Base1, class Base2, class... MoreBases>
-class inplace_vptr<Class, Base1, Base2, MoreBases...>
+struct inplace_vptr<Class, Base1, Base2, MoreBases...>
     : detail::inplace_vptr_derived {
 
     static_assert(

@@ -1244,36 +1244,36 @@ void compiler<Registry>::select_dominant_overriders(
         return;
     }
 
-    if constexpr (!Registry::template has_policy<policies::n2216>) {
-        return;
-    }
+    if constexpr (Registry::template has_policy<policies::n2216>) {
+        if (!candidates[pick]->covariant_return_type) {
+            return;
+        }
 
-    if (!candidates[pick]->covariant_return_type) {
-        return;
-    }
+        remaining = 0;
 
-    remaining = 0;
+        for (size_t i = 0; i < candidates.size(); ++i) {
+            if (candidates[i]) {
+                for (size_t j = i + 1; j < candidates.size(); ++j) {
+                    if (candidates[j]) {
+                        BOOST_ASSERT(candidates[i] != candidates[j]);
 
-    for (size_t i = 0; i < candidates.size(); ++i) {
-        if (candidates[i]) {
-            for (size_t j = i + 1; j < candidates.size(); ++j) {
-                if (candidates[j]) {
-                    BOOST_ASSERT(candidates[i] != candidates[j]);
-
-                    if (candidates[i]->covariant_return_type->is_base_of(
-                            candidates[j]->covariant_return_type)) {
-                        candidates[i] = nullptr;
-                    } else if (candidates[j]->covariant_return_type->is_base_of(
-                                   candidates[i]->covariant_return_type)) {
-                        candidates[j] = nullptr;
+                        if (candidates[i]->covariant_return_type->is_base_of(
+                                candidates[j]->covariant_return_type)) {
+                            candidates[i] = nullptr;
+                        } else if (candidates[j]
+                                       ->covariant_return_type->is_base_of(
+                                           candidates[i]
+                                               ->covariant_return_type)) {
+                            candidates[j] = nullptr;
+                        }
                     }
                 }
             }
-        }
 
-        if (candidates[i]) {
-            pick = i;
-            ++remaining;
+            if (candidates[i]) {
+                pick = i;
+                ++remaining;
+            }
         }
     }
 }

@@ -182,5 +182,5 @@ endif ()
 #
 #-------------------------------------------------
 if (BOOST_OPENMETHOD_BUILD_EXAMPLES)
-    add_subdirectory(example)
+    add_subdirectory(doc/modules/ROOT/example)
 endif ()

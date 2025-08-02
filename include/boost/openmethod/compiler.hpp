@@ -270,7 +270,7 @@ struct compiler : detail::generic_compiler {
 
     template<typename Id, typename Signature>
     const method*
-    operator[](const openmethod::method<Id, Signature, Registry>& fn) const {
+    operator[](const openmethod::method<Id, Signature, Registry>&) const {
         auto type_id = Registry::rtti::template static_type<
             openmethod::method<Id, Signature, Registry>>();
         auto iter = std::find_if(

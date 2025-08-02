@@ -93,8 +93,8 @@ struct check_illegal_smart_ops {
     // ---------------------
     // test other properties
 
-    static_assert(virtual_ptr<smart_ptr<Animal>, Registry>::is_smart_ptr);
-    static_assert(virtual_ptr<smart_ptr<const Animal>, Registry>::is_smart_ptr);
+    static_assert(is_smart_ptr<smart_ptr<Animal>, Registry>);
+    static_assert(is_smart_ptr<smart_ptr<const Animal>, Registry>);
 
     static_assert(
         std::is_same_v<

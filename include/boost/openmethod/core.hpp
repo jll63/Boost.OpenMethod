@@ -403,21 +403,26 @@ A wide pointer combining a pointer to an object and a pointer to its v-table.
 
 template<class Class, class Registry, typename Void>
 class virtual_ptr {
+
+    using traits = virtual_traits<Class&, Registry>;
+
+#ifndef __MRDOCS__
     template<class, class, typename>
     friend class virtual_ptr;
+    template<class, typename Arg>
+    friend auto final_virtual_ptr(Arg&& obj);
+#endif
 
-  public:
+    static constexpr bool is_smart_ptr = false;
+
     static constexpr bool use_indirect_vptrs =
         Registry::template has_policy<policies::indirect_vptr>;
 
-  protected:
     std::conditional_t<use_indirect_vptrs, const vptr_type*, vptr_type> vp;
     Class* obj;
 
   public:
-    using traits = virtual_traits<Class&, Registry>;
     using element_type = Class;
-    static constexpr bool is_smart_ptr = false;
 
     virtual_ptr() = default;
 
@@ -592,26 +597,33 @@ template<class Class, class Registry>
 class virtual_ptr<
     Class, Registry, std::enable_if_t<is_smart_ptr<Class, Registry>>> {
 
+#ifndef __MRDOCS__
     template<class, class, typename>
     friend class virtual_ptr;
+    template<class, typename Arg>
+    friend auto final_virtual_ptr(Arg&& obj);
+#endif
 
-    template<class, class>
-    friend struct virtual_traits;
-
-  public:
-    using traits = virtual_traits<Class, Registry>;
-    using element_type = typename Class::element_type;
+    static constexpr bool is_smart_ptr = true;
 
     static constexpr bool use_indirect_vptrs =
         Registry::template has_policy<policies::indirect_vptr>;
 
-  protected:
+    using traits = virtual_traits<Class, Registry>;
+
     std::conditional_t<use_indirect_vptrs, const vptr_type*, vptr_type> vp;
     Class obj;
 
-  public:
-    static constexpr bool is_smart_ptr = true;
+    template<
+        class Other,
+        typename = std::enable_if_t<std::is_constructible_v<Class*, Other*>>>
+    virtual_ptr(Other& other, decltype(vp) vp) : vp(vp), obj(&other) {
+    }
 
+  public:
+    using element_type = typename Class::element_type;
+
+  public:
     virtual_ptr()
         : vp(detail::box_vptr<use_indirect_vptrs>(detail::null_vptr)) {
     }
@@ -647,12 +659,6 @@ class virtual_ptr<
               other ? detail::acquire_vptr<Registry>(*other)
                     : detail::null_vptr)),
           obj(other) {
-    }
-
-    template<
-        class Other,
-        typename = std::enable_if_t<std::is_constructible_v<Class*, Other*>>>
-    virtual_ptr(Other& other, decltype(vp) vp) : vp(vp), obj(&other) {
     }
 
     template<

@@ -3,6 +3,7 @@
 :mrdocs:
 
 == Macros
+
 [cols=2]
 |===
 | Name

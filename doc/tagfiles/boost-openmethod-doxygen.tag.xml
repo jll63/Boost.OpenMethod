@@ -42,6 +42,7 @@
   <class kind="class">boost::openmethod::virtual_traits</class>
   <class kind="class">boost::openmethod::virtual_traits</class>
   <class kind="class">boost::openmethod::virtual_traits</class>
+  <class kind="class">boost::openmethod::boost_openmethod_vptr</class>
   <class kind="class">boost::openmethod::final_virtual_ptr</class>
   <class kind="class">boost::openmethod::is_method</class>
   <class kind="class">boost::openmethod::is_polymorphic</class>
@@ -62,13 +63,6 @@
     <anchorfile>boost/openmethod/boost_openmethod_registry.adoc</anchorfile>
     <anchor/>
     <arglist>(Class* )</arglist>
-  </member>
-  <member kind="function">
-    <type>vptr_type</type>
-    <name>boost_openmethod_vptr</name>
-    <anchorfile>boost/openmethod/boost_openmethod_vptr.adoc</anchorfile>
-    <anchor/>
-    <arglist>(const Class&amp; obj, detail::inplace_vptr_registry&lt;Base1&gt;* registry)</arglist>
   </member>
   <member kind="function">
     <type>void</type>
@@ -416,7 +410,7 @@
     <name>operator[]</name>
     <anchorfile>boost/openmethod/compiler/operator_subs.adoc</anchorfile>
     <anchor/>
-    <arglist>(const openmethod::method&lt;Id, Signature, Registry&gt;&amp; fn)</arglist>
+    <arglist>(const openmethod::method&lt;Id, Signature, Registry&gt;&amp; )</arglist>
   </member>
   <member kind="function">
     <type>void</type>
@@ -913,6 +907,10 @@
     <anchor/>
     <arglist>(T* arg)</arglist>
   </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::boost_openmethod_vptr</name>
+  <filename>boost/openmethod/boost_openmethod_vptr-02.adoc</filename>
 </compound>
 <compound kind="class">
   <name>boost::openmethod::final_virtual_ptr</name>

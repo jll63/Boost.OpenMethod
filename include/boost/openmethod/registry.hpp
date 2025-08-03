@@ -13,6 +13,45 @@ namespace boost::openmethod {
 
 namespace policies {
 
+/**
+    Base class for all policies.
+
+    A @e policy is a direct subclass of `policy`. Each such subclass
+
+    A @ref
+
+    @par Requirements
+
+    A policy must provide a typedef that identifies its category, which must be
+    a direct derived class of `policy`. The category identifies the policy in
+    the registry.
+
+    @code
+    using category = <policy direct derived class>;
+    @endcode
+
+    <policy_category> must be one of the following:
+
+    - `rtti` obtain static type information for a class, and dynamic type
+      information for an object.
+
+    - `error_handler`
+
+    - `type_hash`
+
+    - `vptr`
+
+    - `indirect_vptr`
+
+    - `output`
+
+    - `trace`
+
+    - `runtime_checks`
+
+    - `n2216`
+*/
+
 struct policy {};
 
 struct rtti : policy {
@@ -40,6 +79,25 @@ struct error_handler : policy {
 struct type_hash : policy {
     using category = type_hash;
 };
+
+/**
+    Acquires a v-table pointer for an object.
+
+    @par Requirements
+
+    Any implementation of this policy must provide a meta-function `fn` that
+    in the form of:
+
+    @code
+    template<class Registry>
+    struct fn {
+        template<class Class> static auto dynamic_vptr(const Class& arg) -> const vptr_type&;
+    };
+    @endcode
+
+    @see policies::vptr_vector::fn::dynamic_vptr for an example.
+
+*/
 
 struct vptr : policy {
     using category = vptr;

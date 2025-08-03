@@ -39,7 +39,7 @@ constexpr bool is_polymorphic = Registry::rtti::template is_polymorphic<Class>;
 
 template<
     class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY,
-    typename Void = void>
+    typename = void>
 class virtual_ptr;
 
 // =============================================================================
@@ -280,6 +280,8 @@ struct use_classes {
     tuple_type tuple;
 };
 
+void boost_openmethod_vptr(...);
+
 // =============================================================================
 // virtual_ptr
 
@@ -308,8 +310,6 @@ struct is_virtual_ptr_aux<const virtual_ptr<Class, Registry, void>&>
 
 template<typename T>
 constexpr bool is_virtual_ptr = detail::is_virtual_ptr_aux<T>::value;
-
-void boost_openmethod_vptr(...);
 
 template<class Class, class Registry>
 constexpr bool has_vptr_fn = std::is_same_v<
@@ -390,18 +390,15 @@ inline auto final_virtual_ptr(Arg&& obj) {
 
 A wide pointer combining a pointer to an object and a pointer to its v-table.
 
-@par Template parameters
-- `Class`
-    The class of the object.
+@tparam Class The class of the object.
 
-- `Registry`
-    The registry in which `Class` is registered.
+@tparam Registry The registry in which `Class` is registered.
 
-- `Void`
-    Used for SFINAE in C++17. Not used in C++20 and later.
+@tparam unnamed Always `void` (used for SFINAE).
+
 */
 
-template<class Class, class Registry, typename Void>
+template<class Class, class Registry, typename>
 class virtual_ptr {
 
     using traits = virtual_traits<Class&, Registry>;
@@ -424,18 +421,52 @@ class virtual_ptr {
   public:
     using element_type = Class;
 
+    /**
+        Constructs a `virtual_ptr` with both object and v-table pointers
+        initialized to `nullptr`.
+    */
+
     virtual_ptr() = default;
+
+    /**
+        Constructs a `virtual_ptr` with both object and v-table pointers
+        initialized to `nullptr`.
+
+        @param value A `nullptr`.
+    */
 
     explicit virtual_ptr(std::nullptr_t)
         : vp(detail::box_vptr<use_indirect_vptrs>(detail::null_vptr)),
           obj(nullptr) {
     }
 
+    /**
+        Constructs a `virtual_ptr` pointing to an object of type `Other`.
+
+        The pointer to the v-table is obtained by calling
+        @ref boost_openmethod_vptr if a suitable overload exists, or the
+        @ref policies::vptr::fn::dynamic_vptr of the registry's @ref
+        policies::vptr otherwise.
+
+        @ref dynamic_vptr foo
+
+        @param other A `nullptr`.
+
+        @par Requirements
+
+        `Other` must be a polymorphic class, according to the `Registry`'s
+        `rtti` policy.
+
+        `Other*` must be convertible to `Class*`.
+
+        @par Errors
+    */
+
     template<
         class Other,
         typename = std::enable_if_t<
             std::is_constructible_v<Class*, Other*> &&
-            is_polymorphic<Class, Registry>>>
+            is_polymorphic<Other, Registry>>>
     virtual_ptr(Other& other)
         : vp(detail::box_vptr<use_indirect_vptrs>(
               detail::acquire_vptr<Registry>(other))),

@@ -134,7 +134,7 @@
 |===
 | Name
 | Description
-| xref:reference:boost/openmethod/boost_openmethod_vptr.adoc[`boost&lowbar;openmethod&lowbar;vptr`]
+| xref:reference:boost/openmethod/boost_openmethod_vptr-02.adoc[`boost&lowbar;openmethod&lowbar;vptr`]
 |
 | xref:reference:boost/openmethod/final_virtual_ptr-04.adoc[`final&lowbar;virtual&lowbar;ptr`]
 |

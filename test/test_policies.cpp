@@ -39,14 +39,14 @@ static_assert(!detail::is_registry<not_a_policy>);
 struct registry1 : default_registry::with<unique<registry1>> {};
 struct registry2 : default_registry::with<unique<registry2>> {};
 
-struct foo : policy {
+struct foo {
     using category = foo;
 };
 
 struct foo1 : foo {};
 struct foo2 : foo {};
 
-struct bar : policy {
+struct bar {
     using category = bar;
 };
 

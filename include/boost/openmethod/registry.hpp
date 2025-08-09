@@ -11,58 +11,76 @@
 
 namespace boost::openmethod {
 
+//! Namespace containing the policy framework.
+//!
+//! A @e policy is a class that controls how some fundamental operations are
+//! performed by the library: type information acquisition (`rtti`), v-table
+//! pointer acquisition (`vptr`), error handling (`error_handler`), etc.
+//!
+//! Some policies can be used directly in a registry's policy list. They
+//! function like flags, enabling blocks of code in the dispatch mechanism. For
+//! example, `runtime_checks` enables code that detects missing class
+//! registrations.
+//!
+//! Others policy classes need to be derived from. The subclass is required to
+//! contain a `template<class Registry> struct fn`, which contains a set static
+//! members that follow the requirements of the policy. For example, subclasses
+//! of `vptr` must provide a `fn` that contains a `static vptr_type
+//! dynamic_vptr(const Class& arg)` that returns a v-table pointer for an object
+//! of type `Class`.
+
 namespace policies {
 
-/**
-    Base class for all policies.
+//! RTTI policy base class.
+//!
+//! A @e rtti policy is responsible for acquiring and manipulating type
+//! information, dynamic casting, and identifying polymorphic classes.
+//!
+//! Class `rtti` provides a default implementation for some of these operations.
+//!
+//! @par Requirements
+//!
+//! A @e rtti policy must derive from class `rtti`, and contain a `fn<Registry>`
+//! class template with the following public static members:
+//!
+//! - `template<class Class> constexpr bool is_polymorphic`: evaluates to `true`
+//!   if `Class` is polymorphic.
+//!
+//! - `template<class Class> type_id static_type()`: returns a `type_id`
+//!   for `Class`.
+//!
+//! - `template<class Class> type_id dynamic_type(const Class& obj)`:
+//!   returns the type_id of an object's dynamic type.
+//!
+//! - `template<typename Stream> void type_name(type_id type, Stream&
+//!   stream)`: writes a description of `type` to `stream`.
+//!
+//! - `template<typename Stream> void type_name(type_id type, Stream&
+//!   stream)`: writes a description of `type` to `stream`.
+//!
+//! - `/* unspecified */ type_index(type_id type)`: returns a @e unique
+//!   identifier for `type`.
 
-    A @e policy is a direct subclass of `policy`. Each such subclass
-
-    A @ref
-
-    @par Requirements
-
-    A policy must provide a typedef that identifies its category, which must be
-    a direct derived class of `policy`. The category identifies the policy in
-    the registry.
-
-    @code
-    using category = <policy direct derived class>;
-    @endcode
-
-    <policy_category> must be one of the following:
-
-    - `rtti` obtain static type information for a class, and dynamic type
-      information for an object.
-
-    - `error_handler`
-
-    - `type_hash`
-
-    - `vptr`
-
-    - `indirect_vptr`
-
-    - `output`
-
-    - `trace`
-
-    - `runtime_checks`
-
-    - `n2216`
-*/
-
-struct policy {};
-
-struct rtti : policy {
+struct rtti {
     using category = rtti;
 
     template<class Register>
     struct fn {
+        //! Default implementation of `type_index`.
+        //!
+        //! Returns `type`.
+        //!
+        //! @param type A `type_id`.
         static auto type_index(type_id type) -> type_id {
             return type;
         }
 
+        //! Default implementation of `type_name`.
+        //!
+        //! Executes `stream << "type_id(" << type << ")"`.
+        //!
+        //! @param type A `type_id`.
+        //! @param stream A stream to write to.
         template<typename Stream>
         static void type_name(type_id type, Stream& stream) {
             stream << "type_id(" << type << ")";
@@ -70,13 +88,50 @@ struct rtti : policy {
     };
 };
 
+//! RTTI policy base class with defered type id collection.
+//!
+//! Some custom RTTI systems rely on static constructors to assign type ids.
+//! OpenMethod itself relies on static constructors to register classes, methods
+//! and overriders. This creates order-of-initialization issues. Deriving a @e
+//! rtti policy from this class - instead of just `rtti` - causes the collection
+//! of type ids to be deferred until the first call to @ref update.
 struct deferred_static_rtti : rtti {};
 
-struct error_handler : policy {
+//! Error handling policy base class.
+//!
+//! A @e error_handler policy runs code before terminating the program due to an
+//! error. This can be useful for throwing, logging, cleanup, or other actions.
+//!
+//! @par Requirements
+//!
+//! A subclass of `error_handler` contains a `fn<Registry>` struct that provides
+//! one or more `error` static functions that take an error object. `error` must
+//! be callable with an instance of any subclass of `openmethod_error`.
+
+struct error_handler {
     using category = error_handler;
 };
 
-struct type_hash : policy {
+//! Hashing policy base class.
+//!
+//! A @e type_hash policy calculates an integer hash for a `type_id`.
+//!
+//! @par Requirements
+//!
+//! A subclass of `error_handler` contains a `fn<Registry>` struct that provides
+//! the following static member functions:
+//! - auto initialize(ForwardIterator first, ForwardIterator last) -> [min,
+//!   max]: initialize the hash table with the values in the [iter, last) range.
+//!   `*iter` is an object of an unspecified type that has two members,
+//!   `type_id_begin()` and `type_id_end()`, which return iterators to a range
+//!   of `type_id`s. `initialize` returns a pair with the minimum and maximum
+//!   hash values.
+//! - auto hash(type_id type) -> std::size_t: returns a hash value for `type`.
+//!   The value must be in the range returned by `initialize`.
+//! - void finalize(): releases any resources allocated by `initialize`. This
+//!   member is optional.
+
+struct type_hash {
     using category = type_hash;
 };
 
@@ -99,23 +154,23 @@ struct type_hash : policy {
 
 */
 
-struct vptr : policy {
+struct vptr {
     using category = vptr;
 };
 
 struct extern_vptr : vptr {};
 
-struct indirect_vptr : policy {
+struct indirect_vptr {
     using category = indirect_vptr;
     template<class Registry>
     struct fn {};
 };
 
-struct output : policy {
+struct output {
     using category = output;
 };
 
-struct trace : policy {
+struct trace {
     using category = trace;
     template<class Registry>
     struct fn {
@@ -136,20 +191,20 @@ struct trace : policy {
     };
 };
 
-struct runtime_checks : policy {
+struct runtime_checks {
     using category = runtime_checks;
     template<class Registry>
     struct fn {};
 };
 
-struct n2216 : policy {
+struct n2216 {
     using category = n2216;
     template<class Registry>
     struct fn {};
 };
 
 template<typename Key>
-struct unique : policy {
+struct unique {
     using category = unique;
     template<class Registry>
     struct fn {};

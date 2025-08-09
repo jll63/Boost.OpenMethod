@@ -60,7 +60,7 @@ struct fast_perfect_hash : type_hash {
                 initialize(first, last, buckets);
             }
 
-            return report{hash_min, hash_max};
+            return std::pair{hash_min, hash_max};
         }
 
         template<typename ForwardIterator>

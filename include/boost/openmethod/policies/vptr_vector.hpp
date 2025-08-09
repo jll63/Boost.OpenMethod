@@ -35,9 +35,9 @@ struct vptr_vector : extern_vptr {
             std::size_t size;
 
             if constexpr (Registry::template has_policy<type_hash>) {
-                auto report = Registry::template policy<type_hash>::initialize(
+                auto [_, max_value] = Registry::template policy<type_hash>::initialize(
                     first, last);
-                size = report.last + 1;
+                size = max_value + 1;
             } else {
                 size = 0;
 

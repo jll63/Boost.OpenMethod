@@ -13,6 +13,33 @@ namespace boost::openmethod {
 
 //! Namespace containing the policy framework.
 //!
+//! A registry contains a list of policies that control how some operations are
+//! performed. Policies fall into categories, depending on which subset of
+//! operations they control. Each category has a corresponding class:
+//!
+//! - @ref vptr: v-table pointer acquisition.
+//!
+//! - @ref rtti: type information acquisition and manipulation.
+//!
+//! - @ref type_hash: hashing of `type_id`s.
+//!
+//! - @ref error_handler: perform operations when errors are detected.
+//!
+//! - @ref output: output stream for logging and debugging.
+//!
+//! - @ref runtime_checks: detect and report common errors.
+//!
+//! - @ref trace: report how dispatch tables are built.
+//!
+//! - @ref n2216: handle ambiguities according to the N2216 proposal.
+//!
+//! The last three policy categories act like flags. They can appear in the
+//! registry's policy list, and enable existing blocks of code.
+//!
+//! The other categories cannot be used directly. They must be subclassed, and
+//! the subclass must contain a `template<class Registry> struct fn` that
+//! provides a set of static members that depends on the policy's category.
+//!
 //! A @e policy is a class that controls how some fundamental operations are
 //! performed by the library: type information acquisition (`rtti`), v-table
 //! pointer acquisition (`vptr`), error handling (`error_handler`), etc.
@@ -36,12 +63,10 @@ namespace policies {
 //! A @e rtti policy is responsible for acquiring and manipulating type
 //! information, dynamic casting, and identifying polymorphic classes.
 //!
-//! Class `rtti` provides a default implementation for some of these operations.
-//!
 //! @par Requirements
 //!
-//! A @e rtti policy must derive from class `rtti`, and contain a `fn<Registry>`
-//! class template with the following public static members:
+//! A subclass of `rtti` must contain a `fn<Registry>` class template with the
+//! following public static members:
 //!
 //! - `template<class Class> constexpr bool is_polymorphic`: evaluates to `true`
 //!   if `Class` is polymorphic.
@@ -50,16 +75,21 @@ namespace policies {
 //!   for `Class`.
 //!
 //! - `template<class Class> type_id dynamic_type(const Class& obj)`:
-//!   returns the type_id of an object's dynamic type.
+//!   returns the type_id of the @e dynamic type of `obj`.
 //!
-//! - `template<typename Stream> void type_name(type_id type, Stream&
-//!   stream)`: writes a description of `type` to `stream`.
-//!
-//! - `template<typename Stream> void type_name(type_id type, Stream&
-//!   stream)`: writes a description of `type` to `stream`.
+//! - `template<typename Stream> void type_name(type_id type, Stream& stream)`:
+//!   writes a description of `type` to `stream`. `rtti::fn` provides a default
+//!   implementation.
 //!
 //! - `/* unspecified */ type_index(type_id type)`: returns a @e unique
-//!   identifier for `type`.
+//!   identifier for `type`. `rtti::fn` provides a default implementation.
+//!
+//! The following functions is required only if casting from base to derived
+//! class cannot be performed using a `static_cast` for some of the registered
+//! classes:
+//!
+//! - `template<typename D, typename B> D dynamic_cast_ref(B&& obj)`: casts
+//!   `obj` to reference type `D`.
 
 struct rtti {
     using category = rtti;
@@ -88,7 +118,7 @@ struct rtti {
     };
 };
 
-//! RTTI policy base class with defered type id collection.
+//! RTTI policy base class for defered type id collection.
 //!
 //! Some custom RTTI systems rely on static constructors to assign type ids.
 //! OpenMethod itself relies on static constructors to register classes, methods
@@ -104,9 +134,10 @@ struct deferred_static_rtti : rtti {};
 //!
 //! @par Requirements
 //!
-//! A subclass of `error_handler` contains a `fn<Registry>` struct that provides
-//! one or more `error` static functions that take an error object. `error` must
-//! be callable with an instance of any subclass of `openmethod_error`.
+//! A subclass of `error_handler` must contain a `fn<Registry>` struct that
+//! provides one or more `error` static functions that take an error object.
+//! `error` must be callable with an instance of any subclass of
+//! `openmethod_error`.
 
 struct error_handler {
     using category = error_handler;
@@ -118,16 +149,19 @@ struct error_handler {
 //!
 //! @par Requirements
 //!
-//! A subclass of `error_handler` contains a `fn<Registry>` struct that provides
+//! A subclass of `type_hash` must contain a `fn<Registry>` struct that provides
 //! the following static member functions:
+//!
 //! - auto initialize(ForwardIterator first, ForwardIterator last) -> [min,
 //!   max]: initialize the hash table with the values in the [iter, last) range.
 //!   `*iter` is an object of an unspecified type that has two members,
 //!   `type_id_begin()` and `type_id_end()`, which return iterators to a range
 //!   of `type_id`s. `initialize` returns a pair with the minimum and maximum
 //!   hash values.
+//!
 //! - auto hash(type_id type) -> std::size_t: returns a hash value for `type`.
 //!   The value must be in the range returned by `initialize`.
+//!
 //! - void finalize(): releases any resources allocated by `initialize`. This
 //!   member is optional.
 
@@ -135,30 +169,29 @@ struct type_hash {
     using category = type_hash;
 };
 
-/**
-    Acquires a v-table pointer for an object.
-
-    @par Requirements
-
-    Any implementation of this policy must provide a meta-function `fn` that
-    in the form of:
-
-    @code
-    template<class Registry>
-    struct fn {
-        template<class Class> static auto dynamic_vptr(const Class& arg) -> const vptr_type&;
-    };
-    @endcode
-
-    @see policies::vptr_vector::fn::dynamic_vptr for an example.
-
-*/
+//! Acquires a v-table pointer for an object.
+//!
+//! @par Requirements
+//!
+//! A subclass of `type_hash` must contain a `fn<Registry>` struct that provides
+//! the following static member functions:
+//!
+//! - auto initialize(ForwardIterator first, ForwardIterator last) -> [min,
+//!   max]: initialize the hash table with the values in the [iter, last) range.
+//!   `*iter` is an object of an unspecified type that has two members,
+//!   `type_id_begin()` and `type_id_end()`, which return iterators to a range
+//!   of `type_id`s. `initialize` returns a pair with the minimum and maximum
+//!   hash values.
+//!
+//! - auto hash(type_id type) -> std::size_t: returns a hash value for `type`.
+//!   The value must be in the range returned by `initialize`.
+//!
+//! - void finalize(): releases any resources allocated by `initialize`. This
+//!   member is optional.
 
 struct vptr {
     using category = vptr;
 };
-
-struct extern_vptr : vptr {};
 
 struct indirect_vptr {
     using category = indirect_vptr;
@@ -324,6 +357,7 @@ struct registry : detail::registry_base {
     static constexpr auto indirect_vptr = has_policy<policies::indirect_vptr>;
 
     using rtti = policy<policies::rtti>;
+    using vptr = policy<policies::vptr>;
     using error_handler = policy<policies::error_handler>;
     using output = policy<policies::output>;
     using trace = policy<policies::trace>;

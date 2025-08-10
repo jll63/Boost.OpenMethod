@@ -25,7 +25,7 @@ inline std::vector<const vptr_type*> vptr_vector_indirect_vptrs;
 
 namespace policies {
 
-struct vptr_vector : extern_vptr {
+struct vptr_vector : vptr {
   public:
     template<class Registry>
     struct fn {
@@ -35,8 +35,9 @@ struct vptr_vector : extern_vptr {
             std::size_t size;
 
             if constexpr (Registry::template has_policy<type_hash>) {
-                auto [_, max_value] = Registry::template policy<type_hash>::initialize(
-                    first, last);
+                auto [_, max_value] =
+                    Registry::template policy<type_hash>::initialize(
+                        first, last);
                 size = max_value + 1;
             } else {
                 size = 0;

@@ -1206,9 +1206,8 @@ void compiler<Registry>::write_global_data() {
     ++trace << rflush(4, Registry::dispatch_data.size()) << " " << gv_iter
             << " end\n";
 
-    if constexpr (Registry::template has_policy<extern_vptr>) {
-        Registry::template policy<extern_vptr>::register_vptrs(
-            classes.begin(), classes.end());
+    if constexpr (is_not_void<typename Registry::vptr>) {
+        Registry::vptr::register_vptrs(classes.begin(), classes.end());
     }
 }
 

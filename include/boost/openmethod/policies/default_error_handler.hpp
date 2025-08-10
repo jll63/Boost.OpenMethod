@@ -13,6 +13,8 @@
 
 namespace boost::openmethod::policies {
 
+//! Calls a function via an indirection.
+
 struct default_error_handler : error_handler {
     using error_variant = std::variant<
         not_initialized_error, not_implemented_error, ambiguous_error,

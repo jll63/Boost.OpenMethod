@@ -15,7 +15,7 @@ namespace boost::openmethod {
 namespace policies {
 
 template<class MapAdaptor = mp11::mp_quote<std::unordered_map>>
-class vptr_map : public extern_vptr {
+class vptr_map : public vptr {
   public:
     template<class Registry>
     struct fn {

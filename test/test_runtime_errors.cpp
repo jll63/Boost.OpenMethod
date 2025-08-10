@@ -68,7 +68,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 }
 
 BOOST_AUTO_TEST_CASE(not_initialized) {
-    if constexpr (registry::runtime_checks) {
+    if constexpr (registry::has_runtime_checks) {
         // throw during virtual_ptr construction, because of hash table lookup
         {
             registry::capture capture;
@@ -110,7 +110,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 }
 
 BOOST_AUTO_TEST_CASE(initialize_unknown_class) {
-    if constexpr (registry::runtime_checks) {
+    if constexpr (registry::has_runtime_checks) {
         {
             registry::capture capture;
             BOOST_CHECK_THROW(initialize<registry>(), unknown_class_error);
@@ -135,7 +135,7 @@ BOOST_OPENMETHOD_OVERRIDE(transpose, (const matrix&), void) {
 }
 
 BOOST_AUTO_TEST_CASE(call_unknown_class) {
-    if constexpr (registry::runtime_checks) {
+    if constexpr (registry::has_runtime_checks) {
         {
             initialize<registry>();
 

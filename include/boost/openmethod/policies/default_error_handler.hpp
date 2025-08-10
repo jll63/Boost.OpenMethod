@@ -39,7 +39,7 @@ struct default_error_handler : error_handler {
         }
 
         static auto default_handler(const error_variant& error) -> void {
-            if constexpr (Registry::template has_policy<output>) {
+            if constexpr (Registry::has_output) {
                 std::visit(
                     [](auto&& error) {
                         error.template write<Registry>(Registry::output::os);

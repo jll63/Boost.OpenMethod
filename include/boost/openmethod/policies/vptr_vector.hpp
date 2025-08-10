@@ -34,10 +34,9 @@ struct vptr_vector : vptr {
             -> void {
             std::size_t size;
 
-            if constexpr (Registry::template has_policy<type_hash>) {
+            if constexpr (Registry::has_type_hash) {
                 auto [_, max_value] =
-                    Registry::template policy<type_hash>::initialize(
-                        first, last);
+                    Registry::type_hash::initialize(first, last);
                 size = max_value + 1;
             } else {
                 size = 0;
@@ -52,7 +51,7 @@ struct vptr_vector : vptr {
                 ++size;
             }
 
-            if constexpr (Registry::template has_policy<indirect_vptr>) {
+            if constexpr (Registry::has_indirect_vptr) {
                 detail::vptr_vector_indirect_vptrs<Registry>.resize(size);
             } else {
                 detail::vptr_vector_vptrs<Registry>.resize(size);
@@ -63,15 +62,13 @@ struct vptr_vector : vptr {
                      type_iter != iter->type_id_end(); ++type_iter) {
                     std::size_t index;
 
-                    if constexpr (Registry::template has_policy<type_hash>) {
-                        index = Registry::template policy<type_hash>::hash(
-                            *type_iter);
+                    if constexpr (Registry::has_type_hash) {
+                        index = Registry::type_hash::hash(*type_iter);
                     } else {
                         index = std::size_t(*type_iter);
                     }
 
-                    if constexpr (Registry::template has_policy<
-                                      indirect_vptr>) {
+                    if constexpr (Registry::has_indirect_vptr) {
                         detail::vptr_vector_indirect_vptrs<Registry>[index] =
                             &iter->vptr();
                     } else {
@@ -84,18 +81,16 @@ struct vptr_vector : vptr {
 
         template<class Class>
         static auto dynamic_vptr(const Class& arg) -> const vptr_type& {
-            auto dynamic_type =
-                Registry::template policy<rtti>::dynamic_type(arg);
+            auto dynamic_type = Registry::rtti::dynamic_type(arg);
             std::size_t index;
 
-            if constexpr (Registry::template has_policy<type_hash>) {
-                index =
-                    Registry::template policy<type_hash>::hash(dynamic_type);
+            if constexpr (Registry::has_type_hash) {
+                index = Registry::type_hash::hash(dynamic_type);
             } else {
                 index = std::size_t(dynamic_type);
             }
 
-            if constexpr (Registry::template has_policy<indirect_vptr>) {
+            if constexpr (Registry::has_indirect_vptr) {
                 return *detail::vptr_vector_indirect_vptrs<Registry>[index];
             } else {
                 return detail::vptr_vector_vptrs<Registry>[index];
@@ -103,7 +98,9 @@ struct vptr_vector : vptr {
         }
 
         static auto finalize() -> void {
-            if constexpr (Registry::template has_policy<indirect_vptr>) {
+            using namespace policies;
+
+            if constexpr (Registry::has_indirect_vptr) {
                 detail::vptr_vector_indirect_vptrs<Registry>.clear();
             } else {
                 detail::vptr_vector_vptrs<Registry>.clear();

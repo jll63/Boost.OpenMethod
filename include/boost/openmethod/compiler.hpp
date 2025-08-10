@@ -174,7 +174,7 @@ template<class Registry>
 auto operator<<(
     trace_type<Registry>& trace, const generic_compiler::class_& cls)
     -> trace_type<Registry>& {
-    if constexpr (Registry::template has_policy<policies::trace>) {
+    if constexpr (Registry::has_trace) {
         trace << type_name(cls.type_ids[0]);
     }
 
@@ -264,8 +264,7 @@ struct compiler : detail::generic_compiler {
     static auto is_base(const overrider* a, const overrider* b) -> bool;
 
     mutable detail::trace_type<Registry> trace;
-    static constexpr bool trace_enabled =
-        Registry::template has_policy<policies::trace>;
+    static constexpr bool trace_enabled = Registry::has_trace;
     using indent = typename detail::trace_type<Registry>::indent;
 
     template<typename Id, typename Signature>
@@ -350,7 +349,7 @@ void compiler<Registry>::augment_classes() {
         // type_info object per class. However, it guarantees that the
         // type_index for a class has a unique value.
         for (auto& cr : Registry::classes) {
-            if constexpr (Registry::deferred_static_rtti) {
+            if constexpr (Registry::has_deferred_static_rtti) {
                 static_cast<deferred_class_info&>(cr).resolve_type_ids();
             }
 
@@ -395,10 +394,8 @@ void compiler<Registry>::augment_classes() {
                 unknown_class_error error;
                 error.type = base;
 
-                if constexpr (Registry::template has_policy<
-                                  policies::error_handler>) {
-                    Registry::template policy<policies::error_handler>::error(
-                        error);
+                if constexpr (Registry::has_error_handler) {
+                    Registry::error_handler::error(error);
                 }
 
                 abort();
@@ -521,7 +518,7 @@ void compiler<Registry>::augment_methods() {
     auto meth_iter = methods.begin();
 
     for (auto& meth_info : Registry::methods) {
-        if constexpr (Registry::deferred_static_rtti) {
+        if constexpr (Registry::has_deferred_static_rtti) {
             static_cast<deferred_method_info&>(meth_info).resolve_type_ids();
         }
 
@@ -545,10 +542,8 @@ void compiler<Registry>::augment_methods() {
                 unknown_class_error error;
                 error.type = ti;
 
-                if constexpr (Registry::template has_policy<
-                                  policies::error_handler>) {
-                    Registry::template policy<policies::error_handler>::error(
-                        error);
+                if constexpr (Registry::has_error_handler) {
+                    Registry::error_handler::error(error);
                 }
 
                 abort();
@@ -587,7 +582,7 @@ void compiler<Registry>::augment_methods() {
         auto spec_iter = meth_iter->specs.begin();
 
         for (auto& overrider_info : meth_info.specs) {
-            if constexpr (Registry::deferred_static_rtti) {
+            if constexpr (Registry::has_deferred_static_rtti) {
                 static_cast<deferred_overrider_info&>(overrider_info)
                     .resolve_type_ids();
             }
@@ -613,10 +608,8 @@ void compiler<Registry>::augment_methods() {
                     unknown_class_error error;
                     error.type = type;
 
-                    if constexpr (Registry::template has_policy<
-                                      policies::error_handler>) {
-                        Registry::template policy<
-                            policies::error_handler>::error(error);
+                    if constexpr (Registry::has_error_handler) {
+                        Registry::error_handler::error(error);
                     }
 
                     abort();
@@ -638,10 +631,8 @@ void compiler<Registry>::augment_methods() {
                     unknown_class_error error;
                     error.type = overrider_info.return_type;
 
-                    if constexpr (Registry::template has_policy<
-                                      policies::error_handler>) {
-                        Registry::template policy<
-                            policies::error_handler>::error(error);
+                    if constexpr (Registry::has_error_handler) {
+                        Registry::error_handler::error(error);
                     }
 
                     abort();
@@ -987,7 +978,7 @@ void compiler<Registry>::build_dispatch_table(
                 m.dispatch_table.push_back(&m.not_implemented);
                 ++m.report.not_implemented;
             } else {
-                if constexpr (!Registry::template has_policy<policies::n2216>) {
+                if constexpr (!Registry::has_n2216) {
                     if (remaining > 1) {
                         ++trace << "ambiguous\n";
                         m.dispatch_table.push_back(&m.ambiguous);
@@ -1048,8 +1039,7 @@ void compiler<Registry>::build_dispatch_table(
 
                     select_dominant_overriders(candidates, pick, remaining);
 
-                    if constexpr (!Registry::template has_policy<
-                                      policies::n2216>) {
+                    if constexpr (!Registry::has_n2216) {
                         if (remaining > 1) {
                             ++trace << "ambiguous 'next'\n";
                             overrider->next = &m.ambiguous;
@@ -1243,7 +1233,7 @@ void compiler<Registry>::select_dominant_overriders(
         return;
     }
 
-    if constexpr (Registry::template has_policy<policies::n2216>) {
+    if constexpr (Registry::has_n2216) {
         if (!candidates[pick]->covariant_return_type) {
             return;
         }

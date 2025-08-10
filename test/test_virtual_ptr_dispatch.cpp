@@ -261,7 +261,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
 
     BOOST_TEST(
         (virtual_bear_ptr.vptr() == Registry::template static_vptr<Bear>) ==
-        Registry::template has_policy<policies::indirect_vptr>);
+        Registry::has_indirect_vptr);
 }
 } // namespace BOOST_OPENMETHOD_GENSYM
 

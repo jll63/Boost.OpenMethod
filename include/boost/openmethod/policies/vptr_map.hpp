@@ -19,10 +19,8 @@ class vptr_map : public vptr {
   public:
     template<class Registry>
     struct fn {
-        static constexpr bool IndirectVptr =
-            Registry::template has_policy<indirect_vptr>;
-        using Value =
-            std::conditional_t<IndirectVptr, const vptr_type*, vptr_type>;
+        using Value = std::conditional_t<
+            Registry::has_indirect_vptr, const vptr_type*, vptr_type>;
         static inline typename MapAdaptor::template fn<type_id, Value> vptrs;
 
         template<typename ForwardIterator>
@@ -31,7 +29,7 @@ class vptr_map : public vptr {
                 for (auto type_iter = iter->type_id_begin();
                      type_iter != iter->type_id_end(); ++type_iter) {
 
-                    if constexpr (IndirectVptr) {
+                    if constexpr (Registry::has_indirect_vptr) {
                         vptrs.emplace(*type_iter, &iter->vptr());
                     } else {
                         vptrs.emplace(*type_iter, iter->vptr());
@@ -45,7 +43,7 @@ class vptr_map : public vptr {
             auto type = Registry::rtti::dynamic_type(arg);
             auto iter = vptrs.find(type);
 
-            if constexpr (Registry::runtime_checks) {
+            if constexpr (Registry::has_runtime_checks) {
                 if (iter == vptrs.end()) {
                     using error_handler = typename Registry::error_handler;
 
@@ -59,7 +57,7 @@ class vptr_map : public vptr {
                 }
             }
 
-            if constexpr (IndirectVptr) {
+            if constexpr (Registry::has_indirect_vptr) {
                 return *iter->second;
             } else {
                 return iter->second;

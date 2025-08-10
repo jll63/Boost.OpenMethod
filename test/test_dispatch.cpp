@@ -336,7 +336,7 @@ BOOST_AUTO_TEST_CASE(simple) {
             times(diag, 2) == string_pair(DIAGONAL_SCALAR, MATRIX_SCALAR));
     }
 
-    if constexpr (test_registry::has_policy<policies::vptr_vector>) {
+    if constexpr (std::is_same_v<test_registry::vptr, policies::vptr_vector>) {
         BOOST_TEST(!test_registry::dispatch_data.empty());
         BOOST_TEST(
             !detail::vptr_vector_vptrs<test_registry::registry_type>.empty());

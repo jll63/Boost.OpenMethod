@@ -21,15 +21,15 @@ namespace detail {
 struct ostdstream {
     FILE* stream = nullptr;
 
-    ostdstream(FILE* stream = nullptr) : stream(stream) {
+    ostdstream(FILE* s = nullptr) : stream(s) {
     }
 
-    void on(FILE* stream = stderr) {
-        this->stream = stream;
+    void on(FILE* s = stderr) {
+        this->stream = s;
     }
 
     void off() {
-        this->stream = nullptr;
+        stream = nullptr;
     }
 
     auto is_on() const -> bool {

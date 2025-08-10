@@ -312,6 +312,10 @@ struct without_aux<Policies, Policy, MorePolicies...> {
 
 } // namespace detail
 
+template<class Registry, class PolicyCategory>
+static constexpr bool has_policy =
+    detail::is_not_void<typename Registry::template policy<PolicyCategory>>;
+
 template<class... Policies>
 struct registry : detail::registry_base {
     using registry_type = registry;
@@ -333,10 +337,6 @@ struct registry : detail::registry_base {
             mp11::mp_bind_front_q<
                 mp11::mp_quote_trait<std::is_base_of>, PolicyCategory>>>::type;
 
-    template<class PolicyCategory>
-    static constexpr bool has_policy =
-        detail::is_not_void<policy<PolicyCategory>>;
-
     template<class... NewPolicies>
     using with = boost::mp11::mp_apply<
         registry, typename detail::with_aux<policy_list, NewPolicies...>::type>;
@@ -346,31 +346,43 @@ struct registry : detail::registry_base {
         registry,
         typename detail::without_aux<policy_list, RemovePolicies...>::type>;
 
-    static constexpr auto has_error_handler =
-        has_policy<policies::error_handler>;
-    static constexpr auto has_output = has_policy<policies::output>;
-    static constexpr auto has_trace = has_policy<policies::trace>;
-    static constexpr auto deferred_static_rtti =
-        has_policy<policies::deferred_static_rtti>;
-    static constexpr auto runtime_checks = has_policy<policies::runtime_checks>;
-    static constexpr auto indirect_vptr = has_policy<policies::indirect_vptr>;
+    static constexpr auto has_deferred_static_rtti =
+        has_policy<registry, policies::deferred_static_rtti>;
+    static constexpr auto has_runtime_checks =
+        has_policy<registry, policies::runtime_checks>;
+    static constexpr auto has_indirect_vptr =
+        has_policy<registry, policies::indirect_vptr>;
+    static constexpr auto has_n2216 = has_policy<registry, policies::n2216>;
 
     using rtti = policy<policies::rtti>;
+    static constexpr auto has_rtti = !std::is_same_v<rtti, void>;
+
+    using type_hash = policy<policies::type_hash>;
+    static constexpr auto has_type_hash = !std::is_same_v<type_hash, void>;
+
     using vptr = policy<policies::vptr>;
+    static constexpr auto has_vptr = !std::is_same_v<vptr, void>;
+
     using error_handler = policy<policies::error_handler>;
+    static constexpr auto has_error_handler =
+        !std::is_same_v<error_handler, void>;
+
     using output = policy<policies::output>;
+    static constexpr auto has_output = !std::is_same_v<output, void>;
+
     using trace = policy<policies::trace>;
+    static constexpr auto has_trace = !std::is_same_v<trace, void>;
 
     static void check_initialized();
 };
 
 template<class... Policies>
 inline void registry<Policies...>::check_initialized() {
-    if constexpr (has_policy<policies::runtime_checks>) {
+    if constexpr (registry::has_runtime_checks) {
         if (!initialized) {
             using error_handler = policy<policies::error_handler>;
 
-            if constexpr (detail::is_not_void<error_handler>) {
+            if constexpr (registry::has_error_handler) {
                 error_handler::error(not_initialized_error());
             }
 

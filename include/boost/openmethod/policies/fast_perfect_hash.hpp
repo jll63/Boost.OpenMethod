@@ -43,7 +43,7 @@ struct fast_perfect_hash : type_hash {
                 (hash_mult * reinterpret_cast<detail::uintptr>(type)) >>
                 hash_shift;
 
-            if constexpr (Registry::template has_policy<runtime_checks>) {
+            if constexpr (Registry::has_runtime_checks) {
                 check(index, type);
             }
 
@@ -52,7 +52,7 @@ struct fast_perfect_hash : type_hash {
 
         template<typename ForwardIterator>
         static auto initialize(ForwardIterator first, ForwardIterator last) {
-            if constexpr (Registry::template has_policy<runtime_checks>) {
+            if constexpr (Registry::has_runtime_checks) {
                 initialize(
                     first, last, detail::fast_perfect_hash_control<Registry>);
             } else {
@@ -81,7 +81,7 @@ void fast_perfect_hash::fn<Registry>::initialize(
     std::vector<type_id>& buckets) {
     using namespace policies;
 
-    constexpr bool trace_enabled = Registry::template has_policy<trace>;
+    constexpr bool trace_enabled = Registry::has_trace;
     const auto N = std::distance(first, last);
 
     if constexpr (trace_enabled) {
@@ -162,8 +162,8 @@ void fast_perfect_hash::fn<Registry>::initialize(
     error.attempts = total_attempts;
     error.buckets = std::size_t(1) << M;
 
-    if constexpr (Registry::template has_policy<policies::error_handler>) {
-        Registry::template policy<policies::error_handler>::error(error);
+    if constexpr (Registry::has_error_handler) {
+        Registry::error_handler::error(error);
     }
 
     abort();
@@ -173,10 +173,11 @@ template<class Registry>
 void fast_perfect_hash::fn<Registry>::check(std::size_t index, type_id type) {
     if (index < hash_min || index > hash_max ||
         detail::fast_perfect_hash_control<Registry>[index] != type) {
-        if constexpr (Registry::template has_policy<policies::error_handler>) {
+
+        if constexpr (Registry::has_error_handler) {
             unknown_class_error error;
             error.type = type;
-            Registry::template policy<policies::error_handler>::error(error);
+            Registry::error_handler::error(error);
         }
 
         abort();

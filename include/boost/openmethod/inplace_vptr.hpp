@@ -37,7 +37,7 @@ void update_vptr(Class* obj) {
     using bases = decltype(boost_openmethod_bases(obj));
 
     if constexpr (mp11::mp_size<bases>::value == 0) {
-        if constexpr (registry::indirect_vptr) {
+        if constexpr (registry::has_indirect_vptr) {
             obj->boost_openmethod_vptr = &registry::template static_vptr<To>;
         } else {
             obj->boost_openmethod_vptr = registry::template static_vptr<To>;
@@ -78,7 +78,7 @@ class inplace_vptr_aux<Class, Registry, true> {
 
     friend auto boost_openmethod_vptr(const Class& obj, Registry*)
         -> vptr_type {
-        if constexpr (Registry::indirect_vptr) {
+        if constexpr (Registry::has_indirect_vptr) {
             return *obj.boost_openmethod_vptr;
         } else {
             return obj.boost_openmethod_vptr;
@@ -87,7 +87,7 @@ class inplace_vptr_aux<Class, Registry, true> {
 
     friend auto boost_openmethod_registry(Class*) -> Registry;
 
-    std::conditional_t<Registry::indirect_vptr, const vptr_type*, vptr_type>
+    std::conditional_t<Registry::has_indirect_vptr, const vptr_type*, vptr_type>
         boost_openmethod_vptr = nullptr;
 };
 

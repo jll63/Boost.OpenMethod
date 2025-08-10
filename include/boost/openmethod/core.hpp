@@ -91,7 +91,7 @@ struct use_class_aux;
 template<class Registry, class Class, typename... Bases>
 struct use_class_aux<Registry, mp11::mp_list<Class, Bases...>>
     : std::conditional_t<
-          Registry::deferred_static_rtti, detail::deferred_class_info,
+          Registry::has_deferred_static_rtti, detail::deferred_class_info,
           detail::class_info> {
     inline static type_id bases[sizeof...(Bases)];
     use_class_aux() {
@@ -100,7 +100,7 @@ struct use_class_aux<Registry, mp11::mp_list<Class, Bases...>>
         this->is_abstract = std::is_abstract_v<Class>;
         this->static_vptr = &Registry::template static_vptr<Class>;
 
-        if constexpr (!Registry::deferred_static_rtti) {
+        if constexpr (!Registry::has_deferred_static_rtti) {
             resolve_type_ids();
         }
 
@@ -356,7 +356,8 @@ inline auto final_virtual_ptr(Arg&& obj) {
     using Class = typename VirtualPtr::element_type;
     using Traits = virtual_traits<Arg, Registry>;
 
-    if constexpr (Registry::runtime_checks && is_polymorphic<Class, Registry>) {
+    if constexpr (
+        Registry::has_runtime_checks && is_polymorphic<Class, Registry>) {
 
         // check that dynamic type == static type
         auto static_type = Registry::rtti::template static_type<Class>();
@@ -411,9 +412,7 @@ class virtual_ptr {
 #endif
 
     static constexpr bool is_smart_ptr = false;
-
-    static constexpr bool use_indirect_vptrs =
-        Registry::template has_policy<policies::indirect_vptr>;
+    static constexpr bool use_indirect_vptrs = Registry::has_indirect_vptr;
 
     std::conditional_t<use_indirect_vptrs, const vptr_type*, vptr_type> vp;
     Class* obj;
@@ -636,9 +635,7 @@ class virtual_ptr<
 #endif
 
     static constexpr bool is_smart_ptr = true;
-
-    static constexpr bool use_indirect_vptrs =
-        Registry::template has_policy<policies::indirect_vptr>;
+    static constexpr bool use_indirect_vptrs = Registry::has_indirect_vptr;
 
     using traits = virtual_traits<Class, Registry>;
 
@@ -1056,7 +1053,7 @@ template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 class method<Name, ReturnType(Parameters...), Registry>
     : std::conditional_t<
-          Registry::deferred_static_rtti, detail::deferred_method_info,
+          Registry::has_deferred_static_rtti, detail::deferred_method_info,
           detail::method_info> {
     // Aliases used in implementation only. Everything extracted from template
     // arguments is capitalized like the arguments themselves.
@@ -1173,8 +1170,8 @@ class method<Name, ReturnType(Parameters...), Registry>
     template<auto Function, typename FnReturnType>
     struct override_impl
         : std::conditional_t<
-              Registry::deferred_static_rtti, detail::deferred_overrider_info,
-              detail::overrider_info> {
+              Registry::has_deferred_static_rtti,
+              detail::deferred_overrider_info, detail::overrider_info> {
         explicit override_impl(FunctionPointer* next = nullptr);
         void resolve_type_ids();
 
@@ -1247,9 +1244,11 @@ constexpr bool is_method = std::is_base_of_v<detail::method_info, T>;
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 method<Name, ReturnType(Parameters...), Registry>::method() {
+    using namespace policies;
+
     this->slots_strides_ptr = slots_strides;
 
-    if constexpr (!Registry::deferred_static_rtti) {
+    if constexpr (!Registry::has_deferred_static_rtti) {
         resolve_type_ids();
     }
 
@@ -1257,7 +1256,7 @@ method<Name, ReturnType(Parameters...), Registry>::method() {
     this->vp_end = vp_type_ids + Arity;
     this->not_implemented = reinterpret_cast<void (*)()>(fn_not_implemented);
 
-    if constexpr (Registry::template has_policy<policies::n2216>) {
+    if constexpr (Registry::has_n2216) {
         this->ambiguous = nullptr;
     } else {
         this->ambiguous = reinterpret_cast<void (*)()>(fn_ambiguous);
@@ -1372,14 +1371,14 @@ method<Name, ReturnType(Parameters...), Registry>::resolve_uni(
     -> detail::word {
 
     using namespace detail;
+    using namespace policies;
     using namespace boost::mp11;
 
     if constexpr (is_virtual<mp_first<MethodArgList>>::value) {
         vptr_type vtbl = vptr<ArgType>(arg);
 
         if constexpr (has_static_offsets<method>::value) {
-            if constexpr (Registry::template has_policy<
-                              policies::runtime_checks>) {
+            if constexpr (Registry::has_runtime_checks) {
                 check_static_offset<static_slot_error>(
                     static_offsets<method>::slots[0], this->slots_strides[0]);
             }
@@ -1409,8 +1408,7 @@ method<Name, ReturnType(Parameters...), Registry>::resolve_multi_first(
 
         if constexpr (has_static_offsets<method>::value) {
             slot = static_offsets<method>::slots[0];
-            if constexpr (Registry::template has_policy<
-                              policies::runtime_checks>) {
+            if constexpr (Registry::has_runtime_checks) {
                 check_static_offset<static_slot_error>(
                     static_offsets<method>::slots[0], this->slots_strides[0]);
             }
@@ -1451,8 +1449,8 @@ method<Name, ReturnType(Parameters...), Registry>::resolve_multi_next(
         if constexpr (has_static_offsets<method>::value) {
             slot = static_offsets<method>::slots[VirtualArg];
             stride = static_offsets<method>::strides[VirtualArg - 1];
-            if constexpr (Registry::template has_policy<
-                              policies::runtime_checks>) {
+
+            if constexpr (Registry::has_runtime_checks) {
                 check_static_offset<static_slot_error>(
                     this->slots_strides[VirtualArg], slot);
                 check_static_offset<static_stride_error>(
@@ -1487,7 +1485,7 @@ inline auto method<Name, ReturnType(Parameters...), Registry>::has_next()
         return false;
     }
 
-    if constexpr (!Registry::template has_policy<policies::n2216>) {
+    if constexpr (!has_policy<Registry, policies::n2216>) {
         if (next<Fn> == fn_ambiguous) {
             return false;
         }
@@ -1501,12 +1499,14 @@ template<
 BOOST_NORETURN auto
 method<Name, ReturnType(Parameters...), Registry>::fn_not_implemented(
     detail::remove_virtual<Parameters>... args) -> ReturnType {
-    if constexpr (Registry::template has_policy<policies::error_handler>) {
+    using namespace policies;
+
+    if constexpr (Registry::has_error_handler) {
         not_implemented_error error;
         detail::init_call_error<method, rtti, 0u>::fn(
             error,
             detail::parameter_traits<Parameters, Registry>::peek(args)...);
-        Registry::template policy<policies::error_handler>::error(error);
+        Registry::error_handler::error(error);
     }
 
     abort(); // in case user handler "forgets" to abort
@@ -1517,12 +1517,14 @@ template<
 BOOST_NORETURN auto
 method<Name, ReturnType(Parameters...), Registry>::fn_ambiguous(
     detail::remove_virtual<Parameters>... args) -> ReturnType {
-    if constexpr (Registry::template has_policy<policies::error_handler>) {
+    using namespace policies;
+
+    if constexpr (Registry::has_error_handler) {
         ambiguous_error error;
         detail::init_call_error<method, rtti, 0u>::fn(
             error,
             detail::parameter_traits<Parameters, Registry>::peek(args)...);
-        Registry::template policy<policies::error_handler>::error(error);
+        Registry::error_handler::error(error);
     }
 
     abort(); // in case user handler "forgets" to abort
@@ -1594,7 +1596,7 @@ method<Name, ReturnType(Parameters...), Registry>::override_impl<
 
     overrider_info::method = &fn;
 
-    if constexpr (!Registry::deferred_static_rtti) {
+    if constexpr (!Registry::has_deferred_static_rtti) {
         resolve_type_ids();
     }
 

@@ -30,7 +30,7 @@ struct vptr_vector : vptr {
     template<class Registry>
     struct fn {
         template<typename ForwardIterator>
-        static auto register_vptrs(ForwardIterator first, ForwardIterator last)
+        static auto initialize(ForwardIterator first, ForwardIterator last)
             -> void {
             std::size_t size;
 

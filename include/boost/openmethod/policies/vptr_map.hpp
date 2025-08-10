@@ -26,8 +26,7 @@ class vptr_map : public vptr {
         static inline typename MapAdaptor::template fn<type_id, Value> vptrs;
 
         template<typename ForwardIterator>
-        static void
-        register_vptrs(ForwardIterator first, ForwardIterator last) {
+        static void initialize(ForwardIterator first, ForwardIterator last) {
             for (auto iter = first; iter != last; ++iter) {
                 for (auto type_iter = iter->type_id_begin();
                      type_iter != iter->type_id_end(); ++type_iter) {

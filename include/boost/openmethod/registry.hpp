@@ -176,15 +176,14 @@ struct type_hash {
 //! A subclass of `type_hash` must contain a `fn<Registry>` struct that provides
 //! the following static member functions:
 //!
-//! - auto initialize(ForwardIterator first, ForwardIterator last) -> [min,
-//!   max]: initialize the hash table with the values in the [iter, last) range.
-//!   `*iter` is an object of an unspecified type that has two members,
-//!   `type_id_begin()` and `type_id_end()`, which return iterators to a range
-//!   of `type_id`s. `initialize` returns a pair with the minimum and maximum
-//!   hash values.
+//! - void initialize(ForwardIterator first, ForwardIterator last): initialize
+//!   the hash table with the values in the [iter, last) range. `*iter` is an
+//!   object of an unspecified type that has three members:
 //!
-//! - auto hash(type_id type) -> std::size_t: returns a hash value for `type`.
-//!   The value must be in the range returned by `initialize`.
+//!   - `type_id_begin()` and `type_id_end()`: return iterators delimiting a
+//!     range of `type_id`s.
+//!
+//!   - `vptr()`: returns a reference to the v-table pointer.
 //!
 //! - void finalize(): releases any resources allocated by `initialize`. This
 //!   member is optional.

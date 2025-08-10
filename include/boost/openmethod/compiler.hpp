@@ -1207,7 +1207,7 @@ void compiler<Registry>::write_global_data() {
             << " end\n";
 
     if constexpr (is_not_void<typename Registry::vptr>) {
-        Registry::vptr::register_vptrs(classes.begin(), classes.end());
+        Registry::vptr::initialize(classes.begin(), classes.end());
     }
 }
 

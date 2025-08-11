@@ -81,11 +81,11 @@ void fast_perfect_hash::fn<Registry>::initialize(
     std::vector<type_id>& buckets) {
     using namespace policies;
 
-    constexpr bool trace_enabled = Registry::has_trace;
+    constexpr bool on = Registry::has_trace;
     const auto N = std::distance(first, last);
 
-    if constexpr (trace_enabled) {
-        if (Registry::template policy<policies::trace>::trace_enabled) {
+    if constexpr (on) {
+        if (Registry::template policy<policies::trace>::on) {
             Registry::template policy<policies::output>::os
                 << "Finding hash factor for " << N << " types\n";
         }
@@ -107,8 +107,8 @@ void fast_perfect_hash::fn<Registry>::initialize(
         hash_min = (std::numeric_limits<std::size_t>::max)();
         hash_max = (std::numeric_limits<std::size_t>::min)();
 
-        if constexpr (trace_enabled) {
-            if (Registry::template policy<policies::trace>::trace_enabled) {
+        if constexpr (on) {
+            if (Registry::template policy<policies::trace>::on) {
                 Registry::template policy<policies::output>::os
                     << "  trying with M = " << M << ", " << hash_size
                     << " buckets\n";
@@ -143,8 +143,8 @@ void fast_perfect_hash::fn<Registry>::initialize(
                 }
             }
 
-            if constexpr (trace_enabled) {
-                if (Registry::template policy<policies::trace>::trace_enabled) {
+            if constexpr (on) {
+                if (Registry::template policy<policies::trace>::on) {
                     Registry::template policy<policies::output>::os
                         << "  found " << hash_mult << " after "
                         << total_attempts << " attempts; span = [" << hash_min

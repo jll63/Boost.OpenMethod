@@ -88,6 +88,29 @@ struct vptr_vector : vptr {
                 index = Registry::type_hash::hash(dynamic_type);
             } else {
                 index = std::size_t(dynamic_type);
+
+                if constexpr (Registry::has_runtime_checks) {
+                    std::size_t max_index = 0;
+
+                    if constexpr (Registry::has_indirect_vptr) {
+                        max_index =
+                            detail::vptr_vector_indirect_vptrs<Registry>.size();
+                    } else {
+                        max_index = detail::vptr_vector_vptrs<Registry>.size();
+                    }
+
+                    if (index >= max_index) {
+                        using error_handler = typename Registry::error_handler;
+
+                        if constexpr (Registry::has_error_handler) {
+                            unknown_class_error error;
+                            error.type = dynamic_type;
+                            Registry::error_handler::error(error);
+                        }
+
+                        abort();
+                    }
+                }
             }
 
             if constexpr (Registry::has_indirect_vptr) {

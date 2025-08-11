@@ -192,21 +192,78 @@ struct vptr {
     using category = vptr;
 };
 
-struct indirect_vptr {
+//! Adds an indirection to pointers to v-tables.
+//!
+//! If this policy is present, constructs like @ref virtual_ptr, @ref
+//! inplace_vptr, @ref vptr_vector, etc store pointers to pointers to v-tables.
+//! These indirect pointers remain valid after a call to @ref initialize, even
+//! though the v-tables move to different locations. This is useful in presence
+//! of dynamic loading.
+//!
+//! @par Requirements
+//!
+//! None. `indirect_vptr` can be added to a registry's policy list as-is.
+
+struct indirect_vptr final {
     using category = indirect_vptr;
     template<class Registry>
     struct fn {};
 };
 
+//! Provides a stream for outputting diagnostics and trace.
+//!
+//! If an `output` policy is present, the default error handler uses it to write
+//! error messages to its output stream. `initialize` can also use it to write
+//! trace messages.
+//!
+//! @par Requirements
+//!
+//! A subclass of `output` must contain a `fn<Registry>` struct that provides a
+//! stream object that supports the following insertion operators:
+//!
+//! - Stream& operator<<(Stream& os, const char* str)
+//!
+//! - Stream& operator<<(Stream& os, const std::string_view& view)
+//!
+//! - Stream& operator<<(Stream& os, const void* value)
+//!
+//! - Stream& operator<<(Stream& os, std::size_t value)
+//!
+//! `std::ostream` fulfills these requirements, so it can be used in an `output`
+//! policy. However, the default output policy - `stderr_output` - uses a
+//! lightweight stream class that writes to `stderr` using the C API.
+
 struct output {
     using category = output;
 };
 
-struct trace {
+//! Enables tracing.
+//!
+//! If `trace` is present, trace instructions are added to various parts of the
+//! initialization process (dispatch table construction, hash factors search,
+//! etc). These instructions are executed only if `trace::fn<Registry>::on` is
+//! set to `true`. The default value of `on` is `true` if environment variable
+//! `BOOST_OPENMETHOD_TRACE` is set to the string "1". At the moment, any other
+//! value disables tracing.
+//!
+//! `trace` requires an `output` policy to be present. Trace is written to its
+//! output stream.
+//!
+//! The exact format of the trace output is not specified, and may change at any
+//! time. The only guarantee is that it is detailed and comprehensive, and makes
+//! it possible to troubleshoot problems like missing class registrations,
+//! missing or ambiguous overriders, etc.
+//!
+//! @par Requirements
+//!
+//! None. `trace` can be added to a registry's policy list as-is.
+
+struct trace final {
     using category = trace;
+
     template<class Registry>
     struct fn {
-        inline static bool trace_enabled = []() {
+        inline static bool on = []() {
 #ifdef _MSC_VER
             char* env;
             std::size_t len;
@@ -223,21 +280,42 @@ struct trace {
     };
 };
 
-struct runtime_checks {
+//! Enables runtime sanity checks.
+//!
+//! If this policy is present, various checks are performed at runtime.
+//! Currently they all attempt to detect missing class registrations.
+//!
+//! @par Requirements
+//!
+//! None. `indirect_vptr` can be added to a registry's policy list as-is.
+
+struct runtime_checks final {
     using category = runtime_checks;
     template<class Registry>
     struct fn {};
 };
 
-struct n2216 {
-    using category = n2216;
-    template<class Registry>
-    struct fn {};
-};
+//! Enables N2216 ambiguity resolution.
+//!
+//! If this policy is present, additional steps are taken to select a single
+//! overrider in presence of ambiguous overriders sets, according to the rules
+//! defined in the N2216 paper. If the normal resolution procedure fails to
+//! select a single overrider, the following steps are applied, in order:
+//!
+//! - If the return types of the remaining overriders are all polymorphic and
+//!   covariant, and one of the return types is more specialized thjat all the
+//!   others, use it.
+//!
+//! - Otherwise, pick one of the overriders. Which one is used is unspecified,
+//!   but remains the same throughtout the program, and across different runs of
+//!   the same program.
+//!
+//! @par Requirements
+//!
+//! None. `n2216` can be added to a registry's policy list as-is.
 
-template<typename Key>
-struct unique {
-    using category = unique;
+struct n2216 final {
+    using category = n2216;
     template<class Registry>
     struct fn {};
 };

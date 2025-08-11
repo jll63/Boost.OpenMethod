@@ -45,12 +45,10 @@ class vptr_map : public vptr {
 
             if constexpr (Registry::has_runtime_checks) {
                 if (iter == vptrs.end()) {
-                    using error_handler = typename Registry::error_handler;
-
-                    if constexpr (detail::is_not_void<error_handler>) {
+                    if constexpr (Registry::has_error_handler) {
                         unknown_class_error error;
                         error.type = type;
-                        error_handler::error(error);
+                        Registry::error_handler::error(error);
                     }
 
                     abort();

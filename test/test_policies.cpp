@@ -11,6 +11,8 @@
 
 #include <boost/openmethod/default_registry.hpp>
 
+#include "test_util.hpp"
+
 using namespace boost::openmethod;
 using namespace boost::openmethod::detail;
 namespace mp11 = boost::mp11;

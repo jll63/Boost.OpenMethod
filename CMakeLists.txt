@@ -170,9 +170,7 @@ endif()
 #
 #-------------------------------------------------
 if (BUILD_TESTING OR BOOST_OPENMETHOD_BUILD_TESTS)
-    if (BOOST_OPENMETHOD_IS_ROOT)
-        include(CTest)
-    endif ()
+    enable_testing()
     add_subdirectory(test)
 endif ()
 
@@ -182,5 +180,6 @@ endif ()
 #
 #-------------------------------------------------
 if (BOOST_OPENMETHOD_BUILD_EXAMPLES)
+    enable_testing()
     add_subdirectory(doc/modules/ROOT/examples)
 endif ()

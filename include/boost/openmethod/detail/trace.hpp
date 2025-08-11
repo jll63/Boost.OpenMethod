@@ -37,7 +37,7 @@ struct trace_type {
 
     auto operator++() -> trace_type& {
         if constexpr (Registry::has_trace) {
-            if (Registry::trace::trace_enabled) {
+            if (Registry::trace::on) {
                 for (std::size_t i = 0; i < indentation_level; ++i) {
                     Registry::output::os << "  ";
                 }
@@ -64,7 +64,7 @@ struct trace_type {
 template<class Registry, typename T, typename F>
 auto write_range(trace_type<Registry>& trace, range<T> range, F fn) -> auto& {
     if constexpr (Registry::has_trace) {
-        if (Registry::trace::trace_enabled) {
+        if (Registry::trace::on) {
             trace << "(";
             const char* sep = "";
             for (auto value : range) {
@@ -82,7 +82,7 @@ auto write_range(trace_type<Registry>& trace, range<T> range, F fn) -> auto& {
 template<class Registry, typename T>
 auto operator<<(trace_type<Registry>& trace, const T& value) -> auto& {
     if constexpr (Registry::has_trace) {
-        if (Registry::trace::trace_enabled) {
+        if (Registry::trace::on) {
             Registry::output::os << value;
         }
     }
@@ -92,7 +92,7 @@ auto operator<<(trace_type<Registry>& trace, const T& value) -> auto& {
 template<class Registry>
 auto operator<<(trace_type<Registry>& trace, const rflush& rf) -> auto& {
     if constexpr (Registry::has_trace) {
-        if (Registry::trace::trace_enabled) {
+        if (Registry::trace::on) {
             std::size_t digits = 1;
             auto tmp = rf.value / 10;
 
@@ -117,7 +117,7 @@ template<class Registry>
 auto operator<<(
     trace_type<Registry>& trace, const boost::dynamic_bitset<>& bits) -> auto& {
     if constexpr (Registry::has_trace) {
-        if (Registry::trace::trace_enabled) {
+        if (Registry::trace::on) {
             auto i = bits.size();
             while (i != 0) {
                 --i;

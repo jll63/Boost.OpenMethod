@@ -11,11 +11,16 @@
 #include <boost/openmethod/core.hpp>
 #include <boost/openmethod/compiler.hpp>
 
-template<int N, class... Policies>
-struct test_registry_
-    : boost::openmethod::default_registry::with<
-          boost::openmethod::policies::unique<test_registry_<N>>, Policies...> {
+template<typename Key>
+struct unique final {
+    using category = unique;
+    template<class Registry>
+    struct fn {};
 };
+
+template<int N, class... Policies>
+struct test_registry_ : boost::openmethod::default_registry::with<
+                            unique<test_registry_<N>>, Policies...> {};
 
 #define TEST_NS BOOST_PP_CAT(test, __COUNTER__)
 

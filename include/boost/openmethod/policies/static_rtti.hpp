@@ -10,15 +10,18 @@
 
 namespace boost::openmethod::policies {
 
-struct minimal_rtti : virtual rtti {
-    template<class Class>
-    static constexpr bool is_polymorphic = false;
+struct static_rtti : rtti {
+    template<class Registry>
+    struct fn : rtti::fn<Registry> {
+        template<class Class>
+        static constexpr bool is_polymorphic = false;
 
-    template<typename T>
-    static auto static_type() -> type_id {
-        static char id;
-        return &id;
-    }
+        template<typename T>
+        static auto static_type() -> type_id {
+            static char id;
+            return &id;
+        }
+    };
 };
 
 } // namespace boost::openmethod::policies

@@ -81,13 +81,12 @@ void fast_perfect_hash::fn<Registry>::initialize(
     std::vector<type_id>& buckets) {
     using namespace policies;
 
-    constexpr bool on = Registry::has_trace;
     const auto N = std::distance(first, last);
 
-    if constexpr (on) {
-        if (Registry::template policy<policies::trace>::on) {
-            Registry::template policy<policies::output>::os
-                << "Finding hash factor for " << N << " types\n";
+    if constexpr (Registry::has_trace && Registry::has_output) {
+        if (Registry::trace::on) {
+            Registry::output::os << "Finding hash factor for " << N
+                                 << " types\n";
         }
     }
 
@@ -107,11 +106,10 @@ void fast_perfect_hash::fn<Registry>::initialize(
         hash_min = (std::numeric_limits<std::size_t>::max)();
         hash_max = (std::numeric_limits<std::size_t>::min)();
 
-        if constexpr (on) {
-            if (Registry::template policy<policies::trace>::on) {
-                Registry::template policy<policies::output>::os
-                    << "  trying with M = " << M << ", " << hash_size
-                    << " buckets\n";
+        if constexpr (Registry::has_trace && Registry::has_output) {
+            if (Registry::trace::on) {
+                Registry::output::os << "  trying with M = " << M << ", "
+                                     << hash_size << " buckets\n";
             }
         }
 
@@ -143,12 +141,12 @@ void fast_perfect_hash::fn<Registry>::initialize(
                 }
             }
 
-            if constexpr (on) {
-                if (Registry::template policy<policies::trace>::on) {
-                    Registry::template policy<policies::output>::os
-                        << "  found " << hash_mult << " after "
-                        << total_attempts << " attempts; span = [" << hash_min
-                        << ", " << hash_max << "]\n";
+            if constexpr (Registry::has_trace && Registry::has_output) {
+                if (Registry::trace::on) {
+                    Registry::output::os << "  found " << hash_mult << " after "
+                                         << total_attempts
+                                         << " attempts; span = [" << hash_min
+                                         << ", " << hash_max << "]\n";
                 }
             }
 

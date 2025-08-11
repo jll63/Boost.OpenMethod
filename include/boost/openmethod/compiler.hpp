@@ -264,7 +264,6 @@ struct compiler : detail::generic_compiler {
     static auto is_base(const overrider* a, const overrider* b) -> bool;
 
     mutable detail::trace_type<Registry> trace;
-    static constexpr bool on = Registry::has_trace;
     using indent = typename detail::trace_type<Registry>::indent;
 
     template<typename Id, typename Signature>
@@ -467,7 +466,7 @@ void compiler<Registry>::augment_classes() {
         calculate_transitive_derived(rtc);
     }
 
-    if constexpr (on) {
+    if constexpr (Registry::has_trace) {
         ++trace << "Inheritance lattice:\n";
 
         for (auto& rtc : classes) {
@@ -937,7 +936,7 @@ void compiler<Registry>::build_dispatch_table(
     for (const auto& [group_mask, group] : *group_iter) {
         auto mask = candidates & group_mask;
 
-        if constexpr (on) {
+        if constexpr (Registry::has_trace) {
             ++trace << "group " << dim << "/" << group_index << " mask " << mask
                     << "\n";
             indent _(trace);
@@ -957,7 +956,7 @@ void compiler<Registry>::build_dispatch_table(
                 ++i;
             }
 
-            if constexpr (on) {
+            if constexpr (Registry::has_trace) {
                 ++trace << "select best of:\n";
                 indent _(trace);
 
@@ -1025,7 +1024,7 @@ void compiler<Registry>::build_dispatch_table(
                     ++trace << "no 'next'\n";
                     overrider->next = &m.not_implemented;
                 } else {
-                    if constexpr (on) {
+                    if constexpr (Registry::has_trace) {
                         ++trace << "for 'next', select best of:\n";
                         indent _(trace);
 
@@ -1108,7 +1107,7 @@ void compiler<Registry>::write_global_data() {
                 m.slots.begin(), m.slots.end(), m.info->slots_strides_ptr);
             std::copy(m.strides.begin(), m.strides.end(), strides_iter);
 
-            if constexpr (on) {
+            if constexpr (Registry::has_trace) {
                 ++trace << rflush(4, Registry::dispatch_data.size()) << " "
                         << " method #" << m.dispatch_table[0]->method_index
                         << " " << type_name(m.info->method_type_id) << "\n";

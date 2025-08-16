@@ -17,9 +17,9 @@ namespace boost::openmethod {
 //! performed. Policies fall into categories, depending on which subset of
 //! operations they control. Each category has a corresponding class:
 //!
-//! - @ref vptr: v-table pointer acquisition.
-//!
 //! - @ref rtti: type information acquisition and manipulation.
+//!
+//! - @ref vptr: v-table pointer acquisition.
 //!
 //! - @ref type_hash: hashing of `type_id`s.
 //!
@@ -58,49 +58,50 @@ namespace boost::openmethod {
 
 namespace policies {
 
-//! RTTI policy base class.
+#ifdef __MRDOCS__
+
+//! Requirements for policy categories (exposition only)
+//!
+struct PolicyCategory {
+    using category = PolicyCategory;
+};
+
+//! Requirements for policies (exposition only)
+//!
+struct Policy : PolicyCategory {
+    template<class Registry>
+    struct fn;
+};
+
+//! Requirements for RestrictedOutputStream (exposition only)
+struct RestrictedOutputStream {
+    RestrictedOutputStream& operator<<(const char* str);
+    RestrictedOutputStream& operator<<(const std::string_view& view);
+    RestrictedOutputStream& operator<<(const void* value);
+    RestrictedOutputStream& operator<<(std::size_t value);
+};
+
+#endif
+
+//! Policy for runtime type information.
 //!
 //! A @e rtti policy is responsible for acquiring and manipulating type
 //! information, dynamic casting, and identifying polymorphic classes.
 //!
 //! @par Requirements
 //!
-//! A subclass of `rtti` must contain a `fn<Registry>` class template with the
-//! following public static members:
-//!
-//! - `template<class Class> constexpr bool is_polymorphic`: evaluates to `true`
-//!   if `Class` is polymorphic.
-//!
-//! - `template<class Class> type_id static_type()`: returns a `type_id`
-//!   for `Class`.
-//!
-//! - `template<class Class> type_id dynamic_type(const Class& obj)`:
-//!   returns the type_id of the @e dynamic type of `obj`.
-//!
-//! - `template<typename Stream> void type_name(type_id type, Stream& stream)`:
-//!   writes a description of `type` to `stream`. `rtti::fn` provides a default
-//!   implementation.
-//!
-//! - `/* unspecified */ type_index(type_id type)`: returns a @e unique
-//!   identifier for `type`. `rtti::fn` provides a default implementation.
-//!
-//! The following functions is required only if casting from base to derived
-//! class cannot be performed using a `static_cast` for some of the registered
-//! classes:
-//!
-//! - `template<typename D, typename B> D dynamic_cast_ref(B&& obj)`: casts
-//!   `obj` to reference type `D`.
-
+//! A subclass of `rtti` must contain a `fn<Registry>` class template
+//! that fulfills the requirements of @ref rtti::fn.
 struct rtti {
     using category = rtti;
 
-    template<class Register>
-    struct fn {
-        //! Default implementation of `type_index`.
-        //!
-        //! Returns `type`.
+    //! Default implementations of some `rtti` requirements.
+    struct defaults {
+        //! Default implementation for `type_index`.
         //!
         //! @param type A `type_id`.
+        //!
+        //! @return `type`.
         static auto type_index(type_id type) -> type_id {
             return type;
         }
@@ -116,9 +117,45 @@ struct rtti {
             stream << "type_id(" << type << ")";
         }
     };
+
+#ifdef __MRDOCS__
+    //! Requirements for `rtti` policies (exposition only)
+    template<class Registry>
+    struct fn {
+        //! Evaluates to `true` if `Class` is polymorphic.
+        //! @tparam Class A class.
+        template<class Class>
+        static constexpr bool is_polymorphic = std::is_polymorphic_v<Class>;
+
+        //! Returns the @ref type_id of `Class`.
+        //!
+        //! @note `Class` is not necessarily a @e registered class. This
+        //! function is also called to acquire the type_id of non-virtual
+        //! parameters, library types, etc, for diagnostic and trace purposes.
+        //!
+        //! @tparam Class A class.
+        template<class Class>
+        static auto static_type() -> type_id;
+
+        //! Returns the @ref type_id of `obj`.
+        template<class Class>
+        static auto dynamic_type(const Class& obj) -> type_id;
+
+        //! Writes a description of a type to a stream.
+        template<typename Stream>
+        static auto type_name(type_id type, Stream& stream) -> void;
+
+        //! Returns a key that uniquely identifies a class.
+        static auto type_index(type_id type);
+
+        //! Casts an object to a type.
+        template<typename D, typename B>
+        static auto dynamic_cast_ref(B&& obj) -> D;
+    };
+#endif
 };
 
-//! RTTI policy base class for defered type id collection.
+//! Policy for defered type id collection.
 //!
 //! Some custom RTTI systems rely on static constructors to assign type ids.
 //! OpenMethod itself relies on static constructors to register classes, methods
@@ -127,72 +164,123 @@ struct rtti {
 //! of type ids to be deferred until the first call to @ref update.
 struct deferred_static_rtti : rtti {};
 
-//! Error handling policy base class.
+//! Policy to handle errors.
 //!
-//! A @e error_handler policy runs code before terminating the program due to an
-//! error. This can be useful for throwing, logging, cleanup, or other actions.
+//! A @e error_handler policy runs code before the library terminats the program
+//! due to an error. This can be useful for throwing, logging, cleanup, or other
+//! actions.
 //!
 //! @par Requirements
 //!
-//! A subclass of `error_handler` must contain a `fn<Registry>` struct that
-//! provides one or more `error` static functions that take an error object.
-//! `error` must be callable with an instance of any subclass of
-//! `openmethod_error`.
+//! A subclass of `error_handler` must contain a `fn<Registry>` class template
+//! that fulfills the requirements of @ref error_handler::fn.
 
 struct error_handler {
     using category = error_handler;
+
+#ifdef __MRDOCS__
+    //! Requirements for `error_handler` policies (exposition only)
+    template<class Registry>
+    struct fn {
+        //! Called when an error is detected.
+        //!
+        //! `error` is a function, or a set of functions, that can be called
+        //! with an instance of any subclass of `openmethod_error`.
+        static auto error(const auto& error) -> void;
+    };
+#endif
 };
 
-//! Hashing policy base class.
+//! Policy to hash a type_id.
 //!
-//! A @e type_hash policy calculates an integer hash for a `type_id`.
+//! A @e type_hash policy calculates an integer hash for a @ref type_id.
 //!
 //! @par Requirements
 //!
-//! A subclass of `type_hash` must contain a `fn<Registry>` struct that provides
-//! the following static member functions:
-//!
-//! - auto initialize(ForwardIterator first, ForwardIterator last) -> [min,
-//!   max]: initialize the hash table with the values in the [iter, last) range.
-//!   `*iter` is an object of an unspecified type that has two members,
-//!   `type_id_begin()` and `type_id_end()`, which return iterators to a range
-//!   of `type_id`s. `initialize` returns a pair with the minimum and maximum
-//!   hash values.
-//!
-//! - auto hash(type_id type) -> std::size_t: returns a hash value for `type`.
-//!   The value must be in the range returned by `initialize`.
-//!
-//! - void finalize(): releases any resources allocated by `initialize`. This
-//!   member is optional.
-
+//! A subclass of `type_hash` must contain a `fn<Registry>` class template
+//! that fulfills the requirements of @ref type_hash::fn.
 struct type_hash {
     using category = type_hash;
+
+#ifdef __MRDOCS__
+    //! Requirements for `type_hash` policies (exposition only)
+    template<class Registry>
+    struct fn {
+        //! Initializes the hash table.
+        //! @tparam ForwardIterator An iterator to a range of const
+        //! @ref VptrAssignment objects.
+        //! @param first The beginning of the range.
+        //! @param last The end of the range.
+        template<typename ForwardIterator>
+        static auto initialize(ForwardIterator first, ForwardIterator last);
+
+        //! Hashes a `type_id`.
+        //! @param type A @ref type_id.
+        //! @return A hash value for the given `type_id`.
+        static auto hash(type_id type) -> std::size_t;
+
+        //! Releases the resources allocated by `initialize`. This function is
+        //! optional.
+        static auto finalize() -> void;
+    };
+#endif
 };
 
-//! Acquires a v-table pointer for an object.
+#ifdef __MRDOCS__
+//! Requirements for VptrAssignment (exposition only)
+//!
+struct VptrAssignment {
+    //! Returns an iterator to the beginning of a range of `type_id`s for a
+    //! single registered class.
+    auto type_id_begin() const;
+
+    //! Returns an iterator to the end of a range of `type_id`s for a
+    //! single registered class.
+    auto type_id_end() const;
+
+    //! Returns a range of `type_id`s that this assignment applies to.
+    auto vptr() const -> const vptr_type&;
+};
+
+#endif
+
+//! Policy to acquire a v-table pointer for an object.
 //!
 //! @par Requirements
 //!
-//! A subclass of `type_hash` must contain a `fn<Registry>` struct that provides
-//! the following static member functions:
-//!
-//! - void initialize(ForwardIterator first, ForwardIterator last): initialize
-//!   the hash table with the values in the [iter, last) range. `*iter` is an
-//!   object of an unspecified type that has three members:
-//!
-//!   - `type_id_begin()` and `type_id_end()`: return iterators delimiting a
-//!     range of `type_id`s.
-//!
-//!   - `vptr()`: returns a reference to the v-table pointer.
-//!
-//! - void finalize(): releases any resources allocated by `initialize`. This
-//!   member is optional.
-
+//! A subclass of `vptr` must contain a `fn<Registry>` class template
+//! that fulfills the requirements of @ref vptr::fn.
 struct vptr {
     using category = vptr;
+
+#ifdef __MRDOCS__
+    //! Requirements for `vptr` policies (exposition only)
+    //!
+    template<class Registry>
+    struct fn {
+        //! Initializes the vector of v-table pointers.
+        //! @tparam ForwardIterator An iterator to a range of const
+        //! @ref `VptrAssignment` objects.
+        //! @param first The beginning of the range.
+        //! @param last The end of the range.
+        template<typename ForwardIterator>
+        static auto initialize(ForwardIterator first, ForwardIterator last);
+
+        //! Returns a *reference* to a v-table pointer for an object.
+        //!
+        //! @tparam Class A registered class.
+        //! @param arg An reference to a const object of type `Class`.
+        template<class Class>
+        static auto dynamic_vptr(const Class& arg) -> const vptr_type&;
+
+        //! Releases the resources allocated by `initialize`. This function is
+        //! optional.
+        static auto finalize() -> void;
+    };
+#endif
 };
 
-//! Adds an indirection to pointers to v-tables.
+//! Policy to add an indirection to pointers to v-tables.
 //!
 //! If this policy is present, constructs like @ref virtual_ptr, @ref
 //! inplace_vptr, @ref vptr_vector, etc store pointers to pointers to v-tables.
@@ -210,7 +298,7 @@ struct indirect_vptr final {
     struct fn {};
 };
 
-//! Provides a stream for outputting diagnostics and trace.
+//! Policy for outputing diagnostics and trace.
 //!
 //! If an `output` policy is present, the default error handler uses it to write
 //! error messages to its output stream. `initialize` can also use it to write
@@ -218,23 +306,20 @@ struct indirect_vptr final {
 //!
 //! @par Requirements
 //!
-//! A subclass of `output` must contain a `fn<Registry>` struct that provides a
-//! stream object that supports the following insertion operators:
-//!
-//! - Stream& operator<<(Stream& os, const char* str)
-//!
-//! - Stream& operator<<(Stream& os, const std::string_view& view)
-//!
-//! - Stream& operator<<(Stream& os, const void* value)
-//!
-//! - Stream& operator<<(Stream& os, std::size_t value)
-//!
-//! `std::ostream` fulfills these requirements, so it can be used in an `output`
-//! policy. However, the default output policy - `stderr_output` - uses a
-//! lightweight stream class that writes to `stderr` using the C API.
-
+//! A subclass of `output` must contain a `fn<Registry>` class template
+//! that fulfills the requirements of @ref output::fn.
 struct output {
     using category = output;
+
+#ifdef __MRDOCS__
+    //! Requirements for `vptr` policies (exposition only)
+    //!
+    template<class Registry>
+    struct fn {
+        //! Initializes the vector of v-table pointers.
+        inline static RestrictedOutputStream os;
+    };
+#endif
 };
 
 //! Enables tracing.
@@ -391,13 +476,11 @@ struct without_aux<Policies, Policy, MorePolicies...> {
 } // namespace detail
 
 template<class Registry, class PolicyCategory>
-static constexpr bool has_policy =
+constexpr bool has_policy =
     detail::is_not_void<typename Registry::template policy<PolicyCategory>>;
 
 template<class... Policies>
 struct registry : detail::registry_base {
-    using registry_type = registry;
-
     inline static bool initialized;
     inline static detail::class_catalog classes;
     inline static detail::method_catalog methods;
@@ -409,7 +492,7 @@ struct registry : detail::registry_base {
 
     template<class PolicyCategory>
     using policy = typename detail::get_policy_aux<
-        registry_type,
+        registry,
         mp11::mp_find_if_q<
             policy_list,
             mp11::mp_bind_front_q<

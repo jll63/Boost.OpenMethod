@@ -39,7 +39,7 @@ namespace bom = boost::openmethod;
 
 struct custom_rtti : bom::policies::rtti {
     template<class Registry>
-    struct fn : bom::policies::rtti::fn<Registry> {
+    struct fn : bom::policies::rtti::defaults {
         template<class T>
         static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
 

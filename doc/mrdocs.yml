@@ -22,6 +22,10 @@ exclude-symbols:
   - 'boost::openmethod::boost_openmethod_bases'
   - 'boost::openmethod::boost_openmethod_registry'
 
+sort-members: false
+extract-friends: false
+implementation-detail: impl
+
 # Metadata Extraction
 private-bases: false
 

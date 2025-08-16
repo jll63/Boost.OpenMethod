@@ -16,16 +16,16 @@
 
 namespace boost::openmethod::policies {
 
-//! `rtti` policy using standard RTTI.
+//! Implements the  `rtti` policy with RTTI.
 //!
 //! This implementation of `rtti` uses the standard C++ RTTI system. It is the
 //! default RTTI policy.
 //!
 
 struct std_rtti : rtti {
-#ifndef BOOST_NO_RTTI
     template<class Registry>
     struct fn {
+#ifndef BOOST_NO_RTTI
         //! Returns `true` if `Class` is polymorphic.
         //!
         //! A polymorphic class, as defined by the C++ standard, is a class that
@@ -88,8 +88,8 @@ struct std_rtti : rtti {
         static auto dynamic_cast_ref(B&& obj) -> D {
             return dynamic_cast<D>(obj);
         }
-    };
 #endif
+    };
 };
 
 } // namespace boost::openmethod::policies

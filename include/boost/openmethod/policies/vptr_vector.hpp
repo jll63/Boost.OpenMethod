@@ -25,10 +25,21 @@ inline std::vector<const vptr_type*> vptr_vector_indirect_vptrs;
 
 namespace policies {
 
+//! Stores v-table pointers in a vector.
+//!
+//! `vptr_vector` stores v-table pointers in a global vector indexed by
+//! `type_id`s, possibly hashed.
+
 struct vptr_vector : vptr {
   public:
+    //! `vptr_vector` policy implementation.
     template<class Registry>
     struct fn {
+        //! Initializes the vector of v-table pointers.
+        //!
+        //! @param An iterator to the first
+        //! @param last The end of the range to initialize.
+
         template<typename ForwardIterator>
         static auto initialize(ForwardIterator first, ForwardIterator last)
             -> void {

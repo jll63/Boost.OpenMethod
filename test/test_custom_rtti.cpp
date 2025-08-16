@@ -42,7 +42,7 @@ struct Cat : Animal {
 
 struct custom_rtti : policies::rtti {
     template<class Registry>
-    struct fn : policies::rtti::fn<Registry> {
+    struct fn : defaults {
         template<class T>
         static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
 
@@ -138,7 +138,7 @@ struct Cat : Animal {
 
 struct custom_rtti : policies::rtti {
     template<class Registry>
-    struct fn : policies::rtti::fn<Registry> {
+    struct fn : defaults {
         template<class T>
         static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
 
@@ -293,7 +293,7 @@ struct Cat : virtual Animal {
 
 struct custom_rtti : policies::rtti {
     template<class Registry>
-    struct fn : policies::rtti::fn<Registry> {
+    struct fn : defaults {
         template<class T>
         static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
 
@@ -439,7 +439,7 @@ std::size_t Cat::static_type = ++Animal::last_type_id;
 
 struct custom_rtti : policies::deferred_static_rtti {
     template<class Registry>
-    struct fn : policies::rtti::fn<Registry> {
+    struct fn : defaults {
         template<class T>
         static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
 

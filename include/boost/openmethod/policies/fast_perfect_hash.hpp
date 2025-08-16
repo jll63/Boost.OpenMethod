@@ -37,18 +37,10 @@ struct fast_perfect_hash : type_hash {
             std::size_t first, last;
         };
 
-        BOOST_FORCEINLINE
-        static auto hash(type_id type) -> std::size_t {
-            auto index =
-                (hash_mult * reinterpret_cast<detail::uintptr>(type)) >>
-                hash_shift;
-
-            if constexpr (Registry::has_runtime_checks) {
-                check(index, type);
-            }
-
-            return index;
-        }
+        template<typename ForwardIterator>
+        static void initialize(
+            ForwardIterator first, ForwardIterator last,
+            std::vector<type_id>& buckets);
 
         template<typename ForwardIterator>
         static auto initialize(ForwardIterator first, ForwardIterator last) {
@@ -63,10 +55,18 @@ struct fast_perfect_hash : type_hash {
             return std::pair{hash_min, hash_max};
         }
 
-        template<typename ForwardIterator>
-        static void initialize(
-            ForwardIterator first, ForwardIterator last,
-            std::vector<type_id>& buckets);
+        BOOST_FORCEINLINE
+        static auto hash(type_id type) -> std::size_t {
+            auto index =
+                (hash_mult * reinterpret_cast<detail::uintptr>(type)) >>
+                hash_shift;
+
+            if constexpr (Registry::has_runtime_checks) {
+                check(index, type);
+            }
+
+            return index;
+        }
 
         static auto finalize() -> void {
             detail::fast_perfect_hash_control<Registry>.clear();

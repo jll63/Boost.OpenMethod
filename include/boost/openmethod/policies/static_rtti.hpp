@@ -12,7 +12,7 @@ namespace boost::openmethod::policies {
 
 struct static_rtti : rtti {
     template<class Registry>
-    struct fn : rtti::fn<Registry> {
+    struct fn : rtti::defaults {
         template<class Class>
         static constexpr bool is_polymorphic = false;
 

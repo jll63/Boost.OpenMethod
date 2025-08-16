@@ -20,7 +20,10 @@ struct unique final {
 
 template<int N, class... Policies>
 struct test_registry_ : boost::openmethod::default_registry::with<
-                            unique<test_registry_<N>>, Policies...> {};
+                            unique<test_registry_<N>>, Policies...> {
+    using registry_type = boost::openmethod::default_registry::with<
+        unique<test_registry_<N>>, Policies...>;
+};
 
 #define TEST_NS BOOST_PP_CAT(test, __COUNTER__)
 

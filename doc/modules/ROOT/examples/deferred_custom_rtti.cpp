@@ -81,9 +81,9 @@ struct Dog : virtual Animal {
 
 namespace bom = boost::openmethod;
 
-struct custom_rtti : bom::policies::rtti {
+struct custom_rtti : bom::policies::deferred_static_rtti {
     template<class Registry>
-    struct fn : bom::policies::rtti::fn<Registry> {
+    struct fn : defaults {
         template<class T>
         static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
 
@@ -120,9 +120,8 @@ struct custom_rtti : bom::policies::rtti {
     };
 };
 
-struct custom_policy : bom::registry<
-                           custom_rtti, bom::policies::deferred_static_rtti,
-                           bom::policies::vptr_vector> {};
+struct custom_policy : bom::registry<custom_rtti, bom::policies::vptr_vector> {
+};
 
 #define BOOST_OPENMETHOD_DEFAULT_REGISTRY custom_policy
 

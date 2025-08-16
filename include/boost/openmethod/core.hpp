@@ -1485,7 +1485,7 @@ inline auto method<Name, ReturnType(Parameters...), Registry>::has_next()
         return false;
     }
 
-    if constexpr (!has_policy<Registry, policies::n2216>) {
+    if constexpr (!Registry::has_n2216) {
         if (next<Fn> == fn_ambiguous) {
             return false;
         }

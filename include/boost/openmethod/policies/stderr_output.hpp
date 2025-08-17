@@ -11,9 +11,13 @@
 
 namespace boost::openmethod::policies {
 
+//! @ref An `output` policy that writes to the C standard error stream.
+//!
+//! `stderr_output` writes to standard error using the C API.
 struct stderr_output : output {
     template<class Registry>
     struct fn {
+        //! A LightweightOuputStream.
         inline static detail::ostderr os;
     };
 };

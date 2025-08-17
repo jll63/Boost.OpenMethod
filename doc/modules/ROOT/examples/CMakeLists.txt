@@ -107,6 +107,10 @@ add_executable(asteroids asteroids.cpp)
 target_link_libraries(asteroids Boost::openmethod)
 add_test(NAME asteroids COMMAND asteroids)
 
+add_executable(static_rtti static_rtti.cpp)
+target_link_libraries(static_rtti Boost::openmethod)
+add_test(NAME static_rtti COMMAND static_rtti)
+
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
   message(STATUS "Building dlopen example")
   add_executable(dl_main dl_main.cpp)

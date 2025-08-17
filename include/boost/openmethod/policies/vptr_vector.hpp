@@ -27,19 +27,27 @@ namespace policies {
 
 //! Stores v-table pointers in a vector.
 //!
-//! `vptr_vector` stores v-table pointers in a global vector indexed by
-//! `type_id`s, possibly hashed.
-
+//! `vptr_vector` stores v-table pointers in a global vector. If `Registry`
+//! contains a @ref type_hash policy, it is used to convert `type_id`s to
+//! indices. Otherwise, `type_id`s are used directly as indices.
+//!
+//! If the registry contains the @ref indirect_vptr policy, stores pointers to
+//! pointers to v-tables in the vector.
 struct vptr_vector : vptr {
   public:
     //! `vptr_vector` policy implementation.
     template<class Registry>
     struct fn {
-        //! Initializes the vector of v-table pointers.
+        //! Initializes the vector.
         //!
-        //! @param An iterator to the first
-        //! @param last The end of the range to initialize.
-
+        //! If `Registry` contains a @ref type_hash policy, its `initialize`
+        //! function is called. Its result determines the size of the vector.
+        //! The v-table pointers are copied into the vector.
+        //!
+        //! @tparam ForwardIterator An iterator to a range of const
+        //! @ref `VptrAssignment` objects.
+        //! @param first The beginning of the range.
+        //! @param last The end of the range.
         template<typename ForwardIterator>
         static auto initialize(ForwardIterator first, ForwardIterator last)
             -> void {
@@ -90,6 +98,22 @@ struct vptr_vector : vptr {
             }
         }
 
+        //! Returns a *reference* to a v-table pointer for an object.
+        //!
+        //! Acquires the dynamic @ref type_id of `arg`, using the registry's
+        //! @ref rtti policy.
+        //!
+        //! If the registry has a @ref type_hash policy, uses it to convert the
+        //! type id to an index; otherwise, uses the type_id as the index.
+        //!
+        //! If the registry contains the @ref runtime_checks policy, verifies
+        //! that the index falls within the limits of the vector. If it does
+        //! not, and if the registry contains a @ref error_handler policy, calls
+        //! its @ref error function with a @ref unknown_class_error value, then
+        //! terminates the program with @ref abort.
+        //!
+        //! @tparam Class A registered class.
+        //! @param arg An reference to a const object of type `Class`.
         template<class Class>
         static auto dynamic_vptr(const Class& arg) -> const vptr_type& {
             auto dynamic_type = Registry::rtti::dynamic_type(arg);
@@ -131,6 +155,7 @@ struct vptr_vector : vptr {
             }
         }
 
+        //! Clears the vector.
         static auto finalize() -> void {
             using namespace policies;
 

@@ -747,7 +747,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#virtual_ptr_members_16">Members</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_restrictedoutputstream">RestrictedOutputStream</a>
+<li><a href="#virtual_ptr_restrictedoutputstream">LightweightOutputStream</a>
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_description_25">Description</a></li>
 </ul>
@@ -6103,7 +6103,7 @@ struct basic_error_output : output {
 <h4 id="virtual_ptr_description_23">Description</h4>
 <div class="paragraph">
 <p><code>basic_error_output</code> is an implementation of <code>output</code> that writes error
-messages to a <code>RestrictedOutputStream</code>.</p>
+messages to a <code>LightweightOutputStream</code>.</p>
 </div>
 </div>
 <div class="sect3">
@@ -6148,7 +6148,7 @@ struct basic_trace_output : trace {
 <h4 id="virtual_ptr_description_24">Description</h4>
 <div class="paragraph">
 <p><code>basic_error_output</code> is an implementation of <code>trace</code> that writes error
-messages to a <code>RestrictedOutputStream</code>.</p>
+messages to a <code>LightweightOutputStream</code>.</p>
 </div>
 </div>
 <div class="sect3">
@@ -6180,11 +6180,11 @@ open it.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="virtual_ptr_restrictedoutputstream">RestrictedOutputStream</h3>
+<h3 id="virtual_ptr_restrictedoutputstream">LightweightOutputStream</h3>
 <div class="sect3">
 <h4 id="virtual_ptr_description_25">Description</h4>
 <div class="paragraph">
-<p>RestrictedOutputStream is a concept describing a <code>std::ostream</code>-like class with
+<p>LightweightOutputStream is a concept describing a <code>std::ostream</code>-like class with
 a reduced set of operations.</p>
 </div>
 <div class="paragraph">
@@ -6194,7 +6194,7 @@ uses a small subset of the operations supported by <code>std::ostream</code>. By
 the library uses a lightweight implementation based on the C stream functions.</p>
 </div>
 <div class="paragraph">
-<p>Implementations of <code>RestrictedOutputStream</code> provide the following functions:</p>
+<p>Implementations of <code>LightweightOutputStream</code> provide the following functions:</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -6210,7 +6210,7 @@ the library uses a lightweight implementation based on the C stream functions.</
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>RestrictedOutputStream&amp; operator&lt;&lt;(RestrictedOutputStream&amp; os, const char* str)</p>
+<p>LightweightOutputStream&amp; operator&lt;&lt;(LightweightOutputStream&amp; os, const char* str)</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Write a null-terminated string <code>str</code> to <code>os</code></p>
@@ -6218,7 +6218,7 @@ the library uses a lightweight implementation based on the C stream functions.</
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>RestrictedOutputStream&amp; operator&lt;&lt;(RestrictedOutputStream&amp; os, const std::string_view&amp; view)</p>
+<p>LightweightOutputStream&amp; operator&lt;&lt;(LightweightOutputStream&amp; os, const std::string_view&amp; view)</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Write a view to `os</p>
@@ -6226,7 +6226,7 @@ the library uses a lightweight implementation based on the C stream functions.</
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>RestrictedOutputStream&amp; operator&lt;&lt;(RestrictedOutputStream&amp; os, const void* value)</p>
+<p>LightweightOutputStream&amp; operator&lt;&lt;(LightweightOutputStream&amp; os, const void* value)</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Write a representation of a pointer to <code>os</code></p>
@@ -6234,7 +6234,7 @@ the library uses a lightweight implementation based on the C stream functions.</
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>RestrictedOutputStream&amp; operator&lt;&lt;(RestrictedOutputStream&amp; os, std::size_t value)</p>
+<p>LightweightOutputStream&amp; operator&lt;&lt;(LightweightOutputStream&amp; os, std::size_t value)</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Write an unsigned integer to <code>os</code></p>

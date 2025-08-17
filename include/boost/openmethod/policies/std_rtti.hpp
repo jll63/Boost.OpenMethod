@@ -16,74 +16,87 @@
 
 namespace boost::openmethod::policies {
 
-//! Implements the  `rtti` policy with RTTI.
+//! Implements the @ref rtti policy using standard RTTI.
 //!
-//! This implementation of `rtti` uses the standard C++ RTTI system. It is the
-//! default RTTI policy.
-//!
-
+//! `std_rtti` implements the `rtti` policy using the standard C++ RTTI system.
+//! It is the default RTTI policy.
 struct std_rtti : rtti {
+    //! A model of @ref rtti::fn.
     template<class Registry>
     struct fn {
 #ifndef BOOST_NO_RTTI
-        //! Returns `true` if `Class` is polymorphic.
+        //! Tests if a class is polymorphic.
         //!
-        //! A polymorphic class, as defined by the C++ standard, is a class that
-        //! contains at least one virtual function.
+        //! Evaluates to `true` if `Class` is a polymorphic class, as defined by
+        //! the C++ standard, i.e. a class that contains at least one virtual
+        //! function.
         //!
         //! @tparam Class A class.
-
         template<class Class>
         static constexpr bool is_polymorphic = std::is_polymorphic_v<Class>;
 
-        //! Returns the @ref type_id of `Class` is polymorphic.
+        //! Returns the static @ref type_id of a type.
         //!
-        //! Returns the address of the `std::type_info` object for `Class`, cast
-        //! to `type_id`.
-        //!
-        //! @note `Class` is not necessarily a @e registered class. This
-        //! function is also called to acquire the type_id of non-virtual
-        //! parameters, library types, etc, for diagnostic and trace purposes.
+        //! Returns `&typeid(Class)`, cast to `type_id`.
         //!
         //! @tparam Class A class.
-
+        //! @return The static type_id of Class.
         template<class Class>
         static auto static_type() -> type_id {
             return &typeid(Class);
         }
 
-        //! Returns the @ref type_id of `obj`.
+        //! Returns the dynamic @ref type_id of an object.
         //!
-        //! Returns the address of the `std::type_info` object for `obj`, cast to `type_id`.
-
+        //! Returns `&typeid(obj)`, cast to `type_id`.
+        //!
+        //! @tparam Class A registered class.
+        //! @param obj A reference to an instance of `Class`.
+        //! @return The type_id of `obj`'s class.
         template<class Class>
         static auto dynamic_type(const Class& obj) -> type_id {
             return &typeid(obj);
         }
 
+        //! Writes a representation of a @ref type_id to a stream.
+        //!
         //! Writes the demangled name of the class identified by `type` to
         //! `stream`.
-
+        //!
+        //! @tparam Stream A SimpleOutputStream.
+        //! @param type The `type_id` to write.
+        //! @param stream The stream to write to.
         template<typename Stream>
         static auto type_name(type_id type, Stream& stream) -> void {
             stream << boost::core::demangle(
                 reinterpret_cast<const std::type_info*>(type)->name());
         }
 
-        //! Returns the `std::type_index` of `type`.
+        //! Returns a key that uniquely identifies a class.
         //!
-        //! This function is required because C++ does *not* guarantee that
-        //! there is a single instance of `std::type_info` per type.
-
+        //! C++ does *not* guarantee that there is a single instance of
+        //! `std::type_info` per type. `std_rtti` uses the addresses of
+        //! `std::type_index` objects as `type_id`s. Thus, the same class may
+        //! have multiple corresponding `type_id`s. `std::type_index` objects,
+        //! on the other hand, are guaranteed to compare as equal if they
+        //! correspond to the same class. This makes them suitable as keys in a
+        //! map.
+        //!
+        //! @param type A `type_id`.
+        //! @return A `std::type_index` for `type`.
         static auto type_index(type_id type) -> std::type_index {
             return std::type_index(
                 *reinterpret_cast<const std::type_info*>(type));
         }
 
-        //! Casts `obj` to type `D`.
+        //! Casts an object to a type.
         //!
-        //! Casts `obj` to `D` using `dynamic_cast`.
-
+        //! Casts `obj` to a reference to an instance of `D`, using
+        //! `dynamic_cast`.
+        //!
+        //! @tparam D A reference to a subclass of `B`.
+        //! @tparam B A registered class.
+        //! @param obj A reference to an instance of `B`.
         template<typename D, typename B>
         static auto dynamic_cast_ref(B&& obj) -> D {
             return dynamic_cast<D>(obj);

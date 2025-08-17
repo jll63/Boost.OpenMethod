@@ -73,17 +73,32 @@ struct Policy : PolicyCategory {
     struct fn;
 };
 
-//! Requirements for RestrictedOutputStream (exposition only)
-struct RestrictedOutputStream {
-    RestrictedOutputStream& operator<<(const char* str);
-    RestrictedOutputStream& operator<<(const std::string_view& view);
-    RestrictedOutputStream& operator<<(const void* value);
-    RestrictedOutputStream& operator<<(std::size_t value);
+//! Requirements for LightweightOutputStream (exposition only)
+struct LightweightOutputStream {
+    LightweightOutputStream& operator<<(const char* str);
+    LightweightOutputStream& operator<<(const std::string_view& view);
+    LightweightOutputStream& operator<<(const void* value);
+    LightweightOutputStream& operator<<(std::size_t value);
+};
+
+//! Requirements for VptrAssignment (exposition only)
+//!
+struct VptrAssignment {
+    //! Returns an iterator to the beginning of a range of `type_id`s for a
+    //! single registered class.
+    auto type_id_begin() const;
+
+    //! Returns an iterator to the end of a range of `type_id`s for a
+    //! single registered class.
+    auto type_id_end() const;
+
+    //! Returns a range of `type_id`s that this assignment applies to.
+    auto vptr() const -> const vptr_type&;
 };
 
 #endif
 
-//! Policy for runtime type information.
+//! Policy category for runtime type information.
 //!
 //! A @e rtti policy is responsible for acquiring and manipulating type
 //! information, dynamic casting, and identifying polymorphic classes.
@@ -122,40 +137,58 @@ struct rtti {
     //! Requirements for `rtti` policies (exposition only)
     template<class Registry>
     struct fn {
-        //! Evaluates to `true` if `Class` is polymorphic.
+        //! Tests if a class is polymorphic.
+        //!
         //! @tparam Class A class.
         template<class Class>
         static constexpr bool is_polymorphic = std::is_polymorphic_v<Class>;
 
-        //! Returns the @ref type_id of `Class`.
+        //! Returns the static @ref type_id of a type.
         //!
         //! @note `Class` is not necessarily a @e registered class. This
         //! function is also called to acquire the type_id of non-virtual
         //! parameters, library types, etc, for diagnostic and trace purposes.
         //!
         //! @tparam Class A class.
+        //! @return The static type_id of Class.
         template<class Class>
         static auto static_type() -> type_id;
 
-        //! Returns the @ref type_id of `obj`.
+        //! Returns the dynamic @ref type_id of an object.
+        //!
+        //! @tparam Class A registered class.
+        //! @param obj A reference to an instance of `Class`.
+        //! @return The type_id of `obj`'s class.
         template<class Class>
         static auto dynamic_type(const Class& obj) -> type_id;
 
-        //! Writes a description of a type to a stream.
+        //! Writes a representation of a @ref type_id to a stream.
+        //!
+        //! @tparam Stream A SimpleOutputStream.
+        //! @param type The `type_id` to write.
+        //! @param stream The stream to write to.
         template<typename Stream>
         static auto type_name(type_id type, Stream& stream) -> void;
 
         //! Returns a key that uniquely identifies a class.
+        //!
+        //! @param type A `type_id`.
+        //! @return A unique value that identifies a class with the given
+        //! `type_id`.
         static auto type_index(type_id type);
 
         //! Casts an object to a type.
+        //!
+        //! @tparam D A reference to a subclass of `B`.
+        //! @tparam B A registered class.
+        //! @param obj A reference to an instance of `B`.
         template<typename D, typename B>
         static auto dynamic_cast_ref(B&& obj) -> D;
     };
 #endif
 };
 
-//! Policy for defered type id collection.
+//! Policy category for deferred type id collection.
 //!
 //! Some custom RTTI systems rely on static constructors to assign type ids.
 //! OpenMethod itself relies on static constructors to register classes, methods
@@ -191,7 +224,7 @@ struct error_handler {
 #endif
 };
 
-//! Policy to hash a type_id.
+//! Policy category for type_id hashing.
 //!
 //! A @e type_hash policy calculates an integer hash for a @ref type_id.
 //!
@@ -211,8 +244,10 @@ struct type_hash {
         //! @ref VptrAssignment objects.
         //! @param first The beginning of the range.
         //! @param last The end of the range.
+        //! @return A pair containing the minimum and maximum hash values.
         template<typename ForwardIterator>
-        static auto initialize(ForwardIterator first, ForwardIterator last);
+        static auto initialize(ForwardIterator first, ForwardIterator last)
+            -> std::pair<std::size_t, std::size_t>;
 
         //! Hashes a `type_id`.
         //! @param type A @ref type_id.
@@ -226,25 +261,7 @@ struct type_hash {
 #endif
 };
 
-#ifdef __MRDOCS__
-//! Requirements for VptrAssignment (exposition only)
-//!
-struct VptrAssignment {
-    //! Returns an iterator to the beginning of a range of `type_id`s for a
-    //! single registered class.
-    auto type_id_begin() const;
-
-    //! Returns an iterator to the end of a range of `type_id`s for a
-    //! single registered class.
-    auto type_id_end() const;
-
-    //! Returns a range of `type_id`s that this assignment applies to.
-    auto vptr() const -> const vptr_type&;
-};
-
-#endif
-
-//! Policy to acquire a v-table pointer for an object.
+//! Policy category for v-table pointer acquisition.
 //!
 //! @par Requirements
 //!
@@ -298,7 +315,7 @@ struct indirect_vptr final {
     struct fn {};
 };
 
-//! Policy for outputing diagnostics and trace.
+//! Policy for diagnostics and trace.
 //!
 //! If an `output` policy is present, the default error handler uses it to write
 //! error messages to its output stream. `initialize` can also use it to write
@@ -317,12 +334,12 @@ struct output {
     template<class Registry>
     struct fn {
         //! Initializes the vector of v-table pointers.
-        inline static RestrictedOutputStream os;
+        inline static LightweightOutputStream os;
     };
 #endif
 };
 
-//! Enables tracing.
+//! Policy for tracing.
 //!
 //! If `trace` is present, trace instructions are added to various parts of the
 //! initialization process (dispatch table construction, hash factors search,
@@ -338,11 +355,6 @@ struct output {
 //! time. The only guarantee is that it is detailed and comprehensive, and makes
 //! it possible to troubleshoot problems like missing class registrations,
 //! missing or ambiguous overriders, etc.
-//!
-//! @par Requirements
-//!
-//! None. `trace` can be added to a registry's policy list as-is.
-
 struct trace final {
     using category = trace;
 
@@ -365,22 +377,17 @@ struct trace final {
     };
 };
 
-//! Enables runtime sanity checks.
+//! Policy for runtime sanity checks.
 //!
 //! If this policy is present, various checks are performed at runtime.
 //! Currently they all attempt to detect missing class registrations.
-//!
-//! @par Requirements
-//!
-//! None. `indirect_vptr` can be added to a registry's policy list as-is.
-
 struct runtime_checks final {
     using category = runtime_checks;
     template<class Registry>
     struct fn {};
 };
 
-//! Enables N2216 ambiguity resolution.
+//! Policy for N2216 ambiguity resolution.
 //!
 //! If this policy is present, additional steps are taken to select a single
 //! overrider in presence of ambiguous overriders sets, according to the rules
@@ -394,11 +401,6 @@ struct runtime_checks final {
 //! - Otherwise, pick one of the overriders. Which one is used is unspecified,
 //!   but remains the same throughtout the program, and across different runs of
 //!   the same program.
-//!
-//! @par Requirements
-//!
-//! None. `n2216` can be added to a registry's policy list as-is.
-
 struct n2216 final {
     using category = n2216;
     template<class Registry>

@@ -39,7 +39,7 @@ static bool trace_enabled;
 #### trace_stream
 
 ```c++
-static RestrictedOutputStream trace_stream;
+static LightweightOutputStream trace_stream;
 ```
 
-A static variable that satisfies the requirements of `RestrictedOutputStream`.
+A static variable that satisfies the requirements of `LightweightOutputStream`.

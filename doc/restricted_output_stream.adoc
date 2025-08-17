@@ -1,9 +1,9 @@
 
-## RestrictedOutputStream
+## LightweightOutputStream
 
 ### Description
 
-RestrictedOutputStream is a concept describing a `std::ostream`-like class with
+LightweightOutputStream is a concept describing a `std::ostream`-like class with
 a reduced set of operations.
 
 While convenient, `std::ostream` and its implementations constitute a sizeable
@@ -11,7 +11,7 @@ piece of code, which may make it unsuitable for certain applications. OpenMethod
 uses a small subset of the operations supported by `std::ostream`. By default,
 the library uses a lightweight implementation based on the C stream functions.
 
-Implementations of `RestrictedOutputStream` provide the following functions:
+Implementations of `LightweightOutputStream` provide the following functions:
 
 [cols="a,a", options="header"]
 
@@ -20,16 +20,16 @@ Implementations of `RestrictedOutputStream` provide the following functions:
 | Name
 | Description
 
-| RestrictedOutputStream& operator<<(RestrictedOutputStream& os, const char* str)
+| LightweightOutputStream& operator<<(LightweightOutputStream& os, const char* str)
 | Write a null-terminated string `str` to `os`
 
-| RestrictedOutputStream& operator<<(RestrictedOutputStream& os, const std::string_view& view)
+| LightweightOutputStream& operator<<(LightweightOutputStream& os, const std::string_view& view)
 | Write a view to `os
 
-| RestrictedOutputStream& operator<<(RestrictedOutputStream& os, const void* value)
+| LightweightOutputStream& operator<<(LightweightOutputStream& os, const void* value)
 | Write a representation of a pointer to `os`
 
-| RestrictedOutputStream& operator<<(RestrictedOutputStream& os, std::size_t value)
+| LightweightOutputStream& operator<<(LightweightOutputStream& os, std::size_t value)
 | Write an unsigned integer to `os`
 
 |===

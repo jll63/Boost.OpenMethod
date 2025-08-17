@@ -78,12 +78,12 @@ struct std_rtti : rtti {
         //! `std::type_info` per type. `std_rtti` uses the addresses of
         //! `std::type_index` objects as `type_id`s. Thus, the same class may
         //! have multiple corresponding `type_id`s. `std::type_index` objects,
-        //! on the other hand, are guaranteed to compare as equal if they
-        //! correspond to the same class. This makes them suitable as keys in a
-        //! map.
+        //! on the other hand, are guaranteed to compare as equal iff they
+        //! correspond to the same class, and they can be used to identify the
+        //! `type_id`s pertaining to the same class.
         //!
         //! @param type A `type_id`.
-        //! @return A `std::type_index` for `type`.
+        //! @return A `std::type_index` for `type` (cast to a `const std::type_info&`).
         static auto type_index(type_id type) -> std::type_index {
             return std::type_index(
                 *reinterpret_cast<const std::type_info*>(type));

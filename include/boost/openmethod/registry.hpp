@@ -134,7 +134,7 @@ struct rtti {
     };
 
 #ifdef __MRDOCS__
-    //! Requirements for `rtti` policies (exposition only)
+    //! Requirements for `rtti` policies (exposition only).
     template<class Registry>
     struct fn {
         //! Tests if a class is polymorphic.
@@ -164,7 +164,7 @@ struct rtti {
 
         //! Writes a representation of a @ref type_id to a stream.
         //!
-        //! @tparam Stream A SimpleOutputStream.
+        //! @tparam Stream A LightweightOutputStream.
         //! @param type The `type_id` to write.
         //! @param stream The stream to write to.
         template<typename Stream>
@@ -212,7 +212,7 @@ struct error_handler {
     using category = error_handler;
 
 #ifdef __MRDOCS__
-    //! Requirements for `error_handler` policies (exposition only)
+    //! Requirements for `error_handler` policies (exposition only).
     template<class Registry>
     struct fn {
         //! Called when an error is detected.
@@ -272,10 +272,9 @@ struct vptr {
 
 #ifdef __MRDOCS__
     //! Requirements for `vptr` policies (exposition only)
-    //!
     template<class Registry>
     struct fn {
-        //! Initializes the vector of v-table pointers.
+        //! Stores the v-table pointers.
         //! @tparam ForwardIterator An iterator to a range of const
         //! @ref `VptrAssignment` objects.
         //! @param first The beginning of the range.
@@ -286,7 +285,8 @@ struct vptr {
         //! Returns a *reference* to a v-table pointer for an object.
         //!
         //! @tparam Class A registered class.
-        //! @param arg An reference to a const object of type `Class`.
+        //! @param arg A reference to a const object of type `Class`.
+        //! @return A reference to a the v-table pointer for `Class`.
         template<class Class>
         static auto dynamic_vptr(const Class& arg) -> const vptr_type&;
 
@@ -315,7 +315,7 @@ struct indirect_vptr final {
     struct fn {};
 };
 
-//! Policy for diagnostics and trace.
+//! Policy for writing diagnostics and trace.
 //!
 //! If an `output` policy is present, the default error handler uses it to write
 //! error messages to its output stream. `initialize` can also use it to write
@@ -329,11 +329,11 @@ struct output {
     using category = output;
 
 #ifdef __MRDOCS__
-    //! Requirements for `vptr` policies (exposition only)
+    //! Requirements for `output` policies (exposition only)
     //!
     template<class Registry>
     struct fn {
-        //! Initializes the vector of v-table pointers.
+        //! A @ref LightweightOutputStream.
         inline static LightweightOutputStream os;
     };
 #endif

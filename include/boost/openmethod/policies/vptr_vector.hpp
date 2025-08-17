@@ -35,17 +35,27 @@ namespace policies {
 //! pointers to v-tables in the vector.
 struct vptr_vector : vptr {
   public:
-    //! `vptr_vector` policy implementation.
+    //! A model of @ref vptr::fn.
+    //!
+    //! Keeps track of v-table pointers using a `std::vector`.
+    //!
+    //! If `Registry` contains a @ref type_hash policy, it is used to convert
+    //! `type_id`s to indices; otherwise, `type_id`s are used as indices.
+    //!
+    //! If `Registry` contains the @ref indirect_vptr policy, stores pointers to
+    //! pointers to v-tables in the map.
+    //!
+    //! @tparam Registry The registry containing this policy.
     template<class Registry>
     struct fn {
-        //! Initializes the vector.
+        //! Stores the v-table pointers.
         //!
         //! If `Registry` contains a @ref type_hash policy, its `initialize`
         //! function is called. Its result determines the size of the vector.
         //! The v-table pointers are copied into the vector.
         //!
-        //! @tparam ForwardIterator An iterator to a range of const
-        //! @ref `VptrAssignment` objects.
+        //! @tparam ForwardIterator An iterator to a range of @ref
+        //! VptrAssignment objects.
         //! @param first The beginning of the range.
         //! @param last The end of the range.
         template<typename ForwardIterator>
@@ -113,7 +123,8 @@ struct vptr_vector : vptr {
         //! terminates the program with @ref abort.
         //!
         //! @tparam Class A registered class.
-        //! @param arg An reference to a const object of type `Class`.
+        //! @param arg A reference to a const object of type `Class`.
+        //! @return A reference to a the v-table pointer for `Class`.
         template<class Class>
         static auto dynamic_vptr(const Class& arg) -> const vptr_type& {
             auto dynamic_type = Registry::rtti::dynamic_type(arg);

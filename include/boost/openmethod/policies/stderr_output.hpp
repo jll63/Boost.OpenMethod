@@ -15,9 +15,10 @@ namespace boost::openmethod::policies {
 //!
 //! `stderr_output` writes to standard error using the C API.
 struct stderr_output : output {
+    //! A model of @ref output::fn.
     template<class Registry>
     struct fn {
-        //! A LightweightOuputStream.
+        //! A @ref LightweightOuputStream.
         inline static detail::ostderr os;
     };
 };

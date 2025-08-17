@@ -14,25 +14,28 @@ namespace boost::openmethod {
 
 namespace policies {
 
-//! Stores v-table pointers in a map.
+//! Keeps track of v-table pointers using a map indexed by `type_id`s.
 //!
 //! `vptr_map` stores v-table pointers in a global map.
 //!
 //! If the registry contains the @ref indirect_vptr policy, stores pointers to
 //! pointers to v-tables in the map.
 //!
-//! @tparam MapAdaptor A mp11 quoted meta-function that takes a key type and a
-//! value type, and returns a map.
-template<class MapAdaptor = mp11::mp_quote<std::unordered_map>>
+//! @tparam MapFn A mp11 quoted meta-function that takes a key type and a
+//! value type, and returns an @ref AssociativeContainer.
+template<class MapFn = mp11::mp_quote<std::unordered_map>>
 class vptr_map : public vptr {
   public:
+    //! A model of @ref vptr::fn.
+    //!
+    //! @tparam Registry The registry containing this policy.
     template<class Registry>
     struct fn {
         using Value = std::conditional_t<
             Registry::has_indirect_vptr, const vptr_type*, vptr_type>;
-        static inline typename MapAdaptor::template fn<type_id, Value> vptrs;
+        static inline typename MapFn::template fn<type_id, Value> vptrs;
 
-        //! Initializes the map.
+        //! Stores the v-table pointers.
         //!
         //! @tparam ForwardIterator An iterator to a range of const
         //! @ref `VptrAssignment` objects.
@@ -65,7 +68,8 @@ class vptr_map : public vptr {
         //! terminates the program with @ref abort.
         //!
         //! @tparam Class A registered class.
-        //! @param arg An reference to a const object of type `Class`.
+        //! @param arg A reference to a const object of type `Class`.
+        //! @return A reference to a the v-table pointer for `Class`.
         template<class Class>
         static auto dynamic_vptr(const Class& arg) -> const vptr_type& {
             auto type = Registry::rtti::dynamic_type(arg);

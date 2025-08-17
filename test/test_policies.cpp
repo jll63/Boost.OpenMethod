@@ -28,8 +28,6 @@ struct derived : base {
     struct fn {};
 };
 
-static_assert(has_policy<registry<derived>, base>);
-
 static_assert(std::is_same_v<
               registry<derived>::policy<base>, derived::fn<registry<derived>>>);
 

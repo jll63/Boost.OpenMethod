@@ -477,15 +477,14 @@ struct without_aux<Policies, Policy, MorePolicies...> {
 
 } // namespace detail
 
-template<class Registry, class PolicyCategory>
-constexpr bool has_policy =
-    detail::is_not_void<typename Registry::template policy<PolicyCategory>>;
-
 template<class... Policies>
 struct registry : detail::registry_base {
-    inline static bool initialized;
     inline static detail::class_catalog classes;
     inline static detail::method_catalog methods;
+
+    //! `true` if `intialize<registry>` was called.
+    inline static bool initialized;
+
     template<class Class>
     inline static vptr_type static_vptr;
     inline static std::vector<detail::word> dispatch_data;
@@ -510,12 +509,12 @@ struct registry : detail::registry_base {
         typename detail::without_aux<policy_list, RemovePolicies...>::type>;
 
     static constexpr auto has_deferred_static_rtti =
-        has_policy<registry, policies::deferred_static_rtti>;
+        !std::is_same_v<void, policies::deferred_static_rtti>;
     static constexpr auto has_runtime_checks =
-        has_policy<registry, policies::runtime_checks>;
+        !std::is_same_v<void, policies::runtime_checks>;
     static constexpr auto has_indirect_vptr =
-        has_policy<registry, policies::indirect_vptr>;
-    static constexpr auto has_n2216 = has_policy<registry, policies::n2216>;
+        !std::is_same_v<void, policies::indirect_vptr>;
+    static constexpr auto has_n2216 = !std::is_same_v<void, policies::n2216>;
 
     using rtti = policy<policies::rtti>;
     static constexpr auto has_rtti = !std::is_same_v<rtti, void>;

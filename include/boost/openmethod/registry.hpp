@@ -197,7 +197,7 @@ struct rtti {
 //! of type ids to be deferred until the first call to @ref update.
 struct deferred_static_rtti : rtti {};
 
-//! Policy to handle errors.
+//! Policy category for error handling.
 //!
 //! A @e error_handler policy runs code before the library terminats the program
 //! due to an error. This can be useful for throwing, logging, cleanup, or other

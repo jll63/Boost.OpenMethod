@@ -478,11 +478,11 @@ struct without_aux<Policies, Policy, MorePolicies...> {
 } // namespace detail
 
 template<class... Policies>
-struct registry : detail::registry_base {
+class registry : detail::registry_base {
     struct compiler;
-    using registry_type = registry;
 
-    static auto initialize() -> compiler;
+  public:
+    static auto initialize();
     static void finalize();
 
     inline static detail::class_catalog classes;
@@ -514,14 +514,6 @@ struct registry : detail::registry_base {
         registry,
         typename detail::without_aux<policy_list, RemovePolicies...>::type>;
 
-    static constexpr auto has_deferred_static_rtti =
-        !std::is_same_v<void, policies::deferred_static_rtti>;
-    static constexpr auto has_runtime_checks =
-        !std::is_same_v<void, policies::runtime_checks>;
-    static constexpr auto has_indirect_vptr =
-        !std::is_same_v<void, policies::indirect_vptr>;
-    static constexpr auto has_n2216 = !std::is_same_v<void, policies::n2216>;
-
     using rtti = policy<policies::rtti>;
     static constexpr auto has_rtti = !std::is_same_v<rtti, void>;
 
@@ -540,6 +532,15 @@ struct registry : detail::registry_base {
 
     using trace = policy<policies::trace>;
     static constexpr auto has_trace = !std::is_same_v<trace, void>;
+
+    static constexpr auto has_deferred_static_rtti =
+        !std::is_same_v<policy<policies::deferred_static_rtti>, void>;
+    static constexpr auto has_runtime_checks =
+        !std::is_same_v<policy<policies::runtime_checks>, void>;
+    static constexpr auto has_indirect_vptr =
+        !std::is_same_v<policy<policies::indirect_vptr>, void>;
+    static constexpr auto has_n2216 =
+        !std::is_same_v<policy<policies::n2216>, void>;
 
     static void check_initialized();
 };

@@ -1052,7 +1052,7 @@ class method;
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 class method<Name, ReturnType(Parameters...), Registry>
-    : std::conditional_t<
+    : public std::conditional_t<
           Registry::has_deferred_static_rtti, detail::deferred_method_info,
           detail::method_info> {
     // Aliases used in implementation only. Everything extracted from template

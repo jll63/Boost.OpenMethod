@@ -164,6 +164,19 @@ struct generic_compiler {
         method_report report;
     };
 
+    const method*
+    operator[](const detail::method_info& info) const {
+        auto iter = std::find_if(
+            methods.begin(), methods.end(), [&info](const method& m) {
+                return m.info == &info;
+            });
+
+        if (iter != methods.end()) {
+            return &*iter;
+        }
+
+        return nullptr;
+    }
     std::deque<class_> classes;
     std::vector<method> methods;
     std::size_t class_mark = 0;
@@ -264,23 +277,6 @@ struct registry<Policies...>::compiler : detail::generic_compiler {
 
     mutable detail::trace_type<registry> trace;
     using indent = typename detail::trace_type<registry>::indent;
-
-    template<typename Id, typename Signature>
-    const method*
-    operator[](const detail::method_info&) const {
-        auto type_id = rtti::template static_type<
-            openmethod::method<Id, Signature, registry>>();
-        auto iter = std::find_if(
-            methods.begin(), methods.end(), [type_id](const method& m) {
-                return m.info->method_type_id == type_id;
-            });
-
-        if (iter != methods.end()) {
-            return &*iter;
-        }
-
-        return nullptr;
-    }
 };
 
 template<class... Policies>
@@ -1311,7 +1307,7 @@ void registry<Policies...>::compiler::print(const method_report& report) const {
 }
 
 template<class... Policies>
-auto registry<Policies...>::initialize() -> compiler {
+auto registry<Policies...>::initialize() {
     compiler comp;
     comp.initialize();
 

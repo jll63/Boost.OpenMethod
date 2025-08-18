@@ -479,6 +479,12 @@ struct without_aux<Policies, Policy, MorePolicies...> {
 
 template<class... Policies>
 struct registry : detail::registry_base {
+    struct compiler;
+    using registry_type = registry;
+
+    static auto initialize() -> compiler;
+    static void finalize();
+
     inline static detail::class_catalog classes;
     inline static detail::method_catalog methods;
 

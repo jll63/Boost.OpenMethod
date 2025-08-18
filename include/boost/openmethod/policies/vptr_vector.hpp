@@ -146,8 +146,6 @@ struct vptr_vector : vptr {
                     }
 
                     if (index >= max_index) {
-                        using error_handler = typename Registry::error_handler;
-
                         if constexpr (Registry::has_error_handler) {
                             unknown_class_error error;
                             error.type = dynamic_type;

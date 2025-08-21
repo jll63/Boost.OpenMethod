@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-#include <boost/openmethod/compiler.hpp>
+#include <boost/openmethod/initialize.hpp>
 #include <boost/openmethod/core.hpp>
 
 struct Animal {

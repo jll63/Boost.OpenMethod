@@ -24,7 +24,7 @@ class Dolphin : public Animal {};
 // Add behavior to existing classes, without modifying them.
 
 #include <boost/openmethod.hpp>
-#include <boost/openmethod/compiler.hpp>
+#include <boost/openmethod/initialize.hpp>
 
 using boost::openmethod::virtual_ptr;
 

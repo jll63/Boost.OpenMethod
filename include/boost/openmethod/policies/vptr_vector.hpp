@@ -48,6 +48,10 @@ struct vptr_vector : vptr {
     //! @tparam Registry The registry containing this policy.
     template<class Registry>
     struct fn {
+        using type_hash =
+            typename Registry::template policy<policies::type_hash>;
+        static constexpr auto has_type_hash = !std::is_same_v<type_hash, void>;
+
         //! Stores the v-table pointers.
         //!
         //! If `Registry` contains a @ref type_hash policy, its `initialize`
@@ -62,10 +66,8 @@ struct vptr_vector : vptr {
         static auto initialize(ForwardIterator first, ForwardIterator last)
             -> void {
             std::size_t size;
-
-            if constexpr (Registry::has_type_hash) {
-                auto [_, max_value] =
-                    Registry::type_hash::initialize(first, last);
+            if constexpr (has_type_hash) {
+                auto [_, max_value] = type_hash::initialize(first, last);
                 size = max_value + 1;
             } else {
                 size = 0;
@@ -91,8 +93,8 @@ struct vptr_vector : vptr {
                      type_iter != iter->type_id_end(); ++type_iter) {
                     std::size_t index;
 
-                    if constexpr (Registry::has_type_hash) {
-                        index = Registry::type_hash::hash(*type_iter);
+                    if constexpr (has_type_hash) {
+                        index = type_hash::hash(*type_iter);
                     } else {
                         index = std::size_t(*type_iter);
                     }
@@ -129,9 +131,8 @@ struct vptr_vector : vptr {
         static auto dynamic_vptr(const Class& arg) -> const vptr_type& {
             auto dynamic_type = Registry::rtti::dynamic_type(arg);
             std::size_t index;
-
-            if constexpr (Registry::has_type_hash) {
-                index = Registry::type_hash::hash(dynamic_type);
+            if constexpr (has_type_hash) {
+                index = type_hash::hash(dynamic_type);
             } else {
                 index = std::size_t(dynamic_type);
 

@@ -1314,9 +1314,8 @@ auto registry<Policies...>::initialize() {
     return comp;
 }
 
-template<class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
 auto initialize() {
-    return Registry::initialize();
+    return BOOST_OPENMETHOD_DEFAULT_REGISTRY::initialize();
 }
 
 namespace detail {

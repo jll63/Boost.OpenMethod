@@ -7,7 +7,7 @@
 #include <type_traits>
 
 #include <boost/openmethod.hpp>
-#include <boost/openmethod/compiler.hpp>
+#include <boost/openmethod/initialize.hpp>
 
 #include "test_util.hpp"
 
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(test_use_classes_linear) {
     BOOST_OPENMETHOD_CLASSES(D3, D4, policy);
     BOOST_OPENMETHOD_CLASSES(D4, D5, D3, policy);
 
-    auto comp = initialize<policy>();
+    auto comp = policy::initialize();
 
     auto base = get_class<Base>(comp);
     auto d1 = get_class<D1>(comp);
@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE(test_use_classes_diamond) {
 
     std::vector<class_*> actual, expected;
 
-    auto comp = initialize<test_registry>();
+    auto comp = test_registry::initialize();
 
     auto a = get_class<A>(comp);
     auto b = get_class<B>(comp);
@@ -239,7 +239,7 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a_b1_c) {
     BOOST_OPENMETHOD_REGISTER(use_classes<A, C, test_registry>);
     ADD_METHOD(B);
 
-    auto comp = initialize<test_registry>();
+    auto comp = test_registry::initialize();
 
     BOOST_TEST_REQUIRE(check(comp[m_B])->slots.size() == 1u);
     BOOST_TEST(check(comp[m_B])->slots[0] == 0u);
@@ -269,7 +269,7 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_c1) {
     ADD_METHOD(A);
     ADD_METHOD(B);
     ADD_METHOD(C);
-    auto comp = initialize<test_registry>();
+    auto comp = test_registry::initialize();
 
     BOOST_TEST_REQUIRE(check(comp[m_A])->slots.size() == 1u);
     BOOST_TEST(check(comp[m_A])->slots[0] == 0u);
@@ -310,7 +310,7 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_d1_c1_d1) {
     ADD_METHOD(B);
     ADD_METHOD(C);
     ADD_METHOD(D);
-    auto comp = initialize<test_registry>();
+    auto comp = test_registry::initialize();
 
     BOOST_TEST_REQUIRE(check(comp[m_A])->slots.size() == 1u);
     BOOST_TEST(check(comp[m_A])->slots[0] == 0u);
@@ -361,7 +361,7 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a1_b1_d1_c1_d1_e2) {
     ADD_METHOD_N(E, 1);
     ADD_METHOD_N(E, 2);
     ADD_METHOD_N(E, 3);
-    auto comp = initialize<test_registry>();
+    auto comp = test_registry::initialize();
 
     BOOST_TEST_REQUIRE(check(comp[m_A])->slots.size() == 1u);
     BOOST_TEST(check(comp[m_A])->slots[0] == 0u);
@@ -415,7 +415,7 @@ BOOST_AUTO_TEST_CASE(test_assign_slots_a1_c1_b1) {
     ADD_METHOD(A);
     ADD_METHOD(B);
     ADD_METHOD(C);
-    auto comp = initialize<test_registry>();
+    auto comp = test_registry::initialize();
 
     BOOST_TEST_REQUIRE(check(comp[m_A])->slots.size() == 1u);
     BOOST_TEST(check(comp[m_A])->slots[0] == 0u);

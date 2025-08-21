@@ -84,7 +84,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 
 BOOST_OPENMETHOD_CLASSES(Animal, Cat, Dog);
 
-#include <boost/openmethod/compiler.hpp>
+#include <boost/openmethod/initialize.hpp>
 
 auto main() -> int {
     boost::openmethod::initialize();

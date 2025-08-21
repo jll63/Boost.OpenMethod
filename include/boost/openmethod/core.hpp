@@ -1296,16 +1296,14 @@ template<class Error>
 auto method<Name, ReturnType(Parameters...), Registry>::check_static_offset(
     std::size_t actual, std::size_t expected) const -> void {
     using namespace detail;
-    using error_handler =
-        typename Registry::template policy<policies::error_handler>;
 
-    if constexpr (is_not_void<error_handler>) {
+    if constexpr (Registry::has_error_handler) {
         if (actual != expected) {
             Error error;
             error.method = Registry::rtti::template static_type<method>();
             error.expected = this->slots_strides[0];
             error.actual = actual;
-            error_handler::error(error);
+            Registry::error_handler::error(error);
 
             abort();
         }

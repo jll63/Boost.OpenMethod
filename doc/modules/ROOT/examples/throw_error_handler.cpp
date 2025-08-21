@@ -35,7 +35,7 @@ struct custom_registry : bom::default_registry::with<throw_if_not_implemented> {
 #define BOOST_OPENMETHOD_DEFAULT_REGISTRY custom_registry
 
 #include <boost/openmethod.hpp>
-#include <boost/openmethod/compiler.hpp>
+#include <boost/openmethod/initialize.hpp>
 
 using boost::openmethod::virtual_ptr;
 

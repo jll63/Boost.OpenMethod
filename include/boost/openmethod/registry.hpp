@@ -475,20 +475,30 @@ struct without_aux<Policies, Policy, MorePolicies...> {
         MorePolicies...>::type;
 };
 
+template<class...>
+struct use_class_aux;
+
 } // namespace detail
 
 template<class... Policies>
 class registry : detail::registry_base {
     struct compiler;
 
-  public:
-    static auto initialize();
-    static void finalize();
-
     inline static detail::class_catalog classes;
+
     inline static detail::method_catalog methods;
 
-    //! `true` if `intialize<registry>` was called.
+    template<class...>
+    friend struct detail::use_class_aux;
+    template<typename Name, typename ReturnType, class Registry>
+    friend class method;
+
+  public:
+    static auto initialize();
+    static void check_initialized();
+    static void finalize();
+
+    //! `true` if `initialize` was called.
     inline static bool initialized;
 
     template<class Class>
@@ -515,10 +525,6 @@ class registry : detail::registry_base {
         typename detail::without_aux<policy_list, RemovePolicies...>::type>;
 
     using rtti = policy<policies::rtti>;
-    static constexpr auto has_rtti = !std::is_same_v<rtti, void>;
-
-    using type_hash = policy<policies::type_hash>;
-    static constexpr auto has_type_hash = !std::is_same_v<type_hash, void>;
 
     using vptr = policy<policies::vptr>;
     static constexpr auto has_vptr = !std::is_same_v<vptr, void>;
@@ -541,16 +547,12 @@ class registry : detail::registry_base {
         !std::is_same_v<policy<policies::indirect_vptr>, void>;
     static constexpr auto has_n2216 =
         !std::is_same_v<policy<policies::n2216>, void>;
-
-    static void check_initialized();
 };
 
 template<class... Policies>
 inline void registry<Policies...>::check_initialized() {
     if constexpr (registry::has_runtime_checks) {
         if (!initialized) {
-            using error_handler = policy<policies::error_handler>;
-
             if constexpr (registry::has_error_handler) {
                 error_handler::error(not_initialized_error());
             }

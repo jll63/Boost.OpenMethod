@@ -14,7 +14,7 @@
 
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/unique_ptr.hpp>
-#include <boost/openmethod/compiler.hpp>
+#include <boost/openmethod/initialize.hpp>
 
 #include "dl.hpp"
 
@@ -32,7 +32,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 auto main() -> int {
     using namespace boost::openmethod;
 
-    initialize<dynamic_policy>();
+    dynamic_policy::initialize();
 
     std::cout << "Before loading library\n";
 
@@ -61,7 +61,7 @@ auto main() -> int {
 
     std::cout << "\nAfter loading library\n";
 
-    boost::openmethod::initialize<dynamic_policy>();
+    dynamic_policy::initialize();
 
     auto make_tiger =
         reinterpret_cast<Animal* (*)()>(dlsym(handle, "make_tiger"));
@@ -86,7 +86,7 @@ auto main() -> int {
 
     std::cout << "\nAfter unloading library\n";
 
-    boost::openmethod::initialize<dynamic_policy>();
+    dynamic_policy::initialize();
 
     std::cout << "Gracie encounters Willy -> "
               << encounter(gracie, willy); // ignore

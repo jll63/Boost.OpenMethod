@@ -9,7 +9,7 @@
 #include <iostream>
 
 #include <boost/openmethod/core.hpp>
-#include <boost/openmethod/compiler.hpp>
+#include <boost/openmethod/initialize.hpp>
 
 template<typename Key>
 struct unique final {

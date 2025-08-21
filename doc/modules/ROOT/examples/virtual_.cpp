@@ -7,7 +7,7 @@
 
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/inplace_vptr.hpp>
-#include <boost/openmethod/compiler.hpp>
+#include <boost/openmethod/initialize.hpp>
 
 using boost::openmethod::virtual_;
 

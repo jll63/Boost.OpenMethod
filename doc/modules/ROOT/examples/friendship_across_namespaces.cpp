@@ -98,7 +98,7 @@ BOOST_OPENMETHOD_CLASSES(core::Animal, Cat, Dog);
 } // namespace pets
 // end::friend[]
 
-#include <boost/openmethod/compiler.hpp>
+#include <boost/openmethod/initialize.hpp>
 
 auto main() -> int {
     boost::openmethod::initialize();

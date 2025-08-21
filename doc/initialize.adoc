@@ -3,7 +3,7 @@
 
 ### Synopsis
 
-Defined in `<boost/openmethod/compiler.hpp>`.
+Defined in `<boost/openmethod/initialize.hpp>`.
 
 ```c++
 namespace boost::openmethod {
@@ -37,7 +37,7 @@ combination of virtual arguments.
 
 ### Synopsis
 
-Defined in `<boost/openmethod/compiler.hpp>`.
+Defined in `<boost/openmethod/initialize.hpp>`.
 
 ```c++
 namespace boost::openmethod {

@@ -6,7 +6,7 @@
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/shared_ptr.hpp>
 #include <boost/openmethod/unique_ptr.hpp>
-#include <boost/openmethod/compiler.hpp>
+#include <boost/openmethod/initialize.hpp>
 
 #include <iostream>
 #include <memory>
@@ -221,7 +221,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
         typename poke::template override<
             poke_bear<virtual_ptr<Player, Registry>>>);
 
-    initialize<Registry>();
+    Registry::initialize();
 
     using vptr_player = virtual_ptr<Player, Registry>;
     static_assert(detail::is_virtual_ptr<vptr_player>);
@@ -257,7 +257,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
         Registry::dispatch_data.resize(2 * Registry::dispatch_data.size());
     }
 
-    initialize<Registry>();
+    Registry::initialize();
 
     BOOST_TEST(
         (virtual_bear_ptr.vptr() == Registry::template static_vptr<Bear>) ==
@@ -292,7 +292,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
             virtual_ptr<Player, Registry>, virtual_ptr<Object, Registry>,
             virtual_ptr<Player, Registry>>>);
 
-    initialize<Registry>();
+    Registry::initialize();
 
     Bear bear;
     BOOST_TEST(poke::fn(virtual_ptr<Player, Registry>(bear)) == "growl");
@@ -339,7 +339,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
             shared_virtual_ptr<Object, Registry>,
             shared_virtual_ptr<Player, Registry>>>);
 
-    initialize<Registry>();
+    Registry::initialize();
 
     auto bear = make_shared_virtual<Bear, Registry>();
     auto warrior = make_shared_virtual<Warrior, Registry>();

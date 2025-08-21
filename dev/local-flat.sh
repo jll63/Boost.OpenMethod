@@ -4,7 +4,7 @@ python3 dev/flatten.py \
   include/boost/openmethod.hpp \
   include/boost/openmethod/unique_ptr.hpp \
   include/boost/openmethod/shared_ptr.hpp \
-  include/boost/openmethod/compiler.hpp
+  include/boost/openmethod/initialize.hpp
 python3 dev/flatten.py \
   flat/boost/openmethod/registry.hpp \
   include/boost/openmethod/registry.hpp \

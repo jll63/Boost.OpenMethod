@@ -17,7 +17,7 @@ struct test_registry : bom::default_registry::without<
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/inplace_vptr.hpp>
 #include <boost/openmethod/shared_ptr.hpp>
-#include <boost/openmethod/compiler.hpp>
+#include <boost/openmethod/initialize.hpp>
 
 #define BOOST_TEST_MODULE intrusive
 #include <boost/test/unit_test.hpp>
@@ -189,7 +189,7 @@ BOOST_OPENMETHOD_OVERRIDE(whatever, (Indirect&), void) {
 }
 
 BOOST_AUTO_TEST_CASE(core_intrusive_vptr) {
-    bom::initialize<indirect_policy>();
+    indirect_policy::initialize();
     Indirect i;
     BOOST_TEST(
         boost_openmethod_vptr(i, nullptr) ==

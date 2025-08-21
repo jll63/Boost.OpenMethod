@@ -67,7 +67,7 @@ macros:
 
 * Include `<boost/openmethod/core.hpp>`and `<boost/openmethod/macros.hpp>`.
 
-#### <boost/openmethod/compiler.hpp>
+#### <boost/openmethod/initialize.hpp>
 
 Provides `intialize` and `finalize`. Typically included only by the translation
 unit that contains `main`, unless dynamic loading is used in other places in the

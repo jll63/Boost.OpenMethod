@@ -97,7 +97,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 // end::multi[]
 
 // tag::main[]
-#include <boost/openmethod/compiler.hpp>
+#include <boost/openmethod/initialize.hpp>
     // only needed in the file that calls boost::openmethod::initialize()
 
 auto main() -> int {

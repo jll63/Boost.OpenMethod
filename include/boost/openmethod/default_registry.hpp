@@ -28,7 +28,7 @@ struct debug_registry
 using default_registry = release_registry;
 #else
 using default_registry = debug_registry;
-#endif // BOOST_OPENMETHOD_DEFAULT_REGISTRY_HPP
+#endif
 
 } // namespace boost::openmethod
 

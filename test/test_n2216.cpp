@@ -12,7 +12,7 @@
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/shared_ptr.hpp>
 #include <boost/openmethod/unique_ptr.hpp>
-#include <boost/openmethod/compiler.hpp>
+#include <boost/openmethod/initialize.hpp>
 #include <boost/openmethod/policies/vptr_vector.hpp>
 
 #include "test_util.hpp"
@@ -46,7 +46,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 }
 
 BOOST_AUTO_TEST_CASE(covariant_return_type) {
-    auto compiler = initialize<n2216>();
+    auto compiler = n2216::initialize();
     BOOST_TEST(compiler.report.ambiguous == 0u);
 
     // N2216: use covariant return types to resolve ambiguity.
@@ -84,7 +84,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 }
 
 BOOST_AUTO_TEST_CASE(pick_any_ambiguous) {
-    auto compiler = initialize<n2216>();
+    auto compiler = n2216::initialize();
     BOOST_TEST(compiler.report.ambiguous == 1u);
 
     // N2216: use covariant return types to resolve ambiguity.

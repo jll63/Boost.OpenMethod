@@ -9,7 +9,7 @@
 #include <typeinfo>
 
 #include <boost/openmethod.hpp>
-#include <boost/openmethod/compiler.hpp>
+#include <boost/openmethod/initialize.hpp>
 #include <boost/openmethod/shared_ptr.hpp>
 
 using std::make_shared;

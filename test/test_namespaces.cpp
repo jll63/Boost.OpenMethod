@@ -27,7 +27,7 @@ class Dolphin : public interfaces::Animal {};
 #include <string>
 
 #include <boost/openmethod.hpp>
-#include <boost/openmethod/compiler.hpp>
+#include <boost/openmethod/initialize.hpp>
 
 using boost::openmethod::virtual_;
 

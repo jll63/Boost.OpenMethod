@@ -75,7 +75,7 @@ struct custom_policy : bom::registry<custom_rtti, bom::policies::vptr_vector> {
 #include <iostream>
 
 #include <boost/openmethod.hpp>
-#include <boost/openmethod/compiler.hpp>
+#include <boost/openmethod/initialize.hpp>
 
 using boost::openmethod::virtual_ptr;
 

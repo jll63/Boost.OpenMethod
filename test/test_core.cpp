@@ -358,7 +358,7 @@ static_assert(detail::has_vptr_fn<Animal, test_registry>);
 static_assert(!detail::has_vptr_fn<Animal, default_registry>);
 
 BOOST_AUTO_TEST_CASE(vptr_from_function) {
-    initialize<test_registry>();
+    test_registry::initialize();
     BOOST_TEST(detail::acquire_vptr<test_registry>(Animal{}) == &value);
 }
 

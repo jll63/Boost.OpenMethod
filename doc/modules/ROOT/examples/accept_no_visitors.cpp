@@ -9,7 +9,7 @@
 
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/shared_ptr.hpp>
-#include <boost/openmethod/compiler.hpp>
+#include <boost/openmethod/initialize.hpp>
 
 using namespace boost::openmethod::aliases;
 

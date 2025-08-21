@@ -2,7 +2,7 @@
 #include <vector>
 
 #include <boost/openmethod.hpp>
-#include <boost/openmethod/compiler.hpp>
+#include <boost/openmethod/initialize.hpp>
 
 struct Animal {
     const char* name;

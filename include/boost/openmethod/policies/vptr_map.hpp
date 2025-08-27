@@ -14,12 +14,12 @@ namespace boost::openmethod {
 
 namespace policies {
 
-//! Keeps track of v-table pointers using a map indexed by `type_id`s.
+//! Keeps track of v-table pointers using a map keyed by `type_id`s.
 //!
-//! `vptr_map` stores v-table pointers in a global map.
+//! `vptr_map` stores v-table pointers in a map keyed by `type_id`s.
 //!
-//! If the registry contains the @ref indirect_vptr policy, stores pointers to
-//! pointers to v-tables in the map.
+//! If the registry contains the @ref indirect_vptr policy, `vptr_map` stores
+//! pointers to pointers to v-tables.
 //!
 //! @tparam MapFn A mp11 quoted meta-function that takes a key type and a
 //! value type, and returns an @ref AssociativeContainer.
@@ -30,15 +30,16 @@ class vptr_map : public vptr {
     //!
     //! @tparam Registry The registry containing this policy.
     template<class Registry>
-    struct fn {
+    class fn {
         using Value = std::conditional_t<
             Registry::has_indirect_vptr, const vptr_type*, vptr_type>;
         static inline typename MapFn::template fn<type_id, Value> vptrs;
 
+      public:
         //! Stores the v-table pointers.
         //!
-        //! @tparam ForwardIterator An iterator to a range of const
-        //! @ref `VptrAssignment` objects.
+        //! @tparam ForwardIterator A forward iterator yielding
+        //! @ref IdsToVptr objects.
         //! @param first The beginning of the range.
         //! @param last The end of the range.
         template<typename ForwardIterator>
@@ -56,7 +57,7 @@ class vptr_map : public vptr {
             }
         }
 
-        //! Returns a *reference* to a v-table pointer for an object.
+        //! Returns a reference to a v-table pointer for an object.
         //!
         //! Acquires the dynamic @ref type_id of `arg`, using the registry's
         //! @ref rtti policy.

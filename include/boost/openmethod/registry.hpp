@@ -9,6 +9,10 @@
 #include <stdlib.h>
 #include <vector>
 
+#ifdef __MRDOCS__
+#include <unordered_map>
+#endif
+
 namespace boost::openmethod {
 
 //! Namespace containing the policy framework.
@@ -81,9 +85,9 @@ struct LightweightOutputStream {
     LightweightOutputStream& operator<<(std::size_t value);
 };
 
-//! Requirements for VptrAssignment (exposition only)
+//! Requirements for IdsToVptr (exposition only)
 //!
-struct VptrAssignment {
+struct IdsToVptr {
     //! Returns an iterator to the beginning of a range of `type_id`s for a
     //! single registered class.
     auto type_id_begin() const;
@@ -98,7 +102,7 @@ struct VptrAssignment {
 
 #endif
 
-//! Policy category for runtime type information.
+//! Policy for runtime type information.
 //!
 //! A @e rtti policy is responsible for acquiring and manipulating type
 //! information, dynamic casting, and identifying polymorphic classes.
@@ -116,7 +120,7 @@ struct rtti {
         //!
         //! @param type A `type_id`.
         //!
-        //! @return `type`.
+        //! @return `type` itself.
         static auto type_index(type_id type) -> type_id {
             return type;
         }
@@ -188,7 +192,12 @@ struct rtti {
 #endif
 };
 
-//! Policy category for deferred type id collection.
+#ifdef __MRDOCS__
+struct std_rtti;
+struct static_rtti;
+#endif
+
+//! Policy for deferred type id collection.
 //!
 //! Some custom RTTI systems rely on static constructors to assign type ids.
 //! OpenMethod itself relies on static constructors to register classes, methods
@@ -197,7 +206,7 @@ struct rtti {
 //! of type ids to be deferred until the first call to @ref update.
 struct deferred_static_rtti : rtti {};
 
-//! Policy category for error handling.
+//! Policy for error handling.
 //!
 //! A @e error_handler policy runs code before the library terminats the program
 //! due to an error. This can be useful for throwing, logging, cleanup, or other
@@ -224,7 +233,12 @@ struct error_handler {
 #endif
 };
 
-//! Policy category for type_id hashing.
+#ifdef __MRDOCS__
+struct default_error_handler;
+struct throw_handler;
+#endif
+
+//! Policy for type_id hashing.
 //!
 //! A @e type_hash policy calculates an integer hash for a @ref type_id.
 //!
@@ -237,11 +251,12 @@ struct type_hash {
 
 #ifdef __MRDOCS__
     //! Requirements for `type_hash` policies (exposition only)
+    //! @tparam Registry The registry containing this policy.
     template<class Registry>
     struct fn {
         //! Initializes the hash table.
         //! @tparam ForwardIterator An iterator to a range of const
-        //! @ref VptrAssignment objects.
+        //! @ref IdsToVptr objects.
         //! @param first The beginning of the range.
         //! @param last The end of the range.
         //! @return A pair containing the minimum and maximum hash values.
@@ -261,7 +276,7 @@ struct type_hash {
 #endif
 };
 
-//! Policy category for v-table pointer acquisition.
+//! Policy for v-table pointer acquisition.
 //!
 //! @par Requirements
 //!
@@ -276,7 +291,7 @@ struct vptr {
     struct fn {
         //! Stores the v-table pointers.
         //! @tparam ForwardIterator An iterator to a range of const
-        //! @ref `VptrAssignment` objects.
+        //! @ref `IdsToVptr` objects.
         //! @param first The beginning of the range.
         //! @param last The end of the range.
         template<typename ForwardIterator>
@@ -315,6 +330,12 @@ struct indirect_vptr final {
     struct fn {};
 };
 
+#ifdef __MRDOCS__
+class vptr_vector;
+template<class MapFn>
+class vptr_map;
+#endif
+
 //! Policy for writing diagnostics and trace.
 //!
 //! If an `output` policy is present, the default error handler uses it to write
@@ -338,6 +359,10 @@ struct output {
     };
 #endif
 };
+
+#ifdef __MRDOCS__
+struct stderr_output;
+#endif
 
 //! Policy for tracing.
 //!

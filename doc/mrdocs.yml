@@ -25,6 +25,7 @@ exclude-symbols:
 sort-members: false
 extract-friends: false
 implementation-detail: impl
+inherit-base-members: never
 
 # Metadata Extraction
 private-bases: false

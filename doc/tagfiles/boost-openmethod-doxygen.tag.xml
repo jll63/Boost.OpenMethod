@@ -106,7 +106,7 @@
   <class kind="class">boost::openmethod::policies::PolicyCategory</class>
   <class kind="class">boost::openmethod::policies::Policy</class>
   <class kind="class">boost::openmethod::policies::LightweightOutputStream</class>
-  <class kind="class">boost::openmethod::policies::VptrAssignment</class>
+  <class kind="class">boost::openmethod::policies::IdsToVptr</class>
   <class kind="class">boost::openmethod::policies::rtti</class>
   <class kind="class">boost::openmethod::policies::deferred_static_rtti</class>
   <class kind="class">boost::openmethod::policies::error_handler</class>
@@ -139,26 +139,26 @@
   <filename>boost/openmethod/policies/LightweightOutputStream.adoc</filename>
 </compound>
 <compound kind="class">
-  <name>boost::openmethod::policies::VptrAssignment</name>
-  <filename>boost/openmethod/policies/VptrAssignment.adoc</filename>
+  <name>boost::openmethod::policies::IdsToVptr</name>
+  <filename>boost/openmethod/policies/IdsToVptr.adoc</filename>
   <member kind="function">
     <type>auto</type>
     <name>type_id_begin</name>
-    <anchorfile>boost/openmethod/policies/VptrAssignment/type_id_begin.adoc</anchorfile>
+    <anchorfile>boost/openmethod/policies/IdsToVptr/type_id_begin.adoc</anchorfile>
     <anchor/>
     <arglist>()</arglist>
   </member>
   <member kind="function">
     <type>auto</type>
     <name>type_id_end</name>
-    <anchorfile>boost/openmethod/policies/VptrAssignment/type_id_end.adoc</anchorfile>
+    <anchorfile>boost/openmethod/policies/IdsToVptr/type_id_end.adoc</anchorfile>
     <anchor/>
     <arglist>()</arglist>
   </member>
   <member kind="function">
     <type>const vptr_type&amp;</type>
     <name>vptr</name>
-    <anchorfile>boost/openmethod/policies/VptrAssignment/vptr.adoc</anchorfile>
+    <anchorfile>boost/openmethod/policies/IdsToVptr/vptr.adoc</anchorfile>
     <anchor/>
     <arglist>()</arglist>
   </member>

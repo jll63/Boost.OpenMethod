@@ -17,9 +17,9 @@ readability):
 [source,asm]
 ----
 mov	    rax, qword ptr [rsi]
-mov	    rdx, qword ptr [rip + hash_mult]
+mov	    rdx, qword ptr [rip + mult]
 imul	rdx, qword ptr [rax - 8]
-movzx	ecx, byte ptr [rip + hash_shift]
+movzx	ecx, byte ptr [rip + shift]
 shr	    rdx, cl
 mov	    rax, qword ptr [rip + vptrs]
 mov	    rax, qword ptr [rax + 8*rdx]

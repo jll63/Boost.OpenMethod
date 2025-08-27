@@ -13,15 +13,19 @@ namespace boost::openmethod::policies {
 //! Minimal implementation of the `rtti` policy.
 //!
 //! `static_rtti` implements only the static parts of the `rtti` policy. It uses
-//! the addresses of a per-class static variables as `type_id`s. It reports all
-//! types as non-polymorphic. As a consequence, the `virtual_ptr` constructors
-//! that take a pointer or a reference to a polymorphic object are disabled.
-//! `virtual_ptr`s must be constructed using @ref final_virtual_ptr.
+//! the addresses of a per-class static variables as a `type_id`. It categorizes
+//! all types as non-polymorphic. As a consequence, the `virtual_ptr`
+//! constructors that take a pointer or a reference to a polymorphic object are
+//! disabled. `virtual_ptr` must be constructed using @ref final_virtual_ptr (or
+//! its equivalents for smart pointers).
 //!
 //! @par Example
 //! TODO
 //! include::example$static_rtti.cpp[tag=all]
 struct static_rtti : rtti {
+    //! A (partial) model of @ref rtti::fn.
+    //!
+    //! @tparam Registry The registry containing this policy.
     template<class Registry>
     struct fn : rtti::defaults {
         //! Always evaluates to `false`.

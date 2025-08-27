@@ -22,6 +22,8 @@ namespace boost::openmethod::policies {
 //! It is the default RTTI policy.
 struct std_rtti : rtti {
     //! A model of @ref rtti::fn.
+    //!
+    //! @tparam Registry The registry containing this policy.
     template<class Registry>
     struct fn {
 #ifndef BOOST_NO_RTTI

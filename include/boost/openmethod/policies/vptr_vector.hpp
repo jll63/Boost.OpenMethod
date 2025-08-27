@@ -59,7 +59,7 @@ struct vptr_vector : vptr {
         //! The v-table pointers are copied into the vector.
         //!
         //! @tparam ForwardIterator An iterator to a range of @ref
-        //! VptrAssignment objects.
+        //! IdsToVptr objects.
         //! @param first The beginning of the range.
         //! @param last The end of the range.
         template<typename ForwardIterator>

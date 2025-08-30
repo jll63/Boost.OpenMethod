@@ -14,6 +14,8 @@
 
 namespace boost::openmethod::policies {
 
+//! Throws error as an exception.
+//!
 struct throw_error_handler : error_handler {
     //! A model of @ref error_handler::fn.
     //!

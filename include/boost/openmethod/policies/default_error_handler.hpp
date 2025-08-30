@@ -13,7 +13,7 @@
 
 namespace boost::openmethod::policies {
 
-//! Calls an error handler via a function object.
+//! Calls a std::function with the error.
 //!
 //! Wraps the error in a @ref std::variant, and calls a `std::function` with it.
 //! The function object is initialized to a function (@ref default_handler) that

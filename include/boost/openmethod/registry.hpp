@@ -17,17 +17,21 @@ namespace boost::openmethod {
 
 //! Namespace containing the policy framework.
 //!
-//! A registry contains a list of policies that control how some operations are
-//! performed. Policies fall into categories, depending on which subset of
-//! operations they control. Each category has a corresponding class:
+//! A registry contains a set of policies that control how certain operations
+//! are performed. For example, the "rtti" policy provides type information,
+//! implements dynamic casting, etc. It can be replaced to interface with custom
+//! RTII systems (like LLVM's).
+//!
+//! A policy must derive from one of the policy base classes, also known as
+//! _policy categories_.
 //!
 //! - @ref rtti: type information acquisition and manipulation.
+//!
+//! - @ref error_handler: perform operations when errors are detected.
 //!
 //! - @ref vptr: v-table pointer acquisition.
 //!
 //! - @ref type_hash: hashing of `type_id`s.
-//!
-//! - @ref error_handler: perform operations when errors are detected.
 //!
 //! - @ref output: output stream for logging and debugging.
 //!
@@ -37,28 +41,30 @@ namespace boost::openmethod {
 //!
 //! - @ref n2216: handle ambiguities according to the N2216 proposal.
 //!
-//! The last three policy categories act like flags. They can appear in the
-//! registry's policy list, and enable existing blocks of code.
+//! Policies are implemented as Boost.MP11 quoted meta-functions. A policy class
+//! must contain a `template<class Registry> struct fn` that provides a set of
+//! _static_ members, fulfilling the requirements specified in the policy's
+//! category. Registries instantiate policies by passing themselves to the
+//! nested `fn` class templates.
 //!
-//! The other categories cannot be used directly. They must be subclassed, and
-//! the subclass must contain a `template<class Registry> struct fn` that
-//! provides a set of static members that depends on the policy's category.
+//! There are two reason for this design.
 //!
-//! A @e policy is a class that controls how some fundamental operations are
-//! performed by the library: type information acquisition (`rtti`), v-table
-//! pointer acquisition (`vptr`), error handling (`error_handler`), etc.
+//! Some policies are "stateful": they contain static _data_ members. Since
+//! several registries can co-exist in the same program, each stateful policy
+//! needs its own, separate set of static data members. For example, @ref
+//! vptr_vector, a "vptr" policy, contains a static vector of vptrs, which
+//! cannot be shared with other registries.
 //!
-//! Some policies can be used directly in a registry's policy list. They
-//! function like flags, enabling blocks of code in the dispatch mechanism. For
-//! example, `runtime_checks` enables code that detects missing class
-//! registrations.
+//! Some policies need access to other policies in the same registry. They can
+//! be accessed via the `Registry` template parameter. For example, @ref
+//! vptr_vector hashes type_ids before using them as an indexes, if `Registry`
+//! cotains a `type_hash` policy. It performs out-of-bounds checks if `Registry`
+//! contains the `runtime_checks` policy. If an error is detected, it invokes
+//! the @ref error_handler policy if there is  one.
 //!
-//! Others policy classes need to be derived from. The subclass is required to
-//! contain a `template<class Registry> struct fn`, which contains a set static
-//! members that follow the requirements of the policy. For example, subclasses
-//! of `vptr` must provide a `fn` that contains a `static vptr_type
-//! dynamic_vptr(const Class& arg)` that returns a v-table pointer for an object
-//! of type `Class`.
+//! The last three policies (runtime_checks, trace and n2216) act like flags,
+//! and enabling some sections of code. They can be used as-is, without the need
+//! for subclassing.
 
 namespace policies {
 
@@ -105,7 +111,7 @@ struct IdsToVptr {
 //! Policy for runtime type information.
 //!
 //! A @e rtti policy is responsible for acquiring and manipulating type
-//! information, dynamic casting, and identifying polymorphic classes.
+//! information, dynamic casting, and detecting polymorphic classes.
 //!
 //! @par Requirements
 //!
@@ -139,6 +145,10 @@ struct rtti {
 
 #ifdef __MRDOCS__
     //! Requirements for `rtti` policies (exposition only).
+    //!
+    //! This class is for _exposition only_. It is the responsibility of
+    //! subclasses to provide a `fn` class template that contains the members
+    //! listed on this page.
     template<class Registry>
     struct fn {
         //! Tests if a class is polymorphic.
@@ -222,6 +232,10 @@ struct error_handler {
 
 #ifdef __MRDOCS__
     //! Requirements for `error_handler` policies (exposition only).
+    //!
+    //! This class is for _exposition only_. It is the responsibility of
+    //! subclasses to provide a `fn` class template that contains the members
+    //! listed on this page.
     template<class Registry>
     struct fn {
         //! Called when an error is detected.
@@ -235,46 +249,8 @@ struct error_handler {
 
 #ifdef __MRDOCS__
 struct default_error_handler;
-struct throw_handler;
+struct throw_error_handler;
 #endif
-
-//! Policy for type_id hashing.
-//!
-//! A @e type_hash policy calculates an integer hash for a @ref type_id.
-//!
-//! @par Requirements
-//!
-//! A subclass of `type_hash` must contain a `fn<Registry>` class template
-//! that fulfills the requirements of @ref type_hash::fn.
-struct type_hash {
-    using category = type_hash;
-
-#ifdef __MRDOCS__
-    //! Requirements for `type_hash` policies (exposition only)
-    //! @tparam Registry The registry containing this policy.
-    template<class Registry>
-    struct fn {
-        //! Initializes the hash table.
-        //! @tparam ForwardIterator An iterator to a range of const
-        //! @ref IdsToVptr objects.
-        //! @param first The beginning of the range.
-        //! @param last The end of the range.
-        //! @return A pair containing the minimum and maximum hash values.
-        template<typename ForwardIterator>
-        static auto initialize(ForwardIterator first, ForwardIterator last)
-            -> std::pair<std::size_t, std::size_t>;
-
-        //! Hashes a `type_id`.
-        //! @param type A @ref type_id.
-        //! @return A hash value for the given `type_id`.
-        static auto hash(type_id type) -> std::size_t;
-
-        //! Releases the resources allocated by `initialize`. This function is
-        //! optional.
-        static auto finalize() -> void;
-    };
-#endif
-};
 
 //! Policy for v-table pointer acquisition.
 //!
@@ -287,6 +263,10 @@ struct vptr {
 
 #ifdef __MRDOCS__
     //! Requirements for `vptr` policies (exposition only)
+    //!
+    //! This class is for _exposition only_. It is the responsibility of
+    //! subclasses to provide a `fn` class template that contains the members
+    //! listed on this page.
     template<class Registry>
     struct fn {
         //! Stores the v-table pointers.
@@ -336,6 +316,52 @@ template<class MapFn>
 class vptr_map;
 #endif
 
+//! Policy for type_id hashing.
+//!
+//! A @e type_hash policy calculates an integer hash for a @ref type_id.
+//!
+//! @par Requirements
+//!
+//! A subclass of `type_hash` must contain a `fn<Registry>` class template
+//! that fulfills the requirements of @ref type_hash::fn.
+struct type_hash {
+    using category = type_hash;
+
+#ifdef __MRDOCS__
+    //! Requirements for `type_hash` policies (exposition only)
+    //! @tparam Registry The registry containing this policy.
+    //!
+    //! This class is for _exposition only_. It is the responsibility of
+    //! subclasses to provide a `fn` class template that contains the members
+    //! listed on this page.
+    template<class Registry>
+    struct fn {
+        //! Initializes the hash table.
+        //! @tparam ForwardIterator An iterator to a range of const
+        //! @ref IdsToVptr objects.
+        //! @param first The beginning of the range.
+        //! @param last The end of the range.
+        //! @return A pair containing the minimum and maximum hash values.
+        template<typename ForwardIterator>
+        static auto initialize(ForwardIterator first, ForwardIterator last)
+            -> std::pair<std::size_t, std::size_t>;
+
+        //! Hashes a `type_id`.
+        //! @param type A @ref type_id.
+        //! @return A hash value for the given `type_id`.
+        static auto hash(type_id type) -> std::size_t;
+
+        //! Releases the resources allocated by `initialize`. This function is
+        //! optional.
+        static auto finalize() -> void;
+    };
+#endif
+};
+
+#ifdef __MRDOCS__
+class fast_perfect_hash;
+#endif
+
 //! Policy for writing diagnostics and trace.
 //!
 //! If an `output` policy is present, the default error handler uses it to write
@@ -352,6 +378,9 @@ struct output {
 #ifdef __MRDOCS__
     //! Requirements for `output` policies (exposition only)
     //!
+    //! This class is for _exposition only_. It is the responsibility of
+    //! subclasses to provide a `fn` class template that contains the members
+    //! listed on this page.
     template<class Registry>
     struct fn {
         //! A @ref LightweightOutputStream.
@@ -507,10 +536,7 @@ struct use_class_aux;
 
 template<class... Policies>
 class registry : detail::registry_base {
-    struct compiler;
-
     inline static detail::class_catalog classes;
-
     inline static detail::method_catalog methods;
 
     template<class...>
@@ -519,7 +545,17 @@ class registry : detail::registry_base {
     friend class method;
 
   public:
+    struct compiler;
+
+    //! Initialize the registry.
+    //!
+    //! `initialize` must be called, typically at the beginning of `main`,
+    //! before using any of the methods in the registry. It sets up the
+    //! v-tables, multi-method dispatch tables, and any other data required by
+    //! the `Policies`, e.g. finding a hash function and setting up a hash
+    //! table.
     static auto initialize();
+
     static void check_initialized();
     static void finalize();
 

@@ -14,7 +14,7 @@ namespace boost::openmethod {
 
 namespace policies {
 
-//! Keeps track of v-table pointers using a map keyed by `type_id`s.
+//! Stores v-table pointers in a map keyed by `type_id`s.
 //!
 //! `vptr_map` stores v-table pointers in a map keyed by `type_id`s.
 //!

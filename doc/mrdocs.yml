@@ -15,8 +15,8 @@ include-symbols:
   - 'boost::openmethod::**'
 # see-below:
 #   - 'boost::urls::format_arg'
-implementation-defined:
-  - 'boost::openmethod::detail::**'
+# implementation-defined:
+#   - 'boost::openmethod::detail::**'
 exclude-symbols:
   - 'boost::openmethod::detail::**'
   - 'boost::openmethod::boost_openmethod_bases'

@@ -534,6 +534,27 @@ struct use_class_aux;
 
 } // namespace detail
 
+//! A collection of methods and their associated dispatch data.
+//!
+//! Methods exist in a registry, which also contains descriptions for all the
+//! classes that can appear in the methods, their overriders, and method calls.
+//!
+//! Before calling a method, the @ref initialize function must be called for its
+//! registry to set up the dispatch tables. This is typically done at the
+//! beginning of `main`.
+//!
+//! Multiple registries can co-exist in the same program. They must be
+//! initialized independently. Classes referenced by methods in different
+//! registries must be registered with each registry individually.
+//!
+//! A registry contains a list of @ref policies, which can be used to customize
+//! certain important aspects of the library.
+//!
+//! @see @ref policies
+//!
+//!
+
+
 template<class... Policies>
 class registry : detail::registry_base {
     inline static detail::class_catalog classes;
@@ -544,9 +565,9 @@ class registry : detail::registry_base {
     template<typename Name, typename ReturnType, class Registry>
     friend class method;
 
-  public:
     struct compiler;
 
+  public:
     //! Initialize the registry.
     //!
     //! `initialize` must be called, typically at the beginning of `main`,
@@ -554,6 +575,11 @@ class registry : detail::registry_base {
     //! v-tables, multi-method dispatch tables, and any other data required by
     //! the `Policies`, e.g. finding a hash function and setting up a hash
     //! table.
+    //!
+    //! A translation unit that contains a call to `initialize` must include the
+    //! `<boost/openmethod/initialize.hpp>` header.
+    //!
+    //! @return A `compiler` object that contains a report of the
     static auto initialize();
 
     static void check_initialized();

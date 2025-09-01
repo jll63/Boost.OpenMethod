@@ -547,13 +547,16 @@ struct use_class_aux;
 //! initialized independently. Classes referenced by methods in different
 //! registries must be registered with each registry individually.
 //!
-//! A registry contains a list of @ref policies, which can be used to customize
-//! certain important aspects of the library.
+//!
+//!
+//! @tparam Policies The policies used in the registry.
+//!
+//! @par Requirements
+//!
+//! `Policies` must be models of @ref policies::Policy. There may be at most one
+//! policy per category, i.e. `Policies::category...` must all be different.
 //!
 //! @see @ref policies
-//!
-//!
-
 template<class... Policies>
 class registry : detail::registry_base {
     inline static detail::class_catalog classes;
@@ -609,52 +612,103 @@ class registry : detail::registry_base {
     //! `<boost/openmethod/initialize.hpp>` header.
     static void finalize();
 
-    //! A pointer to the virtual table for a class.
+    //! A pointer to the virtual table for a registered class.
+    //!
+    //! `static_vptr` is set by @ref initialize to the address of the class's
+    //! virtual table. It remains valid until the next call to `initialize` or
+    //! `finalize`.
     //!
     //! @tparam Class A registered class.
     template<class Class>
     inline static vptr_type static_vptr;
 
+    //! The list of policies selected in a registry.
+    //!
+    //! `policy_list` is a Boost.Mp11 list containing the policies passed to the
+    //! @ref registry clas template.
+    //!
+    //! @tparam Class A registered class.
     using policy_list = mp11::mp_list<Policies...>;
 
-    template<class PolicyCategory>
+    //! Returns the policy for a policy category.
+    //!
+    //! `policy` searches for a policy that derives from the specified @ref
+    //! PolicyCategory. If none is found, it aliases to `void`. Otherwise, it
+    //! aliases to the policy's `fn` class template, instantiated for this
+    //! registry.
+    //!
+    //! @tparam Category A model of @ref policies::PolicyCategory.
+    template<class Category>
     using policy = typename detail::get_policy_aux<
         registry,
         mp11::mp_find_if_q<
             policy_list,
             mp11::mp_bind_front_q<
-                mp11::mp_quote_trait<std::is_base_of>, PolicyCategory>>>::type;
+                mp11::mp_quote_trait<std::is_base_of>, Category>>>::type;
 
+    //! Returns a copy of this registry, with additional policies.
+    //!
+    //! `with` aliases to a registry containing `NewPolicies`, in addition to
+    //! this registry's policies that are not in the same category as any of the
+    //! `NewPolicies`.
+    //!
+    //! @tparam NewPolicies Models of @ref policies::Policy.
     template<class... NewPolicies>
     using with = boost::mp11::mp_apply<
         registry, typename detail::with_aux<policy_list, NewPolicies...>::type>;
 
-    template<class... RemovePolicies>
+    //! Returns a copy of this registry, with some policies removed.
+    //!
+    //! `without` returns a copy of this registry, without the policies that
+    //! derive from `Categories`.
+    //!
+    //! @tparam Categories Models of @ref policies::PolicyCategory.
+    template<class... Categories>
     using without = boost::mp11::mp_apply<
         registry,
-        typename detail::without_aux<policy_list, RemovePolicies...>::type>;
+        typename detail::without_aux<policy_list, Categories...>::type>;
 
+    //! The registry's rtti policy.
     using rtti = policy<policies::rtti>;
 
+    //! The registry's vptr policy if it contains one, or `void`.
     using vptr = policy<policies::vptr>;
+
+    //! `true` if the registry has a vptr policy.
     static constexpr auto has_vptr = !std::is_same_v<vptr, void>;
 
+    //! The registry's error_handler policy if it contains one, or `void`.
     using error_handler = policy<policies::error_handler>;
+
+    //! `true` if the registry has an error_handler policy.
     static constexpr auto has_error_handler =
         !std::is_same_v<error_handler, void>;
 
+    //! The registry's output policy if it contains one, or `void`.
     using output = policy<policies::output>;
+
+    //! `true` if the registry has an output policy.
     static constexpr auto has_output = !std::is_same_v<output, void>;
 
+    //! The registry's trace policy if it contains one, or `void`.
     using trace = policy<policies::trace>;
+
+    //! `true` if the registry has a trace policy.
     static constexpr auto has_trace = !std::is_same_v<trace, void>;
 
+    //! `true` if the registry has a deferred_static_rtti policy.
     static constexpr auto has_deferred_static_rtti =
         !std::is_same_v<policy<policies::deferred_static_rtti>, void>;
+
+    //! `true` if the registry has a runtime_checks policy.
     static constexpr auto has_runtime_checks =
         !std::is_same_v<policy<policies::runtime_checks>, void>;
+
+    //! `true` if the registry has an indirect_vptr policy.
     static constexpr auto has_indirect_vptr =
         !std::is_same_v<policy<policies::indirect_vptr>, void>;
+
+    //! `true` if the registry has a n2216 policy.
     static constexpr auto has_n2216 =
         !std::is_same_v<policy<policies::n2216>, void>;
 };

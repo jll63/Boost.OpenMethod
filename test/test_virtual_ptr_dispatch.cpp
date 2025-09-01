@@ -250,12 +250,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
 
     upcast::fn(virtual_bear_ptr);
 
-    auto data = Registry::dispatch_data.data();
-    std::fill_n(data, Registry::dispatch_data.size(), 0);
-
-    while (data == Registry::dispatch_data.data()) {
-        Registry::dispatch_data.resize(2 * Registry::dispatch_data.size());
-    }
+    Registry::finalize();
 
     Registry::initialize();
 

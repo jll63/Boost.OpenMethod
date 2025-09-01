@@ -554,7 +554,6 @@ struct use_class_aux;
 //!
 //!
 
-
 template<class... Policies>
 class registry : detail::registry_base {
     inline static detail::class_catalog classes;
@@ -567,30 +566,54 @@ class registry : detail::registry_base {
 
     struct compiler;
 
+    inline static std::vector<detail::word> dispatch_data;
+    inline static bool initialized;
+
   public:
-    //! Initialize the registry.
+    //! Initializes the registry.
     //!
     //! `initialize` must be called, typically at the beginning of `main`,
     //! before using any of the methods in the registry. It sets up the
     //! v-tables, multi-method dispatch tables, and any other data required by
-    //! the `Policies`, e.g. finding a hash function and setting up a hash
-    //! table.
+    //! the policies.
     //!
+    //! @note
     //! A translation unit that contains a call to `initialize` must include the
     //! `<boost/openmethod/initialize.hpp>` header.
     //!
-    //! @return A `compiler` object that contains a report of the
+    //! @par Errors
+    //!
+    //! @li @ref unknown_class_error: A class used in a virtual parameter was
+    //! not registered.
+    //!
+    //! In addition, policies may encounter and report errors.
     static auto initialize();
 
+    //! Checks if the registry is initialized.
+    //!
+    //! Checks if `initialize` has been called for this registry, and report an
+    //! error if not.
+    //!
+    //! @par Errors
+    //!
+    //! @li @ref not_initialized_error: The registry is not initialized.
     static void check_initialized();
+
+    //! Releases the resources held by the registry.
+    //!
+    //! `finalize` may be called to release any resources allocated by
+    //! `initialize`.
+    //!
+    //! @note
+    //! A translation unit that contains a call to `finalize` must include the
+    //! `<boost/openmethod/initialize.hpp>` header.
     static void finalize();
 
-    //! `true` if `initialize` was called.
-    inline static bool initialized;
-
+    //! A pointer to the virtual table for a class.
+    //!
+    //! @tparam Class A registered class.
     template<class Class>
     inline static vptr_type static_vptr;
-    inline static std::vector<detail::word> dispatch_data;
 
     using policy_list = mp11::mp_list<Policies...>;
 

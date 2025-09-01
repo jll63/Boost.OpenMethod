@@ -337,13 +337,11 @@ BOOST_AUTO_TEST_CASE(simple) {
     }
 
     if constexpr (std::is_same_v<test_registry::vptr, policies::vptr_vector>) {
-        BOOST_TEST(!test_registry::dispatch_data.empty());
         BOOST_TEST(
             !detail::vptr_vector_vptrs<test_registry::registry_type>.empty());
         finalize<test_registry>();
         static_assert(detail::has_finalize_aux<
                       test_registry::policy<policies::vptr>>::value);
-        BOOST_TEST(test_registry::dispatch_data.empty());
         BOOST_TEST(
             detail::vptr_vector_vptrs<test_registry::registry_type>.empty());
     }

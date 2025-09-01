@@ -68,5 +68,5 @@ BOOST_AUTO_TEST_CASE(test_registry) {
     // BOOST_TEST(&registry2::methods != &registry1::methods);
     // BOOST_TEST(&registry2::classes != &registry1::classes);
     BOOST_TEST(&registry2::static_vptr<void> != &registry1::static_vptr<void>);
-    BOOST_TEST(&registry2::dispatch_data != &registry1::dispatch_data);
+    // BOOST_TEST(&registry2::dispatch_data != &registry1::dispatch_data);
 }

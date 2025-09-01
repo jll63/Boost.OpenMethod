@@ -1339,6 +1339,7 @@ auto registry<Policies...>::finalize() -> void {
     });
 
     dispatch_data.clear();
+    initialized = false;
 }
 
 template<class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY>

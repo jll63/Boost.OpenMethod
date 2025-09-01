@@ -616,8 +616,10 @@ struct same_smart_ptr_aux<
 
 } // namespace detail
 
+#ifndef __MRDOCS__
 template<typename T, class Registry>
 constexpr bool is_smart_ptr = detail::is_smart_ptr_aux<T, Registry>::value;
+#endif
 
 template<class Class, class Other, class Registry>
 constexpr bool same_smart_ptr =

@@ -9,10 +9,6 @@
 #include <stdlib.h>
 #include <vector>
 
-#ifdef __MRDOCS__
-#include <unordered_map>
-#endif
-
 namespace boost::openmethod {
 
 //! Namespace containing the policy framework.

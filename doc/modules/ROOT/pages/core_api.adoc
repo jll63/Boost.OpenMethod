@@ -1,0 +1,92 @@
+
+## Core API
+
+OpenMethod provides a macro-free interface: the core API. This is useful in
+certain situations, for example when combining open-methods and templates.
+
+Let's rewrite the Animals example using the core API. An open-method is
+implemented as an instance of the `method` template. Its parameters are a
+function signature and a return type:
+
+[source,c++]
+----
+#include <boost/openmethod/core.hpp>
+
+using namespace boost::openmethod;
+
+class poke_openmethod;
+
+using poke = method<
+    poke_openmethod(std::ostream&, virtual_<Animal&>), void>;
+----
+
+
+The `poke_openmethod` class acts as the method's identifier: it separates it
+from other methods with the same signature. The exact name does not really
+matter, and the class needs not be defined, only declared. Inventing a class
+name can get tedious, so OpenMethod provides a macro for that:
+
+
+[source,c++]
+----
+include::example$core_api.cpp[tag=method]
+----
+
+NOTE: BOOST_OPENMETHOD and associated macros use `BOOST_OPENMETHOD_ID` in
+their implementation. This makes it possible to mix the "macro" and "core"
+styles.
+
+We call the method via the nested function object `fn`:
+
+[source,c++]
+----
+poke::fn(std::cout, animal);
+----
+
+Overriders are ordinary functions, added to a method using the nested template
+`override`:
+
+[source,c++]
+----
+include::example$core_api.cpp[tag=poke_cat]
+----
+
+NOTE: `override` can register multiple overriders.
+
+In C++26, we will be able to use `_` instead of inventing a one-time-use
+identifier. In the meantime, OpenMethod provides a small convenience macro:
+
+[source,c++]
+----
+include::example$core_api.cpp[tag=poke_dog]
+----
+
+`next` is available from the method's nested `next` template:
+
+[source,c++]
+----
+include::example$core_api.cpp[tag=poke_bulldog]
+----
+
+NOTE: Since the function uses itself as a template argument in its body, its
+return type cannot be deduced. It must be specified explicitly, either by using
+the old function declaration style or a trailing return type.
+
+
+Why not call `poke_dog` directly? We could; however, keep in mind that, in a
+real program, a translation unit is not necessarily aware of the overriders
+added elsewhere - especially in presence of dynamic loading.
+
+We register the classes with `use_classes`:
+
+[source,c++]
+----
+include::example$core_api.cpp[tag=use_classes]
+----
+
+Finally, we call the method via the static member of the method class `fn`:
+
+[source,c++]
+----
+include::example$core_api.cpp[tag=main]
+----

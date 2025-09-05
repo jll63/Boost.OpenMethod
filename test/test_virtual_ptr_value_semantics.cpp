@@ -16,8 +16,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
     static_assert(std::is_same_v<
                   decltype(std::declval<virtual_ptr<Animal, Registry>>().get()),
                   Animal*>);
-    static_assert(!virtual_ptr<Animal, Registry>::is_smart_ptr);
-    static_assert(!virtual_ptr<const Animal, Registry>::is_smart_ptr);
+    static_assert(!is_smart_ptr<Animal, Registry>);
+    static_assert(!is_smart_ptr<const Animal, Registry>);
     static_assert(
         std::is_same_v<
             decltype(*std::declval<virtual_ptr<Animal, Registry>>()), Animal&>);
@@ -272,7 +272,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(indirect_virtual_ptr, Registry, test_policies) {
     BOOST_TEST_MESSAGE(
         "static_vptr<Dog> = " << Registry::template static_vptr<Dog>);
 
-    if constexpr (Registry::template has_policy<indirect_vptr>) {
+    if constexpr (Registry::has_indirect_vptr) {
         BOOST_TEST(p.vptr() == Registry::template static_vptr<Dog>);
     } else {
         BOOST_TEST(p.vptr() != Registry::template static_vptr<Dog>);
@@ -307,7 +307,7 @@ BOOST_AUTO_TEST_CASE(virtual_ptr_final_error) {
         return;
     }
 
-    if constexpr (default_registry::runtime_checks) {
+    if constexpr (default_registry::has_runtime_checks) {
         if (!threw) {
             BOOST_FAIL("should have thrown");
         }

@@ -14,25 +14,41 @@ namespace boost::openmethod {
 
 namespace policies {
 
-template<class MapAdaptor = mp11::mp_quote<std::unordered_map>>
-class vptr_map : public extern_vptr {
+//! Stores v-table pointers in a map keyed by `type_id`s.
+//!
+//! `vptr_map` stores v-table pointers in a map keyed by `type_id`s.
+//!
+//! If the registry contains the @ref indirect_vptr policy, `vptr_map` stores
+//! pointers to pointers to v-tables.
+//!
+//! @tparam MapFn A mp11 quoted meta-function that takes a key type and a
+//! value type, and returns an @ref AssociativeContainer.
+template<class MapFn = mp11::mp_quote<std::unordered_map>>
+class vptr_map : public vptr {
   public:
+    //! A model of @ref vptr::fn.
+    //!
+    //! @tparam Registry The registry containing this policy.
     template<class Registry>
-    struct fn {
-        static constexpr bool IndirectVptr =
-            Registry::template has_policy<indirect_vptr>;
-        using Value =
-            std::conditional_t<IndirectVptr, const vptr_type*, vptr_type>;
-        static inline typename MapAdaptor::template fn<type_id, Value> vptrs;
+    class fn {
+        using Value = std::conditional_t<
+            Registry::has_indirect_vptr, const vptr_type*, vptr_type>;
+        static inline typename MapFn::template fn<type_id, Value> vptrs;
 
+      public:
+        //! Stores the v-table pointers.
+        //!
+        //! @tparam ForwardIterator A forward iterator yielding
+        //! @ref IdsToVptr objects.
+        //! @param first The beginning of the range.
+        //! @param last The end of the range.
         template<typename ForwardIterator>
-        static void
-        register_vptrs(ForwardIterator first, ForwardIterator last) {
+        static void initialize(ForwardIterator first, ForwardIterator last) {
             for (auto iter = first; iter != last; ++iter) {
                 for (auto type_iter = iter->type_id_begin();
                      type_iter != iter->type_id_end(); ++type_iter) {
 
-                    if constexpr (IndirectVptr) {
+                    if constexpr (Registry::has_indirect_vptr) {
                         vptrs.emplace(*type_iter, &iter->vptr());
                     } else {
                         vptrs.emplace(*type_iter, iter->vptr());
@@ -41,32 +57,45 @@ class vptr_map : public extern_vptr {
             }
         }
 
+        //! Returns a reference to a v-table pointer for an object.
+        //!
+        //! Acquires the dynamic @ref type_id of `arg`, using the registry's
+        //! @ref rtti policy.
+        //!
+        //! If the registry contains the @ref runtime_checks policy, checks that
+        //! the map contains the type id. If it does not, and if the registry
+        //! contains a @ref error_handler policy, calls its
+        //! @ref error function with a @ref unknown_class_error value, then
+        //! terminates the program with @ref abort.
+        //!
+        //! @tparam Class A registered class.
+        //! @param arg A reference to a const object of type `Class`.
+        //! @return A reference to a the v-table pointer for `Class`.
         template<class Class>
         static auto dynamic_vptr(const Class& arg) -> const vptr_type& {
             auto type = Registry::rtti::dynamic_type(arg);
             auto iter = vptrs.find(type);
 
-            if constexpr (Registry::runtime_checks) {
+            if constexpr (Registry::has_runtime_checks) {
                 if (iter == vptrs.end()) {
-                    using error_handler = typename Registry::error_handler;
-
-                    if constexpr (detail::is_not_void<error_handler>) {
+                    if constexpr (Registry::has_error_handler) {
                         unknown_class_error error;
                         error.type = type;
-                        error_handler::error(error);
+                        Registry::error_handler::error(error);
                     }
 
                     abort();
                 }
             }
 
-            if constexpr (IndirectVptr) {
+            if constexpr (Registry::has_indirect_vptr) {
                 return *iter->second;
             } else {
                 return iter->second;
             }
         }
 
+        //! Clears the map.
         static auto finalize() -> void {
             vptrs.clear();
         }

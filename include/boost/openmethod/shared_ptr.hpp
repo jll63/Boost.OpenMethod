@@ -113,15 +113,16 @@ struct virtual_traits<std::shared_ptr<Class>, Registry> {
     }
 };
 
+#ifndef __MRDOCS__
 template<class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
 using shared_virtual_ptr = virtual_ptr<std::shared_ptr<Class>, Registry>;
+#endif
 
 template<
     class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY,
     typename... T>
-inline auto make_shared_virtual(T&&... args)
-    -> shared_virtual_ptr<Class, Registry> {
-    return shared_virtual_ptr<Class, Registry>::final(
+inline auto make_shared_virtual(T&&... args) {
+    return final_virtual_ptr<Registry>(
         std::make_shared<Class>(std::forward<T>(args)...));
 }
 

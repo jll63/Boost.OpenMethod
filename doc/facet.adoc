@@ -1,5 +1,5 @@
 
-## facet
+## policy
 
 ### Synopsis
 
@@ -8,7 +8,7 @@ Defined in <boost/openmethod/policies/basic_policy.hpp>.
 ```c++
 namespace boost::openmethod::policies {
 
-struct facet {
+struct policy {
     static auto finalize() -> void;
 };
 
@@ -17,7 +17,7 @@ struct facet {
 
 ### Description
 
-`facet` is the base class of all facets. It provides an empty `finalize` static
+`policy` is the base class of all policys. It provides an empty `finalize` static
 function which can be overriden (via shadowing) by derived classes.
 
 ### Members

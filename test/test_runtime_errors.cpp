@@ -6,7 +6,7 @@
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/registry.hpp>
 #include <boost/openmethod/policies/throw_error_handler.hpp>
-#include <boost/openmethod/compiler.hpp>
+#include <boost/openmethod/initialize.hpp>
 #include <boost/openmethod/unique_ptr.hpp>
 
 #include "test_util.hpp"
@@ -68,7 +68,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 }
 
 BOOST_AUTO_TEST_CASE(not_initialized) {
-    if constexpr (registry::runtime_checks) {
+    if constexpr (registry::has_runtime_checks) {
         // throw during virtual_ptr construction, because of hash table lookup
         {
             registry::capture capture;
@@ -110,10 +110,10 @@ BOOST_OPENMETHOD_OVERRIDE(
 }
 
 BOOST_AUTO_TEST_CASE(initialize_unknown_class) {
-    if constexpr (registry::runtime_checks) {
+    if constexpr (registry::has_runtime_checks) {
         {
             registry::capture capture;
-            BOOST_CHECK_THROW(initialize<registry>(), unknown_class_error);
+            BOOST_CHECK_THROW(registry::initialize(), unknown_class_error);
             BOOST_TEST(capture().find("unknown class") != std::string::npos);
         }
     }
@@ -135,9 +135,9 @@ BOOST_OPENMETHOD_OVERRIDE(transpose, (const matrix&), void) {
 }
 
 BOOST_AUTO_TEST_CASE(call_unknown_class) {
-    if constexpr (registry::runtime_checks) {
+    if constexpr (registry::has_runtime_checks) {
         {
-            initialize<registry>();
+            registry::initialize();
 
             registry::capture capture;
             BOOST_CHECK_THROW(transpose(dense_matrix()), unknown_class_error);
@@ -167,7 +167,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 }
 
 BOOST_AUTO_TEST_CASE(call_error) {
-    auto report = initialize<registry>().report;
+    auto report = registry::initialize().report;
     BOOST_TEST(report.not_implemented == 1u);
     BOOST_TEST(report.ambiguous == 1u);
 
@@ -199,7 +199,7 @@ BOOST_OPENMETHOD(
     times, (virtual_<const matrix&>, virtual_<const matrix&>), void, registry);
 
 BOOST_AUTO_TEST_CASE(throw_error) {
-    initialize<registry>();
+    registry::initialize();
 
     try {
         times(matrix(), matrix());

@@ -454,7 +454,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#tutorials_smart_pointers">Smart Pointers</a></li>
 <li><a href="#tutorials_alternatives_to_virtual_ptr">Alternatives to virtual_ptr</a></li>
 <li><a href="#tutorials_core_api">Core API</a></li>
-<li><a href="#tutorials_policies_and_facets">Policies and Facets</a></li>
+<li><a href="#tutorials_policies_and_policys">Policies and Facets</a></li>
 <li><a href="#tutorials_error_handling">Error Handling</a></li>
 <li><a href="#tutorials_custom_rtti">Custom RTTI</a></li>
 <li><a href="#tutorials_deferred_rtti">Deferred RTTI</a></li>
@@ -635,7 +635,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#virtual_ptr_non_members_2">Non-members</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_facet">facet</a>
+<li><a href="#virtual_ptr_policy">policy</a>
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_synopsis_9">Synopsis</a></li>
 <li><a href="#virtual_ptr_description_9">Description</a></li>
@@ -747,7 +747,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#virtual_ptr_members_16">Members</a></li>
 </ul>
 </li>
-<li><a href="#virtual_ptr_restrictedoutputstream">RestrictedOutputStream</a>
+<li><a href="#virtual_ptr_restrictedoutputstream">LightweightOutputStream</a>
 <ul class="sectlevel3">
 <li><a href="#virtual_ptr_description_25">Description</a></li>
 </ul>
@@ -1615,9 +1615,9 @@ readability):</p>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="asm">mov	    rax, qword ptr [rsi]
-mov	    rdx, qword ptr [rip + hash_mult]
+mov	    rdx, qword ptr [rip + mult]
 imul	rdx, qword ptr [rax - 8]
-movzx	ecx, byte ptr [rip + hash_shift]
+movzx	ecx, byte ptr [rip + shift]
 shr	    rdx, cl
 mov	    rax, qword ptr [rip + vptrs]
 mov	    rax, qword ptr [rax + 8*rdx]
@@ -2165,7 +2165,7 @@ added elsewhere - especially in presence of dynamic loading.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="tutorials_policies_and_facets">Policies and Facets</h3>
+<h3 id="tutorials_policies_and_policys">Policies and Facets</h3>
 <div class="paragraph">
 <p>Methods and classes are scoped in a policy. A method can only reference classes
 registered in the same policy. If a class is used as a virtual parameter in
@@ -2178,17 +2178,17 @@ argument, a policy class, which defaults to <code>policies::debug</code> in debu
 and <code>policies::release</code> in release builds.</p>
 </div>
 <div class="paragraph">
-<p>A policy has a collection of <em>facets</em>. Each facet belongs to a facet category. A
-policy may contain at most one facet of a given category. Facets control how
+<p>A policy has a collection of <em>policys</em>. Each policy belongs to a policy category. A
+policy may contain at most one policy of a given category. Facets control how
 type information is obtained, how vptrs are fetched, how errors are handled and
 printed, etc. Some are used in <code>initialize</code> and method dispatch; some are used
-by other facets in the same policy as part of their implementation. See the
-reference for the list of facets. Policies and facets are placed in the
+by other policys in the same policy as part of their implementation. See the
+reference for the list of policys. Policies and policys are placed in the
 <code>boost::openmethod::policies</code> namespace. Two stock policies are provided by the
 library: <code>release</code> and <code>debug</code>.</p>
 </div>
 <div class="paragraph">
-<p>The <code>release</code> policy contains the following facets:</p>
+<p>The <code>release</code> policy contains the following policys:</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -2198,8 +2198,8 @@ library: <code>release</code> and <code>debug</code>.</p>
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">facet category</th>
-<th class="tableblock halign-left valign-top">facet</th>
+<th class="tableblock halign-left valign-top">policy category</th>
+<th class="tableblock halign-left valign-top">policy</th>
 <th class="tableblock halign-left valign-top">role</th>
 </tr>
 </thead>
@@ -2227,7 +2227,7 @@ library: <code>release</code> and <code>debug</code>.</p>
 </tbody>
 </table>
 <div class="paragraph">
-<p>The <code>debug</code> policy contains the same facets as <code>release</code>, plus a few more:</p>
+<p>The <code>debug</code> policy contains the same policys as <code>release</code>, plus a few more:</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -2237,8 +2237,8 @@ library: <code>release</code> and <code>debug</code>.</p>
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">facet category</th>
-<th class="tableblock halign-left valign-top">facet</th>
+<th class="tableblock halign-left valign-top">policy category</th>
+<th class="tableblock halign-left valign-top">policy</th>
 <th class="tableblock halign-left valign-top">role</th>
 </tr>
 </thead>
@@ -2261,12 +2261,12 @@ library: <code>release</code> and <code>debug</code>.</p>
 </tbody>
 </table>
 <div class="paragraph">
-<p>Policies, and some facets, have static variables. When it is the case, they are
+<p>Policies, and some policys, have static variables. When it is the case, they are
 implemented as CRTP classes.</p>
 </div>
 <div class="paragraph">
 <p>Policies can be created from scratch, using the <code>basic_policy</code> template, or
-constructed from existing policies by adding and removing facets. For example,
+constructed from existing policies by adding and removing policys. For example,
 <code>policies::debug</code> is a tweak of <code>policies::release</code>:</p>
 </div>
 <div class="listingblock">
@@ -2295,9 +2295,9 @@ has no effect.</p>
 <h3 id="tutorials_error_handling">Error Handling</h3>
 <div class="paragraph">
 <p>When an error is encountered, the program is terminated by a call to <code>abort</code>. If
-the policy contains an <code>error_handler</code> facet, it provides an <code>error</code> member
+the policy contains an <code>error_handler</code> policy, it provides an <code>error</code> member
 function (or overloaded functions) to be called with an object identifying the
-error. The <code>release</code> and <code>debug</code> policies implement the error facet with
+error. The <code>release</code> and <code>debug</code> policies implement the error policy with
 <code>default_error_handler</code>, which wraps the error object in a variant, and calls a
 handler via a <code>std::function</code>. By default, it prints a description of the error
 to <code>stderr</code> in the <code>debug</code> policy, and does nothing in the <code>release</code> policy. The
@@ -2366,7 +2366,7 @@ spin</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>We can also replace the <code>error_handler</code> facet with our own. For example:</p>
+<p>We can also replace the <code>error_handler</code> policy with our own. For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2441,7 +2441,7 @@ spin</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Stock facet <code>throw_error_handler</code> does this for all the exception types:</p>
+<p>Stock policy <code>throw_error_handler</code> does this for all the exception types:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2567,11 +2567,11 @@ them as indexes in the table of vptrs.</p>
 </div>
 <div class="paragraph">
 <p>This time we are going to replace the default policy globally. First we need to
-define the custom RTTI facet. We must <em>not</em> include
+define the custom RTTI policy. We must <em>not</em> include
 <code>&lt;boost/openmethod/core.hpp&gt;</code> or any header that includes it yet.</p>
 </div>
 <div class="paragraph">
-<p>Here is the facet implementation:</p>
+<p>Here is the policy implementation:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2605,7 +2605,7 @@ struct custom_rtti : bom::policies::rtti {
 </div>
 </div>
 <div class="paragraph">
-<p>This facet is quite minimal. It does not support virtual inheritance. It would
+<p>This policy is quite minimal. It does not support virtual inheritance. It would
 not produce good error or trace messages, because types would be represented by
 their integer ids.</p>
 </div>
@@ -2678,7 +2678,7 @@ registration. It may read the custom type ids <em>before</em> they are have been
 initialized.</p>
 </div>
 <div class="paragraph">
-<p>The solution is to add the <code>deferred_static_rtti</code> facet to the policy; it defers
+<p>The solution is to add the <code>deferred_static_rtti</code> policy to the policy; it defers
 reading the type information until <code>initialize</code> is called.</p>
 </div>
 <div class="paragraph">
@@ -2740,7 +2740,7 @@ custom_type_info Cat::type_info;
 </div>
 </div>
 <div class="paragraph">
-<p>The rtti facet is the same, with one more function:</p>
+<p>The rtti policy is the same, with one more function:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2761,14 +2761,14 @@ custom_type_info Cat::type_info;
 </div>
 </div>
 <div class="paragraph">
-<p>Finally, the policy contains an additional facet - <code>deferred_static_rtti</code>:</p>
+<p>Finally, the policy contains an additional policy - <code>deferred_static_rtti</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++">struct custom_policy
     : bom::policies::basic_policy&lt;
           custom_policy, custom_rtti,
-          bom::policies::deferred_static_rtti, // &lt;-- additional facet
+          bom::policies::deferred_static_rtti, // &lt;-- additional policy
           bom::policies::vptr_vector&lt;custom_policy&gt;&gt; {};</code></pre>
 </div>
 </div>
@@ -2804,7 +2804,7 @@ implementation detail, but it uses its own policy, there is no issue.
 </table>
 </div>
 <div class="paragraph">
-<p>The solution is to use a policy that contains the <code>indirect_vptr</code> facet. Instead
+<p>The solution is to use a policy that contains the <code>indirect_vptr</code> policy. Instead
 of storing the vptr directly, it stores a reference to the vptr.</p>
 </div>
 <div class="paragraph">
@@ -2828,15 +2828,15 @@ struct Carnivore : Animal {};
 struct Cow : Herbivore {};
 struct Wolf : Carnivore {};
 
-struct dynamic_policy : boost::openmethod::default_registry::with&lt;
+struct dynamic : boost::openmethod::default_registry::with&lt;
                             boost::openmethod::policies::indirect_vptr&gt; {};
 
 template&lt;class Class&gt;
-using dyn_vptr = boost::openmethod::virtual_ptr&lt;Class, dynamic_policy&gt;;
+using dyn_vptr = boost::openmethod::virtual_ptr&lt;Class, dynamic&gt;;
 
 BOOST_OPENMETHOD(
     encounter, (dyn_vptr&lt;Animal&gt;, dyn_vptr&lt;Animal&gt;), std::string,
-    dynamic_policy);</code></pre>
+    dynamic);</code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -2853,7 +2853,7 @@ The policy must be passed to the method as well as the
 </table>
 </div>
 <div class="paragraph">
-<p>The <code>indirect_vptr</code> facet tells <code>virtual_ptr</code> to use a pointer to the vptr. Even
+<p>The <code>indirect_vptr</code> policy tells <code>virtual_ptr</code> to use a pointer to the vptr. Even
 tough the value of the vptr changes when <code>initialize</code> is called, the vptrs are
 stored in the same place (the policy&#8217;s <code>static_vptr&lt;Class&gt;</code> variables).</p>
 </div>
@@ -2876,7 +2876,7 @@ stored in the same place (the policy&#8217;s <code>static_vptr&lt;Class&gt;</cod
 #include "dl.hpp"
 
 BOOST_OPENMETHOD_CLASSES(
-    Animal, Herbivore, Cow, Wolf, Carnivore, dynamic_policy);
+    Animal, Herbivore, Cow, Wolf, Carnivore, dynamic);
 
 BOOST_OPENMETHOD_OVERRIDE(
     encounter, (dyn_vptr&lt;Animal&gt;, dyn_vptr&lt;Animal&gt;), std::string) {
@@ -2893,14 +2893,14 @@ another:</p>
 <pre class="rouge highlight"><code data-lang="c++">auto main() -&gt; int {
     using namespace boost::openmethod;
 
-    initialize&lt;dynamic_policy&gt;();
+    initialize&lt;dynamic&gt;();
 
     std::cout &lt;&lt; "Before loading library\n";
 
-    auto gracie = make_unique_virtual&lt;Cow, dynamic_policy&gt;();
+    auto gracie = make_unique_virtual&lt;Cow, dynamic&gt;();
     // Wolf _willy;
-    // auto willy = virtual_ptr&lt;Wolf, dynamic_policy&gt;(_willy);
-    auto willy = make_unique_virtual&lt;Wolf, dynamic_policy&gt;();
+    // auto willy = virtual_ptr&lt;Wolf, dynamic&gt;(_willy);
+    auto willy = make_unique_virtual&lt;Wolf, dynamic&gt;();
 
     std::cout &lt;&lt; "Gracie encounters Willy -&gt; "
               &lt;&lt; encounter(gracie, willy); // ignore
@@ -2927,7 +2927,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 
 struct Tiger : Carnivore {};
 
-BOOST_OPENMETHOD_CLASSES(Tiger, Carnivore, dynamic_policy);
+BOOST_OPENMETHOD_CLASSES(Tiger, Carnivore, dynamic);
 
 extern "C" auto make_tiger() -&gt; Tiger* {
     return new Tiger;
@@ -2957,7 +2957,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 
     std::cout &lt;&lt; "\nAfter loading library\n";
 
-    boost::openmethod::initialize&lt;dynamic_policy&gt;();
+    boost::openmethod::initialize&lt;dynamic&gt;();
 
     auto make_tiger =
         reinterpret_cast&lt;Animal* (*)()&gt;(dlsym(handle, "make_tiger"));
@@ -2986,7 +2986,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 
     std::cout &lt;&lt; "\nAfter unloading library\n";
 
-    boost::openmethod::initialize&lt;dynamic_policy&gt;();
+    boost::openmethod::initialize&lt;dynamic&gt;();
 
     std::cout &lt;&lt; "Gracie encounters Willy -&gt; "
               &lt;&lt; encounter(gracie, willy); // ignore
@@ -3147,71 +3147,71 @@ preprocessor symbol <code>NDEBUG</code>.</p>
 </div>
 <div class="paragraph">
 <p>Usually not included directly. Can be used to create custom policies from stock
-policies, by forking them and adjusting a few facets.</p>
+policies, by forking them and adjusting a few policys.</p>
 </div>
 </div>
 <div class="sect4">
 <h5 id="ref_boostopenmethodpoliciesbasic_policy_hpp">&lt;boost/openmethod/policies/basic_policy.hpp&gt;</h5>
 <div class="paragraph">
 <p>Provides the constructs used in the policy framework, essentially
-<code>basic_policy</code>, <code>facet</code>, and its abstract subclasses (<code>rtti</code>, <code>extern_vptr</code>,
+<code>basic_policy</code>, <code>policy</code>, and its abstract subclasses (<code>rtti</code>, <code>extern_vptr</code>,
 etc).</p>
 </div>
 </div>
 <div class="sect4">
 <h5 id="ref_boostopenmethodpoliciesstd_rtti_hpp">&lt;boost/openmethod/policies/std_rtti.hpp&gt;</h5>
 <div class="paragraph">
-<p>Implements the <code>rtti</code> facet using standard RTTI.</p>
+<p>Implements the <code>rtti</code> policy using standard RTTI.</p>
 </div>
 </div>
 <div class="sect4">
 <h5 id="ref_boostopenmethodpoliciesminimal_rtti_hpp">&lt;boost/openmethod/policies/minimal_rtti.hpp&gt;</h5>
 <div class="paragraph">
-<p>Implements the <code>rtti</code> facet using a minimal RTTI implementation. Can be used only with the "final" constructs, or with intrusive v-table pointers.</p>
+<p>Implements the <code>rtti</code> policy using a minimal RTTI implementation. Can be used only with the "final" constructs, or with intrusive v-table pointers.</p>
 </div>
 </div>
 <div class="sect4">
 <h5 id="ref_boostopenmethodpoliciesvptr_vector_hpp">&lt;boost/openmethod/policies/vptr_vector.hpp&gt;</h5>
 <div class="paragraph">
-<p>Implements the <code>extern_vptr</code> facet using a vector of pointers.</p>
+<p>Implements the <code>extern_vptr</code> policy using a vector of pointers.</p>
 </div>
 </div>
 <div class="sect4">
 <h5 id="ref_boostopenmethodpoliciesvptr_map_hpp">&lt;boost/openmethod/policies/vptr_map.hpp&gt;</h5>
 <div class="paragraph">
-<p>Implements the <code>extern_vptr</code> facet using a map of pointers.</p>
+<p>Implements the <code>extern_vptr</code> policy using a map of pointers.</p>
 </div>
 </div>
 <div class="sect4">
 <h5 id="ref_boostopenmethodpoliciesfast_perfect_hash_hpp">&lt;boost/openmethod/policies/fast_perfect_hash.hpp&gt;</h5>
 <div class="paragraph">
-<p>Implements the <code>type_hash</code> facet using a perfect hash function.</p>
+<p>Implements the <code>type_hash</code> policy using a perfect hash function.</p>
 </div>
 </div>
 <div class="sect4">
 <h5 id="ref_boostopenmethodpoliciesdefault_error_handler_hpp">&lt;boost/openmethod/policies/default_error_handler.hpp&gt;</h5>
 <div class="paragraph">
-<p>Implements the <code>error_handler</code> facet by routing the error through a
+<p>Implements the <code>error_handler</code> policy by routing the error through a
 <code>std::function</code>.</p>
 </div>
 </div>
 <div class="sect4">
 <h5 id="ref_boostopenmethodpoliciesthrow_error_handler_hpp">&lt;boost/openmethod/policies/throw_error_handler.hpp&gt;</h5>
 <div class="paragraph">
-<p>Implements the <code>error_handler</code> facet by throwing an exception.</p>
+<p>Implements the <code>error_handler</code> policy by throwing an exception.</p>
 </div>
 </div>
 <div class="sect4">
 <h5 id="ref_boostopenmethodpoliciesbasic_error_output_hpp">&lt;boost/openmethod/policies/basic_error_output.hpp&gt;</h5>
 <div class="paragraph">
-<p>Implements the <code>output</code> facet using a lightweight version of
+<p>Implements the <code>output</code> policy using a lightweight version of
 <code>std::ostream</code>.</p>
 </div>
 </div>
 <div class="sect4">
 <h5 id="ref_boostopenmethodpoliciesbasic_trace_output_hpp">&lt;boost/openmethod/policies/basic_trace_output.hpp&gt;</h5>
 <div class="paragraph">
-<p>Implements the <code>trace</code> facet using a lightweight version of
+<p>Implements the <code>trace</code> policy using a lightweight version of
 <code>std::ostream</code>.</p>
 </div>
 </div>
@@ -3804,7 +3804,7 @@ auto finalize() -&gt; void;
 <h4 id="ref_description_14">Description</h4>
 <div class="paragraph">
 <p>De-allocates the resources allocated by <code>initialize</code> for the <code>Policy</code>, including
-resources allocated by the facets in <code>Policy</code>. Resources are de-allocated in an
+resources allocated by the policys in <code>Policy</code>. Resources are de-allocated in an
 arbitrary order. It is not necessary to call <code>finalize</code> between calls to
 <code>initialize</code>. It is provided mainly for the benefit of memory leak detection
 schemes.</p>
@@ -5025,7 +5025,7 @@ using default_registry = policies::debug;
 <h4 id="virtual_ptr_description_8">Description</h4>
 <div class="paragraph">
 <p><code>basic_policy</code> implements a policy, which consists of a a collection of methods,
-classes, dispatch data, and facets, which specify how to obtain a pointer to a
+classes, dispatch data, and policys, which specify how to obtain a pointer to a
 v-table from an object, how to report errors, whether to perform runtime sanity
 checks, etc.</p>
 </div>
@@ -5062,7 +5062,7 @@ variables with the original <em>Policy</em>. The new policy does not retain any
 knowledge of the classes and methods registered in the original.</p>
 </div>
 <div class="paragraph">
-<p><code>fork</code> forks the facets in the policy as well: any facet instantiated from a
+<p><code>fork</code> forks the policys in the policy as well: any policy instantiated from a
 class template is assumed to take a policy as its first template argument. The
 template is re-instantiated with the new policy as the first arguments, while
 the other arguments remain the same.</p>
@@ -5080,11 +5080,11 @@ using with;</code></pre>
 <dl>
 <dt class="hdlist1">Requires</dt>
 <dd>
-<p><em>Facets</em> is a list of classes that derive from <code>facet</code>.</p>
+<p><em>Facets</em> is a list of classes that derive from <code>policy</code>.</p>
 </dd>
 <dt class="hdlist1">Returns</dt>
 <dd>
-<p>A new policy containing <em>Facets</em>, and the facets from the original
+<p>A new policy containing <em>Facets</em>, and the policys from the original
 that do not have the same category as <em>Facets</em>.</p>
 </dd>
 <dt class="hdlist1">Examples</dt>
@@ -5125,11 +5125,11 @@ using without;</code></pre>
 <dl>
 <dt class="hdlist1">Requires</dt>
 <dd>
-<p><em>Facets</em> is a list of facet categories.</p>
+<p><em>Facets</em> is a list of policy categories.</p>
 </dd>
 <dt class="hdlist1">Returns</dt>
 <dd>
-<p>A new policy containing the facets from the original that do not have
+<p>A new policy containing the policys from the original that do not have
 the same category as <em>Facets</em>.</p>
 </dd>
 <dt class="hdlist1">Examples</dt>
@@ -5159,7 +5159,7 @@ will not be used.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>A policy that contains facets <code>std_rtti</code>, <code>fast_perfect_hash</code>, <code>vptr_vector</code> and
+<p>A policy that contains policys <code>std_rtti</code>, <code>fast_perfect_hash</code>, <code>vptr_vector</code> and
 <code>default_error_handler</code>.</p>
 </div>
 </div>
@@ -5171,7 +5171,7 @@ will not be used.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The <code>release</code> policy with additional facet implementations <code>runtime_checks</code>,
+<p>The <code>release</code> policy with additional policy implementations <code>runtime_checks</code>,
 <code>basic_error_output</code> and basic_trace_output.</p>
 </div>
 <div class="admonitionblock note">
@@ -5197,7 +5197,7 @@ same <code>domain</code>.
 </div>
 </div>
 <div class="sect2">
-<h3 id="virtual_ptr_facet">facet</h3>
+<h3 id="virtual_ptr_policy">policy</h3>
 <div class="sect3">
 <h4 id="virtual_ptr_synopsis_9">Synopsis</h4>
 <div class="paragraph">
@@ -5207,7 +5207,7 @@ same <code>domain</code>.
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++">namespace boost::openmethod::policies {
 
-struct facet {
+struct policy {
     static auto finalize() -&gt; void;
 };
 
@@ -5218,7 +5218,7 @@ struct facet {
 <div class="sect3">
 <h4 id="virtual_ptr_description_9">Description</h4>
 <div class="paragraph">
-<p><code>facet</code> is the base class of all facets. It provides an empty <code>finalize</code> static
+<p><code>policy</code> is the base class of all policys. It provides an empty <code>finalize</code> static
 function which can be overriden (via shadowing) by derived classes.</p>
 </div>
 </div>
@@ -5248,7 +5248,7 @@ function which can be overriden (via shadowing) by derived classes.</p>
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++">namespace boost::openmethod::policies {
 
-struct rtti : facet {};
+struct rtti : policy {};
 
 } // boost::openmethod::policies</code></pre>
 </div>
@@ -5257,7 +5257,7 @@ struct rtti : facet {};
 <div class="sect3">
 <h4 id="virtual_ptr_description_10">Description</h4>
 <div class="paragraph">
-<p>The <code>rtti</code> facet provides type information for classes and objects, implements
+<p>The <code>rtti</code> policy provides type information for classes and objects, implements
 downcast in presence of virtual inheritance, and writes descriptions of types to
 an <code>ostream</code>-like object.</p>
 </div>
@@ -5377,7 +5377,7 @@ struct std_rtti : rtti {
 <div class="sect3">
 <h4 id="virtual_ptr_description_11">Description</h4>
 <div class="paragraph">
-<p><code>std_rtti</code> is an implementation of the <code>rtti</code> facet that uses standard RTTI.</p>
+<p><code>std_rtti</code> is an implementation of the <code>rtti</code> policy that uses standard RTTI.</p>
 </div>
 </div>
 <div class="sect3">
@@ -5468,14 +5468,14 @@ struct deferred_static_rtti : rtti {};
 <div class="sect3">
 <h4 id="virtual_ptr_description_12">Description</h4>
 <div class="paragraph">
-<p><code>deferred_static_rtti</code> is a facet that defers collection of static type ids.</p>
+<p><code>deferred_static_rtti</code> is a policy that defers collection of static type ids.</p>
 </div>
 <div class="paragraph">
 <p>Some custom RTTI systems rely on static constructors to assign type ids.
 OpenMethod itself relies on static constructors to register classes, methods and
-overriders, calling the <code>static_type</code> function from the <code>rtti</code> facet in the
+overriders, calling the <code>static_type</code> function from the <code>rtti</code> policy in the
 process. This can result in collecting the type ids <em>before</em> they have been
-initialized. Adding this facet to a policy moves the collection of type ids to
+initialized. Adding this policy to a policy moves the collection of type ids to
 <code>initialize</code>.</p>
 </div>
 </div>
@@ -5499,15 +5499,15 @@ initialized. Adding this facet to a policy moves the collection of type ids to
 <div class="sect3">
 <h4 id="virtual_ptr_description_13">Description</h4>
 <div class="paragraph">
-<p><code>minimal_rtti</code> is an implementation of the <code>rtti</code> facet that only uses static
+<p><code>minimal_rtti</code> is an implementation of the <code>rtti</code> policy that only uses static
 type information.</p>
 </div>
 <div class="paragraph">
 <p><code>minimal_rtti</code> provides the only function strictly required for the <code>rtti</code>
-facet.</p>
+policy.</p>
 </div>
 <div class="paragraph">
-<p>This facet can be used in programs that call methods solely via
+<p>This policy can be used in programs that call methods solely via
 <code>virtual_ptr</code>s created with the "final" constructs. Virtual inheritance
 is not supported. Classes are not required to be polymorphic.</p>
 </div>
@@ -5523,7 +5523,7 @@ static constexpr bool is_polymorphic = false;</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>This facet does not support polymorphic classes.</p>
+<p>This policy does not support polymorphic classes.</p>
 </div>
 </div>
 <div class="sect4">
@@ -5551,7 +5551,7 @@ static auto static_type() -&gt; type_id;</code></pre>
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++">namespace boost::openmethod::policies {
 
-struct extern_vptr : facet {};
+struct extern_vptr : policy {};
 
 }</code></pre>
 </div>
@@ -5560,7 +5560,7 @@ struct extern_vptr : facet {};
 <div class="sect3">
 <h4 id="virtual_ptr_description_14">Description</h4>
 <div class="paragraph">
-<p><code>extern_vptr</code> is a facet that stores and returns pointers to v-tables for
+<p><code>extern_vptr</code> is a policy that stores and returns pointers to v-tables for
 registered classes.</p>
 </div>
 </div>
@@ -5605,14 +5605,14 @@ the same.</p>
 <h4 id="virtual_ptr_synopsis_15">Synopsis</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="c++">struct indirect_vptr : facet {};</code></pre>
+<pre class="rouge highlight"><code data-lang="c++">struct indirect_vptr : policy {};</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="virtual_ptr_description_15">Description</h4>
 <div class="paragraph">
-<p><code>indirect_vptr</code> is a facet that makes <code>virtual_ptr</code>s and <code>inplace_vptr</code> use
+<p><code>indirect_vptr</code> is a policy that makes <code>virtual_ptr</code>s and <code>inplace_vptr</code> use
 pointers to pointers to v-tables, instead of straight pointers. As a
 consequence, they remain valid after a call to <code>initialize</code>.</p>
 </div>
@@ -5620,7 +5620,7 @@ consequence, they remain valid after a call to <code>initialize</code>.</p>
 <div class="sect3">
 <h4 id="virtual_ptr_requirements_3">Requirements</h4>
 <div class="paragraph">
-<p>None. The facet is its own implementation.</p>
+<p>None. The policy is its own implementation.</p>
 </div>
 </div>
 </div>
@@ -5658,7 +5658,7 @@ of indirection is added, making the policy usable in presence of dynamic
 loading.</p>
 </div>
 <div class="paragraph">
-<p><code>Policy</code> is the policy containing the facet.</p>
+<p><code>Policy</code> is the policy containing the policy.</p>
 </div>
 </div>
 <div class="sect3">
@@ -5676,7 +5676,7 @@ auto register_vptrs(ForwardIterator first, ForwardIterator last) -&gt; void;</co
 <code>type_id`s of the classes registered in `Policy</code>.</p>
 </div>
 <div class="paragraph">
-<p>If <code>Policy</code> contains a <code>type_hash</code> facet, call its <code>hash_initialize</code>
+<p>If <code>Policy</code> contains a <code>type_hash</code> policy, call its <code>hash_initialize</code>
 function, and uses it to convert the <code>type_id</code>s to an index.</p>
 </div>
 </div>
@@ -5693,7 +5693,7 @@ auto dynamic_vptr(const Class&amp; object) -&gt; const vptr_type&amp;;</code></p
 </div>
 <div class="paragraph">
 <p>Obtains a <code>type_id</code> for <code>object</code> using <code>Policy::dynamic_type</code>. If <em>Policy</em>
-contains a <code>type_hash</code> facet, uses it to convert the result to an index;
+contains a <code>type_hash</code> policy, uses it to convert the result to an index;
 otherwise, uses the <code>type_id</code> as the index.</p>
 </div>
 </div>
@@ -5731,7 +5731,7 @@ the v-tables in a map. If `Policy</code> contains <code>indirect_vptr</code>, a 
 indirection is added, making the policy usable in presence of dynamic loading.</p>
 </div>
 <div class="paragraph">
-<p><code>Policy</code> is the policy containing the facet.</p>
+<p><code>Policy</code> is the policy containing the policy.</p>
 </div>
 <div class="paragraph">
 <p><code>MapAdaptor</code> is a Boost.Mp11 quoted metafunction that returns a map type.</p>
@@ -5763,8 +5763,8 @@ auto dynamic_vptr(const Class&amp; object) -&gt; const vptr_type&amp;;</code></p
 <p>Returns a pointer to the v-table for <code>object</code> (by reference).</p>
 </div>
 <div class="paragraph">
-<p>If <em>Policy</em> contains the <code>runtime_checks</code> facet, checks if <em>Class</em> is
-registered. If it is not, and <em>Policy</em> contains a <code>error_handler</code> facet, calls
+<p>If <em>Policy</em> contains the <code>runtime_checks</code> policy, checks if <em>Class</em> is
+registered. If it is not, and <em>Policy</em> contains a <code>error_handler</code> policy, calls
 its <code>error</code> function; then calls <code>abort</code>.</p>
 </div>
 </div>
@@ -5781,7 +5781,7 @@ its <code>error</code> function; then calls <code>abort</code>.</p>
 <div class="content">
 <pre class="rouge highlight"><code data-lang="c++">namespace boost::openmethod::policies {
 
-struct type_hash : facet {};
+struct type_hash : policy {};
 
 } // boost::openmethod::policies</code></pre>
 </div>
@@ -5790,7 +5790,7 @@ struct type_hash : facet {};
 <div class="sect3">
 <h4 id="virtual_ptr_description_18">Description</h4>
 <div class="paragraph">
-<p><code>type_hash</code> is a facet that provides a hash function for a fixed set of
+<p><code>type_hash</code> is a policy that provides a hash function for a fixed set of
 <code>type_id</code>s.</p>
 </div>
 </div>
@@ -5872,9 +5872,9 @@ function for <code>type_id</code>s.</p>
 <code>hash_initialize</code>.</p>
 </div>
 <div class="paragraph">
-<p>If the policy has a <code>runtime_checks</code> facet, <code>hash_type_id</code> checks that <code>type</code>
+<p>If the policy has a <code>runtime_checks</code> policy, <code>hash_type_id</code> checks that <code>type</code>
 corresponds to a registered class. If not, it reports a <code>unknown_class_error</code>
-using the policy&#8217;s error_handler facet, if present, then calls <code>abort</code>.</p>
+using the policy&#8217;s error_handler policy, if present, then calls <code>abort</code>.</p>
 </div>
 </div>
 <div class="sect4">
@@ -5891,11 +5891,11 @@ function.</p>
 </div>
 <div class="paragraph">
 <p>If no such factors cannot be found, <code>hash_initialize</code> reports a
-<code>hash_search_error</code> using the policy&#8217;s error_handler facet, if present, the
+<code>hash_search_error</code> using the policy&#8217;s error_handler policy, if present, the
 calls <code>abort</code>.</p>
 </div>
 <div class="paragraph">
-<p>If the policy has a <code>trace</code> facet, <code>hash_initialize</code> uses it to write a
+<p>If the policy has a <code>trace</code> policy, <code>hash_initialize</code> uses it to write a
 summary of the search.</p>
 </div>
 </div>
@@ -5947,11 +5947,11 @@ struct type_mismatch_error : openmethod_error {
 <div class="sect3">
 <h4 id="virtual_ptr_description_20">Description</h4>
 <div class="paragraph">
-<p><code>error_handler</code> is a facet that handles errors.</p>
+<p><code>error_handler</code> is a policy that handles errors.</p>
 </div>
 <div class="paragraph">
 <p>When an error is encountered, either during <code>initialize</code> or method dispatch, the
-program is terminated via a call to <code>abort</code>. If this facet is present in the
+program is terminated via a call to <code>abort</code>. If this policy is present in the
 policy, its <code>error</code> function is called with an error object. It can prevent
 termination by throwing an exception.</p>
 </div>
@@ -6019,7 +6019,7 @@ static auto error(const Error&amp; error) -&gt; void;</code></pre>
 </div>
 <div class="paragraph">
 <p>Calls the function last set via <code>set_error_handler</code> or, if it was never called,
-and if <em>Policy</em> contains an <code>output</code> facet, use it to print a description
+and if <em>Policy</em> contains an <code>output</code> policy, use it to print a description
 of <code>error</code>.</p>
 </div>
 </div>
@@ -6059,7 +6059,7 @@ struct throw_error_handler : error_handler {
 <div class="sect3">
 <h4 id="virtual_ptr_description_22">Description</h4>
 <div class="paragraph">
-<p>throw_error_handler is an implementation of the <code>error_handler</code> facet that
+<p>throw_error_handler is an implementation of the <code>error_handler</code> policy that
 throws the error as an exception.</p>
 </div>
 </div>
@@ -6103,7 +6103,7 @@ struct basic_error_output : output {
 <h4 id="virtual_ptr_description_23">Description</h4>
 <div class="paragraph">
 <p><code>basic_error_output</code> is an implementation of <code>output</code> that writes error
-messages to a <code>RestrictedOutputStream</code>.</p>
+messages to a <code>LightweightOutputStream</code>.</p>
 </div>
 </div>
 <div class="sect3">
@@ -6148,7 +6148,7 @@ struct basic_trace_output : trace {
 <h4 id="virtual_ptr_description_24">Description</h4>
 <div class="paragraph">
 <p><code>basic_error_output</code> is an implementation of <code>trace</code> that writes error
-messages to a <code>RestrictedOutputStream</code>.</p>
+messages to a <code>LightweightOutputStream</code>.</p>
 </div>
 </div>
 <div class="sect3">
@@ -6180,11 +6180,11 @@ open it.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="virtual_ptr_restrictedoutputstream">RestrictedOutputStream</h3>
+<h3 id="virtual_ptr_restrictedoutputstream">LightweightOutputStream</h3>
 <div class="sect3">
 <h4 id="virtual_ptr_description_25">Description</h4>
 <div class="paragraph">
-<p>RestrictedOutputStream is a concept describing a <code>std::ostream</code>-like class with
+<p>LightweightOutputStream is a concept describing a <code>std::ostream</code>-like class with
 a reduced set of operations.</p>
 </div>
 <div class="paragraph">
@@ -6194,7 +6194,7 @@ uses a small subset of the operations supported by <code>std::ostream</code>. By
 the library uses a lightweight implementation based on the C stream functions.</p>
 </div>
 <div class="paragraph">
-<p>Implementations of <code>RestrictedOutputStream</code> provide the following functions:</p>
+<p>Implementations of <code>LightweightOutputStream</code> provide the following functions:</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -6210,7 +6210,7 @@ the library uses a lightweight implementation based on the C stream functions.</
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>RestrictedOutputStream&amp; operator&lt;&lt;(RestrictedOutputStream&amp; os, const char* str)</p>
+<p>LightweightOutputStream&amp; operator&lt;&lt;(LightweightOutputStream&amp; os, const char* str)</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Write a null-terminated string <code>str</code> to <code>os</code></p>
@@ -6218,7 +6218,7 @@ the library uses a lightweight implementation based on the C stream functions.</
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>RestrictedOutputStream&amp; operator&lt;&lt;(RestrictedOutputStream&amp; os, const std::string_view&amp; view)</p>
+<p>LightweightOutputStream&amp; operator&lt;&lt;(LightweightOutputStream&amp; os, const std::string_view&amp; view)</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Write a view to `os</p>
@@ -6226,7 +6226,7 @@ the library uses a lightweight implementation based on the C stream functions.</
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>RestrictedOutputStream&amp; operator&lt;&lt;(RestrictedOutputStream&amp; os, const void* value)</p>
+<p>LightweightOutputStream&amp; operator&lt;&lt;(LightweightOutputStream&amp; os, const void* value)</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Write a representation of a pointer to <code>os</code></p>
@@ -6234,7 +6234,7 @@ the library uses a lightweight implementation based on the C stream functions.</
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>RestrictedOutputStream&amp; operator&lt;&lt;(RestrictedOutputStream&amp; os, std::size_t value)</p>
+<p>LightweightOutputStream&amp; operator&lt;&lt;(LightweightOutputStream&amp; os, std::size_t value)</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Write an unsigned integer to <code>os</code></p>

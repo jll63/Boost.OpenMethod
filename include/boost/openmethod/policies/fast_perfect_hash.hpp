@@ -22,37 +22,52 @@ std::vector<type_id> fast_perfect_hash_control;
 
 namespace policies {
 
+//! Hashes a @ref type_id using a fast, perfect hash function.
+//!
+//! `fast_perfect_hash` implements the @ref type_hash policy using a hash
+//! function in the form `H(x)=(M*x)>>S`. It attempts to determine values for
+//! `M` and `S` that do not result in collisions for the set of registered
+//! type_ids. This may fail for certain sets of inputs, although it is very
+//! likely to succeed for addresses of `std::type_info` objects.
+//!
+//! There is no guarantee that every value in the codomain of the function
+//! corresponds to a value in the domain, or even that the codomain is a dense
+//! range of integers. In other words, a lot of space may be wasted in presence
+//! of large sets of type_ids.
 struct fast_perfect_hash : type_hash {
+    //! A model of @ref type_hash::fn.
+    //!
+    //! @tparam Registry The registry containing this policy.
     template<class Registry>
-    struct fn {
-
-        inline static std::size_t hash_mult;
-        inline static std::size_t hash_shift;
-        inline static std::size_t hash_min;
-        inline static std::size_t hash_max;
+    class fn {
+        inline static std::size_t mult;
+        inline static std::size_t shift;
+        inline static std::size_t min_value;
+        inline static std::size_t max_value;
         inline static void check(std::size_t index, type_id type);
 
+        template<typename ForwardIterator>
+        static void initialize(
+            ForwardIterator first, ForwardIterator last,
+            std::vector<type_id>& buckets);
+
       public:
-        struct report {
-            std::size_t first, last;
-        };
-
-        BOOST_FORCEINLINE
-        static auto hash(type_id type) -> std::size_t {
-            auto index =
-                (hash_mult * reinterpret_cast<detail::uintptr>(type)) >>
-                hash_shift;
-
-            if constexpr (Registry::template has_policy<runtime_checks>) {
-                check(index, type);
-            }
-
-            return index;
-        }
-
+        //! Finds the hash factors.
+        //!
+        //! Attempts to find suitable values for the multiplication factor `M`
+        //! and the shift amount `S` to that do not result in collisions for the
+        //! specified input values.
+        //!
+        //! If no suitable values are found, calls the error handler with
+        //! a @ref hash_error object then calls `abort`.
+        //!
+        //! @tparam ForwardIterator A forward iterator yielding
+        //! @ref IdsToVptr objects.
+        //! @param first The beginning of the range.
+        //! @param last The end of the range.
         template<typename ForwardIterator>
         static auto initialize(ForwardIterator first, ForwardIterator last) {
-            if constexpr (Registry::template has_policy<runtime_checks>) {
+            if constexpr (Registry::has_runtime_checks) {
                 initialize(
                     first, last, detail::fast_perfect_hash_control<Registry>);
             } else {
@@ -60,14 +75,35 @@ struct fast_perfect_hash : type_hash {
                 initialize(first, last, buckets);
             }
 
-            return report{hash_min, hash_max};
+            return std::pair{min_value, max_value};
         }
 
-        template<typename ForwardIterator>
-        static void initialize(
-            ForwardIterator first, ForwardIterator last,
-            std::vector<type_id>& buckets);
+        //! Hashes a type id.
+        //!
+        //! Hashes a type id.
+        //!
+        //! If `Registry` contains the @ref runtime_checks policy, checks that
+        //! the type id is valid, i.e. if it was present in the set passed to
+        //! @ref initialize. Its absence indicates that a class involved in a
+        //! method definition, method overrider, or method call was not
+        //! registered. In this case, signal a @ref unknown_class_error using
+        //! the registry's @ref error_handler if present; then calls `abort`.
+        //!
+        //! @param type The type_id to hash.
+        //! @return The hash value.
+        BOOST_FORCEINLINE
+        static auto hash(type_id type) -> std::size_t {
+            auto index =
+                (mult * reinterpret_cast<detail::uintptr>(type)) >> shift;
 
+            if constexpr (Registry::has_runtime_checks) {
+                check(index, type);
+            }
+
+            return index;
+        }
+
+        //! Releases the memory allocated by `initialize`.
         static auto finalize() -> void {
             detail::fast_perfect_hash_control<Registry>.clear();
         }
@@ -81,13 +117,12 @@ void fast_perfect_hash::fn<Registry>::initialize(
     std::vector<type_id>& buckets) {
     using namespace policies;
 
-    constexpr bool trace_enabled = Registry::template has_policy<trace>;
     const auto N = std::distance(first, last);
 
-    if constexpr (trace_enabled) {
-        if (Registry::template policy<policies::trace>::trace_enabled) {
-            Registry::template policy<policies::output>::os
-                << "Finding hash factor for " << N << " types\n";
+    if constexpr (Registry::has_trace && Registry::has_output) {
+        if (Registry::trace::on) {
+            Registry::output::os << "Finding hash factor for " << N
+                                 << " types\n";
         }
     }
 
@@ -102,16 +137,15 @@ void fast_perfect_hash::fn<Registry>::initialize(
     std::uniform_int_distribution<std::size_t> uniform_dist;
 
     for (std::size_t pass = 0; pass < 4; ++pass, ++M) {
-        hash_shift = 8 * sizeof(type_id) - M;
+        shift = 8 * sizeof(type_id) - M;
         auto hash_size = 1 << M;
-        hash_min = (std::numeric_limits<std::size_t>::max)();
-        hash_max = (std::numeric_limits<std::size_t>::min)();
+        min_value = (std::numeric_limits<std::size_t>::max)();
+        max_value = (std::numeric_limits<std::size_t>::min)();
 
-        if constexpr (trace_enabled) {
-            if (Registry::template policy<policies::trace>::trace_enabled) {
-                Registry::template policy<policies::output>::os
-                    << "  trying with M = " << M << ", " << hash_size
-                    << " buckets\n";
+        if constexpr (Registry::has_trace && Registry::has_output) {
+            if (Registry::trace::on) {
+                Registry::output::os << "  trying with M = " << M << ", "
+                                     << hash_size << " buckets\n";
             }
         }
 
@@ -123,16 +157,15 @@ void fast_perfect_hash::fn<Registry>::initialize(
                 buckets.begin(), buckets.end(), type_id(detail::uintptr_max));
             ++attempts;
             ++total_attempts;
-            hash_mult = uniform_dist(rnd) | 1;
+            mult = uniform_dist(rnd) | 1;
 
             for (auto iter = first; iter != last; ++iter) {
                 for (auto type_iter = iter->type_id_begin();
                      type_iter != iter->type_id_end(); ++type_iter) {
                     auto type = *type_iter;
-                    auto index =
-                        (detail::uintptr(type) * hash_mult) >> hash_shift;
-                    hash_min = (std::min)(hash_min, index);
-                    hash_max = (std::max)(hash_max, index);
+                    auto index = (detail::uintptr(type) * mult) >> shift;
+                    min_value = (std::min)(min_value, index);
+                    max_value = (std::max)(max_value, index);
 
                     if (detail::uintptr(buckets[index]) !=
                         detail::uintptr_max) {
@@ -143,12 +176,12 @@ void fast_perfect_hash::fn<Registry>::initialize(
                 }
             }
 
-            if constexpr (trace_enabled) {
-                if (Registry::template policy<policies::trace>::trace_enabled) {
-                    Registry::template policy<policies::output>::os
-                        << "  found " << hash_mult << " after "
-                        << total_attempts << " attempts; span = [" << hash_min
-                        << ", " << hash_max << "]\n";
+            if constexpr (Registry::has_trace && Registry::has_output) {
+                if (Registry::trace::on) {
+                    Registry::output::os
+                        << "  found " << mult << " after " << total_attempts
+                        << " attempts; span = [" << min_value << ", "
+                        << max_value << "]\n";
                 }
             }
 
@@ -162,8 +195,8 @@ void fast_perfect_hash::fn<Registry>::initialize(
     error.attempts = total_attempts;
     error.buckets = std::size_t(1) << M;
 
-    if constexpr (Registry::template has_policy<policies::error_handler>) {
-        Registry::template policy<policies::error_handler>::error(error);
+    if constexpr (Registry::has_error_handler) {
+        Registry::error_handler::error(error);
     }
 
     abort();
@@ -171,12 +204,13 @@ void fast_perfect_hash::fn<Registry>::initialize(
 
 template<class Registry>
 void fast_perfect_hash::fn<Registry>::check(std::size_t index, type_id type) {
-    if (index < hash_min || index > hash_max ||
+    if (index < min_value || index > max_value ||
         detail::fast_perfect_hash_control<Registry>[index] != type) {
-        if constexpr (Registry::template has_policy<policies::error_handler>) {
+
+        if constexpr (Registry::has_error_handler) {
             unknown_class_error error;
             error.type = type;
-            Registry::template policy<policies::error_handler>::error(error);
+            Registry::error_handler::error(error);
         }
 
         abort();

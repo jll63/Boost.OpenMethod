@@ -1,0 +1,41 @@
+
+= BOOST_OPENMETHOD
+
+### Synopsis
+
+Defined in <boost/openmethod/macros.hpp>.
+
+```c++
+BOOST_OPENMETHOD(NAME, (PARAMETERS...), RETURN_TYPE [, POLICY]);
+```
+
+### Description
+
+Declares a method.
+
+The macro expands to several constructs:
+
+* A `struct` forward declaration that acts as the method's identifier:
+
+```c++
+struct BOOST_OPENMETHOD_ID(NAME);
+```
+
+* An inline function template, constrained to take the same `PARAMETERS`,
+  without the `virtual_` decorators, returning a `RETURN_TYPE`. The function
+  forwards to +
+  `method<BOOST_OPENMETHOD_ID(NAME)(PARAMETERS...), RETURN_TYPE, POLICY>::fn`.
+
+* A guide function used to match overriders with the method:
+
+```c++
+auto BOOST_OPENMETHOD_ID(NAME)_guide(...)
+    -> ::boost::openmethod::method<
+        BOOST_OPENMETHOD_ID(NAME)(PARAMETERS...), RETURN_TYPE [, POLICY]>;
+```
+
+NOTE: `NAME` must be an *identifier*. Qualified names are not allowed.
+
+NOTE: The default value for `POLICY` is the value of
+`BOOST_OPENMETHOD_DEFAULT_REGISTRY` at the point `<boost/openmethod/core.hpp>` is
+included. Changing the value of this symbol has no effect after that point.

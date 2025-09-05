@@ -39,7 +39,7 @@ struct default_error_handler : error_handler {
             using namespace detail;
             using namespace policies;
 
-            if constexpr (Registry::template has_policy<output>) {
+            if constexpr (Registry::has_output) {
                 auto& os = Registry::template policy<policies::output>::os;
 
                 if (auto error = std::get_if<not_implemented_error>(&error_v)) {

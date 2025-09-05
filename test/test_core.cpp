@@ -129,8 +129,8 @@ static_assert(
                     is_virtual, mp11::mp_list<virtual_<a&>, b, virtual_<c&>>>>>,
         mp11::mp_list<a, c>>);
 
-struct registry1 : default_registry::with<policies::unique<registry1>> {};
-struct registry2 : default_registry::with<policies::unique<registry2>> {};
+struct registry1 : default_registry::with<unique<registry1>> {};
+struct registry2 : default_registry::with<unique<registry2>> {};
 
 static_assert(
     detail::using_same_registry<registry1, virtual_ptr<a, registry1>>::value);
@@ -358,7 +358,7 @@ static_assert(detail::has_vptr_fn<Animal, test_registry>);
 static_assert(!detail::has_vptr_fn<Animal, default_registry>);
 
 BOOST_AUTO_TEST_CASE(vptr_from_function) {
-    initialize<test_registry>();
+    test_registry::initialize();
     BOOST_TEST(detail::acquire_vptr<test_registry>(Animal{}) == &value);
 }
 

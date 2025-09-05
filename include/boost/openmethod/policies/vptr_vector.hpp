@@ -25,19 +25,50 @@ inline std::vector<const vptr_type*> vptr_vector_indirect_vptrs;
 
 namespace policies {
 
-struct vptr_vector : extern_vptr {
+//! Stores v-table pointers in a vector.
+//!
+//! `vptr_vector` stores v-table pointers in a global vector. If `Registry`
+//! contains a @ref type_hash policy, it is used to convert `type_id`s to
+//! indices. Otherwise, `type_id`s are used directly as indices.
+//!
+//! If the registry contains the @ref indirect_vptr policy, stores pointers to
+//! pointers to v-tables in the vector.
+struct vptr_vector : vptr {
   public:
+    //! A model of @ref vptr::fn.
+    //!
+    //! Keeps track of v-table pointers using a `std::vector`.
+    //!
+    //! If `Registry` contains a @ref type_hash policy, it is used to convert
+    //! `type_id`s to indices; otherwise, `type_id`s are used as indices.
+    //!
+    //! If `Registry` contains the @ref indirect_vptr policy, stores pointers to
+    //! pointers to v-tables in the map.
+    //!
+    //! @tparam Registry The registry containing this policy.
     template<class Registry>
     struct fn {
+        using type_hash =
+            typename Registry::template policy<policies::type_hash>;
+        static constexpr auto has_type_hash = !std::is_same_v<type_hash, void>;
+
+        //! Stores the v-table pointers.
+        //!
+        //! If `Registry` contains a @ref type_hash policy, its `initialize`
+        //! function is called. Its result determines the size of the vector.
+        //! The v-table pointers are copied into the vector.
+        //!
+        //! @tparam ForwardIterator An iterator to a range of @ref
+        //! IdsToVptr objects.
+        //! @param first The beginning of the range.
+        //! @param last The end of the range.
         template<typename ForwardIterator>
-        static auto register_vptrs(ForwardIterator first, ForwardIterator last)
+        static auto initialize(ForwardIterator first, ForwardIterator last)
             -> void {
             std::size_t size;
-
-            if constexpr (Registry::template has_policy<type_hash>) {
-                auto report = Registry::template policy<type_hash>::initialize(
-                    first, last);
-                size = report.last + 1;
+            if constexpr (has_type_hash) {
+                auto [_, max_value] = type_hash::initialize(first, last);
+                size = max_value + 1;
             } else {
                 size = 0;
 
@@ -51,7 +82,7 @@ struct vptr_vector : extern_vptr {
                 ++size;
             }
 
-            if constexpr (Registry::template has_policy<indirect_vptr>) {
+            if constexpr (Registry::has_indirect_vptr) {
                 detail::vptr_vector_indirect_vptrs<Registry>.resize(size);
             } else {
                 detail::vptr_vector_vptrs<Registry>.resize(size);
@@ -62,15 +93,13 @@ struct vptr_vector : extern_vptr {
                      type_iter != iter->type_id_end(); ++type_iter) {
                     std::size_t index;
 
-                    if constexpr (Registry::template has_policy<type_hash>) {
-                        index = Registry::template policy<type_hash>::hash(
-                            *type_iter);
+                    if constexpr (has_type_hash) {
+                        index = type_hash::hash(*type_iter);
                     } else {
                         index = std::size_t(*type_iter);
                     }
 
-                    if constexpr (Registry::template has_policy<
-                                      indirect_vptr>) {
+                    if constexpr (Registry::has_indirect_vptr) {
                         detail::vptr_vector_indirect_vptrs<Registry>[index] =
                             &iter->vptr();
                     } else {
@@ -81,28 +110,66 @@ struct vptr_vector : extern_vptr {
             }
         }
 
+        //! Returns a *reference* to a v-table pointer for an object.
+        //!
+        //! Acquires the dynamic @ref type_id of `arg`, using the registry's
+        //! @ref rtti policy.
+        //!
+        //! If the registry has a @ref type_hash policy, uses it to convert the
+        //! type id to an index; otherwise, uses the type_id as the index.
+        //!
+        //! If the registry contains the @ref runtime_checks policy, verifies
+        //! that the index falls within the limits of the vector. If it does
+        //! not, and if the registry contains a @ref error_handler policy, calls
+        //! its @ref error function with a @ref unknown_class_error value, then
+        //! terminates the program with @ref abort.
+        //!
+        //! @tparam Class A registered class.
+        //! @param arg A reference to a const object of type `Class`.
+        //! @return A reference to a the v-table pointer for `Class`.
         template<class Class>
         static auto dynamic_vptr(const Class& arg) -> const vptr_type& {
-            auto dynamic_type =
-                Registry::template policy<rtti>::dynamic_type(arg);
+            auto dynamic_type = Registry::rtti::dynamic_type(arg);
             std::size_t index;
-
-            if constexpr (Registry::template has_policy<type_hash>) {
-                index =
-                    Registry::template policy<type_hash>::hash(dynamic_type);
+            if constexpr (has_type_hash) {
+                index = type_hash::hash(dynamic_type);
             } else {
                 index = std::size_t(dynamic_type);
+
+                if constexpr (Registry::has_runtime_checks) {
+                    std::size_t max_index = 0;
+
+                    if constexpr (Registry::has_indirect_vptr) {
+                        max_index =
+                            detail::vptr_vector_indirect_vptrs<Registry>.size();
+                    } else {
+                        max_index = detail::vptr_vector_vptrs<Registry>.size();
+                    }
+
+                    if (index >= max_index) {
+                        if constexpr (Registry::has_error_handler) {
+                            unknown_class_error error;
+                            error.type = dynamic_type;
+                            Registry::error_handler::error(error);
+                        }
+
+                        abort();
+                    }
+                }
             }
 
-            if constexpr (Registry::template has_policy<indirect_vptr>) {
+            if constexpr (Registry::has_indirect_vptr) {
                 return *detail::vptr_vector_indirect_vptrs<Registry>[index];
             } else {
                 return detail::vptr_vector_vptrs<Registry>[index];
             }
         }
 
+        //! Clears the vector.
         static auto finalize() -> void {
-            if constexpr (Registry::template has_policy<indirect_vptr>) {
+            using namespace policies;
+
+            if constexpr (Registry::has_indirect_vptr) {
                 detail::vptr_vector_indirect_vptrs<Registry>.clear();
             } else {
                 detail::vptr_vector_vptrs<Registry>.clear();

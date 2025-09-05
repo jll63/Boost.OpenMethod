@@ -8,21 +8,21 @@ Defined in <boost/openmethod/policies/basic_policy.hpp>.
 ```c++
 namespace boost::openmethod::policies {
 
-struct output : facet {};
+struct output : policy {};
 
 } // boost::openmethod::policies
 ```
 
 ### Description
 
-`output` is a facet that provides a stream for writing error messages.
+`output` is a policy that provides a stream for writing error messages.
 
 ### Requirements
 
 #### error_stream
 
 ```c++
-static RestrictedOutputStream error_stream;
+static LightweightOutputStream error_stream;
 ```
 
-A static variable that satisfies the requirements of `RestrictedOutputStream`.
+A static variable that satisfies the requirements of `LightweightOutputStream`.

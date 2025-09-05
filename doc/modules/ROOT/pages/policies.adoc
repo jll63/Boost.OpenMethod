@@ -1,0 +1,72 @@
+
+## Registries and Policies
+
+Methods are scoped in a registry. A method can only reference classes in the
+same registry. If a class is used as a virtual parameter in methods using
+different registries, it must be registered with each of them.
+
+Class templates `use_classes`, `method`, `virtual_ptr`, and macros
+`BOOST_OPENMETHOD` and `BOOST_OPENMETHOD_CLASSES`, accept an additional
+argument, a registry class, which defaults to `default_registry`, which is an
+alias to `release_registry` or `debug_registry`, depending on the value of
+preprocessor symbols `NDEBUG`. The default registry can be overriden by defining
+the macroprocessor symbol `BOOST_OPENMETHOD_DEFAULT_REGISTRY` _before_ including
+`<boost/openmethod/core.hpp>`. The value of the symbol is used as a default
+template parameter for `use_classes`, `method`, `virtual_ptr`, and others. Once
+the `core` header has been included, changing
+`BOOST_OPENMETHOD_DEFAULT_REGISTRY` has no effect.
+
+A registry has a collection of _policies_. Each policy belongs to a policy
+category. A policy may contain at most one policy of a given category. Policies
+control how type information is obtained, how vptrs are fetched, how errors are
+handled and printed, etc. Some are used in `initialize` and method dispatch;
+some are used by other policies in the same registry as part of their
+implementation. See the reference for the list of policies. Policies are placed
+in the `boost::openmethod::policies` namespace.
+
+`release_registry` contains the following policies:
+
+[cols="1,1,1"]
+|===
+|policy category |policy |role
+
+| rtti
+| std_rtti
+| provides type information for classes and objects
+
+| vptr
+| vptr_vector
+| stores vptrs in an indexed collection
+
+| type_hash
+| fast_perfect_hash
+| hash type id to an index in a vector
+
+| error_handler
+| default_error_handler
+| handles errors
+
+| output
+| basic_error_output
+| prints error descriptions to `stderr`
+
+|===
+
+`debug_registry` contains the same policies as `release_registry`, plus
+`runtime_checks` and `trace`.
+
+Registries can be created from scratch, using the `registry` template, or
+constructed from existing registries, by adding and/or removing policies. For
+example, `debug_registry` is a tweak of `release_registry`:
+
+[source,c++]
+----
+struct release_registry
+    : registry<
+          policies::std_rtti, policies::fast_perfect_hash,
+          policies::vptr_vector, policies::default_error_handler,
+          policies::stderr_output> {};
+
+struct debug_registry
+    : release_registry::with<policies::runtime_checks, policies::trace> {};
+----

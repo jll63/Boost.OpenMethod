@@ -22,17 +22,13 @@ struct release_registry
           policies::stderr_output> {};
 
 struct debug_registry
-    : registry<
-          policies::std_rtti, policies::fast_perfect_hash,
-          policies::vptr_vector, policies::default_error_handler,
-          policies::runtime_checks, policies::stderr_output, policies::trace> {
-};
+    : release_registry::with<policies::runtime_checks, policies::trace> {};
 
 #ifdef NDEBUG
 using default_registry = release_registry;
 #else
 using default_registry = debug_registry;
-#endif // BOOST_OPENMETHOD_DEFAULT_REGISTRY_HPP
+#endif
 
 } // namespace boost::openmethod
 

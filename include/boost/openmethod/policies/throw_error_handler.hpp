@@ -14,20 +14,34 @@
 
 namespace boost::openmethod::policies {
 
+//! Throws error as an exception.
+//!
 struct throw_error_handler : error_handler {
+    //! A model of @ref error_handler::fn.
+    //!
+    //! @tparam Registry The registry containing this policy.
     template<class Registry>
     class fn {
       public:
+        //! Throws the error.
+        //!
+        //! Wraps the error in an object that can be caught either as an
+        //! `Error`, or as a `std::runtime_error`, and throws it as an exception.
+        //!
+        //! @tparam Error A subclass of @ref openmethod_error.
+        //! @param error The error object.
         template<class Error>
         [[noreturn]] static auto error(const Error& error) -> void {
             struct wrapper : Error, std::runtime_error {
-                using std::runtime_error::runtime_error;
+                wrapper(const Error& error, std::string&& description)
+                    : Error(error), std::runtime_error(description) {
+                }
             };
 
             std::ostringstream os;
             error.template write<Registry>(os);
 
-            throw wrapper(os.str());
+            throw wrapper(error, os.str());
         }
     };
 };

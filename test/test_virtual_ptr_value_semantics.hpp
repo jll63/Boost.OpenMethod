@@ -8,7 +8,7 @@
 
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/policies/vptr_map.hpp>
-#include <boost/openmethod/compiler.hpp>
+#include <boost/openmethod/initialize.hpp>
 #include <boost/openmethod/unique_ptr.hpp>
 
 #include "test_util.hpp"
@@ -41,7 +41,7 @@ void init_test() {
     BOOST_OPENMETHOD_REGISTER(use_classes<Animal, Cat, Dog, Registry>);
     struct id;
     (void)&method<id, auto(virtual_ptr<Animal, Registry>)->void, Registry>::fn;
-    boost::openmethod::initialize<Registry>();
+    Registry::initialize();
 }
 
 struct direct_vector : test_registry_<__COUNTER__> {};
@@ -93,8 +93,8 @@ struct check_illegal_smart_ops {
     // ---------------------
     // test other properties
 
-    static_assert(virtual_ptr<smart_ptr<Animal>, Registry>::is_smart_ptr);
-    static_assert(virtual_ptr<smart_ptr<const Animal>, Registry>::is_smart_ptr);
+    static_assert(is_smart_ptr<smart_ptr<Animal>, Registry>);
+    static_assert(is_smart_ptr<smart_ptr<const Animal>, Registry>);
 
     static_assert(
         std::is_same_v<

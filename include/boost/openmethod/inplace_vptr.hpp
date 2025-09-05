@@ -37,7 +37,7 @@ void update_vptr(Class* obj) {
     using bases = decltype(boost_openmethod_bases(obj));
 
     if constexpr (mp11::mp_size<bases>::value == 0) {
-        if constexpr (registry::indirect_vptr) {
+        if constexpr (registry::has_indirect_vptr) {
             obj->boost_openmethod_vptr = &registry::template static_vptr<To>;
         } else {
             obj->boost_openmethod_vptr = registry::template static_vptr<To>;
@@ -78,7 +78,7 @@ class inplace_vptr_aux<Class, Registry, true> {
 
     friend auto boost_openmethod_vptr(const Class& obj, Registry*)
         -> vptr_type {
-        if constexpr (Registry::indirect_vptr) {
+        if constexpr (Registry::has_indirect_vptr) {
             return *obj.boost_openmethod_vptr;
         } else {
             return obj.boost_openmethod_vptr;
@@ -87,7 +87,7 @@ class inplace_vptr_aux<Class, Registry, true> {
 
     friend auto boost_openmethod_registry(Class*) -> Registry;
 
-    std::conditional_t<Registry::indirect_vptr, const vptr_type*, vptr_type>
+    std::conditional_t<Registry::has_indirect_vptr, const vptr_type*, vptr_type>
         boost_openmethod_vptr = nullptr;
 };
 
@@ -116,17 +116,16 @@ template<typename...>
 class inplace_vptr;
 
 template<class Class>
-class inplace_vptr<Class>
-    : public detail::inplace_vptr_aux<
-          Class, BOOST_OPENMETHOD_DEFAULT_REGISTRY, true> {};
+struct inplace_vptr<Class>
+    : detail::inplace_vptr_aux<Class, BOOST_OPENMETHOD_DEFAULT_REGISTRY, true> {
+};
 
 template<class Class, class Other>
-class inplace_vptr<Class, Other>
-    : public detail::inplace_vptr_aux<
-          Class, Other, detail::is_registry<Other>> {};
+struct inplace_vptr<Class, Other>
+    : detail::inplace_vptr_aux<Class, Other, detail::is_registry<Other>> {};
 
 template<class Class, class Base1, class Base2, class... MoreBases>
-class inplace_vptr<Class, Base1, Base2, MoreBases...>
+struct inplace_vptr<Class, Base1, Base2, MoreBases...>
     : detail::inplace_vptr_derived {
 
     static_assert(

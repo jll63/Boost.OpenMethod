@@ -8,7 +8,7 @@
 #include <boost/utility/identity_type.hpp>
 
 #include <boost/openmethod.hpp>
-#include <boost/openmethod/compiler.hpp>
+#include <boost/openmethod/initialize.hpp>
 
 #include "test_util.hpp"
 
@@ -42,7 +42,7 @@ struct Cat : Animal {
 
 struct custom_rtti : policies::rtti {
     template<class Registry>
-    struct fn : policies::rtti::fn<Registry> {
+    struct fn : defaults {
         template<class T>
         static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
 
@@ -93,7 +93,7 @@ BOOST_OPENMETHOD_OVERRIDE(poke, (Cat & cat, std::ostream& os), void) {
 }
 
 BOOST_AUTO_TEST_CASE(custom_rtti_simple_projection) {
-    initialize<test_registry>();
+    test_registry::initialize();
 
     Animal &&a = Dog("Snoopy"), &&b = Cat("Sylvester");
 
@@ -138,7 +138,7 @@ struct Cat : Animal {
 
 struct custom_rtti : policies::rtti {
     template<class Registry>
-    struct fn : policies::rtti::fn<Registry> {
+    struct fn : defaults {
         template<class T>
         static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
 
@@ -204,7 +204,7 @@ BOOST_AUTO_TEST_CASE(custom_rtti_simple) {
     BOOST_TEST(Animal::static_type == 0u);
     BOOST_TEST(Dog::static_type == 1u);
     BOOST_TEST(Cat::static_type == 2u);
-    initialize<test_registry>();
+    test_registry::initialize();
 
     Animal &&a = Dog("Snoopy"), &&b = Cat("Sylvester");
 
@@ -293,7 +293,7 @@ struct Cat : virtual Animal {
 
 struct custom_rtti : policies::rtti {
     template<class Registry>
-    struct fn : policies::rtti::fn<Registry> {
+    struct fn : defaults {
         template<class T>
         static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
 
@@ -362,7 +362,7 @@ BOOST_AUTO_TEST_CASE(virtual_base) {
     BOOST_TEST(Animal::static_type == 0u);
     BOOST_TEST(Dog::static_type == 1u);
     BOOST_TEST(Cat::static_type == 2u);
-    initialize<test_registry>();
+    test_registry::initialize();
 
     Animal &&a = Dog("Snoopy"), &&b = Cat("Sylvester");
 
@@ -439,7 +439,7 @@ std::size_t Cat::static_type = ++Animal::last_type_id;
 
 struct custom_rtti : policies::deferred_static_rtti {
     template<class Registry>
-    struct fn : policies::rtti::fn<Registry> {
+    struct fn : defaults {
         template<class T>
         static constexpr bool is_polymorphic = std::is_base_of_v<Animal, T>;
 
@@ -497,7 +497,7 @@ BOOST_OPENMETHOD_OVERRIDE(meet, (Dog&, Dog&, std::ostream& os), void) {
 }
 
 BOOST_AUTO_TEST_CASE(custom_rtti_deferred) {
-    initialize<test_registry>();
+    test_registry::initialize();
 
     Animal &&a = Dog("Snoopy"), &&b = Cat("Sylvester");
 

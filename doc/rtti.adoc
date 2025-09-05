@@ -8,14 +8,14 @@ Defined in <boost/openmethod/policies/basic_policy.hpp>.
 ```c++
 namespace boost::openmethod::policies {
 
-struct rtti : facet {};
+struct rtti : policy {};
 
 } // boost::openmethod::policies
 ```
 
 ### Description
 
-The `rtti` facet provides type information for classes and objects, implements
+The `rtti` policy provides type information for classes and objects, implements
 downcast in presence of virtual inheritance, and writes descriptions of types to
 an `ostream`-like object.
 
@@ -24,8 +24,7 @@ an `ostream`-like object.
 #### is_polymorphic
 
 ```c++
-template<class Class>
-static constexpr bool is_polymorphic;
+template<class Class> static constexpr bool is_polymorphic;
 ```
 
 `true` if `Class` is polymorphic.
@@ -33,8 +32,7 @@ static constexpr bool is_polymorphic;
 #### static_type
 
 ```c++
-template<class Class>
-static auto static_type() -> type_id;
+template<class Class> static auto static_type() -> type_id;
 ```
 
 Returns a `type_id` for `Class`.
@@ -42,8 +40,7 @@ Returns a `type_id` for `Class`.
 #### dynamic_type
 
 ```c++
-template<class Class>
-static auto dynamic_type(const Class& obj) -> type_id;
+template<class Class> static auto dynamic_type(const Class& obj) -> type_id;
 ```
 
 Returns a `type_id` for an object's dynamic type.

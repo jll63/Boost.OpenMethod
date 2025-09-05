@@ -19,7 +19,7 @@ struct basic_error_output : output {
 ### Description
 
 `basic_error_output` is an implementation of `output` that writes error
-messages to a `RestrictedOutputStream`.
+messages to a `LightweightOutputStream`.
 
 ### Members
 

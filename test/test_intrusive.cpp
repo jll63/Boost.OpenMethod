@@ -9,16 +9,15 @@
 #include <boost/openmethod/default_registry.hpp>
 
 namespace bom = boost::openmethod;
-struct test_registry
-    : bom::default_registry::without<
-          bom::policies::extern_vptr, bom::policies::type_hash> {};
+struct test_registry : bom::default_registry::without<
+                           bom::policies::vptr, bom::policies::type_hash> {};
 
 #define BOOST_OPENMETHOD_DEFAULT_REGISTRY test_registry
 
 #include <boost/openmethod.hpp>
 #include <boost/openmethod/inplace_vptr.hpp>
 #include <boost/openmethod/shared_ptr.hpp>
-#include <boost/openmethod/compiler.hpp>
+#include <boost/openmethod/initialize.hpp>
 
 #define BOOST_TEST_MODULE intrusive
 #include <boost/test/unit_test.hpp>
@@ -182,9 +181,7 @@ BOOST_AUTO_TEST_CASE(intrusive_mode) {
 
 struct indirect_policy : test_registry::with<bom::policies::indirect_vptr> {};
 
-struct Indirect : bom::inplace_vptr<Indirect, indirect_policy> {
-    using bom::inplace_vptr<Indirect, indirect_policy>::boost_openmethod_vptr;
-};
+struct Indirect : bom::inplace_vptr<Indirect, indirect_policy> {};
 
 BOOST_OPENMETHOD(whatever, (virtual_<Indirect&>), void, indirect_policy);
 
@@ -192,8 +189,11 @@ BOOST_OPENMETHOD_OVERRIDE(whatever, (Indirect&), void) {
 }
 
 BOOST_AUTO_TEST_CASE(core_intrusive_vptr) {
-    bom::initialize<indirect_policy>();
+    indirect_policy::initialize();
     Indirect i;
     BOOST_TEST(
-        i.boost_openmethod_vptr == &indirect_policy::static_vptr<Indirect>);
+        boost_openmethod_vptr(i, nullptr) ==
+        indirect_policy::static_vptr<Indirect>);
+    indirect_policy::static_vptr<Indirect> = nullptr;
+    BOOST_TEST(boost_openmethod_vptr(i, nullptr) == nullptr);
 }

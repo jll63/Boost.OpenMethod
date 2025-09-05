@@ -1,0 +1,955 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<tagfile>
+<compound kind="namespace">
+  <name>boost::openmethod</name>
+  <filename>boost/openmethod.adoc</filename>
+  <class kind="class">boost::openmethod::vptr_type</class>
+  <class kind="class">boost::openmethod::type_id</class>
+  <class kind="class">boost::openmethod::default_registry</class>
+  <class kind="class">boost::openmethod::shared_virtual_ptr</class>
+  <class kind="class">boost::openmethod::unique_virtual_ptr</class>
+  <class kind="class">boost::openmethod::virtual_</class>
+  <class kind="class">boost::openmethod::virtual_traits</class>
+  <class kind="class">boost::openmethod::openmethod_error</class>
+  <class kind="class">boost::openmethod::not_initialized_error</class>
+  <class kind="class">boost::openmethod::unknown_class_error</class>
+  <class kind="class">boost::openmethod::hash_search_error</class>
+  <class kind="class">boost::openmethod::call_error</class>
+  <class kind="class">boost::openmethod::not_implemented_error</class>
+  <class kind="class">boost::openmethod::ambiguous_error</class>
+  <class kind="class">boost::openmethod::final_error</class>
+  <class kind="class">boost::openmethod::static_offset_error</class>
+  <class kind="class">boost::openmethod::static_slot_error</class>
+  <class kind="class">boost::openmethod::static_stride_error</class>
+  <class kind="class">boost::openmethod::registry</class>
+  <class kind="class">boost::openmethod::release_registry</class>
+  <class kind="class">boost::openmethod::debug_registry</class>
+  <class kind="class">boost::openmethod::virtual_ptr</class>
+  <class kind="class">boost::openmethod::virtual_traits</class>
+  <class kind="class">boost::openmethod::virtual_traits</class>
+  <class kind="class">boost::openmethod::virtual_traits</class>
+  <class kind="class">boost::openmethod::use_classes</class>
+  <class kind="class">boost::openmethod::virtual_ptr</class>
+  <class kind="class">boost::openmethod::virtual_traits</class>
+  <class kind="class">boost::openmethod::virtual_traits</class>
+  <class kind="class">boost::openmethod::method</class>
+  <class kind="class">boost::openmethod::method</class>
+  <class kind="class">boost::openmethod::compiler</class>
+  <class kind="class">boost::openmethod::inplace_vptr</class>
+  <class kind="class">boost::openmethod::inplace_vptr</class>
+  <class kind="class">boost::openmethod::inplace_vptr</class>
+  <class kind="class">boost::openmethod::inplace_vptr</class>
+  <class kind="class">boost::openmethod::virtual_traits</class>
+  <class kind="class">boost::openmethod::virtual_traits</class>
+  <class kind="class">boost::openmethod::virtual_traits</class>
+  <class kind="class">boost::openmethod::final_virtual_ptr</class>
+  <class kind="class">boost::openmethod::has_policy</class>
+  <class kind="class">boost::openmethod::is_polymorphic</class>
+  <class kind="class">boost::openmethod::is_smart_ptr</class>
+  <class kind="class">boost::openmethod::same_smart_ptr</class>
+  <class kind="class">boost::openmethod::is_method</class>
+  <class kind="class">boost::openmethod::virtual_ptr</class>
+  <class kind="class">boost::openmethod::virtual_ptr</class>
+  <member kind="function">
+    <type>void</type>
+    <name>boost_openmethod_vptr</name>
+    <anchorfile>boost/openmethod/boost_openmethod_vptr.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>bool</type>
+    <name>operator==</name>
+    <anchorfile>boost/openmethod/operator_eq.adoc</anchorfile>
+    <anchor/>
+    <arglist>(const virtual_ptr&lt;Left, Registry&gt;&amp; left, const virtual_ptr&lt;Right, Registry&gt;&amp; right)</arglist>
+  </member>
+  <member kind="function">
+    <type>bool</type>
+    <name>operator!=</name>
+    <anchorfile>boost/openmethod/operator_not_eq.adoc</anchorfile>
+    <anchor/>
+    <arglist>(const virtual_ptr&lt;Left, Registry&gt;&amp; left, const virtual_ptr&lt;Right, Registry&gt;&amp; right)</arglist>
+  </member>
+  <member kind="function">
+    <type>compiler&lt;Registry&gt;</type>
+    <name>initialize</name>
+    <anchorfile>boost/openmethod/initialize.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>void</type>
+    <name>finalize</name>
+    <anchorfile>boost/openmethod/finalize.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>auto</type>
+    <name>make_shared_virtual</name>
+    <anchorfile>boost/openmethod/make_shared_virtual.adoc</anchorfile>
+    <anchor/>
+    <arglist>(T...&amp;&amp; args)</arglist>
+  </member>
+  <member kind="function">
+    <type>auto</type>
+    <name>make_unique_virtual</name>
+    <anchorfile>boost/openmethod/make_unique_virtual.adoc</anchorfile>
+    <anchor/>
+    <arglist>(T...&amp;&amp; args)</arglist>
+  </member>
+</compound>
+<compound kind="namespace">
+  <name>boost::openmethod::policies</name>
+  <filename>boost/openmethod/policies.adoc</filename>
+  <class kind="class">boost::openmethod::policies::PolicyCategory</class>
+  <class kind="class">boost::openmethod::policies::Policy</class>
+  <class kind="class">boost::openmethod::policies::LightweightOutputStream</class>
+  <class kind="class">boost::openmethod::policies::IdsToVptr</class>
+  <class kind="class">boost::openmethod::policies::rtti</class>
+  <class kind="class">boost::openmethod::policies::deferred_static_rtti</class>
+  <class kind="class">boost::openmethod::policies::error_handler</class>
+  <class kind="class">boost::openmethod::policies::type_hash</class>
+  <class kind="class">boost::openmethod::policies::vptr</class>
+  <class kind="class">boost::openmethod::policies::indirect_vptr</class>
+  <class kind="class">boost::openmethod::policies::output</class>
+  <class kind="class">boost::openmethod::policies::trace</class>
+  <class kind="class">boost::openmethod::policies::runtime_checks</class>
+  <class kind="class">boost::openmethod::policies::n2216</class>
+  <class kind="class">boost::openmethod::policies::std_rtti</class>
+  <class kind="class">boost::openmethod::policies::vptr_vector</class>
+  <class kind="class">boost::openmethod::policies::stderr_output</class>
+  <class kind="class">boost::openmethod::policies::fast_perfect_hash</class>
+  <class kind="class">boost::openmethod::policies::default_error_handler</class>
+  <class kind="class">boost::openmethod::policies::static_rtti</class>
+  <class kind="class">boost::openmethod::policies::throw_error_handler</class>
+  <class kind="class">boost::openmethod::policies::vptr_map</class>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::policies::PolicyCategory</name>
+  <filename>boost/openmethod/policies/PolicyCategory.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::policies::Policy</name>
+  <filename>boost/openmethod/policies/Policy.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::policies::LightweightOutputStream</name>
+  <filename>boost/openmethod/policies/LightweightOutputStream.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::policies::IdsToVptr</name>
+  <filename>boost/openmethod/policies/IdsToVptr.adoc</filename>
+  <member kind="function">
+    <type>auto</type>
+    <name>type_id_begin</name>
+    <anchorfile>boost/openmethod/policies/IdsToVptr/type_id_begin.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>auto</type>
+    <name>type_id_end</name>
+    <anchorfile>boost/openmethod/policies/IdsToVptr/type_id_end.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>const vptr_type&amp;</type>
+    <name>vptr</name>
+    <anchorfile>boost/openmethod/policies/IdsToVptr/vptr.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::policies::rtti</name>
+  <filename>boost/openmethod/policies/rtti.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::policies::deferred_static_rtti</name>
+  <filename>boost/openmethod/policies/deferred_static_rtti.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::policies::error_handler</name>
+  <filename>boost/openmethod/policies/error_handler.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::policies::type_hash</name>
+  <filename>boost/openmethod/policies/type_hash.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::policies::vptr</name>
+  <filename>boost/openmethod/policies/vptr.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::policies::indirect_vptr</name>
+  <filename>boost/openmethod/policies/indirect_vptr.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::policies::output</name>
+  <filename>boost/openmethod/policies/output.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::policies::trace</name>
+  <filename>boost/openmethod/policies/trace.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::policies::runtime_checks</name>
+  <filename>boost/openmethod/policies/runtime_checks.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::policies::n2216</name>
+  <filename>boost/openmethod/policies/n2216.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::policies::std_rtti</name>
+  <filename>boost/openmethod/policies/std_rtti.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::policies::vptr_vector</name>
+  <filename>boost/openmethod/policies/vptr_vector.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::policies::stderr_output</name>
+  <filename>boost/openmethod/policies/stderr_output.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::policies::fast_perfect_hash</name>
+  <filename>boost/openmethod/policies/fast_perfect_hash.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::policies::default_error_handler</name>
+  <filename>boost/openmethod/policies/default_error_handler.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::policies::static_rtti</name>
+  <filename>boost/openmethod/policies/static_rtti.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::policies::throw_error_handler</name>
+  <filename>boost/openmethod/policies/throw_error_handler.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::policies::vptr_map</name>
+  <filename>boost/openmethod/policies/vptr_map.adoc</filename>
+</compound>
+<compound kind="namespace">
+  <name>boost::openmethod::aliases</name>
+  <filename>boost/openmethod/aliases.adoc</filename>
+  <class kind="class">boost::openmethod::aliases::final_virtual_ptr</class>
+  <class kind="class">boost::openmethod::aliases::virtual_</class>
+  <class kind="class">boost::openmethod::aliases::virtual_ptr</class>
+  <class kind="class">boost::openmethod::aliases::make_shared_virtual</class>
+  <class kind="class">boost::openmethod::aliases::shared_virtual_ptr</class>
+  <class kind="class">boost::openmethod::aliases::make_unique_virtual</class>
+  <class kind="class">boost::openmethod::aliases::unique_virtual_ptr</class>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::aliases::final_virtual_ptr</name>
+  <filename>boost/openmethod/aliases/final_virtual_ptr.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::aliases::virtual_</name>
+  <filename>boost/openmethod/aliases/virtual_.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::aliases::virtual_ptr</name>
+  <filename>boost/openmethod/aliases/virtual_ptr.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::aliases::make_shared_virtual</name>
+  <filename>boost/openmethod/aliases/make_shared_virtual.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::aliases::shared_virtual_ptr</name>
+  <filename>boost/openmethod/aliases/shared_virtual_ptr.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::aliases::make_unique_virtual</name>
+  <filename>boost/openmethod/aliases/make_unique_virtual.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::aliases::unique_virtual_ptr</name>
+  <filename>boost/openmethod/aliases/unique_virtual_ptr.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::vptr_type</name>
+  <filename>boost/openmethod/vptr_type.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::type_id</name>
+  <filename>boost/openmethod/type_id.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::default_registry</name>
+  <filename>boost/openmethod/default_registry.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::shared_virtual_ptr</name>
+  <filename>boost/openmethod/shared_virtual_ptr.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::unique_virtual_ptr</name>
+  <filename>boost/openmethod/unique_virtual_ptr.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::virtual_</name>
+  <filename>boost/openmethod/virtual_.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::virtual_traits</name>
+  <filename>boost/openmethod/virtual_traits-0be.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::openmethod_error</name>
+  <filename>boost/openmethod/openmethod_error.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::not_initialized_error</name>
+  <filename>boost/openmethod/not_initialized_error.adoc</filename>
+  <member kind="function">
+    <type>void</type>
+    <name>write</name>
+    <anchorfile>boost/openmethod/not_initialized_error/write.adoc</anchorfile>
+    <anchor/>
+    <arglist>(Stream&amp; os)</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::unknown_class_error</name>
+  <filename>boost/openmethod/unknown_class_error.adoc</filename>
+  <member kind="function">
+    <type>void</type>
+    <name>write</name>
+    <anchorfile>boost/openmethod/unknown_class_error/write.adoc</anchorfile>
+    <anchor/>
+    <arglist>(Stream&amp; os)</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::hash_search_error</name>
+  <filename>boost/openmethod/hash_search_error.adoc</filename>
+  <member kind="function">
+    <type>void</type>
+    <name>write</name>
+    <anchorfile>boost/openmethod/hash_search_error/write.adoc</anchorfile>
+    <anchor/>
+    <arglist>(Stream&amp; os)</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::call_error</name>
+  <filename>boost/openmethod/call_error.adoc</filename>
+  <member kind="function">
+    <type>void</type>
+    <name>write_aux</name>
+    <anchorfile>boost/openmethod/call_error/write_aux.adoc</anchorfile>
+    <anchor/>
+    <arglist>(Stream&amp; os, const char* subtype)</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::not_implemented_error</name>
+  <filename>boost/openmethod/not_implemented_error.adoc</filename>
+  <member kind="function">
+    <type>void</type>
+    <name>write</name>
+    <anchorfile>boost/openmethod/not_implemented_error/write.adoc</anchorfile>
+    <anchor/>
+    <arglist>(Stream&amp; os)</arglist>
+  </member>
+  <member kind="function">
+    <type>void</type>
+    <name>write_aux</name>
+    <anchorfile>boost/openmethod/call_error/write_aux.adoc</anchorfile>
+    <anchor/>
+    <arglist>(Stream&amp; os, const char* subtype)</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::ambiguous_error</name>
+  <filename>boost/openmethod/ambiguous_error.adoc</filename>
+  <member kind="function">
+    <type>void</type>
+    <name>write</name>
+    <anchorfile>boost/openmethod/ambiguous_error/write.adoc</anchorfile>
+    <anchor/>
+    <arglist>(Stream&amp; os)</arglist>
+  </member>
+  <member kind="function">
+    <type>void</type>
+    <name>write_aux</name>
+    <anchorfile>boost/openmethod/call_error/write_aux.adoc</anchorfile>
+    <anchor/>
+    <arglist>(Stream&amp; os, const char* subtype)</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::final_error</name>
+  <filename>boost/openmethod/final_error.adoc</filename>
+  <member kind="function">
+    <type>void</type>
+    <name>write</name>
+    <anchorfile>boost/openmethod/final_error/write.adoc</anchorfile>
+    <anchor/>
+    <arglist>(Stream&amp; os)</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::static_offset_error</name>
+  <filename>boost/openmethod/static_offset_error.adoc</filename>
+  <member kind="function">
+    <type>void</type>
+    <name>write</name>
+    <anchorfile>boost/openmethod/static_offset_error/write.adoc</anchorfile>
+    <anchor/>
+    <arglist>(Stream&amp; os)</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::static_slot_error</name>
+  <filename>boost/openmethod/static_slot_error.adoc</filename>
+  <member kind="function">
+    <type>void</type>
+    <name>write</name>
+    <anchorfile>boost/openmethod/static_offset_error/write.adoc</anchorfile>
+    <anchor/>
+    <arglist>(Stream&amp; os)</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::static_stride_error</name>
+  <filename>boost/openmethod/static_stride_error.adoc</filename>
+  <member kind="function">
+    <type>void</type>
+    <name>write</name>
+    <anchorfile>boost/openmethod/static_offset_error/write.adoc</anchorfile>
+    <anchor/>
+    <arglist>(Stream&amp; os)</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::registry</name>
+  <filename>boost/openmethod/registry-07.adoc</filename>
+  <member kind="function">
+    <type>void</type>
+    <name>check_initialized</name>
+    <anchorfile>boost/openmethod/registry-07/check_initialized.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::release_registry</name>
+  <filename>boost/openmethod/release_registry.adoc</filename>
+  <member kind="function">
+    <type>void</type>
+    <name>check_initialized</name>
+    <anchorfile>boost/openmethod/release_registry/check_initialized.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::debug_registry</name>
+  <filename>boost/openmethod/debug_registry.adoc</filename>
+  <member kind="function">
+    <type>void</type>
+    <name>check_initialized</name>
+    <anchorfile>boost/openmethod/debug_registry/check_initialized.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::virtual_ptr</name>
+  <filename>boost/openmethod/virtual_ptr-0a.adoc</filename>
+  <member kind="function">
+    <type>Class*</type>
+    <name>get</name>
+    <anchorfile>boost/openmethod/virtual_ptr-0a/get.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>auto</type>
+    <name>operator-&gt;</name>
+    <anchorfile>boost/openmethod/virtual_ptr-0a/operator_ptr.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>element_type&amp;</type>
+    <name>operator*</name>
+    <anchorfile>boost/openmethod/virtual_ptr-0a/operator_star.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>const Class*&amp;</type>
+    <name>pointer</name>
+    <anchorfile>boost/openmethod/virtual_ptr-0a/pointer.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>decltype(auto)</type>
+    <name>cast</name>
+    <anchorfile>boost/openmethod/virtual_ptr-0a/cast.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>auto</type>
+    <name>vptr</name>
+    <anchorfile>boost/openmethod/virtual_ptr-0a/vptr.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>auto</type>
+    <name>final</name>
+    <anchorfile>boost/openmethod/virtual_ptr-0a/final.adoc</anchorfile>
+    <anchor/>
+    <arglist>(Other&amp;&amp; obj)</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::virtual_traits</name>
+  <filename>boost/openmethod/virtual_traits-08.adoc</filename>
+  <member kind="function">
+    <type>const T&amp;</type>
+    <name>peek</name>
+    <anchorfile>boost/openmethod/virtual_traits-08/peek.adoc</anchorfile>
+    <anchor/>
+    <arglist>(const T&amp; arg)</arglist>
+  </member>
+  <member kind="function">
+    <type>D&amp;</type>
+    <name>cast</name>
+    <anchorfile>boost/openmethod/virtual_traits-08/cast.adoc</anchorfile>
+    <anchor/>
+    <arglist>(T&amp; obj)</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::virtual_traits</name>
+  <filename>boost/openmethod/virtual_traits-098.adoc</filename>
+  <member kind="function">
+    <type>const T&amp;</type>
+    <name>peek</name>
+    <anchorfile>boost/openmethod/virtual_traits-098/peek.adoc</anchorfile>
+    <anchor/>
+    <arglist>(const T&amp; arg)</arglist>
+  </member>
+  <member kind="function">
+    <type>D&amp;&amp;</type>
+    <name>cast</name>
+    <anchorfile>boost/openmethod/virtual_traits-098/cast.adoc</anchorfile>
+    <anchor/>
+    <arglist>(T&amp;&amp; obj)</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::virtual_traits</name>
+  <filename>boost/openmethod/virtual_traits-071.adoc</filename>
+  <member kind="function">
+    <type>const T&amp;</type>
+    <name>peek</name>
+    <anchorfile>boost/openmethod/virtual_traits-071/peek.adoc</anchorfile>
+    <anchor/>
+    <arglist>(T* arg)</arglist>
+  </member>
+  <member kind="function">
+    <type>auto</type>
+    <name>cast</name>
+    <anchorfile>boost/openmethod/virtual_traits-071/cast.adoc</anchorfile>
+    <anchor/>
+    <arglist>(T* ptr)</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::use_classes</name>
+  <filename>boost/openmethod/use_classes.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::virtual_ptr</name>
+  <filename>boost/openmethod/virtual_ptr-02.adoc</filename>
+  <member kind="function">
+    <type>element_type*</type>
+    <name>get</name>
+    <anchorfile>boost/openmethod/virtual_ptr-02/get.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>element_type*</type>
+    <name>operator-&gt;</name>
+    <anchorfile>boost/openmethod/virtual_ptr-02/operator_ptr.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>element_type&amp;</type>
+    <name>operator*</name>
+    <anchorfile>boost/openmethod/virtual_ptr-02/operator_star.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>const Class&amp;</type>
+    <name>pointer</name>
+    <anchorfile>boost/openmethod/virtual_ptr-02/pointer.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>auto</type>
+    <name>vptr</name>
+    <anchorfile>boost/openmethod/virtual_ptr-02/vptr.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>auto</type>
+    <name>final</name>
+    <anchorfile>boost/openmethod/virtual_ptr-02/final.adoc</anchorfile>
+    <anchor/>
+    <arglist>(Other&amp;&amp; obj)</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::virtual_traits</name>
+  <filename>boost/openmethod/virtual_traits-096.adoc</filename>
+  <member kind="function">
+    <type>const virtual_ptr&lt;Class, Registry&gt;&amp;</type>
+    <name>peek</name>
+    <anchorfile>boost/openmethod/virtual_traits-096/peek.adoc</anchorfile>
+    <anchor/>
+    <arglist>(const virtual_ptr&lt;Class, Registry&gt;&amp; ptr)</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::virtual_traits</name>
+  <filename>boost/openmethod/virtual_traits-048.adoc</filename>
+  <member kind="function">
+    <type>const virtual_ptr&lt;Class, Registry&gt;&amp;</type>
+    <name>peek</name>
+    <anchorfile>boost/openmethod/virtual_traits-048/peek.adoc</anchorfile>
+    <anchor/>
+    <arglist>(const virtual_ptr&lt;Class, Registry&gt;&amp; ptr)</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::method</name>
+  <filename>boost/openmethod/method-0d8.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::method</name>
+  <filename>boost/openmethod/method-0db.adoc</filename>
+  <member kind="function">
+    <type>ReturnType</type>
+    <name>operator()</name>
+    <anchorfile>boost/openmethod/method-0db/operator_call.adoc</anchorfile>
+    <anchor/>
+    <arglist>(...detail::remove_virtual&lt;Parameters&gt; args)</arglist>
+  </member>
+  <member kind="function">
+    <type>bool</type>
+    <name>has_next</name>
+    <anchorfile>boost/openmethod/method-0db/has_next.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>ReturnType</type>
+    <name>fn_not_implemented</name>
+    <anchorfile>boost/openmethod/method-0db/fn_not_implemented.adoc</anchorfile>
+    <anchor/>
+    <arglist>(...detail::remove_virtual&lt;Parameters&gt; args)</arglist>
+  </member>
+  <member kind="function">
+    <type>ReturnType</type>
+    <name>fn_ambiguous</name>
+    <anchorfile>boost/openmethod/method-0db/fn_ambiguous.adoc</anchorfile>
+    <anchor/>
+    <arglist>(...detail::remove_virtual&lt;Parameters&gt; args)</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::compiler</name>
+  <filename>boost/openmethod/compiler.adoc</filename>
+  <member kind="function">
+    <type>void</type>
+    <name>compiler</name>
+    <anchorfile>boost/openmethod/compiler/2constructor.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>auto</type>
+    <name>compile</name>
+    <anchorfile>boost/openmethod/compiler/compile.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>auto</type>
+    <name>initialize</name>
+    <anchorfile>boost/openmethod/compiler/initialize.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>void</type>
+    <name>install_global_tables</name>
+    <anchorfile>boost/openmethod/compiler/install_global_tables.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>void</type>
+    <name>augment_classes</name>
+    <anchorfile>boost/openmethod/compiler/augment_classes.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>void</type>
+    <name>collect_transitive_bases</name>
+    <anchorfile>boost/openmethod/compiler/collect_transitive_bases.adoc</anchorfile>
+    <anchor/>
+    <arglist>(class_* cls, class_* base)</arglist>
+  </member>
+  <member kind="function">
+    <type>void</type>
+    <name>calculate_transitive_derived</name>
+    <anchorfile>boost/openmethod/compiler/calculate_transitive_derived.adoc</anchorfile>
+    <anchor/>
+    <arglist>(class_&amp; cls)</arglist>
+  </member>
+  <member kind="function">
+    <type>void</type>
+    <name>augment_methods</name>
+    <anchorfile>boost/openmethod/compiler/augment_methods.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>void</type>
+    <name>assign_slots</name>
+    <anchorfile>boost/openmethod/compiler/assign_slots.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>void</type>
+    <name>assign_tree_slots</name>
+    <anchorfile>boost/openmethod/compiler/assign_tree_slots.adoc</anchorfile>
+    <anchor/>
+    <arglist>(class_&amp; cls, std::size_t base_slot)</arglist>
+  </member>
+  <member kind="function">
+    <type>void</type>
+    <name>assign_lattice_slots</name>
+    <anchorfile>boost/openmethod/compiler/assign_lattice_slots.adoc</anchorfile>
+    <anchor/>
+    <arglist>(class_&amp; cls)</arglist>
+  </member>
+  <member kind="function">
+    <type>void</type>
+    <name>build_dispatch_tables</name>
+    <anchorfile>boost/openmethod/compiler/build_dispatch_tables.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>void</type>
+    <name>build_dispatch_table</name>
+    <anchorfile>boost/openmethod/compiler/build_dispatch_table.adoc</anchorfile>
+    <anchor/>
+    <arglist>(method&amp; m, std::size_t dim, std::vector&lt;group_map&gt;::const_iterator group, const bitvec&amp; candidates, bool concrete)</arglist>
+  </member>
+  <member kind="function">
+    <type>void</type>
+    <name>write_global_data</name>
+    <anchorfile>boost/openmethod/compiler/write_global_data.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>void</type>
+    <name>print</name>
+    <anchorfile>boost/openmethod/compiler/print.adoc</anchorfile>
+    <anchor/>
+    <arglist>(const method_report&amp; report)</arglist>
+  </member>
+  <member kind="function">
+    <type>const method*</type>
+    <name>operator[]</name>
+    <anchorfile>boost/openmethod/compiler/operator_subs.adoc</anchorfile>
+    <anchor/>
+    <arglist>(const openmethod::method&lt;Id, Signature, Registry&gt;&amp; )</arglist>
+  </member>
+  <member kind="function">
+    <type>void</type>
+    <name>select_dominant_overriders</name>
+    <anchorfile>boost/openmethod/compiler/select_dominant_overriders.adoc</anchorfile>
+    <anchor/>
+    <arglist>(std::vector&lt;overrider*&gt;&amp; dominants, std::size_t&amp; pick, std::size_t&amp; remaining)</arglist>
+  </member>
+  <member kind="function">
+    <type>bool</type>
+    <name>is_more_specific</name>
+    <anchorfile>boost/openmethod/compiler/is_more_specific.adoc</anchorfile>
+    <anchor/>
+    <arglist>(const overrider* a, const overrider* b)</arglist>
+  </member>
+  <member kind="function">
+    <type>bool</type>
+    <name>is_base</name>
+    <anchorfile>boost/openmethod/compiler/is_base.adoc</anchorfile>
+    <anchor/>
+    <arglist>(const overrider* a, const overrider* b)</arglist>
+  </member>
+  <member kind="function">
+    <type>void</type>
+    <name>accumulate</name>
+    <anchorfile>boost/openmethod/compiler/accumulate.adoc</anchorfile>
+    <anchor/>
+    <arglist>(const method_report&amp; partial, report&amp; total)</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::inplace_vptr</name>
+  <filename>boost/openmethod/inplace_vptr-0f.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::inplace_vptr</name>
+  <filename>boost/openmethod/inplace_vptr-0a.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::inplace_vptr</name>
+  <filename>boost/openmethod/inplace_vptr-00.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::inplace_vptr</name>
+  <filename>boost/openmethod/inplace_vptr-02.adoc</filename>
+  <member kind="function">
+    <type>void</type>
+    <name>inplace_vptr</name>
+    <anchorfile>boost/openmethod/inplace_vptr-02/2constructor.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>void</type>
+    <name>~inplace_vptr</name>
+    <anchorfile>boost/openmethod/inplace_vptr-02/2destructor.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::virtual_traits</name>
+  <filename>boost/openmethod/virtual_traits-07a.adoc</filename>
+  <member kind="function">
+    <type>const Class&amp;</type>
+    <name>peek</name>
+    <anchorfile>boost/openmethod/virtual_traits-07a/peek.adoc</anchorfile>
+    <anchor/>
+    <arglist>(const std::shared_ptr&lt;Class&gt;&amp; arg)</arglist>
+  </member>
+  <member kind="function">
+    <type>void</type>
+    <name>check_cast</name>
+    <anchorfile>boost/openmethod/virtual_traits-07a/check_cast.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>auto</type>
+    <name>cast</name>
+    <anchorfile>boost/openmethod/virtual_traits-07a/cast.adoc</anchorfile>
+    <anchor/>
+    <arglist>(const std::shared_ptr&lt;Class&gt;&amp; obj)</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::virtual_traits</name>
+  <filename>boost/openmethod/virtual_traits-043.adoc</filename>
+  <member kind="function">
+    <type>const Class&amp;</type>
+    <name>peek</name>
+    <anchorfile>boost/openmethod/virtual_traits-043/peek.adoc</anchorfile>
+    <anchor/>
+    <arglist>(const std::shared_ptr&lt;Class&gt;&amp; arg)</arglist>
+  </member>
+  <member kind="function">
+    <type>void</type>
+    <name>check_cast</name>
+    <anchorfile>boost/openmethod/virtual_traits-043/check_cast.adoc</anchorfile>
+    <anchor/>
+    <arglist>()</arglist>
+  </member>
+  <member kind="function">
+    <type>auto</type>
+    <name>cast</name>
+    <anchorfile>boost/openmethod/virtual_traits-043/cast.adoc</anchorfile>
+    <anchor/>
+    <arglist>(const std::shared_ptr&lt;Class&gt;&amp; obj)</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::virtual_traits</name>
+  <filename>boost/openmethod/virtual_traits-0bf.adoc</filename>
+  <member kind="function">
+    <type>const Class&amp;</type>
+    <name>peek</name>
+    <anchorfile>boost/openmethod/virtual_traits-0bf/peek.adoc</anchorfile>
+    <anchor/>
+    <arglist>(const std::unique_ptr&lt;Class&gt;&amp; arg)</arglist>
+  </member>
+  <member kind="function">
+    <type>auto</type>
+    <name>cast</name>
+    <anchorfile>boost/openmethod/virtual_traits-0bf/cast.adoc</anchorfile>
+    <anchor/>
+    <arglist>(std::unique_ptr&lt;Class&gt;&amp;&amp; ptr)</arglist>
+  </member>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::final_virtual_ptr</name>
+  <filename>boost/openmethod/final_virtual_ptr-04.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::has_policy</name>
+  <filename>boost/openmethod/has_policy.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::is_polymorphic</name>
+  <filename>boost/openmethod/is_polymorphic.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::is_smart_ptr</name>
+  <filename>boost/openmethod/is_smart_ptr.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::same_smart_ptr</name>
+  <filename>boost/openmethod/same_smart_ptr.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::is_method</name>
+  <filename>boost/openmethod/is_method.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::virtual_ptr</name>
+  <filename>boost/openmethod/virtual_ptr-0f.adoc</filename>
+</compound>
+<compound kind="class">
+  <name>boost::openmethod::virtual_ptr</name>
+  <filename>boost/openmethod/virtual_ptr-0b.adoc</filename>
+</compound>
+</tagfile>

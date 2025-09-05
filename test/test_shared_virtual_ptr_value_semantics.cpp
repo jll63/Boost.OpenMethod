@@ -12,13 +12,13 @@
 
 #include <memory>
 
-static_assert(detail::same_smart_ptr<
+static_assert(same_smart_ptr<
               std::shared_ptr<Animal>, std::shared_ptr<Dog>, default_registry>);
 
-static_assert(!detail::same_smart_ptr<
+static_assert(!same_smart_ptr<
               std::shared_ptr<Animal>, std::unique_ptr<Dog>, default_registry>);
 
-static_assert(!detail::same_smart_ptr<
+static_assert(!same_smart_ptr<
               std::shared_ptr<Animal>, shared_virtual_ptr<std::unique_ptr<Dog>>,
               default_registry>);
 
@@ -31,8 +31,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
                   decltype(std::declval<shared_virtual_ptr<Animal, Registry>>()
                                .get()),
                   Animal*>);
-    static_assert(shared_virtual_ptr<Animal, Registry>::is_smart_ptr);
-    static_assert(shared_virtual_ptr<const Animal, Registry>::is_smart_ptr);
+    static_assert(is_smart_ptr<std::shared_ptr<Animal>, Registry>);
+    static_assert(is_smart_ptr<std::shared_ptr<const Animal>, Registry>);
     static_assert(
         std::is_same_v<
             decltype(*std::declval<shared_virtual_ptr<Animal, Registry>>()),

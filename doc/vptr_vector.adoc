@@ -28,7 +28,7 @@ the v-tables in a `std::vector`. If `Policy` contains `indirect_vptr`, a level
 of indirection is added, making the policy usable in presence of dynamic
 loading.
 
-`Policy` is the policy containing the facet.
+`Policy` is the policy containing the policy.
 
 ### Members
 
@@ -42,7 +42,7 @@ auto register_vptrs(ForwardIterator first, ForwardIterator last) -> void;
 Stores the pointers to v-tables in a vector, indexed by the (possibly hashed)
 `type_id`s of the classes registered in `Policy`.
 
-If `Policy` contains a `type_hash` facet, call its `hash_initialize`
+If `Policy` contains a `type_hash` policy, call its `hash_initialize`
 function, and uses it to convert the `type_id`{empty}s to an index.
 
 #### dynamic_vptr
@@ -55,5 +55,5 @@ auto dynamic_vptr(const Class& object) -> const vptr_type&;
 Returns a pointer to the v-table for `object` (by reference).
 
 Obtains a `type_id` for `object` using `Policy::dynamic_type`. If _Policy_
-contains a `type_hash` facet, uses it to convert the result to an index;
+contains a `type_hash` policy, uses it to convert the result to an index;
 otherwise, uses the `type_id` as the index.

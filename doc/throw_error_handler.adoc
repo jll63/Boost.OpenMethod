@@ -18,7 +18,7 @@ struct throw_error_handler : error_handler {
 
 ### Description
 
-throw_error_handler is an implementation of the `error_handler` facet that
+throw_error_handler is an implementation of the `error_handler` policy that
 throws the error as an exception.
 
 ### Members

@@ -42,10 +42,10 @@ struct type_mismatch_error : openmethod_error {
 
 ### Description
 
-`error_handler` is a facet that handles errors.
+`error_handler` is a policy that handles errors.
 
 When an error is encountered, either during `initialize` or method dispatch, the
-program is terminated via a call to `abort`. If this facet is present in the
+program is terminated via a call to `abort`. If this policy is present in the
 policy, its `error` function is called with an error object. It can prevent
 termination by throwing an exception.
 

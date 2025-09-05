@@ -3,7 +3,7 @@
 
 ### Synopsis
 
-Defined in `<boost/openmethod/compiler.hpp>`.
+Defined in `<boost/openmethod/initialize.hpp>`.
 
 ```c++
 namespace boost::openmethod {
@@ -37,7 +37,7 @@ combination of virtual arguments.
 
 ### Synopsis
 
-Defined in `<boost/openmethod/compiler.hpp>`.
+Defined in `<boost/openmethod/initialize.hpp>`.
 
 ```c++
 namespace boost::openmethod {
@@ -51,7 +51,7 @@ auto finalize() -> void;
 ### Description
 
 De-allocates the resources allocated by `initialize` for the `Policy`, including
-resources allocated by the facets in `Policy`. Resources are de-allocated in an
+resources allocated by the policys in `Policy`. Resources are de-allocated in an
 arbitrary order. It is not necessary to call `finalize` between calls to
 `initialize`. It is provided mainly for the benefit of memory leak detection
 schemes.

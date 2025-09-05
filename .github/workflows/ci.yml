@@ -36,6 +36,10 @@ env:
   LCOV_BRANCH_COVERAGE: 0
   CODECOV_NAME: Github Actions
 
+permissions:
+  id-token: write
+  pages: write
+
 jobs:
   posix:
     defaults:
@@ -292,6 +296,8 @@ jobs:
             rmdir /s /q boost-ci-cloned
 
       - name: Setup Boost
+        env:
+          BOOST_BRANCH: master
         run: ci\github\install.bat
 
       - name: Run tests
@@ -453,3 +459,64 @@ jobs:
             cmake -G "${{matrix.generator}}" -DBOOST_CI_INSTALL_TEST=ON -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DBUILD_SHARED_LIBS=${{matrix.build_shared}} -DCMAKE_PREFIX_PATH=$HOME/local ..
             cmake --build . --config ${{matrix.build_type}} -j$B2_JOBS
             ctest --output-on-failure --build-config ${{matrix.build_type}}
+  antora:
+    name: Antora Docs
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Install packages
+        uses: alandefreitas/cpp-actions/package-install@v1.8.10
+        with:
+          apt-get: git cmake
+
+      - name: Clone Boost.OpenMethod
+        uses: actions/checkout@v4
+
+      - name: Clone Boost
+        uses: alandefreitas/cpp-actions/boost-clone@v1.8.10
+        id: boost-clone
+        with:
+          branch: ${{ (github.ref_name == 'master' && github.ref_name) || 'develop' }}
+          boost-dir: ../boost-source
+          scan-modules-dir: .
+          scan-modules-ignore: openmethod
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Build Antora Docs
+        # env:
+        #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global --add safe.directory "$(pwd)"
+
+          cd ..
+          BOOST_SRC_DIR="$(pwd)/boost-source"
+          export BOOST_SRC_DIR
+          cd Boost.OpenMethod
+
+          cd doc
+          bash ./build_antora.sh
+
+          # Antora returns zero even if it fails, so we check if the site directory exists
+          if [ ! -d "build/site" ]; then
+              echo "Antora build failed"
+              exit 1
+          fi
+
+      - name: Create Antora Docs Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: antora-docs-${{ matrix.name }}
+          path: doc/build/site
+
+      - name: Upload static files as artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: doc/build/site
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4

@@ -8,7 +8,7 @@ Defined in <boost/openmethod/policies/basic_policy.hpp>.
 ```c++
 namespace boost::openmethod::policies {
 
-struct trace : facet {};
+struct trace : policy {};
 
 }
 ```
@@ -17,10 +17,10 @@ struct trace : facet {};
 
 ### Description
 
-`trace` is a facet used to write trace messages.
+`trace` is a policy used to write trace messages.
 
 `initialize` can be directed to describe the classes and methods in a policy,
-and how the dispatch tables are built, by including this facet in the policy,
+and how the dispatch tables are built, by including this policy in the policy,
 and setting `trace_enabled` to `true`. The content and the format of the
 description is not documented, beyond the guarantee that it provides an
 exhaustive account of table construction, and may change between major, minor
@@ -39,7 +39,7 @@ static bool trace_enabled;
 #### trace_stream
 
 ```c++
-static RestrictedOutputStream trace_stream;
+static LightweightOutputStream trace_stream;
 ```
 
-A static variable that satisfies the requirements of `RestrictedOutputStream`.
+A static variable that satisfies the requirements of `LightweightOutputStream`.

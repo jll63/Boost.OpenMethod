@@ -15,13 +15,13 @@ struct minimal_rtti : rtti {
 
 ### Description
 
-`minimal_rtti` is an implementation of the `rtti` facet that only uses static
+`minimal_rtti` is an implementation of the `rtti` policy that only uses static
 type information.
 
 `minimal_rtti` provides the only function strictly required for the `rtti`
-facet.
+policy.
 
-This facet can be used in programs that call methods solely via
+This policy can be used in programs that call methods solely via
 `virtual_ptr`{empty}s created with the "final" constructs. Virtual inheritance
 is not supported. Classes are not required to be polymorphic.
 
@@ -35,7 +35,7 @@ template<class Class>
 static constexpr bool is_polymorphic = false;
 ```
 
-This facet does not support polymorphic classes.
+This policy does not support polymorphic classes.
 
 #### static_type
 

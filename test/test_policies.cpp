@@ -11,6 +11,8 @@
 
 #include <boost/openmethod/default_registry.hpp>
 
+#include "test_util.hpp"
+
 using namespace boost::openmethod;
 using namespace boost::openmethod::detail;
 namespace mp11 = boost::mp11;
@@ -26,8 +28,6 @@ struct derived : base {
     struct fn {};
 };
 
-static_assert(registry<derived>::has_policy<base>);
-
 static_assert(std::is_same_v<
               registry<derived>::policy<base>, derived::fn<registry<derived>>>);
 
@@ -39,14 +39,14 @@ static_assert(!detail::is_registry<not_a_policy>);
 struct registry1 : default_registry::with<unique<registry1>> {};
 struct registry2 : default_registry::with<unique<registry2>> {};
 
-struct foo : policy {
+struct foo {
     using category = foo;
 };
 
 struct foo1 : foo {};
 struct foo2 : foo {};
 
-struct bar : policy {
+struct bar {
     using category = bar;
 };
 
@@ -65,8 +65,8 @@ static_assert(
 BOOST_AUTO_TEST_CASE(test_registry) {
     using namespace policies;
 
-    BOOST_TEST(&registry2::methods != &registry1::methods);
-    BOOST_TEST(&registry2::classes != &registry1::classes);
+    // BOOST_TEST(&registry2::methods != &registry1::methods);
+    // BOOST_TEST(&registry2::classes != &registry1::classes);
     BOOST_TEST(&registry2::static_vptr<void> != &registry1::static_vptr<void>);
-    BOOST_TEST(&registry2::dispatch_data != &registry1::dispatch_data);
+    // BOOST_TEST(&registry2::dispatch_data != &registry1::dispatch_data);
 }

@@ -11,5 +11,6 @@
 ** xref:error_handling.adoc[Error Handling]
 ** xref:custom_rtti.adoc[Custom RTTI]
 ** xref:dynamic_loading.adoc[Dynamic Loading]
-* xref:reference:boost/openmethod.adoc[Reference (generated)]
-* xref:reference.adoc[Reference (manual)]
+* Reference
+** xref:macros.adoc[Macros]
+** xref:reference:boost/openmethod.adoc[boost::openmethod]

@@ -2680,8 +2680,8 @@
     <class kind="class">std::gslice_array</class>
     <member kind="function">
       <type>T</type>
-      <name>has_facet</name>
-      <anchorfile>cpp/locale/has_facet</anchorfile>
+      <name>has_policy</name>
+      <anchorfile>cpp/locale/has_policy</anchorfile>
       <anchor></anchor>
       <arglist>(T... args)</arglist>
     </member>
@@ -6551,8 +6551,8 @@
     </member>
     <member kind="function">
       <type>T</type>
-      <name>use_facet</name>
-      <anchorfile>cpp/locale/use_facet</anchorfile>
+      <name>use_policy</name>
+      <anchorfile>cpp/locale/use_policy</anchorfile>
       <anchor></anchor>
       <arglist>(T... args)</arglist>
     </member>
@@ -40387,7 +40387,7 @@
       <anchor></anchor>
       <arglist>(T... args)</arglist>
     </member>
-    <class kind="class">std::locale::facet</class>
+    <class kind="class">std::locale::policy</class>
     <member kind="function">
       <type>T</type>
       <name>global</name>
@@ -40447,12 +40447,12 @@
     </member>
   </compound>
   <compound kind="class">
-    <name>std::locale::facet</name>
-    <filename>cpp/locale/locale/facet</filename>
+    <name>std::locale::policy</name>
+    <filename>cpp/locale/locale/policy</filename>
     <member kind="function">
       <type>T</type>
-      <name>facet</name>
-      <anchorfile>cpp/locale/locale/facet/facet</anchorfile>
+      <name>policy</name>
+      <anchorfile>cpp/locale/locale/policy/policy</anchorfile>
       <anchor></anchor>
       <arglist>(T... args)</arglist>
     </member>

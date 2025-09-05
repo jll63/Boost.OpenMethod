@@ -81,6 +81,7 @@ struct Dog : virtual Animal {
 
 namespace bom = boost::openmethod;
 
+// tag::registry[]
 struct custom_rtti : bom::policies::deferred_static_rtti {
     template<class Registry>
     struct fn : defaults {
@@ -105,7 +106,6 @@ struct custom_rtti : bom::policies::deferred_static_rtti {
             }
         }
 
-        // tag::dynamic_cast_ref[]
         // to support virtual inheritance:
         template<typename Derived, typename Base>
         static auto dynamic_cast_ref(Base&& obj) -> Derived {
@@ -116,14 +116,14 @@ struct custom_rtti : bom::policies::deferred_static_rtti {
                 abort(); // not supported
             }
         }
-        // end::dynamic_cast_ref[]
     };
 };
 
-struct custom_policy : bom::registry<custom_rtti, bom::policies::vptr_vector> {
+struct custom_registry : bom::registry<custom_rtti, bom::policies::vptr_vector> {
 };
+// end::registry[]
 
-#define BOOST_OPENMETHOD_DEFAULT_REGISTRY custom_policy
+#define BOOST_OPENMETHOD_DEFAULT_REGISTRY custom_registry
 
 #include <iostream>
 

@@ -34,7 +34,7 @@ struct Dog : Animal {
 #include <boost/openmethod/registry.hpp>
 #include <boost/openmethod/policies/vptr_vector.hpp>
 
-// tag::facet[]
+// tag::policy[]
 namespace bom = boost::openmethod;
 
 struct custom_rtti : bom::policies::rtti {
@@ -62,14 +62,14 @@ struct custom_rtti : bom::policies::rtti {
         }
     };
 };
-// end::facet[]
+// end::policy[]
 
-// tag::policy[]
-struct custom_policy : bom::registry<custom_rtti, bom::policies::vptr_vector> {
+// tag::registry[]
+struct custom_registry : bom::registry<custom_rtti, bom::policies::vptr_vector> {
 };
 
-#define BOOST_OPENMETHOD_DEFAULT_REGISTRY custom_policy
-// end::policy[]
+#define BOOST_OPENMETHOD_DEFAULT_REGISTRY custom_registry
+// end::registry[]
 
 // tag::example[]
 #include <iostream>

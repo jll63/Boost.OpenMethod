@@ -8,14 +8,14 @@ Defined in <boost/openmethod/policies/basic_policy.hpp>.
 ```c++
 namespace boost::openmethod::policies {
 
-struct rtti : facet {};
+struct rtti : policy {};
 
 } // boost::openmethod::policies
 ```
 
 ### Description
 
-The `rtti` facet provides type information for classes and objects, implements
+The `rtti` policy provides type information for classes and objects, implements
 downcast in presence of virtual inheritance, and writes descriptions of types to
 an `ostream`-like object.
 

@@ -2,13 +2,12 @@
 ## Error Handling
 
 When an error is encountered, the program is terminated by a call to `abort`. If
-the policy contains an `error_handler` facet, it provides an `error` member
+the registry contains an `error_handler` policy, it provides an `error` member
 function (or overloaded functions) to be called with an object identifying the
-error. The `release` and `debug` policies implement the error facet with
+error. `release_registry` and `debug_registry` implement the error policy with
 `default_error_handler`, which wraps the error object in a variant, and calls a
 handler via a `std::function`. By default, it prints a description of the error
-to `stderr` in the `debug` policy, and does nothing in the `release` policy. The
-handler can be set with `set_error_handler`:
+to `stderr`, but this can be changed, for example, to throw an exception:
 
 [source,c++]
 ----
@@ -24,7 +23,7 @@ not implemented
 spin
 ----
 
-We can also replace the `error_handler` facet with our own. For example:
+We can also replace the `error_handler` policy with our own. For example:
 
 
 [source,c++]
@@ -39,7 +38,7 @@ not implemented
 spin
 ----
 
-Stock facet `throw_error_handler` does this for all the exception types:
+Stock policy `throw_error_handler` does this for all the error types:
 
 ```c++
 namespace boost::openmethod::policies {

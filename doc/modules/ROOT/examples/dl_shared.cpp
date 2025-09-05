@@ -18,7 +18,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 
 struct Tiger : Carnivore {};
 
-BOOST_OPENMETHOD_CLASSES(Tiger, Carnivore, dynamic_policy);
+BOOST_OPENMETHOD_CLASSES(Tiger, Carnivore, dynamic);
 
 extern "C" auto make_tiger() -> Tiger* {
     return new Tiger;

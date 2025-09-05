@@ -19,7 +19,7 @@
 #include "dl.hpp"
 
 BOOST_OPENMETHOD_CLASSES(
-    Animal, Herbivore, Cow, Wolf, Carnivore, dynamic_policy);
+    Animal, Herbivore, Cow, Wolf, Carnivore, dynamic);
 
 BOOST_OPENMETHOD_OVERRIDE(
     encounter, (dyn_vptr<Animal>, dyn_vptr<Animal>), std::string) {
@@ -32,14 +32,14 @@ BOOST_OPENMETHOD_OVERRIDE(
 auto main() -> int {
     using namespace boost::openmethod;
 
-    dynamic_policy::initialize();
+    dynamic::initialize();
 
     std::cout << "Before loading library\n";
 
-    auto gracie = make_unique_virtual<Cow, dynamic_policy>();
+    auto gracie = make_unique_virtual<Cow, dynamic>();
     // Wolf _willy;
-    // auto willy = virtual_ptr<Wolf, dynamic_policy>(_willy);
-    auto willy = make_unique_virtual<Wolf, dynamic_policy>();
+    // auto willy = virtual_ptr<Wolf, dynamic>(_willy);
+    auto willy = make_unique_virtual<Wolf, dynamic>();
 
     std::cout << "Gracie encounters Willy -> "
               << encounter(gracie, willy); // ignore
@@ -61,7 +61,7 @@ auto main() -> int {
 
     std::cout << "\nAfter loading library\n";
 
-    dynamic_policy::initialize();
+    dynamic::initialize();
 
     auto make_tiger =
         reinterpret_cast<Animal* (*)()>(dlsym(handle, "make_tiger"));
@@ -86,7 +86,7 @@ auto main() -> int {
 
     std::cout << "\nAfter unloading library\n";
 
-    dynamic_policy::initialize();
+    dynamic::initialize();
 
     std::cout << "Gracie encounters Willy -> "
               << encounter(gracie, willy); // ignore

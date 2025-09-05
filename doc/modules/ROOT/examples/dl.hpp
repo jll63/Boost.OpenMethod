@@ -26,15 +26,15 @@ struct Carnivore : Animal {};
 struct Cow : Herbivore {};
 struct Wolf : Carnivore {};
 
-struct dynamic_policy : boost::openmethod::default_registry::with<
+struct dynamic : boost::openmethod::default_registry::with<
                             boost::openmethod::policies::indirect_vptr> {};
 
 template<class Class>
-using dyn_vptr = boost::openmethod::virtual_ptr<Class, dynamic_policy>;
+using dyn_vptr = boost::openmethod::virtual_ptr<Class, dynamic>;
 
 BOOST_OPENMETHOD(
     encounter, (dyn_vptr<Animal>, dyn_vptr<Animal>), std::string,
-    dynamic_policy);
+    dynamic);
 
 // end::header[]
 

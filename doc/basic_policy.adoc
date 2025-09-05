@@ -46,7 +46,7 @@ Defined in <boost/openmethod/policies/basic_policy.hpp>. Also available via
 ### Description
 
 `basic_policy` implements a policy, which consists of a a collection of methods,
-classes, dispatch data, and facets, which specify how to obtain a pointer to a
+classes, dispatch data, and policys, which specify how to obtain a pointer to a
 v-table from an object, how to report errors, whether to perform runtime sanity
 checks, etc.
 
@@ -75,7 +75,7 @@ Creates a new policy from an existing one. _NewPolicy_ does not share static
 variables with the original _Policy_. The new policy does not retain any
 knowledge of the classes and methods registered in the original.
 
-`fork` forks the facets in the policy as well: any facet instantiated from a
+`fork` forks the policys in the policy as well: any policy instantiated from a
 class template is assumed to take a policy as its first template argument. The
 template is re-instantiated with the new policy as the first arguments, while
 the other arguments remain the same.
@@ -87,9 +87,9 @@ template<class... Facets>
 using with;
 ```
 
-Requires:: _Facets_ is a list of classes that derive from `facet`.
+Requires:: _Facets_ is a list of classes that derive from `policy`.
 
-Returns:: A new policy containing _Facets_, and the facets from the original
+Returns:: A new policy containing _Facets_, and the policys from the original
 that do not have the same category as _Facets_.
 
 Examples::
@@ -111,9 +111,9 @@ template<class... Facets>
 using without;
 ```
 
-Requires:: _Facets_ is a list of facet categories.
+Requires:: _Facets_ is a list of policy categories.
 
-Returns:: A new policy containing the facets from the original that do not have
+Returns:: A new policy containing the policys from the original that do not have
 the same category as _Facets_.
 
 Examples::
@@ -130,7 +130,7 @@ Examples::
 struct release;
 ```
 
-A policy that contains facets `std_rtti`, `fast_perfect_hash`, `vptr_vector` and
+A policy that contains policys `std_rtti`, `fast_perfect_hash`, `vptr_vector` and
 `default_error_handler`.
 
 #### debug
@@ -139,7 +139,7 @@ A policy that contains facets `std_rtti`, `fast_perfect_hash`, `vptr_vector` and
 struct debug;
 ```
 
-The `release` policy with additional facet implementations `runtime_checks`,
+The `release` policy with additional policy implementations `runtime_checks`,
 `basic_error_output` and basic_trace_output.
 
 NOTE: `debug` extends `release` but it does not a fork it. Both policies use the

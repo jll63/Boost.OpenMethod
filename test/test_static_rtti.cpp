@@ -31,12 +31,12 @@ BOOST_OPENMETHOD_CLASSES(Animal, Dog, Cat);
 BOOST_OPENMETHOD(poke, (virtual_ptr<Animal>, std::ostream&), void);
 
 BOOST_OPENMETHOD_OVERRIDE(
-    poke, (virtual_ptr<Dog> dog, std::ostream& os), void) {
+    poke, (virtual_ptr<Dog>, std::ostream& os), void) {
     os << "bark";
 }
 
 BOOST_OPENMETHOD_OVERRIDE(
-    poke, (virtual_ptr<Cat> cat, std::ostream& os), void) {
+    poke, (virtual_ptr<Cat>, std::ostream& os), void) {
     os << "hiss";
 }
 

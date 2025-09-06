@@ -164,12 +164,10 @@ struct generic_compiler {
         method_report report;
     };
 
-    const method*
-    operator[](const detail::method_info& info) const {
+    const method* operator[](const detail::method_info& info) const {
         auto iter = std::find_if(
-            methods.begin(), methods.end(), [&info](const method& m) {
-                return m.info == &info;
-            });
+            methods.begin(), methods.end(),
+            [&info](const method& m) { return m.info == &info; });
 
         if (iter != methods.end()) {
             return &*iter;
@@ -185,8 +183,8 @@ struct generic_compiler {
 
 template<class Registry>
 auto operator<<(
-    trace_type<Registry>& trace, const generic_compiler::class_& cls)
-    -> trace_type<Registry>& {
+    trace_type<Registry>& trace,
+    const generic_compiler::class_& cls) -> trace_type<Registry>& {
     if constexpr (Registry::has_trace) {
         trace << type_name(cls.type_ids[0]);
     }
@@ -271,8 +269,8 @@ struct registry<Policies...>::compiler : detail::generic_compiler {
     static void select_dominant_overriders(
         std::vector<overrider*>& dominants, std::size_t& pick,
         std::size_t& remaining);
-    static auto is_more_specific(const overrider* a, const overrider* b)
-        -> bool;
+    static auto
+    is_more_specific(const overrider* a, const overrider* b) -> bool;
     static auto is_base(const overrider* a, const overrider* b) -> bool;
 
     mutable detail::trace_type<registry> trace;
@@ -520,24 +518,27 @@ void registry<Policies...>::compiler::augment_methods() {
         meth_iter->info = &meth_info;
         meth_iter->vp.reserve(meth_info.arity());
         meth_iter->slots.resize(meth_info.arity());
-        std::size_t param_index = 0;
 
-        for (auto ti : range{meth_info.vp_begin, meth_info.vp_end}) {
-            auto class_ = class_map[rtti::type_index(ti)];
-            if (!class_) {
-                ++trace << "unknown class " << ti << "(" << type_name(ti)
-                        << ") for parameter #" << (param_index + 1) << "\n";
-                unknown_class_error error;
-                error.type = ti;
+        {
+            std::size_t param_index = 0;
 
-                if constexpr (has_error_handler) {
-                    error_handler::error(error);
+            for (auto ti : range{meth_info.vp_begin, meth_info.vp_end}) {
+                auto class_ = class_map[rtti::type_index(ti)];
+                if (!class_) {
+                    ++trace << "unknown class " << ti << "(" << type_name(ti)
+                            << ") for parameter #" << (param_index + 1) << "\n";
+                    unknown_class_error error;
+                    error.type = ti;
+
+                    if constexpr (has_error_handler) {
+                        error_handler::error(error);
+                    }
+
+                    abort();
                 }
 
-                abort();
+                meth_iter->vp.push_back(class_);
             }
-
-            meth_iter->vp.push_back(class_);
         }
 
         if (rtti::type_index(meth_info.return_type_id) !=
@@ -1092,9 +1093,9 @@ void registry<Policies...>::compiler::write_global_data() {
             std::copy(m.strides.begin(), m.strides.end(), strides_iter);
 
             if constexpr (has_trace) {
-                ++trace << rflush(4, dispatch_data.size()) << " "
-                        << " method #" << m.dispatch_table[0]->method_index
-                        << " " << type_name(m.info->method_type_id) << "\n";
+                ++trace << rflush(4, dispatch_data.size()) << " " << " method #"
+                        << m.dispatch_table[0]->method_index << " "
+                        << type_name(m.info->method_type_id) << "\n";
                 indent _(trace);
 
                 for (auto& entry : m.dispatch_table) {
@@ -1115,8 +1116,8 @@ void registry<Policies...>::compiler::write_global_data() {
 
     for (auto& m : methods) {
         indent _(trace);
-        ++trace << "method #"
-                << " " << type_name(m.info->method_type_id) << "\n";
+        ++trace << "method #" << " " << type_name(m.info->method_type_id)
+                << "\n";
 
         for (auto& overrider : m.specs) {
             if (overrider.next) {

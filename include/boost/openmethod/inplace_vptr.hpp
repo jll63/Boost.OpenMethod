@@ -113,7 +113,7 @@ class inplace_vptr_aux<Class, Base, false> : inplace_vptr_derived {
 } // namespace detail
 
 template<typename...>
-class inplace_vptr;
+struct inplace_vptr;
 
 template<class Class>
 struct inplace_vptr<Class>

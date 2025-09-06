@@ -1044,19 +1044,45 @@ struct valid_method_parameter<virtual_<T>, Registry>
           Registry::rtti::template is_polymorphic<virtual_type<T, Registry>>> {
 };
 
+template<class Registry>
+using method_base = std::conditional_t<
+    Registry::has_deferred_static_rtti, deferred_method_info, method_info>;
+
 } // namespace detail
 
+//! See specialization.
 template<
     typename Name, typename ReturnType,
     class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
 class method;
 
+//! An open-method.
+//!
+//! `method` implements an open-method that takes a parameter list -
+//! `Parameters` - and returns a `ReturnType`. `Name` can be any type. Its
+//! purpose is to make it possible to have multiple methods with the same
+//! signature. Typically, `Name` is a class whose name reflects the method's
+//! purpose.
+//!
+//! `Parameters` must contain at least one virtual parameter, i.e. a parameter
+//! that has a type in the form `virtual_ptr<T,{nbsp}Policy>` or `virtual_<T>`.
+//! The dynamic types of the virtual arguments (the arguments corresponding to
+//! virtual parameters in the method's signature) are taken into account to
+//! select the overrider to call.
+//!
+//! A `method` is attached to a `Registry`, which contains policies that
+//! influence several parts of the dispatch mechanism - for example, how to
+//! obtain a v-table pointer for an object, how to report errors, whether to
+//! perform sanity checks, etc.
+//!
+//! @tparam Name A type representing the method's name.
+//! @tparam ReturnType The return type of the method.
+//! @tparam Parameters The types of the method's parameters.
+//! @tparam Registry The registry in which the method is registered.
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 class method<Name, ReturnType(Parameters...), Registry>
-    : public std::conditional_t<
-          Registry::has_deferred_static_rtti, detail::deferred_method_info,
-          detail::method_info> {
+    : public detail::method_base<Registry> {
     // Aliases used in implementation only. Everything extracted from template
     // arguments is capitalized like the arguments themselves.
     using RegistryType = Registry;
@@ -1067,8 +1093,8 @@ class method<Name, ReturnType(Parameters...), Registry>
     using VirtualParameters =
         typename detail::virtual_types<DeclaredParameters>;
     using Signature = auto(Parameters...) -> ReturnType;
-    using FunctionPointer = auto (*)(detail::remove_virtual<Parameters>...)
-        -> ReturnType;
+    using FunctionPointer = auto(*)(detail::remove_virtual<Parameters>...)
+                                -> ReturnType;
     static constexpr auto Arity = boost::mp11::mp_count_if<
         mp11::mp_list<Parameters...>, detail::is_virtual>::value;
 
@@ -1137,9 +1163,9 @@ class method<Name, ReturnType(Parameters...), Registry>
 
   public:
     // Public aliases.
-    using name_type = Name;
-    using return_type = ReturnType;
-    using function_type = ReturnType (*)(detail::remove_virtual<Parameters>...);
+    //using name_type = Name;
+    //using return_type = ReturnType;
+    //using function_type = ReturnType (*)(detail::remove_virtual<Parameters>...);
 
     static method fn;
 

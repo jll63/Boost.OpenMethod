@@ -460,11 +460,11 @@ void registry<Policies...>::compiler::augment_classes() {
         ++trace << "Inheritance lattice:\n";
 
         for (auto& rtc : classes) {
-            indent _(trace);
+            indent _2(trace);
             ++trace << rtc << "\n";
 
             {
-                indent _(trace);
+                indent _3(trace);
                 ++trace << "bases:      " << rtc.direct_bases << "\n";
                 ++trace << "derived:    " << rtc.direct_derived << "\n";
                 ++trace << "covariant:  " << rtc.transitive_derived << "\n";

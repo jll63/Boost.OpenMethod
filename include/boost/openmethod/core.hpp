@@ -1117,8 +1117,8 @@ class method<Name, ReturnType(Parameters...), Registry>
     using VirtualParameters =
         typename detail::virtual_types<DeclaredParameters>;
     using Signature = auto(Parameters...) -> ReturnType;
-    using FunctionPointer = auto (*)(detail::remove_virtual_<Parameters>...)
-        -> ReturnType;
+    using FunctionPointer = auto (*)(
+        BOOST_OPENMETHOD_DETAIL_REMOVE_VIRTUAL_(Parameters)...) -> ReturnType;
     static constexpr auto Arity = boost::mp11::mp_count_if<
         mp11::mp_list<Parameters...>, detail::is_virtual>::value;
 
@@ -1257,18 +1257,18 @@ class method<Name, ReturnType(Parameters...), Registry>
     //! _Overrider_ was not present. Set to `nullptr` if no such overrider exists.
 
     template<auto Overrider>
-    inline static ReturnType (*next)(
+    static ReturnType (*next)(
         BOOST_OPENMETHOD_DETAIL_REMOVE_VIRTUAL_(Parameters)...);
 
     template<auto>
     static bool has_next();
 
+  private:
     static BOOST_NORETURN auto fn_not_implemented(
         detail::remove_virtual_<Parameters>... args) -> ReturnType;
     static BOOST_NORETURN auto
     fn_ambiguous(detail::remove_virtual_<Parameters>... args) -> ReturnType;
 
-  private:
     template<
         auto Overrider, typename OverriderReturn,
         typename... OverriderParameters>
@@ -1345,11 +1345,11 @@ template<
 method<Name, ReturnType(Parameters...), Registry>
     method<Name, ReturnType(Parameters...), Registry>::fn;
 
-// template<
-//     typename Name, typename... Parameters, typename ReturnType, class Registry>
-// template<auto>
-// typename method<Name, ReturnType(Parameters...), Registry>::FunctionPointer
-//     method<Name, ReturnType(Parameters...), Registry>::next;
+template<
+    typename Name, typename... Parameters, typename ReturnType, class Registry>
+template<auto>
+typename method<Name, ReturnType(Parameters...), Registry>::FunctionPointer
+    method<Name, ReturnType(Parameters...), Registry>::next;
 
 template<typename T>
 constexpr bool is_method = std::is_base_of_v<detail::method_info, T>;

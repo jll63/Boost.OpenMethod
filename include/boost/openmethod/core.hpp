@@ -1257,7 +1257,8 @@ class method<Name, ReturnType(Parameters...), Registry>
     //! _Overrider_ was not present. Set to `nullptr` if no such overrider exists.
 
     template<auto Overrider>
-    static FunctionPointer next;
+    inline static ReturnType (*next)(
+        BOOST_OPENMETHOD_DETAIL_REMOVE_VIRTUAL_(Parameters)...);
 
     template<auto>
     static bool has_next();
@@ -1344,11 +1345,11 @@ template<
 method<Name, ReturnType(Parameters...), Registry>
     method<Name, ReturnType(Parameters...), Registry>::fn;
 
-template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
-template<auto>
-typename method<Name, ReturnType(Parameters...), Registry>::FunctionPointer
-    method<Name, ReturnType(Parameters...), Registry>::next;
+// template<
+//     typename Name, typename... Parameters, typename ReturnType, class Registry>
+// template<auto>
+// typename method<Name, ReturnType(Parameters...), Registry>::FunctionPointer
+//     method<Name, ReturnType(Parameters...), Registry>::next;
 
 template<typename T>
 constexpr bool is_method = std::is_base_of_v<detail::method_info, T>;

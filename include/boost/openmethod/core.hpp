@@ -175,14 +175,14 @@ struct remove_virtual_aux<virtual_<T>> {
 };
 
 template<typename T>
-using remove_virtual = typename remove_virtual_aux<T>::type;
+using remove_virtual_ = typename remove_virtual_aux<T>::type;
 
 template<typename T, class Registry>
 using virtual_type = typename virtual_traits<T, Registry>::virtual_type;
 
 template<typename MethodArgList>
 using virtual_types = boost::mp11::mp_transform<
-    remove_virtual, boost::mp11::mp_filter<detail::is_virtual, MethodArgList>>;
+    remove_virtual_, boost::mp11::mp_filter<detail::is_virtual, MethodArgList>>;
 
 template<typename T, class Registry>
 struct parameter_traits {
@@ -905,8 +905,8 @@ struct virtual_traits<virtual_ptr<Class, Registry>, Registry> {
     }
 
     template<typename Derived>
-    static auto cast(const virtual_ptr<Class, Registry>& ptr)
-        -> decltype(auto) {
+    static auto
+    cast(const virtual_ptr<Class, Registry>& ptr) -> decltype(auto) {
         return ptr.template cast<typename Derived::element_type>();
     }
 
@@ -926,8 +926,8 @@ struct virtual_traits<const virtual_ptr<Class, Registry>&, Registry> {
     }
 
     template<typename Derived>
-    static auto cast(const virtual_ptr<Class, Registry>& ptr)
-        -> decltype(auto) {
+    static auto
+    cast(const virtual_ptr<Class, Registry>& ptr) -> decltype(auto) {
         return ptr.template cast<
             typename std::remove_reference_t<Derived>::element_type>();
     }
@@ -1050,7 +1050,31 @@ using method_base = std::conditional_t<
 
 } // namespace detail
 
-//! For specialization only
+#ifdef __MRDOCS__
+
+//! Remove virtual_<> decorator from a type (exposition only)
+//!
+//! @tparam T A type
+template<typename T>
+struct StripVirtualDecorator {
+    //! Same as `T`
+    using type = T;
+};
+
+//! Remove virtual_<> decorator from a type (exposition only)
+template<typename T>
+struct StripVirtualDecorator<virtual_<T>> {
+    //! Same as `T`
+    using type = T;
+};
+
+#define BOOST_OPENMETHOD_DETAIL_REMOVE_VIRTUAL_(T)                             \
+    typename StripVirtualDecorator<T>::type
+#else
+#define BOOST_OPENMETHOD_DETAIL_REMOVE_VIRTUAL_(T) detail::remove_virtual_<T>
+#endif
+
+//! Specialized with name, signature and return type
 template<
     typename Name, typename ReturnType,
     class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
@@ -1065,7 +1089,7 @@ class method;
 //! purpose.
 //!
 //! `Parameters` must contain at least one virtual parameter, i.e. a parameter
-//! that has a type in the form `virtual_ptr<T,{nbsp}Policy>` or `virtual_<T>`.
+//! that has a type in the form `virtual_ptr<T, Registry>` or `virtual\_<T>`.
 //! The dynamic types of the virtual arguments (the arguments corresponding to
 //! virtual parameters in the method's signature) are taken into account to
 //! select the overrider to call.
@@ -1077,8 +1101,8 @@ class method;
 //!
 //! @tparam Name A type representing the method's name.
 //! @tparam ReturnType The return type of the method.
-//! @tparam Parameters The types of the method's parameters.
-//! @tparam Registry The registry in which the method is registered.
+//! @tparam Parameters The types of the parameters.
+//! @tparam Registry The registry of the method.
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 class method<Name, ReturnType(Parameters...), Registry>
@@ -1089,12 +1113,12 @@ class method<Name, ReturnType(Parameters...), Registry>
     using rtti = typename Registry::rtti;
     using DeclaredParameters = mp11::mp_list<Parameters...>;
     using CallParameters =
-        boost::mp11::mp_transform<detail::remove_virtual, DeclaredParameters>;
+        boost::mp11::mp_transform<detail::remove_virtual_, DeclaredParameters>;
     using VirtualParameters =
         typename detail::virtual_types<DeclaredParameters>;
     using Signature = auto(Parameters...) -> ReturnType;
-    using FunctionPointer = auto(*)(detail::remove_virtual<Parameters>...)
-                                -> ReturnType;
+    using FunctionPointer = auto (*)(detail::remove_virtual_<Parameters>...)
+        -> ReturnType;
     static constexpr auto Arity = boost::mp11::mp_count_if<
         mp11::mp_list<Parameters...>, detail::is_virtual>::value;
 
@@ -1107,7 +1131,6 @@ class method<Name, ReturnType(Parameters...), Registry>
         (... && detail::valid_method_parameter<Parameters, Registry>::value),
         "virtual_<> parameter is not polymorphic and no boost_openmethod_vptr "
         "function is available");
-    //static_assert()
 
     type_id vp_type_ids[Arity];
 
@@ -1126,8 +1149,8 @@ class method<Name, ReturnType(Parameters...), Registry>
     auto vptr(const ArgType& arg) const -> vptr_type;
 
     template<class Error>
-    auto check_static_offset(std::size_t actual, std::size_t expected) const
-        -> void;
+    auto
+    check_static_offset(std::size_t actual, std::size_t expected) const -> void;
 
     template<typename MethodArgList, typename ArgType, typename... MoreArgTypes>
     auto resolve_uni(const ArgType& arg, const MoreArgTypes&... more_args) const
@@ -1135,8 +1158,8 @@ class method<Name, ReturnType(Parameters...), Registry>
 
     template<typename MethodArgList, typename ArgType, typename... MoreArgTypes>
     auto resolve_multi_first(
-        const ArgType& arg, const MoreArgTypes&... more_args) const
-        -> detail::word;
+        const ArgType& arg,
+        const MoreArgTypes&... more_args) const -> detail::word;
 
     template<
         std::size_t VirtualArg, typename MethodArgList, typename ArgType,
@@ -1159,37 +1182,98 @@ class method<Name, ReturnType(Parameters...), Registry>
     method(method&&) = delete;
     ~method();
 
-    void resolve(); // perhaps virtual, perhaps not
+    void resolve(); // virtual if Registry contains has_deferred_static_rtti
 
   public:
-    // Public aliases.
-    //using name_type = Name;
-    //using return_type = ReturnType;
-    //using function_type = ReturnType (*)(detail::remove_virtual<Parameters>...);
-
     static method fn;
 
-    auto operator()(detail::remove_virtual<Parameters>... args) const
-        -> ReturnType;
+    //! Call the method
+    //!
+    //! Call the method with `args`. The types of the arguments are the same as
+    //! the method `Parameters...`, stripped from any `virtual\_` decorators.
+    //!
+    //! The overrider is selected in the same way as overloaded function
+    //! resolution:
+    //!
+    //! 1. Form the set of all applicable overriders. An overrider is applicable
+    //!    if it can be called with the arguments passed to the method.
+    //!
+    //! 2. If the set is empty, call the error handler (if present in the
+    //!    policy), then terminate the program with `abort`.
+    //!
+    //! 3. Remove the overriders that are dominated by other overriders in the
+    //!    set. Overrider A dominates overrider B if any of its virtual formal
+    //!    parameters is more specialized than B's, and if none of B's virtual
+    //!    parameters is more specialized than A's.
+    //!
+    //! 4. If the resulting set contains only one overrider, call it. Otherwise,
+    //!    report an error.
+    //!
+    //! For each virtual argument `arg`, the dispatch mechanism calls
+    //! `virtual_traits::peek(arg)` and deduces the v-table pointer from the `result`,
+    //! using the first of the following methods that applies:
+    //!
+    //! 1. If `result` is a `virtual_ptr`, get the pointer to the v-table from it.
+    //!
+    //! 2. If a function named `boost_openmethod_vptr` that takes `result` and returns a
+    //!    `vptr_type` exists, call it.
+    //!
+    //! 3. Call `Policy::dynamic_vptr(result)`.
+    //!
+    //! @par N2216 Handling of Ambiguous Calls
+    //!
+    //! If `Registry` contains the @ref n2216 policy, ambiguous calls are not an
+    //! error. Instead, the following extra steps are taken to select an
+    //! overrider:
+    //!
+    //! 1. If the return type is a registered polymorphic type, remove all the
+    //!    overriders that return a less specific type than others.
+    //!
+    //! 2. If the resulting set contains only one overrider, call it.
+    //!
+    //! 3. Otherwise, call one of the remaining overriders. Which overrider is
+    //!    selected is not specified, but it is the same across calls with the
+    //!    same arguments types.
+    //!
+    //! @param args The arguments for the method call.
+    //!
+    //! @par Errors
+    //!
+    //! If `Registry` contains an @ref error_handler policy, call its `error`
+    //! function with an object of one of the following types:
+    //!
+    //! @li @ref not_implemented: No overrider is applicable.
+    //! @li @ref ambiguous_call: More than one overrider is applicable, and
+    //! none is more specialized than all the others.
+    //!
+    //! Then terminate the program with a call to `abort`.
+    auto operator()(BOOST_OPENMETHOD_DETAIL_REMOVE_VIRTUAL_(
+        Parameters)... args) const -> ReturnType;
 
-    template<auto>
-    static function_type next;
+    //! The next most specialized overrider
+    //!
+    //! A pointer to the next most specialized overrider after _Overrider_, i.e. the
+    //! overrider that would be called for the same tuple of virtual arguments if
+    //! _Overrider_ was not present. Set to `nullptr` if no such overrider exists.
+
+    template<auto Overrider>
+    static FunctionPointer next;
 
     template<auto>
     static bool has_next();
 
+    static BOOST_NORETURN auto fn_not_implemented(
+        detail::remove_virtual_<Parameters>... args) -> ReturnType;
     static BOOST_NORETURN auto
-    fn_not_implemented(detail::remove_virtual<Parameters>... args)
-        -> ReturnType;
-    static BOOST_NORETURN auto
-    fn_ambiguous(detail::remove_virtual<Parameters>... args) -> ReturnType;
+    fn_ambiguous(detail::remove_virtual_<Parameters>... args) -> ReturnType;
 
   private:
     template<
         auto Overrider, typename OverriderReturn,
         typename... OverriderParameters>
     struct thunk<Overrider, OverriderReturn (*)(OverriderParameters...)> {
-        static auto fn(detail::remove_virtual<Parameters>... arg) -> ReturnType;
+        static auto
+        fn(detail::remove_virtual_<Parameters>... arg) -> ReturnType;
         using OverriderVirtualParameters = detail::overrider_virtual_types<
             DeclaredParameters, mp11::mp_list<OverriderParameters...>,
             Registry>;
@@ -1345,11 +1429,13 @@ template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 BOOST_FORCEINLINE auto
 method<Name, ReturnType(Parameters...), Registry>::operator()(
-    detail::remove_virtual<Parameters>... args) const -> ReturnType {
+    BOOST_OPENMETHOD_DETAIL_REMOVE_VIRTUAL_(Parameters)... args) const
+    -> ReturnType {
     using namespace detail;
     auto pf = resolve(parameter_traits<Parameters, Registry>::peek(args)...);
 
-    return pf(std::forward<remove_virtual<Parameters>>(args)...);
+    return pf(std::forward<BOOST_OPENMETHOD_DETAIL_REMOVE_VIRTUAL_(Parameters)>(
+        args)...);
 }
 
 template<
@@ -1393,8 +1479,8 @@ template<
 template<typename MethodArgList, typename ArgType, typename... MoreArgTypes>
 BOOST_FORCEINLINE auto
 method<Name, ReturnType(Parameters...), Registry>::resolve_uni(
-    const ArgType& arg, const MoreArgTypes&... more_args) const
-    -> detail::word {
+    const ArgType& arg,
+    const MoreArgTypes&... more_args) const -> detail::word {
 
     using namespace detail;
     using namespace policies;
@@ -1422,8 +1508,8 @@ template<
 template<typename MethodArgList, typename ArgType, typename... MoreArgTypes>
 BOOST_FORCEINLINE auto
 method<Name, ReturnType(Parameters...), Registry>::resolve_multi_first(
-    const ArgType& arg, const MoreArgTypes&... more_args) const
-    -> detail::word {
+    const ArgType& arg,
+    const MoreArgTypes&... more_args) const -> detail::word {
 
     using namespace detail;
     using namespace boost::mp11;
@@ -1505,8 +1591,8 @@ method<Name, ReturnType(Parameters...), Registry>::resolve_multi_next(
 template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 template<auto Fn>
-inline auto method<Name, ReturnType(Parameters...), Registry>::has_next()
-    -> bool {
+inline auto
+method<Name, ReturnType(Parameters...), Registry>::has_next() -> bool {
     if (next<Fn> == fn_not_implemented) {
         return false;
     }
@@ -1524,7 +1610,7 @@ template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 BOOST_NORETURN auto
 method<Name, ReturnType(Parameters...), Registry>::fn_not_implemented(
-    detail::remove_virtual<Parameters>... args) -> ReturnType {
+    detail::remove_virtual_<Parameters>... args) -> ReturnType {
     using namespace policies;
 
     if constexpr (Registry::has_error_handler) {
@@ -1542,7 +1628,7 @@ template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 BOOST_NORETURN auto
 method<Name, ReturnType(Parameters...), Registry>::fn_ambiguous(
-    detail::remove_virtual<Parameters>... args) -> ReturnType {
+    detail::remove_virtual_<Parameters>... args) -> ReturnType {
     using namespace policies;
 
     if constexpr (Registry::has_error_handler) {
@@ -1571,7 +1657,7 @@ template<
     auto Overrider, typename OverriderReturn, typename... OverriderParameters>
 auto method<Name, ReturnType(Parameters...), Registry>::
     thunk<Overrider, OverriderReturn (*)(OverriderParameters...)>::fn(
-        detail::remove_virtual<Parameters>... arg) -> ReturnType {
+        detail::remove_virtual_<Parameters>... arg) -> ReturnType {
     using namespace detail;
     static_assert(
         (true && ... &&
@@ -1580,7 +1666,7 @@ auto method<Name, ReturnType(Parameters...), Registry>::
     return Overrider(
         detail::parameter_traits<Parameters, Registry>::template cast<
             OverriderParameters>(
-            std::forward<detail::remove_virtual<Parameters>>(arg))...);
+            std::forward<detail::remove_virtual_<Parameters>>(arg))...);
 }
 
 // -----------------------------------------------------------------------------

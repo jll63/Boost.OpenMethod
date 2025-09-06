@@ -1050,13 +1050,13 @@ using method_base = std::conditional_t<
 
 } // namespace detail
 
-//! See specialization.
+//! For specialization only
 template<
     typename Name, typename ReturnType,
     class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
 class method;
 
-//! An open-method.
+//! A method
 //!
 //! `method` implements an open-method that takes a parameter list -
 //! `Parameters` - and returns a `ReturnType`. `Name` can be any type. Its

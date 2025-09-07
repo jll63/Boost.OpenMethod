@@ -25,6 +25,11 @@
 #include <boost/assert.hpp>
 #include <boost/dynamic_bitset.hpp>
 
+#ifdef BOOST_COMP_MSVC
+#pragma warning(push)
+#pragma warning(disable : 4457)
+#endif
+
 namespace boost::openmethod {
 namespace detail {
 
@@ -811,7 +816,7 @@ void registry<Policies...>::compiler::build_dispatch_tables() {
                     mask.resize(m.specs.size());
 
                     std::size_t group_index = 0;
-                    indent _(trace);
+                    indent _2(trace);
 
                     for (auto& spec : m.specs) {
                         if (spec.vp[dim]->transitive_derived.find(
@@ -1161,7 +1166,7 @@ void registry<Policies...>::compiler::write_global_data() {
             } else {
                 trace << "vp #" << entry.vp_index << " group #"
                       << entry.group_index << "\n";
-                indent _(trace);
+                indent _2(trace);
                 ++trace << type_name(method.info->method_type_id);
                 BOOST_ASSERT(gv_iter + 1 <= gv_last);
 
@@ -1349,5 +1354,9 @@ auto finalize() -> void {
 }
 
 } // namespace boost::openmethod
+
+#ifdef BOOST_COMP_MSVC
+#pragma warning(pop)
+#endif
 
 #endif

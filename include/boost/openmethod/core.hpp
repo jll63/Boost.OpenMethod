@@ -27,9 +27,10 @@
 #define BOOST_OPENMETHOD_DEFAULT_REGISTRY ::boost::openmethod::default_registry
 #endif
 
-#ifdef _MSC_VER
+#ifdef BOOST_COMP_MSVC
 #pragma warning(push)
 #pragma warning(disable : 4646)
+#pragma warning(disable : 4100)
 #endif
 
 namespace boost::openmethod {
@@ -1751,7 +1752,7 @@ using boost::openmethod::virtual_ptr;
 
 } // namespace boost::openmethod
 
-#ifdef _MSC_VER
+#ifdef BOOST_COMP_MSVC
 #pragma warning(pop)
 #endif
 

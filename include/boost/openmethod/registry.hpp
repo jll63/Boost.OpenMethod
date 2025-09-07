@@ -411,7 +411,7 @@ struct trace final {
     template<class Registry>
     struct fn {
         inline static bool on = []() {
-#ifdef _MSC_VER
+#ifdef BOOST_COMP_MSVC
             char* env;
             std::size_t len;
             auto result =

@@ -8,10 +8,6 @@
 
 #include <cstdint>
 
-#ifdef __MRDOCS__
-#include <boost/openmethod/detail/mrdocs.hpp>
-#endif
-
 #include <boost/openmethod/detail/static_list.hpp>
 
 #if BOOST_CXX_VERSION >= 202002L

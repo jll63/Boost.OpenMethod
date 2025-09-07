@@ -16,7 +16,8 @@
 #include <utility>
 
 using namespace boost::openmethod;
-using namespace boost::openmethod::policies;
+using namespace policies;
+using namespace detail;
 
 struct Animal {
     virtual ~Animal() {
@@ -93,8 +94,8 @@ struct check_illegal_smart_ops {
     // ---------------------
     // test other properties
 
-    static_assert(is_smart_ptr<smart_ptr<Animal>, Registry>);
-    static_assert(is_smart_ptr<smart_ptr<const Animal>, Registry>);
+    static_assert(IsSmartPtr<smart_ptr<Animal>, Registry>);
+    static_assert(IsSmartPtr<smart_ptr<const Animal>, Registry>);
 
     static_assert(
         std::is_same_v<

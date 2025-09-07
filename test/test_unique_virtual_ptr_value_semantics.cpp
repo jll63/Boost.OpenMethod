@@ -12,6 +12,8 @@
 
 #include <memory>
 
+using namespace detail;
+
 BOOST_AUTO_TEST_CASE_TEMPLATE(
     unique_virtual_ptr_value, Registry, test_policies) {
     init_test<Registry>();
@@ -23,8 +25,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
                   decltype(std::declval<unique_virtual_ptr<Animal, Registry>>()
                                .get()),
                   Animal*>);
-    static_assert(is_smart_ptr<std::unique_ptr<Animal>, Registry>);
-    static_assert(is_smart_ptr<std::unique_ptr<const Animal>, Registry>);
+    static_assert(IsSmartPtr<std::unique_ptr<Animal>, Registry>);
+    static_assert(IsSmartPtr<std::unique_ptr<const Animal>, Registry>);
     static_assert(
         std::is_same_v<
             decltype(*std::declval<unique_virtual_ptr<Animal, Registry>>()),

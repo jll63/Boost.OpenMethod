@@ -17,10 +17,6 @@
 
 cmake_minimum_required(VERSION 3.8...3.20)
 
-if(MSVC)
-  target_compile_options(${TARGET_NAME} /W4 /WX)
-endif()
-
 set(BOOST_OPENMETHOD_VERSION 1)
 
 if (BOOST_SUPERPROJECT_VERSION)

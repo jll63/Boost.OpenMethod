@@ -45,9 +45,13 @@ namespace boost::openmethod {
 #define BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS(CODE) CODE
 #endif
 
+namespace detail {
+using void_t = void;
+}
+
 template<
     class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY,
-    typename = void>
+    typename = detail::void_t>
 class virtual_ptr;
 
 // =============================================================================
@@ -90,39 +94,6 @@ struct init_type_ids<Registry, mp11::mp_list<Class...>> {
     static auto fn(type_id* ids) {
         (..., (*ids++ = Registry::rtti::template static_type<Class>()));
         return ids;
-    }
-};
-
-template<class...>
-struct use_class_aux;
-
-template<class Registry, class Class, typename... Bases>
-struct use_class_aux<Registry, mp11::mp_list<Class, Bases...>>
-    : std::conditional_t<
-          Registry::has_deferred_static_rtti, detail::deferred_class_info,
-          detail::class_info> {
-    inline static type_id bases[sizeof...(Bases)];
-    use_class_aux() {
-        this->first_base = bases;
-        this->last_base = bases + sizeof...(Bases);
-        this->is_abstract = std::is_abstract_v<Class>;
-        this->static_vptr = &Registry::template static_vptr<Class>;
-
-        if constexpr (!Registry::has_deferred_static_rtti) {
-            resolve_type_ids();
-        }
-
-        Registry::classes.push_back(*this);
-    }
-
-    void resolve_type_ids() {
-        this->type = Registry::rtti::template static_type<Class>();
-        auto iter = bases;
-        (..., (*iter++ = Registry::rtti::template static_type<Bases>()));
-    }
-
-    ~use_class_aux() {
-        Registry::classes.remove(*this);
     }
 };
 
@@ -294,18 +265,80 @@ struct virtual_traits<T*, Registry> {
     }
 };
 
+namespace detail {
+
+template<class...>
+struct use_class_aux;
+
+template<class Registry, class Class, typename... Bases>
+struct use_class_aux<Registry, mp11::mp_list<Class, Bases...>>
+    : std::conditional_t<
+          Registry::has_deferred_static_rtti, detail::deferred_class_info,
+          detail::class_info> {
+    inline static type_id bases[sizeof...(Bases)];
+    use_class_aux() {
+        this->first_base = bases;
+        this->last_base = bases + sizeof...(Bases);
+        this->is_abstract = std::is_abstract_v<Class>;
+        this->static_vptr = &Registry::template static_vptr<Class>;
+
+        if constexpr (!Registry::has_deferred_static_rtti) {
+            resolve_type_ids();
+        }
+
+        Registry::classes.push_back(*this);
+    }
+
+    void resolve_type_ids() {
+        this->type = Registry::rtti::template static_type<Class>();
+        auto iter = bases;
+        (..., (*iter++ = Registry::rtti::template static_type<Bases>()));
+    }
+
+    ~use_class_aux() {
+        Registry::classes.remove(*this);
+    }
+};
+
 template<class... Classes>
-struct use_classes {
-    using tuple_type = boost::mp11::mp_apply<
-        std::tuple,
-        boost::mp11::mp_transform_q<
-            boost::mp11::mp_bind_front<
-                detail::use_class_aux,
-                typename detail::extract_registry<Classes...>::registry>,
-            boost::mp11::mp_apply<
-                detail::inheritance_map,
-                typename detail::extract_registry<Classes...>::others>>>;
-    tuple_type tuple;
+using use_classes_tuple_type = boost::mp11::mp_apply<
+    std::tuple,
+    boost::mp11::mp_transform_q<
+        boost::mp11::mp_bind_front<
+            detail::use_class_aux,
+            typename detail::extract_registry<Classes...>::registry>,
+        boost::mp11::mp_apply<
+            detail::inheritance_map,
+            typename detail::extract_registry<Classes...>::others>>>;
+
+} // namespace detail
+
+//! Add classes to a registry
+//!
+//! `use_classes` is a registrar class that adds one or more classes to a
+//! registry.
+//!
+//! Classes potentially involved in a method definition, an overrider, or a
+//! method call must be registered via `use_classes`. A class may be registered
+//! multiple times. A class and its direct bases must be listed together in one
+//! or more instantiations of `use_classes`.
+//!
+//! If a class is identified by different type ids in different translation
+//! units, it must be registered in as many translation units as necessary for
+//! `use_classes` to register all the type ids. This situation can occur when
+//! using standard RTTI, because the address of the `type_info` objects are used
+//! as type ids, and the standard does not guarantee that there is exactly one
+//! such object per class. The only such case known to the author is when using
+//! Windows DLLs.
+//!
+//! Virtual and multiple inheritance are supported, as long as it is possible to
+//! cast the virtual arguments of a method call to the types required by the
+//! overriders. The registry's `rtti` policy defines which casts are possible.
+//! For the @ref policies::std_rtti (the default), some scenarios involving
+//! repeated inheritance may not allow the cast.
+template<class... Classes>
+class use_classes {
+    detail::use_classes_tuple_type<Classes...> tuple;
 };
 
 void boost_openmethod_vptr(...);
@@ -485,17 +518,11 @@ inline auto final_virtual_ptr(Arg&& obj) {
         std::forward<Arg>(obj));
 }
 
-/**
-
-A wide pointer combining a pointer to an object and a pointer to its v-table.
-
-@tparam Class The class of the object.
-
-@tparam Registry The registry in which `Class` is registered.
-
-@tparam unnamed Always `void` (used for SFINAE).
-
-*/
+//! Wide pointer combining a pointers to an object and its v-table
+//!
+//! @tparam Class The class of the object.
+//! @tparam Registry The registry in which `Class` is registered.
+//! @tparam unnamed Implementation defined, do not provide.
 
 template<class Class, class Registry, typename>
 class virtual_ptr {
@@ -515,50 +542,52 @@ class virtual_ptr {
     std::conditional_t<use_indirect_vptrs, const vptr_type*, vptr_type> vp;
     Class* obj;
 
+    template<
+        class Other,
+        typename = std::enable_if_t<std::is_constructible_v<Class*, Other*>>>
+    virtual_ptr(Other& other, decltype(vp) vp) : vp(vp), obj(&other) {
+    }
+
   public:
     using element_type = Class;
 
-    /**
-        Constructs a `virtual_ptr` with both object and v-table pointers
-        initialized to `nullptr`.
-    */
-
+    //! Default constructor
+    //!
+    //! @note This constructor does nothing. The state of the two pointers
+    //! inside the object is as specified for uninitialized variables by C++.
     virtual_ptr() = default;
 
-    /**
-        Constructs a `virtual_ptr` with both object and v-table pointers
-        initialized to `nullptr`.
-
-        @param value A `nullptr`.
-    */
-
+    //! Constructs a `virtual_ptr` with both object and v-table pointers
+    //! initialized to `nullptr`.
+    //!
+    //! @param value A `nullptr`.
     explicit virtual_ptr(std::nullptr_t)
         : vp(detail::box_vptr<use_indirect_vptrs>(detail::null_vptr)),
           obj(nullptr) {
     }
 
-    /**
-        Constructs a `virtual_ptr` pointing to an object of type `Other`.
-
-        The pointer to the v-table is obtained by calling
-        @ref boost_openmethod_vptr if a suitable overload exists, or the
-        @ref policies::vptr::fn::dynamic_vptr of the registry's @ref
-        policies::vptr otherwise.
-
-        @ref dynamic_vptr foo
-
-        @param other A `nullptr`.
-
-        @par Requirements
-
-        `Other` must be a polymorphic class, according to the `Registry`'s
-        `rtti` policy.
-
-        `Other*` must be convertible to `Class*`.
-
-        @par Errors
-    */
-
+    //! Constructs a `virtual_ptr` from a reference to an object
+    //!
+    //! The pointer to the v-table is obtained by calling
+    //! @ref boost_openmethod_vptr if a suitable overload exists, or the
+    //! @ref policies::vptr::fn::dynamic_vptr of the registry's
+    //! `vptr` policy otherwise.
+    //!
+    //! @param other A reference to a polymorphic object
+    //!
+    //! @par Requirements
+    //!
+    //! @li `Other` must be a polymorphic class, according to `Registry`'s
+    //! `rtti` policy.
+    //!
+    //! @li `Other*` must be constructible from `Class*`.
+    //!
+    //! @par Errors
+    //!
+    //! The following errors may occur, depending on the policies selected in
+    //! `Registry`:
+    //!
+    //! @li @ref unknown_class_error
     template<
         class Other,
         typename = std::enable_if_t<
@@ -571,6 +600,28 @@ class virtual_ptr {
           obj(&other) {
     }
 
+    //! Constructs a `virtual_ptr` from a pointer to an object
+    //!
+    //! The pointer to the v-table is obtained by calling
+    //! @ref boost_openmethod_vptr if a suitable overload exists, or the
+    //! @ref policies::vptr::fn::dynamic_vptr of the registry's
+    //! `vptr` policy otherwise.
+    //!
+    //! @param other A pointer to a polymorphic object
+    //!
+    //! @par Requirements
+    //!
+    //! @li `Other` must be a polymorphic class, according to `Registry`'s
+    //! `rtti` policy.
+    //!
+    //! @li `Other*` must be constructible from `Class*`.
+    //!
+    //! @par Errors
+    //!
+    //! The following errors may occur, depending on the policies selected in
+    //! `Registry`:
+    //!
+    //! @li @ref unknown_class_error
     template<
         class Other,
         typename = std::enable_if_t<
@@ -584,6 +635,15 @@ class virtual_ptr {
           obj(other) {
     }
 
+    //! Constructs a `virtual_ptr` from a `virtual_ptr`
+    //!
+    //! The pointer to the v-table is copied from `other`.
+    //!
+    //! @param other A virtual_ptr to a type-compatible polymorphic object
+    //!
+    //! @par Requirements
+    //!
+    //! @li `Other*` must be constructible from `Class*`.
     template<
         class Other,
         typename = std::enable_if_t<std::is_constructible_v<
@@ -592,6 +652,15 @@ class virtual_ptr {
         : vp(other.vp), obj(other.get()) {
     }
 
+    //! Constructs a `virtual_ptr` from a `virtual_ptr`
+    //!
+    //! The pointer to the v-table is copied from `other`.
+    //!
+    //! @param other A virtual_ptr to a type-compatible polymorphic object
+    //!
+    //! @par Requirements
+    //!
+    //! @li `Other*` must be constructible from `Class*`.
     template<
         class Other,
         typename = std::enable_if_t<std::is_constructible_v<
@@ -608,18 +677,34 @@ class virtual_ptr {
         // that is incorrect.
     }
 
-    template<
-        class Other,
-        typename = std::enable_if_t<std::is_constructible_v<Class*, Other*>>>
-    virtual_ptr(Other& other, decltype(vp) vp) : vp(vp), obj(&other) {
-    }
-
+    //! Set a `virtual_ptr` to point to an object
+    //!
+    //! The pointer to the v-table is obtained by calling
+    //! @ref boost_openmethod_vptr if a suitable overload exists, or the
+    //! @ref policies::vptr::fn::dynamic_vptr of the registry's
+    //! `vptr` policy otherwise.
+    //!
+    //! @param other A reference to a polymorphic object
+    //!
+    //! @par Requirements
+    //!
+    //! @li `Other` must be a polymorphic class, according to `Registry`'s
+    //! `rtti` policy.
+    //!
+    //! @li `Other*` must be constructible from `Class*`.
+    //!
+    //! @par Errors
+    //!
+    //! The following errors may occur, depending on the policies selected in
+    //! `Registry`:
+    //!
+    //! @li @ref unknown_class_error
     template<
         class Other,
         typename = std::enable_if_t<
-            std::is_assignable_v<Class*, Other*> &&
             BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS(detail::)
-                IsPolymorphic<Class, Registry>>>
+                IsPolymorphic<Class, Registry> &&
+            std::is_assignable_v<Class*, Other*>>>
     virtual_ptr& operator=(Other& other) {
         obj = &other;
         vp = detail::box_vptr<use_indirect_vptrs>(
@@ -627,12 +712,34 @@ class virtual_ptr {
         return *this;
     }
 
+    //! Set a `virtual_ptr` to point to an object
+    //!
+    //! The pointer to the v-table is obtained by calling
+    //! @ref boost_openmethod_vptr if a suitable overload exists, or the
+    //! @ref policies::vptr::fn::dynamic_vptr of the registry's
+    //! `vptr` policy otherwise.
+    //!
+    //! @param other A pointer to a polymorphic object
+    //!
+    //! @par Requirements
+    //!
+    //! @li `Other` must be a polymorphic class, according to `Registry`'s
+    //! `rtti` policy.
+    //!
+    //! @li `Other*` must be constructible from `Class*`.
+    //!
+    //! @par Errors
+    //!
+    //! The following errors may occur, depending on the policies selected in
+    //! `Registry`:
+    //!
+    //! @li @ref unknown_class_error
     template<
         class Other,
         typename = std::enable_if_t<
-            std::is_assignable_v<Class*, Other*> &&
             BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS(detail::)
-                IsPolymorphic<Class, Registry>>>
+                IsPolymorphic<Class, Registry> &&
+            std::is_assignable_v<Class*, Other*>>>
     virtual_ptr& operator=(Other* other) {
         obj = other;
         vp = detail::box_vptr<use_indirect_vptrs>(
@@ -640,6 +747,15 @@ class virtual_ptr {
         return *this;
     }
 
+    //! Assign a `virtual_ptr` from a `virtual_ptr`
+    //!
+    //! The pointer to the v-table is copied from `other`.
+    //!
+    //! @param other A virtual_ptr to a type-compatible polymorphic object
+    //!
+    //! @par Requirements
+    //!
+    //! @li `Other*` must be constructible from `Class*`.
     template<
         class Other,
         typename = std::enable_if_t<std::is_assignable_v<
@@ -650,26 +766,32 @@ class virtual_ptr {
         return *this;
     }
 
+    //! Set a `virtual_ptr` to `nullptr`
     virtual_ptr& operator=(std::nullptr_t) {
         obj = nullptr;
         vp = detail::box_vptr<use_indirect_vptrs>(detail::null_vptr);
         return *this;
     }
 
+    //! Get a pointer to the object
+    //!
+    //! @return A pointer to the object
     auto get() const -> Class* {
         return obj;
     }
 
+    //! Get a pointer to the object
+    //!
+    //! @return A pointer to the object
     auto operator->() const {
         return get();
     }
 
+    //! Get a reference to the object
+    //!
+    //! @return A reference to the object
     auto operator*() const -> element_type& {
         return *get();
-    }
-
-    auto pointer() const -> const Class*& {
-        return obj;
     }
 
     template<class Other>
@@ -1167,6 +1289,143 @@ template<
     typename Name, typename... Parameters, typename ReturnType, class Registry>
 class method<Name, ReturnType(Parameters...), Registry>
     : public detail::method_base<Registry> {
+    template<auto Function, typename FunctionType>
+    struct override_aux;
+
+  public:
+    //! Entry point to call the method
+    //!
+    //! The only instance of `method`. Its `operator()` is used to call
+    //! the method.
+    static method fn;
+
+    //! Call the method
+    //!
+    //! Call the method with `args`. The types of the arguments are the same as
+    //! the method `Parameters...`, stripped from any `virtual\_` decorators.
+    //!
+    //! The overrider is selected in the same way as overloaded function
+    //! resolution:
+    //!
+    //! 1. Form the set of all applicable overriders. An overrider is applicable
+    //!    if it can be called with the arguments passed to the method.
+    //!
+    //! 2. If the set is empty, call the error handler (if present in the
+    //!    policy), then terminate the program with `abort`.
+    //!
+    //! 3. Remove the overriders that are dominated by other overriders in the
+    //!    set. Overrider A dominates overrider B if any of its virtual formal
+    //!    parameters is more specialized than B's, and if none of B's virtual
+    //!    parameters is more specialized than A's.
+    //!
+    //! 4. If the resulting set contains only one overrider, call it. Otherwise,
+    //!    report an error.
+    //!
+    //! For each virtual argument `arg`, the dispatch mechanism calls
+    //! `virtual_traits::peek(arg)` and deduces the v-table pointer from the `result`,
+    //! using the first of the following methods that applies:
+    //!
+    //! 1. If `result` is a `virtual_ptr`, get the pointer to the v-table from it.
+    //!
+    //! 2. If a function named `boost_openmethod_vptr` that takes `result` and returns a
+    //!    `vptr_type` exists, call it.
+    //!
+    //! 3. Call `Policy::dynamic_vptr(result)`.
+    //!
+    //! @par N2216 Handling of Ambiguous Calls
+    //!
+    //! If `Registry` contains the @ref n2216 policy, ambiguous calls are not an
+    //! error. Instead, the following extra steps are taken to select an
+    //! overrider:
+    //!
+    //! 1. If the return type is a registered polymorphic type, remove all the
+    //!    overriders that return a less specific type than others.
+    //!
+    //! 2. If the resulting set contains only one overrider, call it.
+    //!
+    //! 3. Otherwise, call one of the remaining overriders. Which overrider is
+    //!    selected is not specified, but it is the same across calls with the
+    //!    same arguments types.
+    //!
+    //! @param args The arguments for the method call.
+    //!
+    //! @par Errors
+    //!
+    //! If `Registry` contains an @ref error_handler policy, call its `error`
+    //! function with an object of one of the following types:
+    //!
+    //! @li @ref not_implemented: No overrider is applicable.
+    //! @li @ref ambiguous_call: More than one overrider is applicable, and
+    //! none is more specialized than all the others.
+    //!
+    //! Then terminate the program with a call to `abort`.
+    auto operator()(typename BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS(detail::)
+                        StripVirtualDecorator<Parameters>::type... args) const
+        -> ReturnType;
+
+    //! Check if a next most specialized overrider exists
+    //!
+    //! Return `true` if a next most specialized overrider after _Fn_ exists,
+    //! and @ref next can be called without causing a @ref call_error.
+    //!
+    //! @par Requirements
+    //!
+    //! `Fn` must be a function that is an overrider of the method.
+    //!
+    //! @tparam Fn A function that is an overrider of the method.
+    //! @return `true` if a next most specialized overrider exists
+    template<auto Fn>
+    static bool has_next();
+
+    //! The next most specialized overrider
+    //!
+    //! A pointer to the next most specialized overrider after `Fn`, i.e. the
+    //! overrider that would be called for the same tuple of virtual arguments
+    //! if `Fn` was not present. Set to `nullptr` if no such overrider exists.
+    //! @par Requirements
+    //!
+    //! `Fn` must be a function that is an overrider of the method.
+    //!
+    //! @tparam Fn A function that is an overrider of the method.
+    template<auto Fn>
+    inline static ReturnType (*next)(
+        typename BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS(detail::)
+            StripVirtualDecorator<Parameters>::type... args);
+
+    //! Add overriders to method
+    //!
+    //! `override`, instantiated as a static object, adds one or more overriders
+    //! to an open-method.
+    //!
+    //! @par Requirements
+    //!
+    //! `Fn` must be a function that fulfills the following requirements:
+    //!
+    //! @li Have the same number of formal parameters as the method.
+    //!
+    //! @li Each `virtual_ptr<T>` in the method's parameter list must have a
+    //! corresponding `virtual_ptr<U> in the same position in the overrider's
+    //! parameter list. The registry's `rtti` policy must have a
+    //! `dynamic_cast_ref` that can cast `virtual_ptr<T>` to `virtual_ptr<U>`.
+    //!
+    //! @li Each `virtual_<T>` in the method's parameter list must have a
+    //! corresponding parameter `U` that the registry's `rtti` policy can cast
+    //! from `T` to `U`. Note: `U` must *not* be decorated with `virtual_<>`.
+    //!
+    //! @li All other formal parameters must have the same type as the method's
+    //! corresponding parameters.
+    //!
+    //! @li The return type of the overrider must be the same as the method's
+    //! return type or, if it is a polymorphic type, covariant with the method's
+    //! return type.
+    //!
+    //! @tparam Fn One or more functions to the overrider list
+    template<auto... Fn>
+    class override {
+        std::tuple<override_aux<Fn, decltype(Fn)>...> impl;
+    };
+
+  private:
     // Aliases used in implementation only. Everything extracted from template
     // arguments is capitalized like the arguments themselves.
     using RegistryType = Registry;
@@ -1244,88 +1503,6 @@ class method<Name, ReturnType(Parameters...), Registry>
 
     void resolve(); // virtual if Registry contains has_deferred_static_rtti
 
-  public:
-    static method fn;
-
-    //! Call the method
-    //!
-    //! Call the method with `args`. The types of the arguments are the same as
-    //! the method `Parameters...`, stripped from any `virtual\_` decorators.
-    //!
-    //! The overrider is selected in the same way as overloaded function
-    //! resolution:
-    //!
-    //! 1. Form the set of all applicable overriders. An overrider is applicable
-    //!    if it can be called with the arguments passed to the method.
-    //!
-    //! 2. If the set is empty, call the error handler (if present in the
-    //!    policy), then terminate the program with `abort`.
-    //!
-    //! 3. Remove the overriders that are dominated by other overriders in the
-    //!    set. Overrider A dominates overrider B if any of its virtual formal
-    //!    parameters is more specialized than B's, and if none of B's virtual
-    //!    parameters is more specialized than A's.
-    //!
-    //! 4. If the resulting set contains only one overrider, call it. Otherwise,
-    //!    report an error.
-    //!
-    //! For each virtual argument `arg`, the dispatch mechanism calls
-    //! `virtual_traits::peek(arg)` and deduces the v-table pointer from the `result`,
-    //! using the first of the following methods that applies:
-    //!
-    //! 1. If `result` is a `virtual_ptr`, get the pointer to the v-table from it.
-    //!
-    //! 2. If a function named `boost_openmethod_vptr` that takes `result` and returns a
-    //!    `vptr_type` exists, call it.
-    //!
-    //! 3. Call `Policy::dynamic_vptr(result)`.
-    //!
-    //! @par N2216 Handling of Ambiguous Calls
-    //!
-    //! If `Registry` contains the @ref n2216 policy, ambiguous calls are not an
-    //! error. Instead, the following extra steps are taken to select an
-    //! overrider:
-    //!
-    //! 1. If the return type is a registered polymorphic type, remove all the
-    //!    overriders that return a less specific type than others.
-    //!
-    //! 2. If the resulting set contains only one overrider, call it.
-    //!
-    //! 3. Otherwise, call one of the remaining overriders. Which overrider is
-    //!    selected is not specified, but it is the same across calls with the
-    //!    same arguments types.
-    //!
-    //! @param args The arguments for the method call.
-    //!
-    //! @par Errors
-    //!
-    //! If `Registry` contains an @ref error_handler policy, call its `error`
-    //! function with an object of one of the following types:
-    //!
-    //! @li @ref not_implemented: No overrider is applicable.
-    //! @li @ref ambiguous_call: More than one overrider is applicable, and
-    //! none is more specialized than all the others.
-    //!
-    //! Then terminate the program with a call to `abort`.
-    auto operator()(typename BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS(detail::)
-                        StripVirtualDecorator<Parameters>::type... args) const
-        -> ReturnType;
-
-    //! The next most specialized overrider
-    //!
-    //! A pointer to the next most specialized overrider after _Overrider_, i.e. the
-    //! overrider that would be called for the same tuple of virtual arguments if
-    //! _Overrider_ was not present. Set to `nullptr` if no such overrider exists.
-
-    template<auto Overrider>
-    inline static ReturnType (*next)(
-        typename BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS(detail::)
-            StripVirtualDecorator<Parameters>::type... args);
-
-    template<auto>
-    static bool has_next();
-
-  private:
     static BOOST_NORETURN auto fn_not_implemented(
         detail::remove_virtual_<Parameters>... args) -> ReturnType;
     static BOOST_NORETURN auto
@@ -1378,12 +1555,6 @@ class method<Name, ReturnType(Parameters...), Registry>
         }
 
         inline static override_impl<fn, FnReturnType> impl{&next<Function>};
-    };
-
-  public:
-    template<auto... Function>
-    struct override {
-        std::tuple<override_aux<Function, decltype(Function)>...> impl;
     };
 };
 

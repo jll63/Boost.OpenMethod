@@ -66,6 +66,10 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
         BOOST_TEST(p.get() == snoopy.get());
         BOOST_TEST(p.vptr() == Registry::template static_vptr<Dog>);
 
+        p = p;
+        BOOST_TEST(p.get() == snoopy.get());
+        BOOST_TEST(p.vptr() == Registry::template static_vptr<Dog>);
+
         auto hector = std::make_shared<Dog>();
         p = hector;
         BOOST_TEST(p.get() == hector.get());

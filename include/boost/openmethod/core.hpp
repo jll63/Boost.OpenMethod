@@ -27,7 +27,7 @@
 #define BOOST_OPENMETHOD_DEFAULT_REGISTRY ::boost::openmethod::default_registry
 #endif
 
-#ifdef BOOST_COMP_MSVC
+#ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable : 4646)
 #pragma warning(disable : 4100)
@@ -1091,7 +1091,7 @@ class method;
 //!
 //! `Parameters` must contain at least one virtual parameter, i.e. a parameter
 //! that has a type in the form `virtual_ptr<T, Registry>` or `virtual\_<T>`.
-//! The dynamic types of the virtual arguments (the arguments corresponding to
+//! The dynamic types of the virtual arguments (the arguments corresponding tosy
 //! virtual parameters in the method's signature) are taken into account to
 //! select the overrider to call.
 //!
@@ -1259,7 +1259,7 @@ class method<Name, ReturnType(Parameters...), Registry>
 
     template<auto Overrider>
     static ReturnType (*next)(
-        BOOST_OPENMETHOD_DETAIL_REMOVE_VIRTUAL_(Parameters)...);
+        BOOST_OPENMETHOD_DETAIL_REMOVE_VIRTUAL_(Parameters)... args);
 
     template<auto>
     static bool has_next();
@@ -1752,7 +1752,7 @@ using boost::openmethod::virtual_ptr;
 
 } // namespace boost::openmethod
 
-#ifdef BOOST_COMP_MSVC
+#ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 

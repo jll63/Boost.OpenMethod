@@ -25,7 +25,7 @@
 #include <boost/assert.hpp>
 #include <boost/dynamic_bitset.hpp>
 
-#ifdef BOOST_COMP_MSVC
+#ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable : 4457)
 #endif
@@ -1355,7 +1355,7 @@ auto finalize() -> void {
 
 } // namespace boost::openmethod
 
-#ifdef BOOST_COMP_MSVC
+#ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 

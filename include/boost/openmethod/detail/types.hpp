@@ -87,10 +87,16 @@ struct hash_search_error : openmethod_error {
     auto write(Stream& os) const -> void;
 };
 
+//! An error indicating that no valid overrider exists for the given virtual
+//! tuple.
 struct call_error : openmethod_error {
+    //! The type_id of method that was called.
     type_id method;
+    //! The number of @em virtual arguments in the call.
     std::size_t arity;
+    //! The maximum size of `types`.
     static constexpr std::size_t max_types = 16;
+    //! The type_ids of the arguments.
     type_id types[max_types];
 
   protected:
@@ -98,20 +104,42 @@ struct call_error : openmethod_error {
     auto write_aux(Stream& os, const char* subtype) const -> void;
 };
 
+//! An error indicating that no overrider exists for the given virtual tuple.
+//!
+//! @see @ref call_error for data members.
 struct not_implemented_error : call_error {
+    //! Write a short description to an output stream.
+    //! @param os The output stream.
+    //! @tparam Registry The registry type.
+    //! @tparam Stream A @ref LightweightOutputStream.
     template<class Registry, class Stream>
     auto write(Stream& os) const -> void {
         write_aux<Registry>(os, "not implemented");
     }
 };
 
+//! An error indicating that a method call is ambiguous.
+//!
+//! @see @ref call_error for data members.
 struct ambiguous_error : call_error {
+    //! Write a short description to an output stream.
+    //! @param os The output stream.
+    //! @tparam Registry The registry type.
+    //! @tparam Stream A @ref LightweightOutputStream.
     template<class Registry, class Stream>
     auto write(Stream& os) const -> void {
         write_aux<Registry>(os, "ambiguous");
     }
 };
 
+//! Static and dynamic type mismatch in a "final" construct.
+//!
+//! If runtime checks are enabled, the "final" construct checks that the static
+//! and dynamic types of the object, as reported by the `rtti` policy,  are the
+//! same. If they are not, and if the registry contains an @ref error_handler
+//! policy, its @ref error function is called with a `final_error` object, then
+//! the program is terminated with
+//! @ref abort.
 struct final_error : openmethod_error {
     type_id static_type, dynamic_type;
 

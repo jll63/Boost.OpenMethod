@@ -156,35 +156,24 @@ struct remove_virtual_aux<virtual_<T>> {
 template<typename T>
 using remove_virtual_ = typename remove_virtual_aux<T>::type;
 
+template<typename T, class Registry, typename = void>
+struct virtual_type_aux {
+    using type = void;
+};
+
 template<typename T, class Registry>
-using virtual_type = typename virtual_traits<T, Registry>::virtual_type;
+struct virtual_type_aux<
+    T, Registry,
+    std::void_t<typename virtual_traits<T, Registry>::virtual_type>> {
+    using type = typename virtual_traits<T, Registry>::virtual_type;
+};
+
+template<typename T, class Registry>
+using virtual_type = typename virtual_type_aux<T, Registry>::type;
 
 template<typename MethodArgList>
 using virtual_types = boost::mp11::mp_transform<
     remove_virtual_, boost::mp11::mp_filter<detail::is_virtual, MethodArgList>>;
-
-template<typename T, class Registry>
-struct parameter_traits {
-    static auto peek(const T&) {
-        return nullptr;
-    }
-
-    template<typename>
-    static auto cast(T value) -> T {
-        return value;
-    }
-};
-
-template<typename T, class Registry>
-struct parameter_traits<virtual_<T>, Registry> : virtual_traits<T, Registry> {};
-
-template<class Class, class Registry>
-struct parameter_traits<virtual_ptr<Class, Registry, void>, Registry>
-    : virtual_traits<virtual_ptr<Class, Registry, void>, Registry> {};
-
-template<class Class, class Registry>
-struct parameter_traits<const virtual_ptr<Class, Registry, void>&, Registry>
-    : virtual_traits<const virtual_ptr<Class, Registry, void>&, Registry> {};
 
 } // namespace detail
 
@@ -212,9 +201,7 @@ BOOST_OPENMETHOD_CLOSE_NAMESPACE_DETAIL_UNLESS_MRDOCS
 // virtual_traits
 
 template<typename T, class Registry>
-struct virtual_traits {
-    using virtual_type = void;
-};
+struct virtual_traits;
 
 template<typename T, class Registry>
 struct virtual_traits<T&, Registry> {
@@ -479,6 +466,26 @@ inline vptr_type null_vptr = nullptr;
 
 } // namespace detail
 
+//! Create a `virtual_ptr` for an object of an exact known type
+//!
+//! `final_virtual_ptr` creates a `virtual_ptr` to an object, setting its
+//! v-table pointer according to the declared type of its argument. It assumes
+//! that the static and dynamic types are the same. The v-table pointer is
+//! initialized from the `Policy::static_vptr` for the class, which needs
+//! not be polymorphic.
+//!
+//! @para Errors If the registry has runtime checks enabled, and the argument is
+//! a class type that is polymorphic according to the registry's `rtti` policy,
+//! a check is performed to verify that the static and dynamic types are indeed
+//! the same. If they are not, and if the registry contains an @ref
+//! error_handler policy, its
+//! @ref error function is called with a @ref final_error value, then the
+//! program is terminated with @ref abort.
+//!
+//! @tparam Registry The registry in which the class is registered.
+//! @tparam Arg The type of the argument.
+//! @param obj A reference to an object.
+//! @return A `virtual_ptr<Class, Registry>` pointing to `obj`.
 template<class Registry, typename Arg>
 inline auto final_virtual_ptr(Arg&& obj) {
     using namespace detail;
@@ -518,12 +525,25 @@ inline auto final_virtual_ptr(Arg&& obj) {
         std::forward<Arg>(obj));
 }
 
-//! Wide pointer combining a pointers to an object and its v-table
+//! Wide pointer combining pointers to an object and its v-table
 //!
-//! @tparam Class The class of the object.
-//! @tparam Registry The registry in which `Class` is registered.
+//! `virtual_ptr` is a wide pointer that combines a pointer to an object and a
+//! pointer to its v-table. It can be constructed from a reference, a pointer,
+//! or another `virtual_ptr`.
+//!
+//! Calls to methods via `virtual_ptr` are as fast as ordinary virtual function
+//! calls (typically two instructions).
+//!
+//! @par Requirements
+//!
+//! @li A `virtual_traits<Class&>` specialization must exist and provide the
+//! required members.
+//! @li `Class` must be a class type, possibly cv-qualified. It must be
+//! registered in `Registry`.
+//!
+//! @tparam Class The class of the object, possibly cv-qualified
+//! @tparam Registry The registry in which `Class` is registered
 //! @tparam unnamed Implementation defined, do not provide.
-
 template<class Class, class Registry, typename>
 class virtual_ptr {
 
@@ -549,6 +569,9 @@ class virtual_ptr {
     }
 
   public:
+    //! The type of the object pointed to
+    //!
+    //! This is the same as `Class`.
     using element_type = Class;
 
     //! Default constructor
@@ -794,25 +817,47 @@ class virtual_ptr {
         return *get();
     }
 
+    //! Cast to another `virtual_ptr` type
+    //! @tparam Other The target class of the cast
+    //! @return A `virtual_ptr<Other, Registry>` pointing to the same object
+    //! @par Requirements
+    //! @li `Other` must be a base or derived class of `Class`.
     template<class Other>
     auto cast() const -> decltype(auto) {
-        static_assert(
-            std::is_base_of_v<Class, Other> || std::is_base_of_v<Other, Class>);
-
         return virtual_ptr<Other, Registry>(
             traits::template cast<Other&>(*obj), vp);
     }
 
+    //! Construct a `virtual_ptr` from a reference to an object
+    //!
+    //! This function forwards to @ref final_virtual_ptr.
+    //!
+    //! @tparam Other The type of the argument
+    //! @param obj A reference to an object
+    //! @return A `virtual_ptr<Class, Registry>` pointing to `obj`
     template<class Other>
     static auto final(Other&& obj) {
         return final_virtual_ptr<Registry>(std::forward<Other>(obj));
     }
 
+    //! Get the v-table pointer
+    //! @return The v-table pointer
     auto vptr() const {
         return detail::unbox_vptr(this->vp);
     }
 };
 
+//! Wide pointer combining a smart pointer to an object and its v-table
+//!
+//! This specialization of `virtual_ptr` uses a smart pointer to the object,
+//! instead of a plain pointer.
+//!
+//! Calls to methods via `virtual_ptr` are as fast as ordinary virtual function
+//! calls (typically two instructions).
+//!
+//! @tparam Class The class of the object, possibly cv-qualified
+//! @tparam Registry The registry in which `Class` is registered
+//! @tparam unnamed Implementation defined, do not provide.
 template<class Class, class Registry>
 class virtual_ptr<
     Class, Registry,
@@ -1254,6 +1299,29 @@ template<class Registry>
 using method_base = std::conditional_t<
     Registry::has_deferred_static_rtti, deferred_method_info, method_info>;
 
+template<typename T, class Registry>
+struct parameter_traits {
+    static auto peek(const T&) {
+        return nullptr;
+    }
+
+    template<typename>
+    static auto cast(T value) -> T {
+        return value;
+    }
+};
+
+template<typename T, class Registry>
+struct parameter_traits<virtual_<T>, Registry> : virtual_traits<T, Registry> {};
+
+template<class Class, class Registry>
+struct parameter_traits<virtual_ptr<Class, Registry, void>, Registry>
+    : virtual_traits<virtual_ptr<Class, Registry, void>, Registry> {};
+
+template<class Class, class Registry>
+struct parameter_traits<const virtual_ptr<Class, Registry, void>&, Registry>
+    : virtual_traits<const virtual_ptr<Class, Registry, void>&, Registry> {};
+
 } // namespace detail
 
 //! Specialized with name, signature and return type
@@ -1613,8 +1681,8 @@ template<
 void method<Name, ReturnType(Parameters...), Registry>::resolve_type_ids() {
     using namespace detail;
     this->method_type_id = rtti::template static_type<method>();
-    this->return_type_id = rtti::template static_type<
-        typename virtual_traits<ReturnType, Registry>::virtual_type>();
+    this->return_type_id =
+        rtti::template static_type<virtual_type<ReturnType, Registry>>();
     init_type_ids<
         Registry,
         mp11::mp_transform_q<
@@ -1963,7 +2031,7 @@ void method<Name, ReturnType(Parameters...), Registry>::override_impl<
     using namespace detail;
 
     this->return_type = Registry::rtti::template static_type<
-        typename virtual_traits<FnReturnType, Registry>::virtual_type>();
+        virtual_type<FnReturnType, Registry>>();
     this->type = Registry::rtti::template static_type<decltype(Function)>();
     using Thunk = thunk<Function, decltype(Function)>;
     detail::

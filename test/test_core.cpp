@@ -45,9 +45,6 @@ static_assert(
 static_assert(std::is_same_v<
               virtual_traits<base&&, default_registry>::virtual_type, base>);
 
-static_assert(
-    std::is_same_v<virtual_traits<int, default_registry>::virtual_type, void>);
-
 static_assert(std::is_same_v<
               mp11::mp_filter<
                   is_virtual, mp11::mp_list<virtual_<a&>, b, virtual_<c&>>>,

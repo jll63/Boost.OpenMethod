@@ -1,11 +1,18 @@
+= xref:macros.adoc[Macro]&nbsp;BOOST_OPENMETHOD_DEFAULT_REGISTRY
 
-[#BOOST_OPENMETHOD_DEFAULT_REGISTRY]
+Default value for Registry
 
-## BOOST_OPENMETHOD_DEFAULT_REGISTRY
+== Synopsis
 
-### Description
+Defined in `&lt;https://www.github.com/boostorg/openmethod/blob/develop/include/boost/openmethod/core.hpp#L27[boost&sol;openmethod&sol;core&period;hpp]&gt;`
 
-The name of the default policy.
+```cpp
+#define BOOST_OPENMETHOD_DEFAULT_REGISTRY ::boost::openmethod::default_registry
+```
+
+== Description
+
+The name of the default registry.
 
 `BOOST_OPENMETHOD_DEFAULT_REGISTRY` is the default value for the `Policy` template
 parameter of `method`, `use_classes`, and other constructs defined in

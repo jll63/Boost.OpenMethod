@@ -22,7 +22,7 @@ std::vector<type_id> fast_perfect_hash_control;
 
 namespace policies {
 
-//! Hashes a @ref type_id using a fast, perfect hash function.
+//! Hash a @ref type_id using a fast, perfect hash function
 //!
 //! `fast_perfect_hash` implements the @ref type_hash policy using a hash
 //! function in the form `H(x)=(M*x)>>S`. It attempts to determine values for
@@ -37,7 +37,7 @@ namespace policies {
 struct fast_perfect_hash : type_hash {
     //! A model of @ref type_hash::fn.
     //!
-    //! @tparam Registry The registry containing this policy.
+    //! @tparam Registry The registry containing this policy
     template<class Registry>
     class fn {
         inline static std::size_t mult;
@@ -52,7 +52,7 @@ struct fast_perfect_hash : type_hash {
             std::vector<type_id>& buckets);
 
       public:
-        //! Finds the hash factors.
+        //! Find the hash factors
         //!
         //! Attempts to find suitable values for the multiplication factor `M`
         //! and the shift amount `S` to that do not result in collisions for the
@@ -62,9 +62,9 @@ struct fast_perfect_hash : type_hash {
         //! a @ref hash_error object then calls `abort`.
         //!
         //! @tparam ForwardIterator A forward iterator yielding
-        //! @ref IdsToVptr objects.
-        //! @param first The beginning of the range.
-        //! @param last The end of the range.
+        //! @ref IdsToVptr objects
+        //! @param first Beginning of the range
+        //! @param last End of the range
         template<typename ForwardIterator>
         static auto initialize(ForwardIterator first, ForwardIterator last) {
             if constexpr (Registry::has_runtime_checks) {
@@ -78,9 +78,9 @@ struct fast_perfect_hash : type_hash {
             return std::pair{min_value, max_value};
         }
 
-        //! Hashes a type id.
+        //! Hash a type id
         //!
-        //! Hashes a type id.
+        //! Hash a type id.
         //!
         //! If `Registry` contains the @ref runtime_checks policy, checks that
         //! the type id is valid, i.e. if it was present in the set passed to
@@ -89,8 +89,8 @@ struct fast_perfect_hash : type_hash {
         //! registered. In this case, signal a @ref unknown_class_error using
         //! the registry's @ref error_handler if present; then calls `abort`.
         //!
-        //! @param type The type_id to hash.
-        //! @return The hash value.
+        //! @param type The type_id to hash
+        //! @return The hash value
         BOOST_FORCEINLINE
         static auto hash(type_id type) -> std::size_t {
             auto index =
@@ -191,7 +191,7 @@ void fast_perfect_hash::fn<Registry>::initialize(
         }
     }
 
-    hash_search_error error;
+    fast_perfect_hash_error error;
     error.attempts = total_attempts;
     error.buckets = std::size_t(1) << M;
 

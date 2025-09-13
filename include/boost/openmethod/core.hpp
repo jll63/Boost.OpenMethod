@@ -46,12 +46,12 @@ namespace boost::openmethod {
 #endif
 
 namespace detail {
-using void_t = void;
+using sfinae = void;
 }
 
 template<
     class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY,
-    typename = detail::void_t>
+    typename = detail::sfinae>
 class virtual_ptr;
 
 // =============================================================================
@@ -534,16 +534,23 @@ inline auto final_virtual_ptr(Arg&& obj) {
 //! Calls to methods via `virtual_ptr` are as fast as ordinary virtual function
 //! calls (typically two instructions).
 //!
+//! The default value for `Registry` can be customized by defining the <a
+//! href="openmethod/BOOST_OPENMETHOD_DEFAULT_REGISTRY.html">BOOST_OPENMETHOD_DEFAULT_REGISTRY</a>
+//! preprocessor symbol.
+//!
+//! The default value for `Registry` can be customized by defining the
+//! xref:BOOST_OPENMETHOD_DEFAULT_REGISTRY.adoc[`BOOST_OPENMETHOD_DEFAULT_REGISTRY`]
+//! preprocessor symbol.
+//!
 //! @par Requirements
 //!
-//! @li A `virtual_traits<Class&>` specialization must exist and provide the
-//! required members.
-//! @li `Class` must be a class type, possibly cv-qualified. It must be
-//! registered in `Registry`.
+//! @li @ref virtual_traits must be specialized for `Class&`.
+//! @li `Class` must be a class type, possibly cv-qualified, registered in
+//! `Registry`.
 //!
 //! @tparam Class The class of the object, possibly cv-qualified
 //! @tparam Registry The registry in which `Class` is registered
-//! @tparam unnamed Implementation defined, do not provide.
+//! @tparam unnamed Implementation defined, use default
 template<class Class, class Registry, typename>
 class virtual_ptr {
 
@@ -569,7 +576,7 @@ class virtual_ptr {
     }
 
   public:
-    //! The type of the object pointed to
+    //! Class
     //!
     //! This is the same as `Class`.
     using element_type = Class;
@@ -1324,44 +1331,112 @@ struct parameter_traits<const virtual_ptr<Class, Registry, void>&, Registry>
 
 } // namespace detail
 
-//! Specialized with name, signature and return type
+//! Implement a method
+//!
+//! Methods are created by specializing the `method` class template with an
+//! identifier, a function type and optionally a registry.
+//!
+//! `Id` is a type, typically an incomplete class declaration named after the
+//! method's purpose. It is used to allow different methods with the same
+//! signature.
+//!
+//! `Fn` is a function type, i.e. a type in the form `ReturnType(Parameters...)`.
+//!
+//! `Registry` is an instantiation of class template @ref registry. Methods may
+//! use only classes that have been registered in the same registry as virtual
+//! parameters and arguments. The registry also policies that influence several
+//! aspects of the dispatch mechanism - for example, how to obtain a v-table
+//! pointer for an object, how to report errors, whether to perform sanity
+//! checks, etc.
+//!
+//! The default value of `Registry` is the preprocessor symbol
+//! `BOOST_OPENMETHOD_DEFAULT_REGISTRY`. It can be defined before including the
+//! `<boost/openmethod/core.hpp>` header to override the default registry.
+//! Setting this symbol after including `core.hpp` has no effect.
+//!
+//! Specializations of `method` have a single instance: the static member `fn`,
+//! a function object whose `operator()` is used to call the method and forward
+//! to the appropriate overrider. It is selected in the same way as overloaded
+//! function resolution:
+//!
+//! 1. Form the set of all applicable overriders. An overrider is applicable
+//!    if it can be called with the arguments passed to the method.
+//!
+//! 2. If the set is empty, call the error handler (if present in the
+//!    policy), then terminate the program with `abort`.
+//!
+//! 3. Remove the overriders that are dominated by other overriders in the
+//!    set. Overrider A dominates overrider B if any of its virtual formal
+//!    parameters is more specialized than B's, and if none of B's virtual
+//!    parameters is more specialized than A's.
+//!
+//! 4. If the resulting set contains exactly one overrider, call it.
+//!
+//! If a single most specialized overrider does not exist, the program is
+//! terminated via `abort`. If the registry contains an @ref error_handler
+//! policy, its `error` function is called with an object that describes the
+//! error, prior calling `abort`. `error` may prevent termination by throwing an
+//! exception.
+//!
+//! For each virtual argument `arg`, the dispatch mechanism calls
+//! `virtual_traits::peek(arg)` and deduces the v-table pointer from the
+//! `result`, using the first of the following methods that applies:
+//!
+//! 1. If `result` is a `virtual_ptr`, get the pointer to the v-table from it.
+//!
+//! 2. If `boost_openmethod_vptr` can be called with `result` and a `Registry*`,
+//!    and returns a `vptr_type`, call it.
+//!
+//! 3. Call `Registry::rtti::dynamic_vptr(result)`.
+//!
+//! @par N2216 Handling of Ambiguous Calls
+//!
+//! If `Registry` contains the @ref n2216 policy, ambiguous calls are not an
+//! error. Instead, the following extra steps are taken to select an
+//! overrider:
+//!
+//! 1. If the return type is a registered polymorphic type, remove all the
+//!    overriders that return a less specific type than others.
+//!
+//! 2. If the resulting set contains only one overrider, call it.
+//!
+//! 3. Otherwise, call one of the remaining overriders. Which overrider is
+//!    selected is not specified, but it is the same across calls with the
+//!    same arguments types.
+//!
+//! @tparam Id A type
+//! @tparam Fn A function type
+//! @tparam Registry The registry in which the method is defined
 template<
-    typename Name, typename ReturnType,
+    typename Id, typename Fn,
     class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
 class method;
 
-//! A method
+//! Method with a specific id, signature and return type
 //!
 //! `method` implements an open-method that takes a parameter list -
-//! `Parameters` - and returns a `ReturnType`. `Name` can be any type. Its
-//! purpose is to make it possible to have multiple methods with the same
-//! signature. Typically, `Name` is a class whose name reflects the method's
-//! purpose.
+//! `Parameters` - and returns a `ReturnType`.
 //!
 //! `Parameters` must contain at least one virtual parameter, i.e. a parameter
 //! that has a type in the form `virtual_ptr<T, Registry>` or `virtual\_<T>`.
-//! The dynamic types of the virtual arguments (the arguments corresponding tosy
-//! virtual parameters in the method's signature) are taken into account to
-//! select the overrider to call.
+//! The dynamic types of the virtual arguments are taken into account to select
+//! the overrider to call.
 //!
-//! A `method` is attached to a `Registry`, which contains policies that
-//! influence several parts of the dispatch mechanism - for example, how to
-//! obtain a v-table pointer for an object, how to report errors, whether to
-//! perform sanity checks, etc.
+//! @see method
 //!
-//! @tparam Name A type representing the method's name.
-//! @tparam ReturnType The return type of the method.
-//! @tparam Parameters The types of the parameters.
-//! @tparam Registry The registry of the method.
+//! @tparam Id A type representing the method's name
+//! @tparam ReturnType The return type of the method
+//! @tparam Parameters The types of the parameters
+//! @tparam Registry The registry of the method
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
-class method<Name, ReturnType(Parameters...), Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
+class method<Id, ReturnType(Parameters...), Registry>
     : public detail::method_base<Registry> {
     template<auto Function, typename FunctionType>
     struct override_aux;
 
   public:
-    //! Entry point to call the method
+    //! Method singleton
     //!
     //! The only instance of `method`. Its `operator()` is used to call
     //! the method.
@@ -1372,50 +1447,7 @@ class method<Name, ReturnType(Parameters...), Registry>
     //! Call the method with `args`. The types of the arguments are the same as
     //! the method `Parameters...`, stripped from any `virtual\_` decorators.
     //!
-    //! The overrider is selected in the same way as overloaded function
-    //! resolution:
-    //!
-    //! 1. Form the set of all applicable overriders. An overrider is applicable
-    //!    if it can be called with the arguments passed to the method.
-    //!
-    //! 2. If the set is empty, call the error handler (if present in the
-    //!    policy), then terminate the program with `abort`.
-    //!
-    //! 3. Remove the overriders that are dominated by other overriders in the
-    //!    set. Overrider A dominates overrider B if any of its virtual formal
-    //!    parameters is more specialized than B's, and if none of B's virtual
-    //!    parameters is more specialized than A's.
-    //!
-    //! 4. If the resulting set contains only one overrider, call it. Otherwise,
-    //!    report an error.
-    //!
-    //! For each virtual argument `arg`, the dispatch mechanism calls
-    //! `virtual_traits::peek(arg)` and deduces the v-table pointer from the `result`,
-    //! using the first of the following methods that applies:
-    //!
-    //! 1. If `result` is a `virtual_ptr`, get the pointer to the v-table from it.
-    //!
-    //! 2. If a function named `boost_openmethod_vptr` that takes `result` and returns a
-    //!    `vptr_type` exists, call it.
-    //!
-    //! 3. Call `Policy::dynamic_vptr(result)`.
-    //!
-    //! @par N2216 Handling of Ambiguous Calls
-    //!
-    //! If `Registry` contains the @ref n2216 policy, ambiguous calls are not an
-    //! error. Instead, the following extra steps are taken to select an
-    //! overrider:
-    //!
-    //! 1. If the return type is a registered polymorphic type, remove all the
-    //!    overriders that return a less specific type than others.
-    //!
-    //! 2. If the resulting set contains only one overrider, call it.
-    //!
-    //! 3. Otherwise, call one of the remaining overriders. Which overrider is
-    //!    selected is not specified, but it is the same across calls with the
-    //!    same arguments types.
-    //!
-    //! @param args The arguments for the method call.
+    //! @param args The arguments for the method call
     //!
     //! @par Errors
     //!
@@ -1426,7 +1458,6 @@ class method<Name, ReturnType(Parameters...), Registry>
     //! @li @ref ambiguous_call: More than one overrider is applicable, and
     //! none is more specialized than all the others.
     //!
-    //! Then terminate the program with a call to `abort`.
     auto operator()(typename BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS(detail::)
                         StripVirtualDecorator<Parameters>::type... args) const
         -> ReturnType;
@@ -1642,19 +1673,19 @@ class method<Name, ReturnType(Parameters...), Registry>
 // https://godbolt.org/z/GzEn486P7
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
-method<Name, ReturnType(Parameters...), Registry>
-    method<Name, ReturnType(Parameters...), Registry>::fn;
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
+method<Id, ReturnType(Parameters...), Registry>
+    method<Id, ReturnType(Parameters...), Registry>::fn;
 
 // template<
-//     typename Name, typename... Parameters, typename ReturnType, class Registry>
+//     typename Id, typename... Parameters, typename ReturnType, class Registry>
 // template<auto>
-// typename method<Name, ReturnType(Parameters...), Registry>::FunctionPointer
-//     method<Name, ReturnType(Parameters...), Registry>::next;
+// typename method<Id, ReturnType(Parameters...), Registry>::FunctionPointer
+//     method<Id, ReturnType(Parameters...), Registry>::next;
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
-method<Name, ReturnType(Parameters...), Registry>::method() {
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
+method<Id, ReturnType(Parameters...), Registry>::method() {
     using namespace policies;
 
     this->slots_strides_ptr = slots_strides;
@@ -1677,8 +1708,8 @@ method<Name, ReturnType(Parameters...), Registry>::method() {
 }
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
-void method<Name, ReturnType(Parameters...), Registry>::resolve_type_ids() {
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
+void method<Id, ReturnType(Parameters...), Registry>::resolve_type_ids() {
     using namespace detail;
     this->method_type_id = rtti::template static_type<method>();
     this->return_type_id =
@@ -1691,20 +1722,20 @@ void method<Name, ReturnType(Parameters...), Registry>::resolve_type_ids() {
 }
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 std::size_t method<
-    Name, ReturnType(Parameters...), Registry>::slots_strides[2 * Arity - 1];
+    Id, ReturnType(Parameters...), Registry>::slots_strides[2 * Arity - 1];
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
-method<Name, ReturnType(Parameters...), Registry>::~method() {
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
+method<Id, ReturnType(Parameters...), Registry>::~method() {
     Registry::methods.remove(*this);
 }
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 template<class Error>
-auto method<Name, ReturnType(Parameters...), Registry>::check_static_offset(
+auto method<Id, ReturnType(Parameters...), Registry>::check_static_offset(
     std::size_t actual, std::size_t expected) const -> void {
     using namespace detail;
 
@@ -1725,9 +1756,9 @@ auto method<Name, ReturnType(Parameters...), Registry>::check_static_offset(
 // method dispatch
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 BOOST_FORCEINLINE auto
-method<Name, ReturnType(Parameters...), Registry>::operator()(
+method<Id, ReturnType(Parameters...), Registry>::operator()(
     typename BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS(detail::)
         StripVirtualDecorator<Parameters>::type... args) const -> ReturnType {
     using namespace detail;
@@ -1738,11 +1769,11 @@ method<Name, ReturnType(Parameters...), Registry>::operator()(
 }
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 template<typename... ArgType>
 BOOST_FORCEINLINE
-    typename method<Name, ReturnType(Parameters...), Registry>::FunctionPointer
-    method<Name, ReturnType(Parameters...), Registry>::resolve(
+    typename method<Id, ReturnType(Parameters...), Registry>::FunctionPointer
+    method<Id, ReturnType(Parameters...), Registry>::resolve(
         const ArgType&... args) const {
     using namespace detail;
 
@@ -1762,9 +1793,9 @@ BOOST_FORCEINLINE
 }
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 template<typename ArgType>
-BOOST_FORCEINLINE auto method<Name, ReturnType(Parameters...), Registry>::vptr(
+BOOST_FORCEINLINE auto method<Id, ReturnType(Parameters...), Registry>::vptr(
     const ArgType& arg) const -> vptr_type {
     if constexpr (detail::is_virtual_ptr<ArgType>) {
         return arg.vptr();
@@ -1774,10 +1805,10 @@ BOOST_FORCEINLINE auto method<Name, ReturnType(Parameters...), Registry>::vptr(
 }
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 template<typename MethodArgList, typename ArgType, typename... MoreArgTypes>
 BOOST_FORCEINLINE auto
-method<Name, ReturnType(Parameters...), Registry>::resolve_uni(
+method<Id, ReturnType(Parameters...), Registry>::resolve_uni(
     const ArgType& arg,
     const MoreArgTypes&... more_args) const -> detail::word {
 
@@ -1803,10 +1834,10 @@ method<Name, ReturnType(Parameters...), Registry>::resolve_uni(
 }
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 template<typename MethodArgList, typename ArgType, typename... MoreArgTypes>
 BOOST_FORCEINLINE auto
-method<Name, ReturnType(Parameters...), Registry>::resolve_multi_first(
+method<Id, ReturnType(Parameters...), Registry>::resolve_multi_first(
     const ArgType& arg,
     const MoreArgTypes&... more_args) const -> detail::word {
 
@@ -1841,12 +1872,12 @@ method<Name, ReturnType(Parameters...), Registry>::resolve_multi_first(
 }
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 template<
     std::size_t VirtualArg, typename MethodArgList, typename ArgType,
     typename... MoreArgTypes>
 BOOST_FORCEINLINE auto
-method<Name, ReturnType(Parameters...), Registry>::resolve_multi_next(
+method<Id, ReturnType(Parameters...), Registry>::resolve_multi_next(
     vptr_type dispatch, const ArgType& arg,
     const MoreArgTypes&... more_args) const -> detail::word {
 
@@ -1888,10 +1919,10 @@ method<Name, ReturnType(Parameters...), Registry>::resolve_multi_next(
 // Error handling
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 template<auto Fn>
 inline auto
-method<Name, ReturnType(Parameters...), Registry>::has_next() -> bool {
+method<Id, ReturnType(Parameters...), Registry>::has_next() -> bool {
     if (next<Fn> == fn_not_implemented) {
         return false;
     }
@@ -1906,9 +1937,9 @@ method<Name, ReturnType(Parameters...), Registry>::has_next() -> bool {
 }
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 BOOST_NORETURN auto
-method<Name, ReturnType(Parameters...), Registry>::fn_not_implemented(
+method<Id, ReturnType(Parameters...), Registry>::fn_not_implemented(
     detail::remove_virtual_<Parameters>... args) -> ReturnType {
     using namespace policies;
 
@@ -1924,9 +1955,9 @@ method<Name, ReturnType(Parameters...), Registry>::fn_not_implemented(
 }
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 BOOST_NORETURN auto
-method<Name, ReturnType(Parameters...), Registry>::fn_ambiguous(
+method<Id, ReturnType(Parameters...), Registry>::fn_ambiguous(
     detail::remove_virtual_<Parameters>... args) -> ReturnType {
     using namespace policies;
 
@@ -1951,10 +1982,10 @@ constexpr bool is_virtual_ptr_compatible =
 }
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 template<
     auto Overrider, typename OverriderReturn, typename... OverriderParameters>
-auto method<Name, ReturnType(Parameters...), Registry>::
+auto method<Id, ReturnType(Parameters...), Registry>::
     thunk<Overrider, OverriderReturn (*)(OverriderParameters...)>::fn(
         detail::remove_virtual_<Parameters>... arg) -> ReturnType {
     using namespace detail;
@@ -1972,9 +2003,9 @@ auto method<Name, ReturnType(Parameters...), Registry>::
 // overriders
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 template<auto Function, typename FnReturnType>
-method<Name, ReturnType(Parameters...), Registry>::override_impl<
+method<Id, ReturnType(Parameters...), Registry>::override_impl<
     Function, FnReturnType>::override_impl(FunctionPointer* p_next) {
     using namespace detail;
 
@@ -2024,9 +2055,9 @@ method<Name, ReturnType(Parameters...), Registry>::override_impl<
 }
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 template<auto Function, typename FnReturnType>
-void method<Name, ReturnType(Parameters...), Registry>::override_impl<
+void method<Id, ReturnType(Parameters...), Registry>::override_impl<
     Function, FnReturnType>::resolve_type_ids() {
     using namespace detail;
 
@@ -2039,6 +2070,7 @@ void method<Name, ReturnType(Parameters...), Registry>::override_impl<
             this->vp_type_ids);
 }
 
+//! Contains aliases for the most frequently used types in the library
 namespace aliases {
 
 using boost::openmethod::final_virtual_ptr;

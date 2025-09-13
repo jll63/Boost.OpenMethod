@@ -760,7 +760,7 @@ auto final_error::write(Stream& os) const -> void {
 }
 
 template<class Registry, class Stream>
-auto hash_search_error::write(Stream& os) const -> void {
+auto fast_perfect_hash_error::write(Stream& os) const -> void {
     os << "could not find hash factors after " << attempts << "s using "
        << buckets << " buckets\n";
 }

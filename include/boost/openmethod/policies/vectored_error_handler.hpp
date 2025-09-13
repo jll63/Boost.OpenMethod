@@ -16,7 +16,7 @@ namespace boost::openmethod::policies {
 struct default_error_handler : error_handler {
     using error_variant = std::variant<
         openmethod_error, not_implemented_error, unknown_class_error,
-        hash_search_error, final_error, static_slot_error, static_stride_error>;
+        fast_perfect_hash_error, final_error, static_slot_error, static_stride_error>;
 
     using function_type = std::function<void(const error_variant& error)>;
 
@@ -70,7 +70,7 @@ struct default_error_handler : error_handler {
                         error->type, os);
                     os << "\n";
                 } else if (
-                    auto error = std::get_if<hash_search_error>(&error_v)) {
+                    auto error = std::get_if<fast_perfect_hash_error>(&error_v)) {
                     os << "could not find hash factors after "
                        << error->attempts << "s using " << error->buckets
                        << " buckets\n";

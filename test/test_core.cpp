@@ -45,15 +45,12 @@ static_assert(
 static_assert(std::is_same_v<
               virtual_traits<base&&, default_registry>::virtual_type, base>);
 
-static_assert(
-    std::is_same_v<virtual_traits<int, default_registry>::virtual_type, void>);
-
 static_assert(std::is_same_v<
               mp11::mp_filter<
                   is_virtual, mp11::mp_list<virtual_<a&>, b, virtual_<c&>>>,
               mp11::mp_list<virtual_<a&>, virtual_<c&>>>);
 
-static_assert(std::is_same_v<remove_virtual<virtual_<a&>>, a&>);
+static_assert(std::is_same_v<remove_virtual_<virtual_<a&>>, a&>);
 
 static_assert(std::is_same_v<virtual_type<a&, default_registry>, a>);
 
@@ -108,7 +105,7 @@ static_assert(
 
 static_assert(std::is_same_v<
               mp11::mp_transform<
-                  remove_virtual, mp11::mp_list<virtual_<a&>, virtual_<c&>>>,
+                  remove_virtual_, mp11::mp_list<virtual_<a&>, virtual_<c&>>>,
               mp11::mp_list<a&, c&>>);
 
 static_assert(
@@ -116,7 +113,7 @@ static_assert(
         mp11::mp_transform_q<
             mp11::mp_bind_back<virtual_type, default_registry>,
             mp11::mp_transform<
-                remove_virtual, mp11::mp_list<virtual_<a&>, virtual_<c&>>>>,
+                remove_virtual_, mp11::mp_list<virtual_<a&>, virtual_<c&>>>>,
         mp11::mp_list<a, c>>);
 
 static_assert(
@@ -124,7 +121,7 @@ static_assert(
         mp11::mp_transform_q<
             mp11::mp_bind_back<virtual_type, default_registry>,
             mp11::mp_transform<
-                remove_virtual,
+                remove_virtual_,
                 mp11::mp_filter<
                     is_virtual, mp11::mp_list<virtual_<a&>, b, virtual_<c&>>>>>,
         mp11::mp_list<a, c>>);
@@ -285,7 +282,7 @@ static_assert(
 
 static_assert(
     std::is_same_v<
-        use_classes<Animal, Dog, Bulldog, Cat, Dolphin>::tuple_type,
+        detail::use_classes_tuple_type<Animal, Dog, Bulldog, Cat, Dolphin>,
         std::tuple<
             use_class_aux<default_registry, mp11::mp_list<Animal, Animal>>,
             use_class_aux<default_registry, mp11::mp_list<Dog, Animal, Dog>>,

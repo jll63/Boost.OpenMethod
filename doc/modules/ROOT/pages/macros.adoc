@@ -1,0 +1,31 @@
+[#macros]
+= xref:macros.adoc[Macros]
+:mrdocs:
+
+[cols=2]
+|===
+| Name
+| Description
+| xref:BOOST_OPENMETHOD.adoc[BOOST_OPENMETHOD]
+| Declare a method
+| xref:BOOST_OPENMETHOD_CLASSES.adoc[BOOST_OPENMETHOD_CLASSES]
+| registers classes
+| xref:BOOST_OPENMETHOD_DECLARE_OVERRIDER.adoc[BOOST_OPENMETHOD_DECLARE_OVERRIDER]
+| Declare a method overrider
+| xref:BOOST_OPENMETHOD_DEFAULT_REGISTRY.adoc[BOOST_OPENMETHOD_DEFAULT_REGISTRY]
+| Default registry
+| xref:BOOST_OPENMETHOD_DEFINE_OVERRIDER.adoc[BOOST_OPENMETHOD_DEFINE_OVERRIDER]
+| Define the body of a method overrider
+| xref:BOOST_OPENMETHOD_ID.adoc[BOOST_OPENMETHOD_ID]
+| Generate a method id
+| xref:BOOST_OPENMETHOD_INLINE_OVERRIDE.adoc[BOOST_OPENMETHOD_INLINE_OVERRIDE]
+| Add an overrider to a method as an inline function
+| xref:BOOST_OPENMETHOD_OVERRIDE.adoc[BOOST_OPENMETHOD_OVERRIDE]
+| Add an overrider to a method
+| xref:BOOST_OPENMETHOD_OVERRIDER.adoc[BOOST_OPENMETHOD_OVERRIDER]
+| Return the class template specialization containing an overrider
+| xref:BOOST_OPENMETHOD_OVERRIDERS.adoc[BOOST_OPENMETHOD_OVERRIDERS]
+| Return the class template containing the overriders for all the methods with a given name
+| xref:BOOST_OPENMETHOD_REGISTER.adoc[BOOST_OPENMETHOD_REGISTER]
+| Create a registrar object
+|===

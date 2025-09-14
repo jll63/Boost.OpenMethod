@@ -78,12 +78,7 @@ struct va_args<ReturnType> {
                 ::boost::openmethod::detail::va_args<__VA_ARGS__>::return_type \
                     ARGS,                                                      \
                 ::boost::openmethod::detail::va_args<__VA_ARGS__>::registry>,  \
-            typename ::boost::openmethod::method<                              \
-                BOOST_OPENMETHOD_ID(NAME),                                     \
-                ::boost::openmethod::detail::va_args<__VA_ARGS__>::return_type \
-                    ARGS,                                                      \
-                ::boost::openmethod::detail::va_args<__VA_ARGS__>::registry>:: \
-                return_type,                                                   \
+            ::boost::openmethod::detail::va_args<__VA_ARGS__>::return_type,    \
             ForwarderParameters...>::type {                                    \
         return ::boost::openmethod::method<                                    \
             BOOST_OPENMETHOD_ID(NAME),                                         \

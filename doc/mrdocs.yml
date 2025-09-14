@@ -13,22 +13,24 @@ file-patterns:
 # Filters
 include-symbols:
   - 'boost::openmethod::**'
+implementation-defined:
+  - 'boost::openmethod::detail'
 # see-below:
 #   - 'boost::urls::format_arg'
 # implementation-defined:
 #   - 'boost::openmethod::detail::**'
 exclude-symbols:
-  - 'boost::openmethod::detail::**'
   - 'boost::openmethod::boost_openmethod_bases'
   - 'boost::openmethod::boost_openmethod_registry'
 
 sort-members: false
+# sort-namespace-members-by: location
 extract-friends: false
-implementation-detail: impl
 inherit-base-members: never
 
 # Metadata Extraction
 private-bases: false
+auto-function-metadata: false
 
 # Generator
 generate: adoc

@@ -4,4 +4,8 @@
   <name>boost::openmethod::BOOST_OPENMETHOD</name>
   <filename>boost/openmethod/BOOST_OPENMETHOD.adoc</filename>
 </compound>
+<compound kind="class">
+  <name>boostBOOST_OPENMETHOD_DEFAULT_REGISTRY</name>
+  <filename>BOOST_OPENMETHOD_DEFAULT_REGISTRY.adoc</filename>
+</compound>
 </tagfile>

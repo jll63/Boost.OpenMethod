@@ -30,16 +30,28 @@
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable : 4646)
+#pragma warning(disable : 4100)
 #endif
 
 namespace boost::openmethod {
 
-template<class Class, class Registry>
-constexpr bool is_polymorphic = Registry::rtti::template is_polymorphic<Class>;
+#ifdef __MRDOCS__
+#define BOOST_OPENMETHOD_OPEN_NAMESPACE_DETAIL_UNLESS_MRDOCS
+#define BOOST_OPENMETHOD_CLOSE_NAMESPACE_DETAIL_UNLESS_MRDOCS
+#define BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS
+#else
+#define BOOST_OPENMETHOD_OPEN_NAMESPACE_DETAIL_UNLESS_MRDOCS namespace detail {
+#define BOOST_OPENMETHOD_CLOSE_NAMESPACE_DETAIL_UNLESS_MRDOCS }
+#define BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS detail::
+#endif
+
+namespace detail {
+using sfinae = void;
+}
 
 template<
     class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY,
-    typename = void>
+    typename = detail::sfinae>
 class virtual_ptr;
 
 // =============================================================================
@@ -82,39 +94,6 @@ struct init_type_ids<Registry, mp11::mp_list<Class...>> {
     static auto fn(type_id* ids) {
         (..., (*ids++ = Registry::rtti::template static_type<Class>()));
         return ids;
-    }
-};
-
-template<class...>
-struct use_class_aux;
-
-template<class Registry, class Class, typename... Bases>
-struct use_class_aux<Registry, mp11::mp_list<Class, Bases...>>
-    : std::conditional_t<
-          Registry::has_deferred_static_rtti, detail::deferred_class_info,
-          detail::class_info> {
-    inline static type_id bases[sizeof...(Bases)];
-    use_class_aux() {
-        this->first_base = bases;
-        this->last_base = bases + sizeof...(Bases);
-        this->is_abstract = std::is_abstract_v<Class>;
-        this->static_vptr = &Registry::template static_vptr<Class>;
-
-        if constexpr (!Registry::has_deferred_static_rtti) {
-            resolve_type_ids();
-        }
-
-        Registry::classes.push_back(*this);
-    }
-
-    void resolve_type_ids() {
-        this->type = Registry::rtti::template static_type<Class>();
-        auto iter = bases;
-        (..., (*iter++ = Registry::rtti::template static_type<Bases>()));
-    }
-
-    ~use_class_aux() {
-        Registry::classes.remove(*this);
     }
 };
 
@@ -175,47 +154,54 @@ struct remove_virtual_aux<virtual_<T>> {
 };
 
 template<typename T>
-using remove_virtual = typename remove_virtual_aux<T>::type;
+using remove_virtual_ = typename remove_virtual_aux<T>::type;
 
-template<typename T, class Registry>
-using virtual_type = typename virtual_traits<T, Registry>::virtual_type;
-
-template<typename MethodArgList>
-using virtual_types = boost::mp11::mp_transform<
-    remove_virtual, boost::mp11::mp_filter<detail::is_virtual, MethodArgList>>;
-
-template<typename T, class Registry>
-struct parameter_traits {
-    static auto peek(const T&) {
-        return nullptr;
-    }
-
-    template<typename>
-    static auto cast(T value) -> T {
-        return value;
-    }
+template<typename T, class Registry, typename = void>
+struct virtual_type_aux {
+    using type = void;
 };
 
 template<typename T, class Registry>
-struct parameter_traits<virtual_<T>, Registry> : virtual_traits<T, Registry> {};
+struct virtual_type_aux<
+    T, Registry,
+    std::void_t<typename virtual_traits<T, Registry>::virtual_type>> {
+    using type = typename virtual_traits<T, Registry>::virtual_type;
+};
 
-template<class Class, class Registry>
-struct parameter_traits<virtual_ptr<Class, Registry, void>, Registry>
-    : virtual_traits<virtual_ptr<Class, Registry, void>, Registry> {};
+template<typename T, class Registry>
+using virtual_type = typename virtual_type_aux<T, Registry>::type;
 
-template<class Class, class Registry>
-struct parameter_traits<const virtual_ptr<Class, Registry, void>&, Registry>
-    : virtual_traits<const virtual_ptr<Class, Registry, void>&, Registry> {};
+template<typename MethodArgList>
+using virtual_types = boost::mp11::mp_transform<
+    remove_virtual_, boost::mp11::mp_filter<detail::is_virtual, MethodArgList>>;
 
 } // namespace detail
+
+BOOST_OPENMETHOD_OPEN_NAMESPACE_DETAIL_UNLESS_MRDOCS
+
+//! Remove virtual_<> decorator from a type (exposition only)
+//!
+//! @tparam T A type
+template<typename T>
+struct StripVirtualDecorator {
+    //! Same as `T`
+    using type = T;
+};
+
+//! Remove virtual_<> decorator from a type (exposition only)
+template<typename T>
+struct StripVirtualDecorator<virtual_<T>> {
+    //! Same as `T`
+    using type = T;
+};
+
+BOOST_OPENMETHOD_CLOSE_NAMESPACE_DETAIL_UNLESS_MRDOCS
 
 // =============================================================================
 // virtual_traits
 
 template<typename T, class Registry>
-struct virtual_traits {
-    using virtual_type = void;
-};
+struct virtual_traits;
 
 template<typename T, class Registry>
 struct virtual_traits<T&, Registry> {
@@ -266,24 +252,155 @@ struct virtual_traits<T*, Registry> {
     }
 };
 
+namespace detail {
+
+template<class...>
+struct use_class_aux;
+
+template<class Registry, class Class, typename... Bases>
+struct use_class_aux<Registry, mp11::mp_list<Class, Bases...>>
+    : std::conditional_t<
+          Registry::has_deferred_static_rtti, detail::deferred_class_info,
+          detail::class_info> {
+    inline static type_id bases[sizeof...(Bases)];
+    use_class_aux() {
+        this->first_base = bases;
+        this->last_base = bases + sizeof...(Bases);
+        this->is_abstract = std::is_abstract_v<Class>;
+        this->static_vptr = &Registry::template static_vptr<Class>;
+
+        if constexpr (!Registry::has_deferred_static_rtti) {
+            resolve_type_ids();
+        }
+
+        Registry::classes.push_back(*this);
+    }
+
+    void resolve_type_ids() {
+        this->type = Registry::rtti::template static_type<Class>();
+        auto iter = bases;
+        (..., (*iter++ = Registry::rtti::template static_type<Bases>()));
+    }
+
+    ~use_class_aux() {
+        Registry::classes.remove(*this);
+    }
+};
+
 template<class... Classes>
-struct use_classes {
-    using tuple_type = boost::mp11::mp_apply<
-        std::tuple,
-        boost::mp11::mp_transform_q<
-            boost::mp11::mp_bind_front<
-                detail::use_class_aux,
-                typename detail::extract_registry<Classes...>::registry>,
-            boost::mp11::mp_apply<
-                detail::inheritance_map,
-                typename detail::extract_registry<Classes...>::others>>>;
-    tuple_type tuple;
+using use_classes_tuple_type = boost::mp11::mp_apply<
+    std::tuple,
+    boost::mp11::mp_transform_q<
+        boost::mp11::mp_bind_front<
+            detail::use_class_aux,
+            typename detail::extract_registry<Classes...>::registry>,
+        boost::mp11::mp_apply<
+            detail::inheritance_map,
+            typename detail::extract_registry<Classes...>::others>>>;
+
+} // namespace detail
+
+//! Add classes to a registry
+//!
+//! `use_classes` is a registrar class that adds one or more classes to a
+//! registry.
+//!
+//! Classes potentially involved in a method definition, an overrider, or a
+//! method call must be registered via `use_classes`. A class may be registered
+//! multiple times. A class and its direct bases must be listed together in one
+//! or more instantiations of `use_classes`.
+//!
+//! If a class is identified by different type ids in different translation
+//! units, it must be registered in as many translation units as necessary for
+//! `use_classes` to register all the type ids. This situation can occur when
+//! using standard RTTI, because the address of the `type_info` objects are used
+//! as type ids, and the standard does not guarantee that there is exactly one
+//! such object per class. The only such case known to the author is when using
+//! Windows DLLs.
+//!
+//! Virtual and multiple inheritance are supported, as long as it is possible to
+//! cast the virtual arguments of a method call to the types required by the
+//! overriders. The registry's `rtti` policy defines which casts are possible.
+//! For the @ref policies::std_rtti (the default), some scenarios involving
+//! repeated inheritance may not allow the cast.
+template<class... Classes>
+class use_classes {
+    detail::use_classes_tuple_type<Classes...> tuple;
 };
 
 void boost_openmethod_vptr(...);
 
 // =============================================================================
 // virtual_ptr
+
+namespace detail {
+
+template<typename, class, typename = void>
+struct is_smart_ptr_aux : std::false_type {};
+
+template<typename Class, class Registry>
+struct is_smart_ptr_aux<
+    Class, Registry,
+    std::void_t<
+        typename virtual_traits<Class, Registry>::template rebind<Class>>>
+    : std::true_type {};
+
+template<class Class, class Other, class Registry, typename = void>
+struct same_smart_ptr_aux : std::false_type {};
+
+template<class Class, class Other, class Registry>
+struct same_smart_ptr_aux<
+    Class, Other, Registry,
+    std::void_t<typename virtual_traits<Class, Registry>::template rebind<
+        typename Other::element_type>>>
+    : std::is_same<
+          Other,
+          typename virtual_traits<Class, Registry>::template rebind<
+              typename Other::element_type>> {};
+
+} // namespace detail
+
+BOOST_OPENMETHOD_OPEN_NAMESPACE_DETAIL_UNLESS_MRDOCS
+
+//! Test if argument is polymorphic (exposition only)
+//!
+//! Evaluates to `true` if `Class` is a polymorphic type, according to the
+//! `rtti` policy of `Registry`.
+//!
+//! If Registry's `rtti` policy is std_rtti`, this is the same as
+//! `std::is_polymorphic`. However, other `rtti` policies may have a different
+//! view of what is polymorphic.
+//!
+//! @tparam Class A class type.
+//! @tparam Registry A registry.
+template<class Class, class Registry>
+constexpr bool IsPolymorphic = Registry::rtti::template is_polymorphic<Class>;
+
+//! Test if argument is a smart pointer (exposition only)
+//!
+//! Evaluates to `true` if `Class` is a smart pointer type, and false otherwise.
+//! `Class` is considered a smart pointer if `virtual_traits<Class, Registry>`
+//! exists and it defines a nested template `rebind<T>` that can be instantiated
+//! with `Class`.
+//!
+//! @tparam Class A class type.
+//! @tparam Registry A registry.
+template<typename Class, class Registry>
+constexpr bool IsSmartPtr = detail::is_smart_ptr_aux<Class, Registry>::value;
+
+//! Test if arguments are smart pointers of same type (exposition only)
+//!
+//! Evaluates to `true` if `Class` and `Other` are both smart pointers of the
+//! same type.
+//!
+//! @tparam Class A class type.
+//! @tparam Other Another class type.
+//! @tparam Registry A registry.
+template<class Class, class Other, class Registry>
+constexpr bool SameSmartPtr =
+    detail::same_smart_ptr_aux<Class, Other, Registry>::value;
+
+BOOST_OPENMETHOD_CLOSE_NAMESPACE_DETAIL_UNLESS_MRDOCS
 
 template<class Registry, typename Arg>
 inline auto final_virtual_ptr(Arg&& obj);
@@ -349,6 +466,26 @@ inline vptr_type null_vptr = nullptr;
 
 } // namespace detail
 
+//! Create a `virtual_ptr` for an object of an exact known type
+//!
+//! `final_virtual_ptr` creates a `virtual_ptr` to an object, setting its
+//! v-table pointer according to the declared type of its argument. It assumes
+//! that the static and dynamic types are the same. The v-table pointer is
+//! initialized from the `Policy::static_vptr` for the class, which needs
+//! not be polymorphic.
+//!
+//! @par Errors If the registry has runtime checks enabled, and the argument is
+//! a class type that is polymorphic according to the registry's `rtti` policy,
+//! a check is performed to verify that the static and dynamic types are indeed
+//! the same. If they are not, and if the registry contains an @ref
+//! error_handler policy, its
+//! @ref error function is called with a @ref final_error value, then the
+//! program is terminated with @ref abort.
+//!
+//! @tparam Registry The registry in which the class is registered.
+//! @tparam Arg The type of the argument.
+//! @param obj A reference to an object.
+//! @return A `virtual_ptr<Class, Registry>` pointing to `obj`.
 template<class Registry, typename Arg>
 inline auto final_virtual_ptr(Arg&& obj) {
     using namespace detail;
@@ -357,7 +494,8 @@ inline auto final_virtual_ptr(Arg&& obj) {
     using Traits = virtual_traits<Arg, Registry>;
 
     if constexpr (
-        Registry::has_runtime_checks && is_polymorphic<Class, Registry>) {
+        Registry::has_runtime_checks &&
+        Registry::rtti::template is_polymorphic<Class>) {
 
         // check that dynamic type == static type
         auto static_type = Registry::rtti::template static_type<Class>();
@@ -387,18 +525,40 @@ inline auto final_virtual_ptr(Arg&& obj) {
         std::forward<Arg>(obj));
 }
 
-/**
-
-A wide pointer combining a pointer to an object and a pointer to its v-table.
-
-@tparam Class The class of the object.
-
-@tparam Registry The registry in which `Class` is registered.
-
-@tparam unnamed Always `void` (used for SFINAE).
-
-*/
-
+//! Wide pointer combining pointers to an object and its v-table
+//!
+//! A `virtual_ptr` is a wide pointer that combines pointers to an object and
+//! its v-table. Calls to methods via `virtual_ptr` are as fast as ordinary
+//! virtual function calls (typically two instructions).
+//!
+//! A `virtual_ptr` can be implicitly constructed from a reference, a pointer,
+//! or another `virtual_ptr`, provided that they are type-compatible.
+//!
+//! `virtual_ptr` has specializations that use a `std::shared_ptr` or a
+//! `std::unique_ptr` as the pointer to the object. The mechanism can be
+//! extended to other smart pointers by specializing @ref virtual_traits. A
+//! "plain" `virtual_ptr` can be constructed from a smart `virtual_ptr`, but not
+//! the other way around.
+//!
+//! TODO: link out from mrdocs to macro documentation
+//! The default value for `Registry` can be customized by defining the <a href="openmethod/BOOST_OPENMETHOD_DEFAULT_REGISTRY.html">BOOST_OPENMETHOD_DEFAULT_REGISTRY</a>
+//! preprocessor symbol.
+//!
+//! The default value for `Registry` can be customized by defining the
+//! xref:BOOST_OPENMETHOD_DEFAULT_REGISTRY.adoc[`BOOST_OPENMETHOD_DEFAULT_REGISTRY`]
+//! preprocessor symbol.
+//!
+//! @par Examples
+//!
+//! @par Requirements
+//!
+//! @li @ref virtual_traits must be specialized for `Class&`.
+//! @li `Class` must be a class type, possibly cv-qualified, registered in
+//! `Registry`.
+//!
+//! @tparam Class The class of the object, possibly cv-qualified
+//! @tparam Registry The registry in which `Class` is registered
+//! @tparam unnamed Implementation defined, use default
 template<class Class, class Registry, typename>
 class virtual_ptr {
 
@@ -417,73 +577,200 @@ class virtual_ptr {
     std::conditional_t<use_indirect_vptrs, const vptr_type*, vptr_type> vp;
     Class* obj;
 
+    template<
+        class Other,
+        typename = std::enable_if_t<std::is_constructible_v<Class*, Other*>>>
+    virtual_ptr(Other& other, decltype(vp) vp) : vp(vp), obj(&other) {
+    }
+
   public:
+    //! Class
+    //!
+    //! This is the same as `Class`.
     using element_type = Class;
 
-    /**
-        Constructs a `virtual_ptr` with both object and v-table pointers
-        initialized to `nullptr`.
-    */
-
+    //! Default constructor
+    //!
+    //! @note This constructor does nothing. The state of the two pointers
+    //! inside the object is as specified for uninitialized variables by C++.
     virtual_ptr() = default;
 
-    /**
-        Constructs a `virtual_ptr` with both object and v-table pointers
-        initialized to `nullptr`.
-
-        @param value A `nullptr`.
-    */
-
+    //! Construct from `nullptr`
+    //!
+    //! Set both object and v-table pointers to `nullptr`.
+    //!
+    //! @param value A `nullptr`.
+    //!
+    //! @par Example
+    //!
+    //! @code
+    //! struct Animal { virtual ~Animal() { } }; // polymorphic
+    //! struct Dog : Animal {}; // polymorphic
+    //! BOOST_OPENMETHOD_CLASSES(Animal, Dog);
+    //! initialize();
+    //!
+    //! virtual_ptr<Dog> p{nullptr};
+    //! BOOST_TEST(p.get() == nullptr);
+    //! BOOST_TEST(p.vptr() == nullptr);
+    //! @endcode
+    //!
+    //! @param value A `nullptr`.
     explicit virtual_ptr(std::nullptr_t)
         : vp(detail::box_vptr<use_indirect_vptrs>(detail::null_vptr)),
           obj(nullptr) {
     }
 
-    /**
-        Constructs a `virtual_ptr` pointing to an object of type `Other`.
-
-        The pointer to the v-table is obtained by calling
-        @ref boost_openmethod_vptr if a suitable overload exists, or the
-        @ref policies::vptr::fn::dynamic_vptr of the registry's @ref
-        policies::vptr otherwise.
-
-        @ref dynamic_vptr foo
-
-        @param other A `nullptr`.
-
-        @par Requirements
-
-        `Other` must be a polymorphic class, according to the `Registry`'s
-        `rtti` policy.
-
-        `Other*` must be convertible to `Class*`.
-
-        @par Errors
-    */
-
+    //! Construct a `virtual_ptr` from a reference to an object
+    //!
+    //! The pointer to the v-table is obtained by calling
+    //! @ref boost_openmethod_vptr if a suitable overload exists, or the
+    //! @ref policies::vptr::fn::dynamic_vptr of the registry's
+    //! `vptr` policy otherwise.
+    //!
+    //! @param other A reference to a polymorphic object
+    //!
+    //! @par Example
+    //! @code
+    //! struct Animal { virtual ~Animal() { } }; // polymorphic
+    //! struct Dog : Animal {}; // polymorphic
+    //! BOOST_OPENMETHOD_CLASSES(Animal, Dog);
+    //! initialize();
+    //!
+    //! Dog snoopy;
+    //! Animal& animal = snoopy;
+    //!
+    //! virtual_ptr<Animal> p = animal;
+    //!
+    //! BOOST_TEST(p.get() == &snoopy);
+    //! BOOST_TEST(p.vptr() == default_registry::static_vptr<Dog>);
+    //! @endcode
+    //!
+    //! @par Requirements
+    //! @li `Other` must be a polymorphic class, according to `Registry`'s
+    //! `rtti` policy.
+    //! @li `Other\*` must be constructible from `Class\*`.
+    //!
+    //! @par Errors
+    //!
+    //! The following errors may occur, depending on the policies selected in
+    //! `Registry`:
+    //!
+    //! @li @ref unknown_class_error
     template<
         class Other,
         typename = std::enable_if_t<
-            std::is_constructible_v<Class*, Other*> &&
-            is_polymorphic<Other, Registry>>>
+            BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS
+                IsPolymorphic<Other, Registry> &&
+            std::is_constructible_v<Class*, Other*>>>
     virtual_ptr(Other& other)
         : vp(detail::box_vptr<use_indirect_vptrs>(
               detail::acquire_vptr<Registry>(other))),
           obj(&other) {
     }
 
+    //! Construct a `virtual_ptr` from a pointer to an object
+    //!
+    //! The pointer to the v-table is obtained by calling
+    //! @ref boost_openmethod_vptr if a suitable overload exists, or the
+    //! @ref policies::vptr::fn::dynamic_vptr of the registry's
+    //! `vptr` policy otherwise.
+    //!
+    //! @par Example
+    //! @code
+    //! struct Animal { virtual ~Animal() { } }; // polymorphic
+    //! struct Dog : Animal {}; // polymorphic
+    //! BOOST_OPENMETHOD_CLASSES(Animal, Dog);
+    //! initialize();
+    //!
+    //! Dog snoopy;
+    //! Animal* animal = &snoopy;
+    //!
+    //! virtual_ptr<Animal> p = animal;
+    //!
+    //! BOOST_TEST(p.get() == &snoopy);
+    //! BOOST_TEST(p.vptr() == default_registry::static_vptr<Dog>);
+    //! @endcode
+    //!
+    //! @param other A pointer to a polymorphic object
+    //!
+    //! @par Requirements
+    //!
+    //! @li `Other` must be a polymorphic class, according to `Registry`'s
+    //! `rtti` policy.
+    //!
+    //! @li `Other\*` must be constructible from `Class\*`.
+    //!
+    //! @par Errors
+    //!
+    //! The following errors may occur, depending on the policies selected in
+    //! `Registry`:
+    //!
+    //! @li @ref unknown_class_error
     template<
         class Other,
         typename = std::enable_if_t<
-            std::is_constructible_v<
-                Class*, typename virtual_ptr<Other, Registry>::element_type*> &&
-            is_polymorphic<Class, Registry>>>
+            BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS
+                IsPolymorphic<Class, Registry> &&
+            std::is_constructible_v<Class*, Other*>>>
     virtual_ptr(Other* other)
         : vp(detail::box_vptr<use_indirect_vptrs>(
               detail::acquire_vptr<Registry>(*other))),
           obj(other) {
     }
 
+    //! Construct a `virtual_ptr` from another `virtual_ptr`
+    //!
+    //! Copy the object and v-table pointers from `other` to `this.
+    //!
+    //! `Other` is _not_ required to be a pointer to a polymorphic class.
+    //!
+    //! @par Examples
+    //!
+    //! Assigning from a plain virtual_ptr:
+    //!
+    //! @code
+    //! struct Animal {}; // polymorphism not required
+    //! struct Dog : Animal {}; // polymorphism not required
+    //! BOOST_OPENMETHOD_CLASSES(Animal, Dog);
+    //! initialize();
+    //!
+    //! Dog snoopy;
+    //! virtual_ptr<Dog> dog = final_virtual_ptr(snoopy);
+    //! virtual_ptr<Animal> p{nullptr};
+    //!
+    //! p = dog;
+    //!
+    //! BOOST_TEST(p.get() == &snoopy);
+    //! BOOST_TEST(p.vptr() == default_registry::static_vptr<Dog>);
+    //! @endcode
+    //!
+    //! Assigning from a smart virtual_ptr:
+    //!
+    //! @code
+    //! struct Animal {}; // polymorphism not required
+    //! struct Dog : Animal {}; // polymorphism not required
+    //! BOOST_OPENMETHOD_CLASSES(Animal, Dog);
+    //! initialize();
+    //!
+    //! virtual_ptr<std::shared_ptr<Animal>> snoopy = make_shared_virtual<Dog>();
+    //! virtual_ptr<Animal> p = snoopy;
+    //!
+    //! BOOST_TEST(p.get() == snoopy.get());
+    //! BOOST_TEST(p.vptr() == default_registry::static_vptr<Dog>);
+    //! @endcode
+    //!
+    //! No construction of a smart `virtual_ptr` from a plain `virtual_ptr`:
+    //!
+    //! @code
+    //! static_assert(
+    //!     std::is_constructible_v<
+    //!         shared_virtual_ptr<Animal>, virtual_ptr<Dog>> == false);
+    //! @endcode
+    //!
+    //! @param other A virtual_ptr to a type-compatible object
+    //!
+    //! @par Requirements
+    //! @li `Other`\'s object pointer must be assignable to a `Class\*`.
     template<
         class Other,
         typename = std::enable_if_t<std::is_constructible_v<
@@ -492,33 +779,51 @@ class virtual_ptr {
         : vp(other.vp), obj(other.get()) {
     }
 
-    template<
-        class Other,
-        typename = std::enable_if_t<std::is_constructible_v<
-            Class*, typename virtual_ptr<Other, Registry>::element_type*>>>
-    virtual_ptr(virtual_ptr<Other, Registry>& other)
-        : vp(other.vp), obj(other.get()) {
-        // Why is this needed? Consider this conversion conversion from
-        // smart to dumb pointer:
-        //      virtual_ptr<std::shared_ptr<const Node>> p = ...;
-        //      virtual_ptr<const Node> q = p;
-        // Since 'p' is not const, in the absence of this ctor,
-        // virtual_ptr(Other&) would be preferred to
-        // virtual_ptr(const virtual_ptr<Other, Registry>& other), and
-        // that is incorrect.
-    }
-
-    template<
-        class Other,
-        typename = std::enable_if_t<std::is_constructible_v<Class*, Other*>>>
-    virtual_ptr(Other& other, decltype(vp) vp) : vp(vp), obj(&other) {
-    }
-
+    //! Assign a `virtual_ptr` from a reference to an object
+    //!
+    //! The pointer to the v-table is obtained by calling
+    //! @ref boost_openmethod_vptr if a suitable overload exists, or the
+    //! @ref policies::vptr::fn::dynamic_vptr of the registry's
+    //! `vptr` policy otherwise.
+    //!
+    //! @par Example
+    //! @code
+    //! struct Animal { virtual ~Animal() { } }; // polymorphic
+    //! struct Dog : Animal {}; // polymorphic
+    //! BOOST_OPENMETHOD_CLASSES(Animal, Dog);
+    //! initialize();
+    //!
+    //! virtual_ptr<Animal> p{nullptr};
+    //! Dog snoopy;
+    //! Animal& animal = snoopy;
+    //!
+    //! p = animal;
+    //!
+    //! BOOST_TEST(p.get() == &snoopy);
+    //! BOOST_TEST(p.vptr() == default_registry::static_vptr<Dog>);
+    //! @endcode
+    //!
+    //! @param other A reference to a polymorphic object
+    //!
+    //! @par Requirements
+    //!
+    //! @li `Other` must be a polymorphic class, according to `Registry`'s
+    //! `rtti` policy.
+    //!
+    //! @li `Other\*` must be constructible from `Class\*`.
+    //!
+    //! @par Errors
+    //!
+    //! The following errors may occur, depending on the policies selected in
+    //! `Registry`:
+    //!
+    //! @li @ref unknown_class_error
     template<
         class Other,
         typename = std::enable_if_t<
-            std::is_assignable_v<Class*, Other*> &&
-            is_polymorphic<Class, Registry>>>
+            BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS
+                IsPolymorphic<Class, Registry> &&
+            std::is_assignable_v<Class*&, Other*>>>
     virtual_ptr& operator=(Other& other) {
         obj = &other;
         vp = detail::box_vptr<use_indirect_vptrs>(
@@ -526,11 +831,49 @@ class virtual_ptr {
         return *this;
     }
 
+    //! Assign a `virtual_ptr` from a pointer to an object
+    //!
+    //! The pointer to the v-table is obtained by calling
+    //! @ref boost_openmethod_vptr if a suitable overload exists, or the
+    //! @ref policies::vptr::fn::dynamic_vptr of the registry's
+    //! `vptr` policy otherwise.
+    //!
+    //! @par Example
+    //! @code
+    //! struct Animal { virtual ~Animal() { } }; // polymorphic
+    //! struct Dog : Animal {}; // polymorphic
+    //! BOOST_OPENMETHOD_CLASSES(Animal, Dog);
+    //! initialize();
+    //!
+    //! virtual_ptr<Animal> p{nullptr};
+    //! Dog snoopy;
+    //! Animal* animal = &snoopy;
+    //!
+    //! p = animal;
+    //!
+    //! BOOST_TEST(p.get() == &snoopy);
+    //! BOOST_TEST(p.vptr() == default_registry::static_vptr<Dog>);
+    //! @endcode
+    //!
+    //! @param other A pointer to a polymorphic object
+    //!
+    //! @par Requirements
+    //! @li `Other` must be a polymorphic class, according to `Registry`'s
+    //! `rtti` policy.
+    //! @li `Other\*` must be constructible from `Class\*`.
+    //!
+    //! @par Errors
+    //!
+    //! The following errors may occur, depending on the policies selected in
+    //! `Registry`:
+    //!
+    //! @li @ref unknown_class_error
     template<
         class Other,
         typename = std::enable_if_t<
-            std::is_assignable_v<Class*, Other*> &&
-            is_polymorphic<Class, Registry>>>
+            BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS
+                IsPolymorphic<Class, Registry> &&
+            std::is_assignable_v<Class*&, Other*>>>
     virtual_ptr& operator=(Other* other) {
         obj = other;
         vp = detail::box_vptr<use_indirect_vptrs>(
@@ -538,96 +881,175 @@ class virtual_ptr {
         return *this;
     }
 
+    //! Assign a `virtual_ptr` from another `virtual_ptr`
+    //!
+    //! Copy the object and v-table pointers from `other` to `this.
+    //!
+    //! `Other` is _not_ required to be a pointer to a polymorphic class.
+    //!
+    //! @par Examples
+    //!
+    //! Assigning from a plain virtual_ptr:
+    //!
+    //! @code
+    //! struct Animal {}; // polymorphism not required
+    //! struct Dog : Animal {}; // polymorphism not required
+    //! BOOST_OPENMETHOD_CLASSES(Animal, Dog);
+    //! initialize();
+    //!
+    //! Dog snoopy;
+    //! virtual_ptr<Dog> dog = final_virtual_ptr(snoopy);
+    //! virtual_ptr<Animal> p{nullptr};
+    //!
+    //! p = dog;
+    //!
+    //! BOOST_TEST(p.get() == &snoopy);
+    //! BOOST_TEST(p.vptr() == default_registry::static_vptr<Dog>);
+    //! @endcode
+    //!
+    //! Assigning from a smart virtual_ptr:
+    //!
+    //! @code
+    //! struct Animal {}; // polymorphism not required
+    //! struct Dog : Animal {}; // polymorphism not required
+    //! BOOST_OPENMETHOD_CLASSES(Animal, Dog);
+    //! initialize();
+    //!
+    //! virtual_ptr<std::shared_ptr<Animal>> snoopy = make_shared_virtual<Dog>();
+    //! virtual_ptr<Animal> p;
+    //!
+    //! p = snoopy;
+    //!
+    //! BOOST_TEST(p.get() == snoopy.get());
+    //! BOOST_TEST(p.vptr() == default_registry::static_vptr<Dog>);
+    //! @endcode
+    //!
+    //! No assignment from a plain `virtual_ptr` to a smart `virtual_ptr`:
+    //!
+    //! @code
+    //! static_assert(
+    //!     std::is_assignable_v<
+    //!         shared_virtual_ptr<Animal>&, virtual_ptr<Dog>> == false);
+    //! @endcode
+    //!
+    //! @param other A virtual_ptr to a type-compatible object
+    //!
+    //! @par Requirements
+    //! @li `Other`\'s object pointer must be assignable to a `Class\*`.
     template<
         class Other,
         typename = std::enable_if_t<std::is_assignable_v<
-            Class*, typename virtual_ptr<Other, Registry>::element_type*>>>
+            Class*&, typename virtual_ptr<Other, Registry>::element_type*>>>
     virtual_ptr& operator=(const virtual_ptr<Other, Registry>& other) {
         obj = other.get();
         vp = other.vp;
         return *this;
     }
 
+    //! Set a `virtual_ptr` to `nullptr`
+    //!
+    //! Set both object and v-table pointers to `nullptr`.
+    //!
+    //! @par Example
+    //! struct Animal {}; // polymorphism not required
+    //! struct Dog : Animal {}; // polymorphism not required
+    //! BOOST_OPENMETHOD_CLASSES(Animal, Dog);
+    //! initialize();
+    //!
+    //! Dog snoopy;
+    //! virtual_ptr<Animal> p = final_virtual_ptr(snoopy);
+    //!
+    //! p = nullptr;
+    //!
+    //! BOOST_TEST(p.get() == nullptr);
+    //! BOOST_TEST(p.vptr() == nullptr);
+    //!     //! @code
+    //! @endcode
     virtual_ptr& operator=(std::nullptr_t) {
         obj = nullptr;
         vp = detail::box_vptr<use_indirect_vptrs>(detail::null_vptr);
         return *this;
     }
 
+    //! Get a pointer to the object
+    //!
+    //! @return A pointer to the object
     auto get() const -> Class* {
         return obj;
     }
 
+    //! Get a pointer to the object
+    //!
+    //! @return A pointer to the object
     auto operator->() const {
         return get();
     }
 
+    //! Get a reference to the object
+    //!
+    //! @return A reference to the object
     auto operator*() const -> element_type& {
         return *get();
     }
 
-    auto pointer() const -> const Class*& {
+    //! Get a pointer to the object
+    //!
+    //! @return A pointer to the object
+    auto pointer() const -> element_type* {
         return obj;
     }
 
-    template<class Other>
+    //! Cast to another `virtual_ptr` type
+    //!
+    //! @par Example
+    //! @code
+    //! @endcode
+    //!
+    //! @tparam Other The target class of the cast
+    //! @return A `virtual_ptr<Other, Registry>` pointing to the same object
+    //! @par Requirements
+    //! @li `Other` must be a base or derived class of `Class`.
+    template<
+        class Other,
+        typename = std::enable_if_t<
+            std::is_base_of_v<element_type, Other> ||
+            std::is_base_of_v<Other, element_type>>>
     auto cast() const -> decltype(auto) {
-        static_assert(
-            std::is_base_of_v<Class, Other> || std::is_base_of_v<Other, Class>);
-
         return virtual_ptr<Other, Registry>(
             traits::template cast<Other&>(*obj), vp);
     }
 
+    //! Construct a `virtual_ptr` from a reference to an object
+    //!
+    //! This function forwards to @ref final_virtual_ptr.
+    //!
+    //! @tparam Other The type of the argument
+    //! @param obj A reference to an object
+    //! @return A `virtual_ptr<Class, Registry>` pointing to `obj`
     template<class Other>
     static auto final(Other&& obj) {
         return final_virtual_ptr<Registry>(std::forward<Other>(obj));
     }
 
+    //! Get the v-table pointer
+    //! @return The v-table pointer
     auto vptr() const {
         return detail::unbox_vptr(this->vp);
     }
 };
 
-namespace detail {
-
-template<typename, class, typename = void>
-struct is_smart_ptr_aux : std::false_type {};
-
-template<typename Class, class Registry>
-struct is_smart_ptr_aux<
-    Class, Registry,
-    std::void_t<
-        typename virtual_traits<Class, Registry>::template rebind<Class>>>
-    : std::true_type {};
-
-template<class Class, class Other, class Registry, typename = void>
-struct same_smart_ptr_aux : std::false_type {};
-
-template<class Class, class Other, class Registry>
-struct same_smart_ptr_aux<
-    Class, Other, Registry,
-    std::void_t<typename virtual_traits<Class, Registry>::template rebind<
-        typename Other::element_type>>>
-    : std::is_same<
-          Other,
-          typename virtual_traits<Class, Registry>::template rebind<
-              typename Other::element_type>> {};
-
-} // namespace detail
-
-#ifndef __MRDOCS__
-template<typename T, class Registry>
-constexpr bool is_smart_ptr = detail::is_smart_ptr_aux<T, Registry>::value;
-#endif
-
-template<class Class, class Other, class Registry>
-constexpr bool same_smart_ptr =
-    detail::same_smart_ptr_aux<Class, Other, Registry>::value;
-
-template<class Class, class Registry>
+//! Wide pointer combining a smart pointer to an object and its v-table
+//!
+//! This specialization of `virtual_ptr` uses a smart pointer to track the
+//! object, instead of a plain pointer.
+//!
+//! @tparam SmartPtr A smart pointer type
+//! @tparam Registry The registry in which the underlying class is registered
+template<class SmartPtr, class Registry>
 class virtual_ptr<
-    Class, Registry, std::enable_if_t<is_smart_ptr<Class, Registry>>> {
+    SmartPtr, Registry,
+    std::enable_if_t<
+        BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS IsSmartPtr<SmartPtr, Registry>>> {
 
 #ifndef __MRDOCS__
     template<class, class, typename>
@@ -639,101 +1061,15 @@ class virtual_ptr<
     static constexpr bool is_smart_ptr = true;
     static constexpr bool use_indirect_vptrs = Registry::has_indirect_vptr;
 
-    using traits = virtual_traits<Class, Registry>;
+    using traits = virtual_traits<SmartPtr, Registry>;
 
     std::conditional_t<use_indirect_vptrs, const vptr_type*, vptr_type> vp;
-    Class obj;
+    SmartPtr obj;
 
     template<
         class Other,
-        typename = std::enable_if_t<std::is_constructible_v<Class*, Other*>>>
+        typename = std::enable_if_t<std::is_constructible_v<SmartPtr*, Other*>>>
     virtual_ptr(Other& other, decltype(vp) vp) : vp(vp), obj(&other) {
-    }
-
-  public:
-    using element_type = typename Class::element_type;
-
-  public:
-    virtual_ptr()
-        : vp(detail::box_vptr<use_indirect_vptrs>(detail::null_vptr)) {
-    }
-
-    explicit virtual_ptr(std::nullptr_t)
-        : vp(detail::box_vptr<use_indirect_vptrs>(detail::null_vptr)),
-          obj(nullptr) {
-    }
-
-    virtual_ptr(const virtual_ptr& other) = default;
-
-    template<
-        class Other,
-        typename = std::enable_if_t<
-            same_smart_ptr<Class, Other, Registry> &&
-            std::is_constructible_v<Class, const Other&> &&
-            is_polymorphic<element_type, Registry>>>
-    virtual_ptr(const Other& other)
-        : vp(detail::box_vptr<use_indirect_vptrs>(
-              other ? detail::acquire_vptr<Registry>(*other)
-                    : detail::null_vptr)),
-          obj(other) {
-    }
-
-    template<
-        class Other,
-        typename = std::enable_if_t<
-            same_smart_ptr<Class, Other, Registry> &&
-            std::is_constructible_v<Class, Other&> &&
-            is_polymorphic<element_type, Registry>>>
-    virtual_ptr(Other& other)
-        : vp(detail::box_vptr<use_indirect_vptrs>(
-              other ? detail::acquire_vptr<Registry>(*other)
-                    : detail::null_vptr)),
-          obj(other) {
-    }
-
-    template<
-        class Other,
-        typename = std::enable_if_t<
-            same_smart_ptr<Class, Other, Registry> &&
-            std::is_constructible_v<Class, Other&&> &&
-            is_polymorphic<element_type, Registry>>>
-    virtual_ptr(Other&& other)
-        : vp(detail::box_vptr<use_indirect_vptrs>(
-              other ? detail::acquire_vptr<Registry>(*other)
-                    : detail::null_vptr)),
-          obj(std::move(other)) {
-    }
-
-    template<
-        class Other,
-        typename = std::enable_if_t<
-            same_smart_ptr<Class, Other, Registry> &&
-            std::is_constructible_v<Class, const Other&>>>
-    virtual_ptr(const virtual_ptr<Other, Registry>& other)
-        : vp(other.vp), obj(other.obj) {
-    }
-
-    template<
-        class Other,
-        typename = std::enable_if_t<
-            same_smart_ptr<Class, Other, Registry> &&
-            std::is_constructible_v<Class, Other&>>>
-    virtual_ptr(virtual_ptr<Other, Registry>& other)
-        : vp(other.vp), obj(other.obj) {
-    }
-
-    virtual_ptr(virtual_ptr&& other) : vp(other.vp), obj(std::move(other.obj)) {
-        other.vp = detail::box_vptr<use_indirect_vptrs>(detail::null_vptr);
-    }
-
-    template<
-        class Other,
-        typename = std::enable_if_t<
-            same_smart_ptr<Class, Other, Registry> &&
-            std::is_constructible_v<Class, Other&&>>>
-    virtual_ptr(virtual_ptr<Other, Registry>&& other)
-        : vp(other.vp), obj(std::move(other.obj)) {
-        other.vp = detail::box_vptr<use_indirect_vptrs>(detail::null_vptr);
     }
 
     template<typename Arg>
@@ -741,18 +1077,322 @@ class virtual_ptr<
         : vp(vp), obj(std::forward<Arg>(obj)) {
     }
 
+  public:
+    //! Class pointed to by SmartPtr
+    using element_type = typename SmartPtr::element_type;
+
+    //! Default constructor
+    //!
+    //! Construct the object pointer using its default constructor. Set the
+    //! v-table pointer to `nullptr`.
+    //!
+    //! @par Example
+    //! @code
+    //! struct Dog {}; // polymorphism not required
+    //! BOOST_OPENMETHOD_CLASSES(Dog);
+    //! initialize();
+    //!
+    //! virtual_ptr<std::shared_ptr<Dog>> p;
+    //! BOOST_TEST(p.get() == nullptr);
+    //! BOOST_TEST(p.vptr() == nullptr);
+    //! @par Example
+    //! @endcode
+    virtual_ptr()
+        : vp(detail::box_vptr<use_indirect_vptrs>(detail::null_vptr)) {
+    }
+
+    //! Construct from `nullptr`
+    //!
+    //! Construct the object pointer using its default constructor. Set the
+    //! v-table pointer to `nullptr`.
+    //!
+    //! @par Example
+    //! @code
+    //! struct Dog {}; // polymorphism not required
+    //! BOOST_OPENMETHOD_CLASSES(Dog);
+    //! initialize();
+    //!
+    //! virtual_ptr<std::shared_ptr<Dog>> p{nullptr};
+    //! BOOST_TEST(p.get() == nullptr);
+    //! BOOST_TEST(p.vptr() == nullptr);
+    //! @endcode
+    //!
+    //! @param value A `nullptr`.
+    explicit virtual_ptr(std::nullptr_t)
+        : vp(detail::box_vptr<use_indirect_vptrs>(detail::null_vptr)) {
+    }
+
+    virtual_ptr(const virtual_ptr& other) = default;
+
+    virtual_ptr(virtual_ptr&& other)
+        : vp(std::exchange(
+              other.vp,
+              detail::box_vptr<use_indirect_vptrs>(detail::null_vptr))),
+          obj(std::move(other.obj)) {
+    }
+
+    //! Construct from a (const) smart pointer to a derived class
+    //!
+    //! Set the object pointer with a copy of `other`. Set the v-table pointer
+    //! according to the dynamic type of `*other`.
+    //!
+    //! @par Example
+    //! @code
+    //! struct Animal { virtual ~Animal() { } }; // polymorphic
+    //! struct Dog : Animal {}; // polymorphic
+    //! BOOST_OPENMETHOD_CLASSES(Animal, Dog);
+    //! initialize();
+    //!
+    //! const std::shared_ptr<Dog> snoopy = std::make_shared<Dog>();
+    //! virtual_ptr<std::shared_ptr<Animal>> p = snoopy;
+    //!
+    //! BOOST_TEST(p.get() == snoopy.get());
+    //! BOOST_TEST(p.vptr() == default_registry::static_vptr<Dog>);
+    //! @endcode
+    //!
+    //! @par Requirements
+    //! @li `SmartPtr` and `Other` must be instantiated from the same template -
+    //! e.g. both `std::shared_ptr` or both `std::unique_ptr`.
+    //! @li `Other` must be a smart pointer to a polymorphic class derived from
+    //! `element_type`.
+    //! @li `SmartPtr` must be constructible from `const Other&`.
+    template<
+        class Other,
+        typename = std::enable_if_t<
+            BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS
+                SameSmartPtr<SmartPtr, Other, Registry> &&
+            BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS
+                IsPolymorphic<typename Other::element_type, Registry> &&
+            std::is_constructible_v<SmartPtr, const Other&>>>
+    virtual_ptr(const Other& other)
+        : vp(detail::box_vptr<use_indirect_vptrs>(
+              other ? detail::acquire_vptr<Registry>(*other)
+                    : detail::null_vptr)),
+          obj(other) {
+    }
+
+    //! Construct from a smart pointer to a derived class
+    //!
+    //! Copy object pointer from `other` to `this`. Set the v-table pointer
+    //! according to the dynamic type of `*other`.
+    //!
+    //! @par Example
+    //! @code
+    //! struct Animal { virtual ~Animal() { } }; // polymorphic
+    //! struct Dog : Animal {}; // polymorphic
+    //! BOOST_OPENMETHOD_CLASSES(Animal, Dog);
+    //! initialize();
+    //!
+    //! std::shared_ptr<Dog> snoopy = std::make_shared<Dog>();
+    //! virtual_ptr<std::shared_ptr<Animal>> p = snoopy;
+    //!
+    //! BOOST_TEST(p.get() == snoopy.get());
+    //! BOOST_TEST(p.vptr() == default_registry::static_vptr<Dog>);
+    //! @endcode
+    //!
+    //! @par Requirements
+    //! @li `SmartPtr` and `Other` must be instantiated from the same template -
+    //! e.g. both `std::shared_ptr` or both `std::unique_ptr`.
+    //! @li `Other` must be a smart pointer to a polymorphic class derived from
+    //! `element_type`.
+    //! @li `SmartPtr` must be constructible from `Other&`.
+    template<
+        class Other,
+        typename = std::enable_if_t<
+            BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS
+                SameSmartPtr<SmartPtr, Other, Registry> &&
+            BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS
+                IsPolymorphic<typename Other::element_type, Registry> &&
+            std::is_constructible_v<SmartPtr, Other&>>>
+    virtual_ptr(Other& other)
+        : vp(detail::box_vptr<use_indirect_vptrs>(
+              other ? detail::acquire_vptr<Registry>(*other)
+                    : detail::null_vptr)),
+          obj(other) {
+    }
+
+    //! Move-construct from a smart pointer to a derived class
+    //!
+    //! Move object pointer from `other` to `this`. Set the v-table pointer
+    //! according to the dynamic type of `*other`.
+    //!
+    //! @par Example
+    //! @code
+    //! struct Animal { virtual ~Animal() { } }; // polymorphic
+    //! struct Dog : Animal {}; // polymorphic
+    //! BOOST_OPENMETHOD_CLASSES(Animal, Dog);
+    //! initialize();
+    //!
+    //! std::shared_ptr<Dog> snoopy = std::make_shared<Dog>();
+    //! Dog* moving = snoopy.get();
+    //!
+    //! virtual_ptr<std::shared_ptr<Animal>> p = std::move(snoopy);
+    //!
+    //! BOOST_TEST(p.get() == moving);
+    //! BOOST_TEST(p.vptr() == default_registry::static_vptr<Dog>);
+    //! BOOST_TEST(snoopy.get() == nullptr);
+    //! @endcode
+    //!
+    //! @par Requirements
+    //! @li `SmartPtr` and `Other` must be instantiated from the same template -
+    //! e.g. both `std::shared_ptr` or both `std::unique_ptr`.
+    //! @li `Other` must be a smart pointer to a polymorphic class derived from
+    //! `element_type`.
+    //! @li `SmartPtr` must be constructible from `Other&&`.
+    template<
+        class Other,
+        typename = std::enable_if_t<
+            BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS
+                SameSmartPtr<SmartPtr, Other, Registry> &&
+            BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS
+                IsPolymorphic<typename Other::element_type, Registry> &&
+            std::is_constructible_v<SmartPtr, Other&&>>>
+    virtual_ptr(Other&& other)
+        : vp(detail::box_vptr<use_indirect_vptrs>(
+              other ? detail::acquire_vptr<Registry>(*other)
+                    : detail::null_vptr)),
+          obj(std::move(other)) {
+    }
+
+    //! Construct from a smart virtual (const) pointer to a derived class
+    //!
+    //! Copy the object and v-table pointers from `other`.
+    //!
+    //! `Other` is _not_ required to be a pointer to a polymorphic class.
+    //!
+    //! @par Example
+    //! @code
+    //! struct Animal {}; // polymorphism not required
+    //! struct Dog : Animal {}; // polymorphism not required
+    //! BOOST_OPENMETHOD_CLASSES(Animal, Dog);
+    //! initialize();
+    //!
+    //! const virtual_ptr<std::shared_ptr<Dog>> snoopy = make_shared_virtual<Dog>();
+    //! virtual_ptr<std::shared_ptr<Animal>> p = snoopy;
+    //!
+    //! BOOST_TEST(snoopy.get() != nullptr);
+    //! BOOST_TEST(p.get() == snoopy.get());
+    //! BOOST_TEST(p.vptr() == default_registry::static_vptr<Dog>);
+    //! @endcode
+    //!
+    //! @par Requirements
+    //! @li `SmartPtr` and `Other` must be instantiated from the same template -
+    //! e.g. both `std::shared_ptr` or both `std::unique_ptr`.
+    //! @li `Other` must be a virtual pointer to a class derived from
+    //! `element_type`.
+    //! @li `SmartPtr` must be constructible from `Other&`.
+    template<
+        class Other,
+        typename = std::enable_if_t<
+            BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS
+                SameSmartPtr<SmartPtr, Other, Registry> &&
+            std::is_constructible_v<SmartPtr, const Other&>>>
+    virtual_ptr(const virtual_ptr<Other, Registry>& other)
+        : vp(other.vp), obj(other.obj) {
+    }
+
+    //! Construct-move from a virtual pointer to a derived class
+    //!
+    //! Move the object pointer from `other` to `this`. Copy the v-table pointer
+    //! from `other`.
+    //!
+    //! `Other` is _not_ required to be a pointer to a polymorphic class.
+    //!
+    //! @par Example
+    //! @code
+    //! struct Animal {}; // polymorphism not required
+    //! struct Dog : Animal {}; // polymorphism not required
+    //! BOOST_OPENMETHOD_CLASSES(Animal, Dog);
+    //! initialize();
+    //!
+    //! virtual_ptr<std::shared_ptr<Dog>> snoopy = make_shared_virtual<Dog>();
+    //! Dog* dog = snoopy.get();
+    //!
+    //! virtual_ptr<std::shared_ptr<Animal>> p = std::move(snoopy);
+    //!
+    //! BOOST_TEST(p.get() == dog);
+    //! BOOST_TEST(p.vptr() == default_registry::static_vptr<Dog>);
+    //! BOOST_TEST(snoopy.get() == nullptr);
+    //! @endcode
+    //!
+    //! @par Requirements
+    //! @li `SmartPtr` and `Other` must be instantiated from the same template -
+    //! e.g. both `std::shared_ptr` or both `std::unique_ptr`.
+    //! @li `Other` must be a smart pointer to a class derived from
+    //! `element_type`.
+    //! @li `SmartPtr` must be constructible from `Other&&`.
+    template<
+        class Other,
+        typename = std::enable_if_t<
+            BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS
+                SameSmartPtr<SmartPtr, Other, Registry> &&
+            std::is_constructible_v<SmartPtr, Other&&>>>
+    virtual_ptr(virtual_ptr<Other, Registry>&& other)
+        : vp(std::exchange(
+              other.vp,
+              detail::box_vptr<use_indirect_vptrs>(detail::null_vptr))),
+          obj(std::move(other.obj)) {
+    }
+
+    //! Assign from `nullptr`
+    //!
+    //! Reset the object pointer using its default constructor. Set the
+    //! v-table pointer to `nullptr`.
+    //!
+    //! @par Example
+    //! @code
+    //! struct Dog {}; // polymorphism not required
+    //! BOOST_OPENMETHOD_CLASSES(Dog);
+    //! initialize();
+    //!
+    //! virtual_ptr<std::shared_ptr<Dog>> p = make_shared_virtual<Dog>();
+    //!
+    //! p = nullptr;
+    //!
+    //! BOOST_TEST(p.get() == nullptr);
+    //! BOOST_TEST(p.vptr() == nullptr);
+    //! BOOST_TEST((p == virtual_ptr<std::shared_ptr<Dog>>()));
+    //! @endcode
+    //!
+    //! @param value A `nullptr`.
     virtual_ptr& operator=(std::nullptr_t) {
-        obj = nullptr;
+        obj = SmartPtr();
         vp = detail::box_vptr<use_indirect_vptrs>(detail::null_vptr);
         return *this;
     }
 
+    //! Assign from a (const) smart pointer to a derived class
+    //!
+    //! Copy the object pointer from `other` to `this`. Set the v-table pointer
+    //! according to the dynamic type of `*other`.
+    //!
+    //! @par Example
+    //! @code
+    //! virtual_ptr<std::shared_ptr<Dog>> snoopy = make_shared_virtual<Dog>();
+    //! virtual_ptr<std::shared_ptr<Dog>> p;
+    //!
+    //! p = snoopy;
+    //!
+    //! BOOST_TEST(p.get() != nullptr);
+    //! BOOST_TEST(p.get() == snoopy.get());
+    //! BOOST_TEST(p.vptr() == default_registry::static_vptr<Dog>);
+    //! BOOST_TEST(snoopy.vptr() == default_registry::static_vptr<Dog>);
+    //! @endcode
+    //!
+    //! @par Requirements
+    //! @li `SmartPtr` and `Other` must be instantiated from the same template -
+    //! e.g. both `std::shared_ptr` or both `std::unique_ptr`.
+    //! @li `Other` must be a smart pointer to a polymorphic class derived from
+    //! `element_type`.
+    //! @li `SmartPtr` must be constructible from `const Other&`.
     template<
         class Other,
         typename = std::enable_if_t<
-            same_smart_ptr<Class, Other, Registry> &&
-            std::is_assignable_v<Class, const Other&> &&
-            is_polymorphic<element_type, Registry>>>
+            BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS
+                SameSmartPtr<SmartPtr, Other, Registry> &&
+            std::is_assignable_v<SmartPtr, const Other&> &&
+            BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS
+                IsPolymorphic<typename Other::element_type, Registry>>>
     virtual_ptr& operator=(const Other& other) {
         obj = other;
         vp = detail::box_vptr<use_indirect_vptrs>(
@@ -760,12 +1400,39 @@ class virtual_ptr<
         return *this;
     }
 
+    //! Move-assign from a smart pointer to a derived class
+    //!
+    //! Move object pointer from `other` to `this`. Set the v-table pointer
+    //! according to the dynamic type of `*other`.
+    //!
+    //! @par Example
+    //! @code
+    //! virtual_ptr<std::shared_ptr<Dog>> snoopy = make_shared_virtual<Dog>();
+    //! Dog* moving = snoopy.get();
+    //! virtual_ptr<std::shared_ptr<Dog>> p;
+    //!
+    //! p = std::move(snoopy);
+    //!
+    //! BOOST_TEST(p.get() == moving);
+    //! BOOST_TEST(p.vptr() == default_registry::static_vptr<Dog>);
+    //! BOOST_TEST(snoopy.get() == nullptr);
+    //! BOOST_TEST(snoopy.vptr() == nullptr);
+    //! @endcode
+    //!
+    //! @par Requirements
+    //! @li `SmartPtr` and `Other` must be instantiated from the same template -
+    //! e.g. both `std::shared_ptr` or both `std::unique_ptr`.
+    //! @li `Other` must be a smart pointer to a polymorphic class derived from
+    //! `element_type`.
+    //! @li `SmartPtr` must be constructible from `Other&&`.
     template<
         class Other,
         typename = std::enable_if_t<
-            same_smart_ptr<Class, Other, Registry> &&
-            std::is_assignable_v<Class, Other&&> &&
-            is_polymorphic<element_type, Registry>>>
+            BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS
+                SameSmartPtr<SmartPtr, Other, Registry> &&
+            std::is_assignable_v<SmartPtr, Other&&> &&
+            BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS
+                IsPolymorphic<typename Other::element_type, Registry>>>
     virtual_ptr& operator=(Other&& other) {
         vp = detail::box_vptr<use_indirect_vptrs>(
             other ? detail::acquire_vptr<Registry>(*other) : detail::null_vptr);
@@ -773,11 +1440,42 @@ class virtual_ptr<
         return *this;
     }
 
+    //! Assign from a smart virtual pointer to a derived class
+    //!
+    //! Copy the object and v-table pointers from `other` to `this`.
+    //!
+    //! `Other` is _not_ required to be a pointer to a polymorphic class.
+    //!
+    //! @par Example
+    //! @code
+    //! struct Animal {}; // polymorphism not required
+    //! struct Dog : Animal {}; // polymorphism not required
+    //! BOOST_OPENMETHOD_CLASSES(Animal, Dog);
+    //! initialize();
+    //!
+    //! virtual_ptr<std::shared_ptr<Dog>> snoopy = make_shared_virtual<Dog>();
+    //! virtual_ptr<std::shared_ptr<Dog>> p;
+    //!
+    //! p = snoopy;
+    //!
+    //! BOOST_TEST(p.get() != nullptr);
+    //! BOOST_TEST(p.get() == snoopy.get());
+    //! BOOST_TEST(p.vptr() == default_registry::static_vptr<Dog>);
+    //! BOOST_TEST(snoopy.vptr() == default_registry::static_vptr<Dog>);
+    //! @endcode
+    //!
+    //! @par Requirements
+    //! @li `SmartPtr` and `Other` must be instantiated from the same template -
+    //! e.g. both `std::shared_ptr` or both `std::unique_ptr`.
+    //! @li `Other` must be a virtual pointer to a class derived from
+    //! `element_type`.
+    //! @li `SmartPtr` must be constructible from `Other&`.
     template<
         class Other,
         typename = std::enable_if_t<
-            same_smart_ptr<Class, Other, Registry> &&
-            std::is_assignable_v<Class, Other&>>>
+            BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS
+                SameSmartPtr<SmartPtr, Other, Registry> &&
+            std::is_assignable_v<SmartPtr, Other&>>>
     virtual_ptr& operator=(virtual_ptr<Other, Registry>& other) {
         obj = other.obj;
         vp = other.vp;
@@ -786,63 +1484,146 @@ class virtual_ptr<
 
     virtual_ptr& operator=(const virtual_ptr& other) = default;
 
+    //! Assign from a smart virtual const pointer to a derived class
+    //!
+    //! Copy the object and v-table pointers from `other` to `this`.
+    //!
+    //! `Other` is _not_ required to be a pointer to a polymorphic class.
+    //!
+    //! @par Example
+    //! @code
+    //! struct Animal {}; // polymorphism not required
+    //! struct Dog : Animal {}; // polymorphism not required
+    //! BOOST_OPENMETHOD_CLASSES(Animal, Dog);
+    //! initialize();
+    //!
+    //! const virtual_ptr<std::shared_ptr<Dog>> snoopy = make_shared_virtual<Dog>();
+    //! virtual_ptr<std::shared_ptr<Dog>> p;
+    //!
+    //! p = snoopy;
+    //!
+    //! BOOST_TEST(p.get() != nullptr);
+    //! BOOST_TEST(p.get() == snoopy.get());
+    //! BOOST_TEST(p.vptr() == default_registry::static_vptr<Dog>);
+    //! BOOST_TEST(snoopy.vptr() == default_registry::static_vptr<Dog>);
+    //! @endcode
+    //!
+    //! @par Requirements
+    //! @li `SmartPtr` and `Other` must be instantiated from the same template -
+    //! e.g. both `std::shared_ptr` or both `std::unique_ptr`.
+    //! @li `Other` must be a virtual pointer to a class derived from
+    //! `element_type`.
+    //! @li `SmartPtr` must be constructible from `Other&`.
     template<
         class Other,
         typename = std::enable_if_t<
-            same_smart_ptr<Class, Other, Registry> &&
-            std::is_assignable_v<Class, const Other&>>>
+            BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS
+                SameSmartPtr<SmartPtr, Other, Registry> &&
+            std::is_assignable_v<SmartPtr, const Other&>>>
     virtual_ptr& operator=(const virtual_ptr<Other, Registry>& other) {
         obj = other.obj;
         vp = other.vp;
         return *this;
     }
 
+    //! Move from a virtual pointer to a derived class
+    //!
+    //! Move the object pointer from `other` to `this`. Copy the v-table pointer
+    //! from `other`.
+    //!
+    //! `Other` is _not_ required to be a pointer to a polymorphic class.
+    //!
+    //! @par Example
+    //! @code
+    //! struct Animal {}; // polymorphism not required
+    //! struct Dog : Animal {}; // polymorphism not required
+    //! BOOST_OPENMETHOD_CLASSES(Animal, Dog);
+    //! initialize();
+    //!
+    //! virtual_ptr<std::shared_ptr<Dog>> snoopy =
+    //!     make_shared_virtual<Dog>();
+    //! Dog* moving = snoopy.get();
+    //! virtual_ptr<std::shared_ptr<Dog>> p;
+    //!
+    //! p = std::move(snoopy);
+    //!
+    //! BOOST_TEST(p.get() == moving);
+    //! BOOST_TEST(p.vptr() == default_registry::static_vptr<Dog>);
+    //! BOOST_TEST(snoopy.get() == nullptr);
+    //! BOOST_TEST(snoopy.vptr() == nullptr);
+    //! @endcode
+    //!
+    //! @par Requirements
+    //! @li `SmartPtr` and `Other` must be instantiated from the same template -
+    //! e.g. both `std::shared_ptr` or both `std::unique_ptr`.
+    //! @li `Other` must be a smart pointer to a class derived from
+    //! `element_type`.
+    //! @li `SmartPtr` must be constructible from `Other&&`.
     template<
         class Other,
         typename = std::enable_if_t<
-            same_smart_ptr<Class, Other, Registry> &&
-            std::is_assignable_v<Class, Other&&>>>
+            BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS
+                SameSmartPtr<SmartPtr, Other, Registry> &&
+            std::is_assignable_v<SmartPtr, Other&&>>>
     virtual_ptr& operator=(virtual_ptr<Other, Registry>&& other) {
+        vp = std::exchange(
+            other.vp, detail::box_vptr<use_indirect_vptrs>(detail::null_vptr));
         obj = std::move(other.obj);
-        vp = other.vp;
-        other.vp = detail::box_vptr<use_indirect_vptrs>(detail::null_vptr);
+
         return *this;
     }
 
+    //! Get a pointer to the object
+    //!
+    //! @return A *plain* pointer to the object
     auto get() const -> element_type* {
         return obj.get();
     }
 
+    //! Get a pointer to the object
+    //!
+    //! @return A *plain* pointer to the object
     auto operator->() const -> element_type* {
         return get();
     }
 
+    //! Get a reference to the object
+    //!
+    //! @return A reference to the object
     auto operator*() const -> element_type& {
         return *get();
     }
 
-    auto pointer() const -> const Class& {
+    //! Get a smart pointer to the object
+    //!
+    //! @return A const reference to the object pointer
+    auto pointer() const -> const SmartPtr& {
         return obj;
     }
 
-    template<class Other>
-    auto cast() & -> decltype(auto) {
-        static_assert(
+    //! Cast to another `virtual_ptr` type
+    //! @tparam Other The target class of the cast
+    //! @return A `virtual_ptr<Other, Registry>` pointing to the same object
+    //! @par Requirements
+    //! @li `Other` must be a base or a derived class of `Class`.
+    template<
+        class Other,
+        typename = std::enable_if_t<
             std::is_base_of_v<element_type, Other> ||
-            std::is_base_of_v<Other, element_type>);
-
+            std::is_base_of_v<Other, element_type>>>
+    auto cast() & -> decltype(auto) {
         using other_smart_ptr = typename traits::template rebind<Other>;
 
         return virtual_ptr<other_smart_ptr, Registry>(
             traits::template cast<other_smart_ptr>(obj), vp);
     }
 
-    template<class Other>
-    auto cast() const& -> decltype(auto) {
-        static_assert(
+    template<
+        class Other,
+        typename = std::enable_if_t<
             std::is_base_of_v<element_type, Other> ||
-            std::is_base_of_v<Other, element_type>);
-
+            std::is_base_of_v<Other, element_type>>>
+    auto cast() const& -> decltype(auto) {
         using other_smart_ptr = typename traits::template rebind<Other>;
 
         return virtual_ptr<other_smart_ptr, Registry>(
@@ -866,6 +1647,8 @@ class virtual_ptr<
         return final_virtual_ptr<Registry>(std::forward<Other>(obj));
     }
 
+    //! Get the v-table pointer
+    //! @return The v-table pointer
     auto vptr() const {
         return detail::unbox_vptr(this->vp);
     }
@@ -905,8 +1688,8 @@ struct virtual_traits<virtual_ptr<Class, Registry>, Registry> {
     }
 
     template<typename Derived>
-    static auto cast(const virtual_ptr<Class, Registry>& ptr)
-        -> decltype(auto) {
+    static auto
+    cast(const virtual_ptr<Class, Registry>& ptr) -> decltype(auto) {
         return ptr.template cast<typename Derived::element_type>();
     }
 
@@ -926,8 +1709,8 @@ struct virtual_traits<const virtual_ptr<Class, Registry>&, Registry> {
     }
 
     template<typename Derived>
-    static auto cast(const virtual_ptr<Class, Registry>& ptr)
-        -> decltype(auto) {
+    static auto
+    cast(const virtual_ptr<Class, Registry>& ptr) -> decltype(auto) {
         return ptr.template cast<
             typename std::remove_reference_t<Derived>::element_type>();
     }
@@ -1044,30 +1827,240 @@ struct valid_method_parameter<virtual_<T>, Registry>
           Registry::rtti::template is_polymorphic<virtual_type<T, Registry>>> {
 };
 
+template<class Registry>
+using method_base = std::conditional_t<
+    Registry::has_deferred_static_rtti, deferred_method_info, method_info>;
+
+template<typename T, class Registry>
+struct parameter_traits {
+    static auto peek(const T&) {
+        return nullptr;
+    }
+
+    template<typename>
+    static auto cast(T value) -> T {
+        return value;
+    }
+};
+
+template<typename T, class Registry>
+struct parameter_traits<virtual_<T>, Registry> : virtual_traits<T, Registry> {};
+
+template<class Class, class Registry>
+struct parameter_traits<virtual_ptr<Class, Registry, void>, Registry>
+    : virtual_traits<virtual_ptr<Class, Registry, void>, Registry> {};
+
+template<class Class, class Registry>
+struct parameter_traits<const virtual_ptr<Class, Registry, void>&, Registry>
+    : virtual_traits<const virtual_ptr<Class, Registry, void>&, Registry> {};
+
 } // namespace detail
 
+//! Implement a method
+//!
+//! Methods are created by specializing the `method` class template with an
+//! identifier, a function type and optionally a registry.
+//!
+//! `Id` is a type, typically an incomplete class declaration named after the
+//! method's purpose. It is used to allow different methods with the same
+//! signature.
+//!
+//! `Fn` is a function type, i.e. a type in the form `ReturnType(Parameters...)`.
+//!
+//! `Registry` is an instantiation of class template @ref registry. Methods may
+//! use only classes that have been registered in the same registry as virtual
+//! parameters and arguments. The registry also policies that influence several
+//! aspects of the dispatch mechanism - for example, how to obtain a v-table
+//! pointer for an object, how to report errors, whether to perform sanity
+//! checks, etc.
+//!
+//! The default value of `Registry` is the preprocessor symbol
+//! `BOOST_OPENMETHOD_DEFAULT_REGISTRY`. It can be defined before including the
+//! `<boost/openmethod/core.hpp>` header to override the default registry.
+//! Setting this symbol after including `core.hpp` has no effect.
+//!
+//! Specializations of `method` have a single instance: the static member `fn`,
+//! a function object whose `operator()` is used to call the method and forward
+//! to the appropriate overrider. It is selected in the same way as overloaded
+//! function resolution:
+//!
+//! 1. Form the set of all applicable overriders. An overrider is applicable
+//!    if it can be called with the arguments passed to the method.
+//!
+//! 2. If the set is empty, call the error handler (if present in the
+//!    policy), then terminate the program with `abort`.
+//!
+//! 3. Remove the overriders that are dominated by other overriders in the
+//!    set. Overrider A dominates overrider B if any of its virtual formal
+//!    parameters is more specialized than B's, and if none of B's virtual
+//!    parameters is more specialized than A's.
+//!
+//! 4. If the resulting set contains exactly one overrider, call it.
+//!
+//! If a single most specialized overrider does not exist, the program is
+//! terminated via `abort`. If the registry contains an @ref error_handler
+//! policy, its `error` function is called with an object that describes the
+//! error, prior calling `abort`. `error` may prevent termination by throwing an
+//! exception.
+//!
+//! For each virtual argument `arg`, the dispatch mechanism calls
+//! `virtual_traits::peek(arg)` and deduces the v-table pointer from the
+//! `result`, using the first of the following methods that applies:
+//!
+//! 1. If `result` is a `virtual_ptr`, get the pointer to the v-table from it.
+//!
+//! 2. If `boost_openmethod_vptr` can be called with `result` and a `Registry*`,
+//!    and returns a `vptr_type`, call it.
+//!
+//! 3. Call `Registry::rtti::dynamic_vptr(result)`.
+//!
+//! @par N2216 Handling of Ambiguous Calls
+//!
+//! If `Registry` contains the @ref n2216 policy, ambiguous calls are not an
+//! error. Instead, the following extra steps are taken to select an
+//! overrider:
+//!
+//! 1. If the return type is a registered polymorphic type, remove all the
+//!    overriders that return a less specific type than others.
+//!
+//! 2. If the resulting set contains only one overrider, call it.
+//!
+//! 3. Otherwise, call one of the remaining overriders. Which overrider is
+//!    selected is not specified, but it is the same across calls with the
+//!    same arguments types.
+//!
+//! @tparam Id A type
+//! @tparam Fn A function type
+//! @tparam Registry The registry in which the method is defined
 template<
-    typename Name, typename ReturnType,
+    typename Id, typename Fn,
     class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
 class method;
 
+//! Method with a specific id, signature and return type
+//!
+//! `method` implements an open-method that takes a parameter list -
+//! `Parameters` - and returns a `ReturnType`.
+//!
+//! `Parameters` must contain at least one virtual parameter, i.e. a parameter
+//! that has a type in the form `virtual_ptr<T, Registry>` or `virtual\_<T>`.
+//! The dynamic types of the virtual arguments are taken into account to select
+//! the overrider to call.
+//!
+//! @see method
+//!
+//! @tparam Id A type representing the method's name
+//! @tparam ReturnType The return type of the method
+//! @tparam Parameters The types of the parameters
+//! @tparam Registry The registry of the method
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
-class method<Name, ReturnType(Parameters...), Registry>
-    : public std::conditional_t<
-          Registry::has_deferred_static_rtti, detail::deferred_method_info,
-          detail::method_info> {
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
+class method<Id, ReturnType(Parameters...), Registry>
+    : public detail::method_base<Registry> {
+    template<auto Function, typename FunctionType>
+    struct override_aux;
+
+  public:
+    //! Method singleton
+    //!
+    //! The only instance of `method`. Its `operator()` is used to call
+    //! the method.
+    static method fn;
+
+    //! Call the method
+    //!
+    //! Call the method with `args`. The types of the arguments are the same as
+    //! the method `Parameters...`, stripped from any `virtual\_` decorators.
+    //!
+    //! @param args The arguments for the method call
+    //!
+    //! @par Errors
+    //!
+    //! If `Registry` contains an @ref error_handler policy, call its `error`
+    //! function with an object of one of the following types:
+    //!
+    //! @li @ref not_implemented: No overrider is applicable.
+    //! @li @ref ambiguous_call: More than one overrider is applicable, and
+    //! none is more specialized than all the others.
+    //!
+    auto operator()(typename BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS
+                        StripVirtualDecorator<Parameters>::type... args) const
+        -> ReturnType;
+
+    //! Check if a next most specialized overrider exists
+    //!
+    //! Return `true` if a next most specialized overrider after _Fn_ exists,
+    //! and @ref next can be called without causing a @ref call_error.
+    //!
+    //! @par Requirements
+    //!
+    //! `Fn` must be a function that is an overrider of the method.
+    //!
+    //! @tparam Fn A function that is an overrider of the method.
+    //! @return `true` if a next most specialized overrider exists
+    template<auto Fn>
+    static bool has_next();
+
+    //! The next most specialized overrider
+    //!
+    //! A pointer to the next most specialized overrider after `Fn`, i.e. the
+    //! overrider that would be called for the same tuple of virtual arguments
+    //! if `Fn` was not present. Set to `nullptr` if no such overrider exists.
+    //! @par Requirements
+    //!
+    //! `Fn` must be a function that is an overrider of the method.
+    //!
+    //! @tparam Fn A function that is an overrider of the method.
+    template<auto Fn>
+    inline static ReturnType (*next)(
+        typename BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS
+            StripVirtualDecorator<Parameters>::type... args);
+
+    //! Add overriders to method
+    //!
+    //! `override`, instantiated as a static object, adds one or more overriders
+    //! to an open-method.
+    //!
+    //! @par Requirements
+    //!
+    //! `Fn` must be a function that fulfills the following requirements:
+    //!
+    //! @li Have the same number of formal parameters as the method.
+    //!
+    //! @li Each `virtual_ptr<T>` in the method's parameter list must have a
+    //! corresponding `virtual_ptr<U> in the same position in the overrider's
+    //! parameter list. The registry's `rtti` policy must have a
+    //! `dynamic_cast_ref` that can cast `virtual_ptr<T>` to `virtual_ptr<U>`.
+    //!
+    //! @li Each `virtual_<T>` in the method's parameter list must have a
+    //! corresponding parameter `U` that the registry's `rtti` policy can cast
+    //! from `T` to `U`. Note: `U` must *not* be decorated with `virtual_<>`.
+    //!
+    //! @li All other formal parameters must have the same type as the method's
+    //! corresponding parameters.
+    //!
+    //! @li The return type of the overrider must be the same as the method's
+    //! return type or, if it is a polymorphic type, covariant with the method's
+    //! return type.
+    //!
+    //! @tparam Fn One or more functions to the overrider list
+    template<auto... Fn>
+    class override {
+        std::tuple<override_aux<Fn, decltype(Fn)>...> impl;
+    };
+
+  private:
     // Aliases used in implementation only. Everything extracted from template
     // arguments is capitalized like the arguments themselves.
     using RegistryType = Registry;
     using rtti = typename Registry::rtti;
     using DeclaredParameters = mp11::mp_list<Parameters...>;
     using CallParameters =
-        boost::mp11::mp_transform<detail::remove_virtual, DeclaredParameters>;
+        boost::mp11::mp_transform<detail::remove_virtual_, DeclaredParameters>;
     using VirtualParameters =
         typename detail::virtual_types<DeclaredParameters>;
     using Signature = auto(Parameters...) -> ReturnType;
-    using FunctionPointer = auto (*)(detail::remove_virtual<Parameters>...)
+    using FunctionPointer = auto (*)(detail::remove_virtual_<Parameters>...)
         -> ReturnType;
     static constexpr auto Arity = boost::mp11::mp_count_if<
         mp11::mp_list<Parameters...>, detail::is_virtual>::value;
@@ -1081,7 +2074,6 @@ class method<Name, ReturnType(Parameters...), Registry>
         (... && detail::valid_method_parameter<Parameters, Registry>::value),
         "virtual_<> parameter is not polymorphic and no boost_openmethod_vptr "
         "function is available");
-    //static_assert()
 
     type_id vp_type_ids[Arity];
 
@@ -1100,8 +2092,8 @@ class method<Name, ReturnType(Parameters...), Registry>
     auto vptr(const ArgType& arg) const -> vptr_type;
 
     template<class Error>
-    auto check_static_offset(std::size_t actual, std::size_t expected) const
-        -> void;
+    auto
+    check_static_offset(std::size_t actual, std::size_t expected) const -> void;
 
     template<typename MethodArgList, typename ArgType, typename... MoreArgTypes>
     auto resolve_uni(const ArgType& arg, const MoreArgTypes&... more_args) const
@@ -1109,8 +2101,8 @@ class method<Name, ReturnType(Parameters...), Registry>
 
     template<typename MethodArgList, typename ArgType, typename... MoreArgTypes>
     auto resolve_multi_first(
-        const ArgType& arg, const MoreArgTypes&... more_args) const
-        -> detail::word;
+        const ArgType& arg,
+        const MoreArgTypes&... more_args) const -> detail::word;
 
     template<
         std::size_t VirtualArg, typename MethodArgList, typename ArgType,
@@ -1133,37 +2125,19 @@ class method<Name, ReturnType(Parameters...), Registry>
     method(method&&) = delete;
     ~method();
 
-    void resolve(); // perhaps virtual, perhaps not
+    void resolve(); // virtual if Registry contains has_deferred_static_rtti
 
-  public:
-    // Public aliases.
-    using name_type = Name;
-    using return_type = ReturnType;
-    using function_type = ReturnType (*)(detail::remove_virtual<Parameters>...);
-
-    static method fn;
-
-    auto operator()(detail::remove_virtual<Parameters>... args) const
-        -> ReturnType;
-
-    template<auto>
-    static function_type next;
-
-    template<auto>
-    static bool has_next();
-
+    static BOOST_NORETURN auto fn_not_implemented(
+        detail::remove_virtual_<Parameters>... args) -> ReturnType;
     static BOOST_NORETURN auto
-    fn_not_implemented(detail::remove_virtual<Parameters>... args)
-        -> ReturnType;
-    static BOOST_NORETURN auto
-    fn_ambiguous(detail::remove_virtual<Parameters>... args) -> ReturnType;
+    fn_ambiguous(detail::remove_virtual_<Parameters>... args) -> ReturnType;
 
-  private:
     template<
         auto Overrider, typename OverriderReturn,
         typename... OverriderParameters>
     struct thunk<Overrider, OverriderReturn (*)(OverriderParameters...)> {
-        static auto fn(detail::remove_virtual<Parameters>... arg) -> ReturnType;
+        static auto
+        fn(detail::remove_virtual_<Parameters>... arg) -> ReturnType;
         using OverriderVirtualParameters = detail::overrider_virtual_types<
             DeclaredParameters, mp11::mp_list<OverriderParameters...>,
             Registry>;
@@ -1206,12 +2180,6 @@ class method<Name, ReturnType(Parameters...), Registry>
 
         inline static override_impl<fn, FnReturnType> impl{&next<Function>};
     };
-
-  public:
-    template<auto... Function>
-    struct override {
-        std::tuple<override_aux<Function, decltype(Function)>...> impl;
-    };
 };
 
 // Following cannot be `inline static` becaused of MSVC (19.43) bug causing a
@@ -1230,22 +2198,19 @@ class method<Name, ReturnType(Parameters...), Registry>
 // https://godbolt.org/z/GzEn486P7
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
-method<Name, ReturnType(Parameters...), Registry>
-    method<Name, ReturnType(Parameters...), Registry>::fn;
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
+method<Id, ReturnType(Parameters...), Registry>
+    method<Id, ReturnType(Parameters...), Registry>::fn;
+
+// template<
+//     typename Id, typename... Parameters, typename ReturnType, class Registry>
+// template<auto>
+// typename method<Id, ReturnType(Parameters...), Registry>::FunctionPointer
+//     method<Id, ReturnType(Parameters...), Registry>::next;
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
-template<auto>
-typename method<Name, ReturnType(Parameters...), Registry>::FunctionPointer
-    method<Name, ReturnType(Parameters...), Registry>::next;
-
-template<typename T>
-constexpr bool is_method = std::is_base_of_v<detail::method_info, T>;
-
-template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
-method<Name, ReturnType(Parameters...), Registry>::method() {
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
+method<Id, ReturnType(Parameters...), Registry>::method() {
     using namespace policies;
 
     this->slots_strides_ptr = slots_strides;
@@ -1268,12 +2233,12 @@ method<Name, ReturnType(Parameters...), Registry>::method() {
 }
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
-void method<Name, ReturnType(Parameters...), Registry>::resolve_type_ids() {
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
+void method<Id, ReturnType(Parameters...), Registry>::resolve_type_ids() {
     using namespace detail;
     this->method_type_id = rtti::template static_type<method>();
-    this->return_type_id = rtti::template static_type<
-        typename virtual_traits<ReturnType, Registry>::virtual_type>();
+    this->return_type_id =
+        rtti::template static_type<virtual_type<ReturnType, Registry>>();
     init_type_ids<
         Registry,
         mp11::mp_transform_q<
@@ -1282,20 +2247,20 @@ void method<Name, ReturnType(Parameters...), Registry>::resolve_type_ids() {
 }
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 std::size_t method<
-    Name, ReturnType(Parameters...), Registry>::slots_strides[2 * Arity - 1];
+    Id, ReturnType(Parameters...), Registry>::slots_strides[2 * Arity - 1];
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
-method<Name, ReturnType(Parameters...), Registry>::~method() {
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
+method<Id, ReturnType(Parameters...), Registry>::~method() {
     Registry::methods.remove(*this);
 }
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 template<class Error>
-auto method<Name, ReturnType(Parameters...), Registry>::check_static_offset(
+auto method<Id, ReturnType(Parameters...), Registry>::check_static_offset(
     std::size_t actual, std::size_t expected) const -> void {
     using namespace detail;
 
@@ -1316,22 +2281,24 @@ auto method<Name, ReturnType(Parameters...), Registry>::check_static_offset(
 // method dispatch
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 BOOST_FORCEINLINE auto
-method<Name, ReturnType(Parameters...), Registry>::operator()(
-    detail::remove_virtual<Parameters>... args) const -> ReturnType {
+method<Id, ReturnType(Parameters...), Registry>::operator()(
+    typename BOOST_OPENMETHOD_DETAIL_UNLESS_MRDOCS
+        StripVirtualDecorator<Parameters>::type... args) const -> ReturnType {
     using namespace detail;
     auto pf = resolve(parameter_traits<Parameters, Registry>::peek(args)...);
 
-    return pf(std::forward<remove_virtual<Parameters>>(args)...);
+    return pf(std::forward<typename StripVirtualDecorator<Parameters>::type>(
+        args)...);
 }
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 template<typename... ArgType>
 BOOST_FORCEINLINE
-    typename method<Name, ReturnType(Parameters...), Registry>::FunctionPointer
-    method<Name, ReturnType(Parameters...), Registry>::resolve(
+    typename method<Id, ReturnType(Parameters...), Registry>::FunctionPointer
+    method<Id, ReturnType(Parameters...), Registry>::resolve(
         const ArgType&... args) const {
     using namespace detail;
 
@@ -1351,9 +2318,9 @@ BOOST_FORCEINLINE
 }
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 template<typename ArgType>
-BOOST_FORCEINLINE auto method<Name, ReturnType(Parameters...), Registry>::vptr(
+BOOST_FORCEINLINE auto method<Id, ReturnType(Parameters...), Registry>::vptr(
     const ArgType& arg) const -> vptr_type {
     if constexpr (detail::is_virtual_ptr<ArgType>) {
         return arg.vptr();
@@ -1363,12 +2330,12 @@ BOOST_FORCEINLINE auto method<Name, ReturnType(Parameters...), Registry>::vptr(
 }
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 template<typename MethodArgList, typename ArgType, typename... MoreArgTypes>
 BOOST_FORCEINLINE auto
-method<Name, ReturnType(Parameters...), Registry>::resolve_uni(
-    const ArgType& arg, const MoreArgTypes&... more_args) const
-    -> detail::word {
+method<Id, ReturnType(Parameters...), Registry>::resolve_uni(
+    const ArgType& arg,
+    const MoreArgTypes&... more_args) const -> detail::word {
 
     using namespace detail;
     using namespace policies;
@@ -1392,12 +2359,12 @@ method<Name, ReturnType(Parameters...), Registry>::resolve_uni(
 }
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 template<typename MethodArgList, typename ArgType, typename... MoreArgTypes>
 BOOST_FORCEINLINE auto
-method<Name, ReturnType(Parameters...), Registry>::resolve_multi_first(
-    const ArgType& arg, const MoreArgTypes&... more_args) const
-    -> detail::word {
+method<Id, ReturnType(Parameters...), Registry>::resolve_multi_first(
+    const ArgType& arg,
+    const MoreArgTypes&... more_args) const -> detail::word {
 
     using namespace detail;
     using namespace boost::mp11;
@@ -1430,12 +2397,12 @@ method<Name, ReturnType(Parameters...), Registry>::resolve_multi_first(
 }
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 template<
     std::size_t VirtualArg, typename MethodArgList, typename ArgType,
     typename... MoreArgTypes>
 BOOST_FORCEINLINE auto
-method<Name, ReturnType(Parameters...), Registry>::resolve_multi_next(
+method<Id, ReturnType(Parameters...), Registry>::resolve_multi_next(
     vptr_type dispatch, const ArgType& arg,
     const MoreArgTypes&... more_args) const -> detail::word {
 
@@ -1477,10 +2444,10 @@ method<Name, ReturnType(Parameters...), Registry>::resolve_multi_next(
 // Error handling
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 template<auto Fn>
-inline auto method<Name, ReturnType(Parameters...), Registry>::has_next()
-    -> bool {
+inline auto
+method<Id, ReturnType(Parameters...), Registry>::has_next() -> bool {
     if (next<Fn> == fn_not_implemented) {
         return false;
     }
@@ -1495,10 +2462,10 @@ inline auto method<Name, ReturnType(Parameters...), Registry>::has_next()
 }
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 BOOST_NORETURN auto
-method<Name, ReturnType(Parameters...), Registry>::fn_not_implemented(
-    detail::remove_virtual<Parameters>... args) -> ReturnType {
+method<Id, ReturnType(Parameters...), Registry>::fn_not_implemented(
+    detail::remove_virtual_<Parameters>... args) -> ReturnType {
     using namespace policies;
 
     if constexpr (Registry::has_error_handler) {
@@ -1513,10 +2480,10 @@ method<Name, ReturnType(Parameters...), Registry>::fn_not_implemented(
 }
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 BOOST_NORETURN auto
-method<Name, ReturnType(Parameters...), Registry>::fn_ambiguous(
-    detail::remove_virtual<Parameters>... args) -> ReturnType {
+method<Id, ReturnType(Parameters...), Registry>::fn_ambiguous(
+    detail::remove_virtual_<Parameters>... args) -> ReturnType {
     using namespace policies;
 
     if constexpr (Registry::has_error_handler) {
@@ -1540,12 +2507,12 @@ constexpr bool is_virtual_ptr_compatible =
 }
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 template<
     auto Overrider, typename OverriderReturn, typename... OverriderParameters>
-auto method<Name, ReturnType(Parameters...), Registry>::
+auto method<Id, ReturnType(Parameters...), Registry>::
     thunk<Overrider, OverriderReturn (*)(OverriderParameters...)>::fn(
-        detail::remove_virtual<Parameters>... arg) -> ReturnType {
+        detail::remove_virtual_<Parameters>... arg) -> ReturnType {
     using namespace detail;
     static_assert(
         (true && ... &&
@@ -1554,16 +2521,16 @@ auto method<Name, ReturnType(Parameters...), Registry>::
     return Overrider(
         detail::parameter_traits<Parameters, Registry>::template cast<
             OverriderParameters>(
-            std::forward<detail::remove_virtual<Parameters>>(arg))...);
+            std::forward<detail::remove_virtual_<Parameters>>(arg))...);
 }
 
 // -----------------------------------------------------------------------------
 // overriders
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 template<auto Function, typename FnReturnType>
-method<Name, ReturnType(Parameters...), Registry>::override_impl<
+method<Id, ReturnType(Parameters...), Registry>::override_impl<
     Function, FnReturnType>::override_impl(FunctionPointer* p_next) {
     using namespace detail;
 
@@ -1613,14 +2580,14 @@ method<Name, ReturnType(Parameters...), Registry>::override_impl<
 }
 
 template<
-    typename Name, typename... Parameters, typename ReturnType, class Registry>
+    typename Id, typename... Parameters, typename ReturnType, class Registry>
 template<auto Function, typename FnReturnType>
-void method<Name, ReturnType(Parameters...), Registry>::override_impl<
+void method<Id, ReturnType(Parameters...), Registry>::override_impl<
     Function, FnReturnType>::resolve_type_ids() {
     using namespace detail;
 
     this->return_type = Registry::rtti::template static_type<
-        typename virtual_traits<FnReturnType, Registry>::virtual_type>();
+        virtual_type<FnReturnType, Registry>>();
     this->type = Registry::rtti::template static_type<decltype(Function)>();
     using Thunk = thunk<Function, decltype(Function)>;
     detail::
@@ -1628,6 +2595,7 @@ void method<Name, ReturnType(Parameters...), Registry>::override_impl<
             this->vp_type_ids);
 }
 
+//! Contains aliases for the most frequently used types in the library
 namespace aliases {
 
 using boost::openmethod::final_virtual_ptr;

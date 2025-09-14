@@ -62,6 +62,18 @@ namespace boost::openmethod {
 //! and enabling some sections of code. They can be used as-is, without the need
 //! for subclassing.
 
+#ifdef __MRDOCS__
+
+//! Requirements for LightweightOutputStream (exposition only)
+struct LightweightOutputStream {
+    LightweightOutputStream& operator<<(const char* str);
+    LightweightOutputStream& operator<<(const std::string_view& view);
+    LightweightOutputStream& operator<<(const void* value);
+    LightweightOutputStream& operator<<(std::size_t value);
+};
+
+#endif
+
 namespace policies {
 
 #ifdef __MRDOCS__
@@ -77,14 +89,6 @@ struct PolicyCategory {
 struct Policy : PolicyCategory {
     template<class Registry>
     struct fn;
-};
-
-//! Requirements for LightweightOutputStream (exposition only)
-struct LightweightOutputStream {
-    LightweightOutputStream& operator<<(const char* str);
-    LightweightOutputStream& operator<<(const std::string_view& view);
-    LightweightOutputStream& operator<<(const void* value);
-    LightweightOutputStream& operator<<(std::size_t value);
 };
 
 //! Requirements for IdsToVptr (exposition only)
@@ -756,7 +760,7 @@ auto final_error::write(Stream& os) const -> void {
 }
 
 template<class Registry, class Stream>
-auto hash_search_error::write(Stream& os) const -> void {
+auto fast_perfect_hash_error::write(Stream& os) const -> void {
     os << "could not find hash factors after " << attempts << "s using "
        << buckets << " buckets\n";
 }

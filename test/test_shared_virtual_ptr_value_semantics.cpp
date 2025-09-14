@@ -12,13 +12,13 @@
 
 #include <memory>
 
-static_assert(same_smart_ptr<
+static_assert(SameSmartPtr<
               std::shared_ptr<Animal>, std::shared_ptr<Dog>, default_registry>);
 
-static_assert(!same_smart_ptr<
+static_assert(!SameSmartPtr<
               std::shared_ptr<Animal>, std::unique_ptr<Dog>, default_registry>);
 
-static_assert(!same_smart_ptr<
+static_assert(!SameSmartPtr<
               std::shared_ptr<Animal>, shared_virtual_ptr<std::unique_ptr<Dog>>,
               default_registry>);
 
@@ -31,8 +31,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
                   decltype(std::declval<shared_virtual_ptr<Animal, Registry>>()
                                .get()),
                   Animal*>);
-    static_assert(is_smart_ptr<std::shared_ptr<Animal>, Registry>);
-    static_assert(is_smart_ptr<std::shared_ptr<const Animal>, Registry>);
+    static_assert(IsSmartPtr<std::shared_ptr<Animal>, Registry>);
+    static_assert(IsSmartPtr<std::shared_ptr<const Animal>, Registry>);
     static_assert(
         std::is_same_v<
             decltype(*std::declval<shared_virtual_ptr<Animal, Registry>>()),
@@ -63,6 +63,10 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
     {
         auto snoopy = std::make_shared<Dog>();
         shared_virtual_ptr<Dog, Registry> p(snoopy);
+        BOOST_TEST(p.get() == snoopy.get());
+        BOOST_TEST(p.vptr() == Registry::template static_vptr<Dog>);
+
+        p = p;
         BOOST_TEST(p.get() == snoopy.get());
         BOOST_TEST(p.vptr() == Registry::template static_vptr<Dog>);
 
@@ -97,7 +101,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
     }
 
     {
-        auto snoopy = std::make_shared<const Dog>();
+        const auto snoopy = std::make_shared<const Dog>();
         shared_virtual_ptr<const Animal, Registry> p(snoopy);
         BOOST_TEST(p.get() == snoopy.get());
         BOOST_TEST(p.vptr() == Registry::template static_vptr<Dog>);

@@ -8,10 +8,6 @@
 
 #include <cstdint>
 
-#ifdef __MRDOCS__
-#include <boost/openmethod/detail/mrdocs.hpp>
-#endif
-
 #include <boost/openmethod/detail/static_list.hpp>
 
 #if BOOST_CXX_VERSION >= 202002L
@@ -69,32 +65,55 @@ struct virtual_traits;
 
 struct openmethod_error {};
 
+//! Registry not initialized
 struct not_initialized_error : openmethod_error {
+    //! Write a short description to an output stream
+    //! @param os The output stream
+    //! @tparam Registry The registry
+    //! @tparam Stream A @ref LightweightOutputStream
     template<class Registry, class Stream>
     auto write(Stream& os) const -> void {
         os << "not initialized";
     }
 };
 
+//! Unknown class
 struct unknown_class_error : openmethod_error {
+    //! The type_id of the unknown class.
     type_id type;
 
+    //! Write a short description to an output stream
+    //! @param os The output stream
+    //! @tparam Registry The registry
+    //! @tparam Stream A @ref LightweightOutputStream
     template<class Registry, class Stream>
     auto write(Stream& os) const -> void;
 };
 
-struct hash_search_error : openmethod_error {
+//! Cannot find hash factors
+struct fast_perfect_hash_error : openmethod_error {
+    //! Number of attempts to find hash factors
     std::size_t attempts;
+    //! Number of buckets used in the last attempt
     std::size_t buckets;
 
+    //! Write a short description to an output stream
+    //! @param os The output stream
+    //! @tparam Registry The registry
+    //! @tparam Stream A @ref LightweightOutputStream
     template<class Registry, class Stream>
     auto write(Stream& os) const -> void;
 };
 
+//! No valid overrider
 struct call_error : openmethod_error {
+    //! The type_id of method that was called
     type_id method;
+    //! The number of @em virtual arguments in the call
     std::size_t arity;
+    //! The maximum size of `types`
     static constexpr std::size_t max_types = 16;
+    //! The type_ids of the arguments.
     type_id types[max_types];
 
   protected:
@@ -102,36 +121,71 @@ struct call_error : openmethod_error {
     auto write_aux(Stream& os, const char* subtype) const -> void;
 };
 
+//! No overrider for virtual tuple
+//!
+//! @see @ref call_error for data members.
 struct not_implemented_error : call_error {
+    //! Write a short description to an output stream
+    //! @param os The output stream
+    //! @tparam Registry The registry
+    //! @tparam Stream A @ref LightweightOutputStream
     template<class Registry, class Stream>
     auto write(Stream& os) const -> void {
         write_aux<Registry>(os, "not implemented");
     }
 };
 
+//! Ambiguous call
+//!
+//! @see @ref call_error for data members.
 struct ambiguous_error : call_error {
+    //! Write a short description to an output stream
+    //! @param os The output stream
+    //! @tparam Registry The registry
+    //! @tparam Stream A @ref LightweightOutputStream
     template<class Registry, class Stream>
     auto write(Stream& os) const -> void {
         write_aux<Registry>(os, "ambiguous");
     }
 };
 
+//! Static and dynamic type mismatch in "final" construct
+//!
+//! If runtime checks are enabled, the "final" construct checks that the static
+//! and dynamic types of the object, as reported by the `rtti` policy,  are the
+//! same. If they are not, and if the registry contains an @ref error_handler
+//! policy, its @ref error function is called with a `final_error` object, then
+//! the program is terminated with
+//! @ref abort.
 struct final_error : openmethod_error {
     type_id static_type, dynamic_type;
 
+    //! Write a short description to an output stream
+    //! @param os The output stream
+    //! @tparam Registry The registry
+    //! @tparam Stream A @ref LightweightOutputStream
     template<class Registry, class Stream>
     auto write(Stream& os) const -> void;
 };
 
+
+//! For future use
 struct static_offset_error : openmethod_error {
     type_id method;
     int actual, expected;
 
+    //! Write a short description to an output stream
+    //! @param os The output stream
+    //! @tparam Registry The registry
+    //! @tparam Stream A @ref LightweightOutputStream
     template<class Registry, class Stream>
     auto write(Stream& os) const -> void;
 };
 
+//! For future use
 struct static_slot_error : static_offset_error {};
+
+//! For future use
 struct static_stride_error : static_offset_error {};
 
 namespace detail {

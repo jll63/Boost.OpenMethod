@@ -1668,7 +1668,7 @@ template<class Left, class Right, class Registry>
 auto operator==(
     const virtual_ptr<Left, Registry>& left,
     const virtual_ptr<Right, Registry>& right) -> bool {
-    return &*left == &*right;
+    return left.pointer() == right.pointer();
 }
 
 template<class Left, class Right, class Registry>

@@ -496,7 +496,7 @@ jobs:
           cd ..
           BOOST_SRC_DIR="$(pwd)/boost-source"
           export BOOST_SRC_DIR
-          cd Boost.OpenMethod
+          cd openmethod
 
           cd doc
           bash ./build_antora.sh

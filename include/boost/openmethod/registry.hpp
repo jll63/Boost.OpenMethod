@@ -8,6 +8,11 @@
 
 #include <stdlib.h>
 #include <vector>
+#ifdef _MSC_VER
+
+#pragma warning(push)
+#pragma warning(disable : 4702)
+#endif
 
 namespace boost::openmethod {
 
@@ -773,5 +778,9 @@ auto static_offset_error::write(Stream& os) const -> void {
 }
 
 } // namespace boost::openmethod
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 #endif // BOOST_OPENMETHOD_REGISTRY_HPP

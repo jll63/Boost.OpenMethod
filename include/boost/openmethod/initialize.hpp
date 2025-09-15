@@ -27,7 +27,9 @@
 
 #ifdef _MSC_VER
 #pragma warning(push)
-#pragma warning(disable : 4457)
+#pragma warning(disable : 4456)
+#pragma warning(disable : 4458)
+#pragma warning(disable : 4702) // unreachable code
 #endif
 
 namespace boost::openmethod {
@@ -936,12 +938,12 @@ void registry<Policies...>::compiler::build_dispatch_table(
         }
 
         if (dim == 0) {
-            std::vector<overrider*> candidates;
+            std::vector<overrider*> overriders;
             std::size_t i = 0;
 
             for (auto& spec : m.specs) {
                 if (mask[i]) {
-                    candidates.push_back(&spec);
+                    overriders.push_back(&spec);
                 }
                 ++i;
             }
@@ -950,13 +952,13 @@ void registry<Policies...>::compiler::build_dispatch_table(
                 ++trace << "select best of:\n";
                 indent _(trace);
 
-                for (auto& app : candidates) {
+                for (auto& app : overriders) {
                     ++trace << "#" << app->spec_index << " "
                             << type_name(app->info->type) << "\n";
                 }
             }
 
-            std::vector<overrider*> dominants = candidates;
+            std::vector<overrider*> dominants = overriders;
             std::size_t pick, remaining;
 
             select_dominant_overriders(dominants, pick, remaining);
@@ -994,10 +996,10 @@ void registry<Policies...>::compiler::build_dispatch_table(
                 // -------------------------------------------------------------
                 // next
 
-                // First remove the dominant overriders from the candidates.
-                // Note that the dominants appear in the candidates in the same
+                // First remove the dominant overriders from the overriders.
+                // Note that the dominants appear in the overriders in the same
                 // relative order.
-                auto candidate = candidates.begin();
+                auto candidate = overriders.begin();
                 remaining = 0;
 
                 for (auto dominant : dominants) {
@@ -1018,7 +1020,7 @@ void registry<Policies...>::compiler::build_dispatch_table(
                         ++trace << "for 'next', select best of:\n";
                         indent _(trace);
 
-                        for (auto& app : candidates) {
+                        for (auto& app : overriders) {
                             if (app) {
                                 ++trace << "#" << app->spec_index << " "
                                         << type_name(app->info->type) << "\n";
@@ -1026,7 +1028,7 @@ void registry<Policies...>::compiler::build_dispatch_table(
                         }
                     }
 
-                    select_dominant_overriders(candidates, pick, remaining);
+                    select_dominant_overriders(overriders, pick, remaining);
 
                     if constexpr (!has_n2216) {
                         if (remaining > 1) {
@@ -1036,7 +1038,7 @@ void registry<Policies...>::compiler::build_dispatch_table(
                         }
                     }
 
-                    auto next_overrider = candidates[pick];
+                    auto next_overrider = overriders[pick];
                     overrider->next = next_overrider;
 
                     ++trace << "-> #" << next_overrider->spec_index << " "
@@ -1300,15 +1302,15 @@ auto registry<Policies...>::compiler::is_base(
 }
 
 template<class... Policies>
-void registry<Policies...>::compiler::print(const method_report& report) const {
+void registry<Policies...>::compiler::print(const method_report& r) const {
     ++trace;
 
-    if (report.cells) {
+    if (r.cells) {
         // only for multi-methods, uni-methods don't have dispatch tables
-        ++trace << report.cells << " dispatch table cells, ";
+        ++trace << r.cells << " dispatch table cells, ";
     }
 
-    trace << report.not_implemented << " not implemented, " << report.ambiguous
+    trace << r.not_implemented << " not implemented, " << r.ambiguous
           << " ambiguous\n";
 }
 

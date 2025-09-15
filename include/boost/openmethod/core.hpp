@@ -29,8 +29,9 @@
 
 #ifdef _MSC_VER
 #pragma warning(push)
-#pragma warning(disable : 4646)
 #pragma warning(disable : 4100)
+#pragma warning(disable : 4646)
+#pragma warning(disable : 4702) // unreachable code
 #endif
 
 namespace boost::openmethod {

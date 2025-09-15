@@ -253,8 +253,8 @@ struct Animal {
     Animal(const char* name, std::size_t type) : name(name), type(type) {
     }
 
-    virtual auto cast_aux(std::size_t type) -> void* {
-        return type == static_type ? this : nullptr;
+    virtual auto cast_aux(std::size_t to_type) -> void* {
+        return to_type == static_type ? this : nullptr;
     }
 
     static constexpr std::size_t static_type = 0;
@@ -273,8 +273,8 @@ struct Dog : virtual Animal {
     Dog(const char* name, std::size_t type = static_type) : Animal(name, type) {
     }
 
-    auto cast_aux(std::size_t type) -> void* override {
-        return type == static_type ? this : Animal::cast_aux(type);
+    auto cast_aux(std::size_t to_type) -> void* override {
+        return to_type == static_type ? this : Animal::cast_aux(to_type);
     }
 
     static constexpr std::size_t static_type = 1;
@@ -284,8 +284,8 @@ struct Cat : virtual Animal {
     Cat(const char* name, std::size_t type = static_type) : Animal(name, type) {
     }
 
-    auto cast_aux(std::size_t type) -> void* override {
-        return type == static_type ? this : Animal::cast_aux(type);
+    auto cast_aux(std::size_t to_type) -> void* override {
+        return to_type == static_type ? this : Animal::cast_aux(to_type);
     }
 
     static constexpr std::size_t static_type = 2;

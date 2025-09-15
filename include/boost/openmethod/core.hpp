@@ -1039,7 +1039,8 @@ class virtual_ptr {
     }
 };
 
-//! Wide pointer combining a smart pointer to an object and its v-table
+//! Wide pointer combining a smart pointer to an object and a pointer to its
+//! v-table
 //!
 //! This specialization of `virtual_ptr` uses a smart pointer to track the
 //! object, instead of a plain pointer.
@@ -1643,6 +1644,13 @@ class virtual_ptr<
             traits::template cast<other_smart_ptr>(std::move(obj)), vp);
     }
 
+    //! Construct a `virtual_ptr` from a smart pointer to an object
+    //!
+    //! This function forwards to @ref final_virtual_ptr.
+    //!
+    //! @tparam Other The type of the argument
+    //! @param obj A reference to an object
+    //! @return A `virtual_ptr<Class, Registry>` pointing to `obj`
     template<class Other>
     static auto final(Other&& obj) {
         return final_virtual_ptr<Registry>(std::forward<Other>(obj));
@@ -1967,6 +1975,8 @@ class method<Id, ReturnType(Parameters...), Registry>
     //! The only instance of `method`. Its `operator()` is used to call
     //! the method.
     static method fn;
+    // `fn` cannot be `inline static` becaused of MSVC (19.43) bug causing
+    // a "no appropriate default constructor available".
 
     //! Call the method
     //!
@@ -2182,21 +2192,6 @@ class method<Id, ReturnType(Parameters...), Registry>
         inline static override_impl<fn, FnReturnType> impl{&next<Function>};
     };
 };
-
-// Following cannot be `inline static` becaused of MSVC (19.43) bug causing a
-// "no appropriate default constructor available". Try this in CE:
-//
-// template<typename>
-// class method {
-//         method();
-//         method(const method&) = delete;
-//         method(method&&) = delete;
-//         ~method();
-//     public:
-//         static inline method instance;
-// };
-// template method<void>;
-// https://godbolt.org/z/GzEn486P7
 
 template<
     typename Id, typename... Parameters, typename ReturnType, class Registry>

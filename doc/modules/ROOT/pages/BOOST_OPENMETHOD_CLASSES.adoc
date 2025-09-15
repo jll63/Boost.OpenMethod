@@ -8,14 +8,14 @@
 Defined in <boost/openmethod/macros.hpp>.
 
 ```c++
-BOOST_OPENMETHOD_CLASSES(CLASSES...[, POLICY]);
+BOOST_OPENMETHOD_CLASSES(CLASSES...[, REGISTRY]);
 ```
 
 ### Description
 
-Registers `CLASSES` in POLICY.
+Registers `CLASSES` in REGISTRY.
 
-NOTE: The default value for `POLICY` is the value of
+NOTE: The default value for `REGISTRY` is the value of
 `BOOST_OPENMETHOD_DEFAULT_REGISTRY` when `<boost/openmethod/core.hpp>` is
 included. Subsequently changing it has no retroactive effect.
 

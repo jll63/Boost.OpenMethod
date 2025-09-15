@@ -34,16 +34,7 @@ struct shared_ptr_traits<const std::shared_ptr<Class>&> {
 } // namespace detail
 
 template<class Class, class Registry>
-struct virtual_traits<const std::shared_ptr<Class>&, Registry> {
-    using virtual_type = std::remove_cv_t<Class>;
-
-    static auto peek(const std::shared_ptr<Class>& arg) -> const Class& {
-        return *arg;
-    }
-
-    template<class Other>
-    using rebind = std::shared_ptr<Other>;
-
+class virtual_traits<const std::shared_ptr<Class>&, Registry> {
     template<class Other>
     static void check_cast() {
         using namespace boost::openmethod::detail;
@@ -56,6 +47,16 @@ struct virtual_traits<const std::shared_ptr<Class>&, Registry> {
         static_assert(
             std::is_class_v<typename shared_ptr_traits<Other>::virtual_type>);
     }
+
+  public:
+    using virtual_type = std::remove_cv_t<Class>;
+
+    static auto peek(const std::shared_ptr<Class>& arg) -> const Class& {
+        return *arg;
+    }
+
+    template<class Other>
+    using rebind = std::shared_ptr<Other>;
 
     template<class Other>
     static auto cast(const std::shared_ptr<Class>& obj) {
@@ -74,16 +75,7 @@ struct virtual_traits<const std::shared_ptr<Class>&, Registry> {
 };
 
 template<typename Class, class Registry>
-struct virtual_traits<std::shared_ptr<Class>, Registry> {
-    using virtual_type = std::remove_cv_t<Class>;
-
-    static auto peek(const std::shared_ptr<Class>& arg) -> const Class& {
-        return *arg;
-    }
-
-    template<class Other>
-    using rebind = std::shared_ptr<Other>;
-
+class virtual_traits<std::shared_ptr<Class>, Registry> {
     template<class Other>
     static void check_cast() {
         using namespace boost::openmethod::detail;
@@ -96,6 +88,17 @@ struct virtual_traits<std::shared_ptr<Class>, Registry> {
         static_assert(
             std::is_class_v<typename shared_ptr_traits<Other>::virtual_type>);
     }
+
+  public:
+    using virtual_type = std::remove_cv_t<Class>;
+
+    static auto peek(const std::shared_ptr<Class>& arg) -> const Class& {
+        return *arg;
+    }
+
+    template<class Other>
+    using rebind = std::shared_ptr<Other>;
+
     template<class Other>
     static auto cast(const std::shared_ptr<Class>& obj) {
         using namespace boost::openmethod::detail;

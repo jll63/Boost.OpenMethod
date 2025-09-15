@@ -11,7 +11,7 @@ Defined in <boost/openmethod/macros.hpp>.
 
 ### Description
 
-Declares an overrider for a method.
+Declare an overrider for a method.
 
 The method is deduced from a call to a method guide function with the
 overrider's arguments.

@@ -14,16 +14,16 @@ Defined in `&lt;https://www.github.com/boostorg/openmethod/blob/develop/include/
 
 The name of the default registry.
 
-`BOOST_OPENMETHOD_DEFAULT_REGISTRY` is the default value for the `Policy` template
+`BOOST_OPENMETHOD_DEFAULT_REGISTRY` is the default value for the `REGISTRY` template
 parameter of `method`, `use_classes`, and other constructs defined in
 `<boost/openmethod/core.hpp>`. If it is not defined,
-`::boost::openmethod::policy::default_registry` is used.
+`::boost::openmethod::REGISTRY::default_registry` is used.
 
 `BOOST_OPENMETHOD_DEFAULT_REGISTRY` can be defined by a program to change the
-default policy globally. Once `<boost/openmethod/core.hpp>` has been included,
-redefining the symbol has no effect. To override the default policy, proceed as
+default REGISTRY globally. Once `<boost/openmethod/core.hpp>` has been included,
+redefining the symbol has no effect. To override the default REGISTRY, proceed as
 follows:
 
 1. Include headers under `boost/openmethod/policies/` as needed.
-2. Create a policy class, and set `BOOST_OPENMETHOD_DEFAULT_REGISTRY`.
+2. Create a REGISTRY class, and set `BOOST_OPENMETHOD_DEFAULT_REGISTRY`.
 3. Include `<boost/openmethod/core.hpp>`.

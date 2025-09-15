@@ -11,7 +11,7 @@ Defined in <boost/openmethod/macros.hpp>.
 
 ### Description
 
-Defines the body of an overrider declared with
+Define the body of an overrider declared with
 `BOOST_OPENMETHOD_DECLARE_OVERRIDER`. It should be called in an implementation
 file, and followed by a function body.
 

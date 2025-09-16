@@ -7,7 +7,7 @@
 # Official repository: https://github.com/boostorg/openmethod
 #
 
-set -xe
+set -e
 
 if [ $# -eq 0 ]
   then
@@ -25,4 +25,11 @@ echo "Building docs in custom dir..."
 PATH="$(pwd)/node_modules/.bin:${PATH}"
 export PATH
 npx antora --clean --fetch "$PLAYBOOK" --stacktrace --log-level all
+
+echo "Fixing links to non-mrdocs URIs..."
+
+for f in $(find build/site -name '*.html'); do
+  perl -i -pe 's{&lsqb;(.*?)&rsqb;\(([^)]+)\)}{<a href="../../$2">$1</a>}g' "$f"
+done
+
 echo "Done"

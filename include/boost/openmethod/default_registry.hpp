@@ -21,6 +21,11 @@ struct release_registry
           policies::vptr_vector, policies::default_error_handler,
           policies::stderr_output> {};
 
+//! Registry with runtime checks and trace enabled
+//!
+//! This is the default value of
+//! [BOOST_OPENMETHOD_DEFAULT_REGISTRY](../BOOST_OPENMETHOD_DEFAULT_REGISTRY.html) when NDEBUG
+//! is not defined.
 struct debug_registry
     : release_registry::with<policies::runtime_checks, policies::trace> {};
 

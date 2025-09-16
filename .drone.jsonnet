@@ -97,12 +97,6 @@ local windows_pipeline(name, image, environment, arch = "amd64") =
 
 [
     linux_pipeline(
-        "Linux 18.04 GCC 7* 32/64",
-        "cppalliance/droneubuntu1804:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++', CXXSTD: '17', ADDRMD: '32,64' },
-    ),
-
-    linux_pipeline(
         "Linux 18.04 GCC 8 32/64",
         "cppalliance/droneubuntu1804:1",
         { TOOLSET: 'gcc', COMPILER: 'g++-8', CXXSTD: '17', ADDRMD: '32,64' },
@@ -227,13 +221,6 @@ local windows_pipeline(name, image, environment, arch = "amd64") =
     ),
 
     linux_pipeline(
-        "Linux 18.04 Clang 6.0",
-        "cppalliance/droneubuntu1804:1",
-        { TOOLSET: 'clang', COMPILER: 'clang++-6.0', CXXSTD: '17' },
-        "clang-6.0",
-    ),
-
-    linux_pipeline(
         "Linux 20.04 Clang 7",
         "cppalliance/droneubuntu2004:1",
         { TOOLSET: 'clang', COMPILER: 'clang++-7', CXXSTD: '17' },
@@ -351,18 +338,6 @@ local windows_pipeline(name, image, environment, arch = "amd64") =
         "MacOS 12.4 Xcode 13.4.1 ASAN",
         { TOOLSET: 'clang', COMPILER: 'clang++', CXXSTD: '17,20,2b' } + asan,
         xcode_version = "13.4.1", osx_version = "monterey", arch = "arm64",
-    ),
-
-    windows_pipeline(
-        "Windows VS2015 msvc-14.0",
-        "cppalliance/dronevs2015",
-        { TOOLSET: 'msvc-14.0', CXXSTD: 'latest', B2_DONT_EMBED_MANIFEST: '1' },
-    ),
-
-    windows_pipeline(
-        "Windows VS2017 msvc-14.1",
-        "cppalliance/dronevs2017",
-        { TOOLSET: 'msvc-14.1', CXXSTD: '17,latest' },
     ),
 
     windows_pipeline(

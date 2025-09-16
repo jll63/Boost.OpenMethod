@@ -296,8 +296,6 @@ jobs:
             rmdir /s /q boost-ci-cloned
 
       - name: Setup Boost
-        env:
-          BOOST_BRANCH: master
         run: ci\github\install.bat
 
       - name: Run tests

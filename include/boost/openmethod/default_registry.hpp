@@ -23,9 +23,17 @@ struct release_registry
 
 //! Registry with runtime checks and trace enabled
 //!
+//! `debug_registry` uses the same policies as @ref release_registry, with the
+//! additional policies of @ref policies::runtime_checks and @ref
+//! policies::trace.
+//!
 //! This is the default value of
-//! [BOOST_OPENMETHOD_DEFAULT_REGISTRY](../BOOST_OPENMETHOD_DEFAULT_REGISTRY.html) when NDEBUG
-//! is not defined.
+//! [BOOST_OPENMETHOD_DEFAULT_REGISTRY](../BOOST_OPENMETHOD_DEFAULT_REGISTRY.html)
+//! when NDEBUG is not defined.
+//!
+//! `debug_registry` is derived from `release_registry::with<...>`, instead of
+//! being aliased, to avoid creating long symbol names wherever it is used. Its
+//! state is entirely distinct from `release_registry`\'s.
 struct debug_registry
     : release_registry::with<policies::runtime_checks, policies::trace> {};
 

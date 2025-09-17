@@ -14,10 +14,10 @@ Defined in `&lt;https://www.github.com/boostorg/openmethod/blob/develop/include/
 
 The name of the default registry.
 
-`BOOST_OPENMETHOD_DEFAULT_REGISTRY` is the default value for the `REGISTRY` template
-parameter of `method`, `use_classes`, and other constructs defined in
+`BOOST_OPENMETHOD_DEFAULT_REGISTRY` is the default value for the `Registry`
+template parameter of `method`, `use_classes`, and other constructs defined in
 `<boost/openmethod/core.hpp>`. If it is not defined,
-`::boost::openmethod::REGISTRY::default_registry` is used.
+link:reference/boost/openmethod/default_registry.html[`default_registry`] is used.
 
 `BOOST_OPENMETHOD_DEFAULT_REGISTRY` can be defined by a program to change the
 default REGISTRY globally. Once `<boost/openmethod/core.hpp>` has been included,

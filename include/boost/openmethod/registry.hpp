@@ -69,7 +69,7 @@ namespace boost::openmethod {
 
 #ifdef __MRDOCS__
 
-//! Requirements for LightweightOutputStream (exposition only)
+//! Blueprint for a lightweight output stream (exposition only).
 struct LightweightOutputStream {
     LightweightOutputStream& operator<<(const char* str);
     LightweightOutputStream& operator<<(const std::string_view& view);

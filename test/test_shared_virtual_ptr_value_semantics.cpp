@@ -273,6 +273,66 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
         !construct_assign_ok<shared_virtual_ptr<Dog, Registry>, const Dog&>);
     static_assert(
         !construct_assign_ok<shared_virtual_ptr<Dog, Registry>, const Dog*>);
+
+    // casts
+
+    {}
+}
+
+BOOST_AUTO_TEST_CASE(cast_shared_ptr_value) {
+    std::shared_ptr<Animal> animal = std::make_shared<Dog>();
+    auto dog = virtual_traits<std::shared_ptr<Animal>, default_registry>::cast<
+        std::shared_ptr<Dog>>(animal);
+    BOOST_TEST(dog.get() == animal.get());
+}
+
+BOOST_AUTO_TEST_CASE(cast_shared_ptr_lvalue_reference) {
+    std::shared_ptr<Animal> animal = std::make_shared<Dog>();
+    auto dog =
+        virtual_traits<const std::shared_ptr<Animal>&, default_registry>::cast<
+            const std::shared_ptr<Dog>&>(animal);
+    BOOST_TEST(dog.get() == animal.get());
+}
+
+BOOST_AUTO_TEST_CASE(cast_shared_ptr_xvalue_reference) {
+    std::shared_ptr<Animal> animal = std::make_shared<Dog>();
+    auto p = animal.get();
+    auto dog = virtual_traits<std::shared_ptr<Animal>, default_registry>::cast<
+        std::shared_ptr<Dog>&&>(std::move(animal));
+    BOOST_TEST(dog.get() == p);
+    BOOST_TEST(animal.get() == nullptr);
+}
+
+BOOST_AUTO_TEST_CASE(cast_shared_virtual_ptr_value) {
+    shared_virtual_ptr<Animal> animal = make_shared_virtual<Dog>();
+    auto dog =
+        virtual_traits<shared_virtual_ptr<Animal>, default_registry>::cast<
+            shared_virtual_ptr<Dog>>(animal);
+    BOOST_TEST(dog.get() == animal.get());
+    BOOST_TEST(animal.vptr() == default_registry::static_vptr<Dog>);
+    BOOST_TEST(dog.vptr() == default_registry::static_vptr<Dog>);
+}
+
+BOOST_AUTO_TEST_CASE(cast_shared_virtual_ptr_lvalue_reference) {
+    shared_virtual_ptr<Animal> animal = make_shared_virtual<Dog>();
+    auto dog =
+        virtual_traits<const shared_virtual_ptr<Animal>&, default_registry>::
+            cast<shared_virtual_ptr<Dog>>(animal);
+    BOOST_TEST(dog.get() == animal.get());
+    BOOST_TEST(animal.vptr() == default_registry::static_vptr<Dog>);
+    BOOST_TEST(dog.vptr() == default_registry::static_vptr<Dog>);
+}
+
+BOOST_AUTO_TEST_CASE(cast_shared_virtual_ptr_rvalue_reference) {
+    shared_virtual_ptr<Animal> animal = make_shared_virtual<Dog>();
+    auto p = animal.get();
+    auto dog =
+        virtual_traits<shared_virtual_ptr<Animal>, default_registry>::
+            cast<shared_virtual_ptr<Dog>>(std::move(animal));
+    BOOST_TEST(dog.get() == p);
+    BOOST_TEST(dog.vptr() == default_registry::static_vptr<Dog>);
+    BOOST_TEST(animal.get() == nullptr);
+    BOOST_TEST(animal.vptr() == nullptr);
 }
 
 template struct check_illegal_smart_ops<

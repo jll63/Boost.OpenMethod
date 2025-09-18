@@ -34,6 +34,11 @@
 #pragma warning(disable : 4702) // unreachable code
 #endif
 
+//! Main namespace of the OpenMethod library.
+//!
+//! @note Names in CamelCase are for exposition only. Blueprints are
+//! exposition-only classes that describe the requirements for existing classes.
+
 namespace boost::openmethod {
 
 #ifdef __MRDOCS__
@@ -180,19 +185,19 @@ using virtual_types = boost::mp11::mp_transform<
 
 BOOST_OPENMETHOD_OPEN_NAMESPACE_DETAIL_UNLESS_MRDOCS
 
-//! Remove virtual_<> decorator from a type (exposition only)
+//! Remove virtual_<> decorator from a type (exposition only).
 //!
-//! @tparam T A type
+//! @tparam T A type.
 template<typename T>
 struct StripVirtualDecorator {
     //! Same as `T`
     using type = T;
 };
 
-//! Remove virtual_<> decorator from a type (exposition only)
+//! Remove virtual_<> decorator from a type (exposition only).
 template<typename T>
 struct StripVirtualDecorator<virtual_<T>> {
-    //! Same as `T`
+    //! Same as `T`.
     using type = T;
 };
 
@@ -201,54 +206,118 @@ BOOST_OPENMETHOD_CLOSE_NAMESPACE_DETAIL_UNLESS_MRDOCS
 // =============================================================================
 // virtual_traits
 
+//! Traits for types that can be used as virtual arguments.
+//!
+//! `virtual_traits` must be specialized for each type that can be used as a
+//! virtual parameters. It enables methods to:
+//! @li find the type of the object the argument refers to (e.g. `Cat` from
+//! `Cat&`)
+//! @li obtain a non-modifiable reference to that object (e.g. a `const Cat&` from
+//! `Cat&`)
+//! @li cast the argument to another type (e.g. cast a `Animal&` to a `Cat&`)
+//!
+//! Specializations of `virtual_traits` must conform to the @ref VirtualTraits
+//! blueprint.
+//!
+//! @tparam T A type referring (in the broad sense) to an instance of a class.
+//! @tparam Registry A @ref registry.
 template<typename T, class Registry>
 struct virtual_traits;
 
-template<typename T, class Registry>
-struct virtual_traits<T&, Registry> {
-    using virtual_type = std::remove_cv_t<T>;
+//! Specialize virtual_traits for lvalue reference types.
+//!
+//! @tparam Class A class type, possibly cv-qualified.
+//! @tparam Registry A @ref registry.
+template<class Class, class Registry>
+struct virtual_traits<Class&, Registry> {
+    //! `Class`, stripped from cv-qualifiers.
+    using virtual_type = std::remove_cv_t<Class>;
 
-    static auto peek(const T& arg) -> const T& {
+    //! Return a reference to a non-modifiable `Class` object.
+    //! @param arg A reference to a non-modifiable `Class` object.
+    //! @return A reference to the same object.
+    static auto peek(const Class& arg) -> const Class& {
         return arg;
     }
 
-    template<typename D>
-    static auto cast(T& obj) -> D& {
-        return detail::optimal_cast<Registry, D&>(obj);
+    //! Cast to another type.
+    //!
+    //! Cast an object to another type. If possible, use `static_cast`.
+    //! Otherwise, use `Registry::rtti::dynamic_cast_ref`.
+    //!
+    //! @tparam Derived A lvalue reference type.
+    //! @param obj A reference to a `Class` object.
+    //! @return A reference to the same object, cast to `Derived`.
+    template<typename Derived>
+    static auto cast(Class& obj) -> Derived {
+        static_assert(std::is_lvalue_reference_v<Derived>);
+        return detail::optimal_cast<Registry, Derived>(obj);
     }
 };
 
-template<typename T, class Registry>
-struct virtual_traits<T&&, Registry> {
-    using virtual_type = T;
+//! Specialize virtual_traits for xvalue reference types.
+//!
+//! @tparam T A xvalue reference type.
+//! @tparam Registry A @ref registry.
+template<class Class, class Registry>
+struct virtual_traits<Class&&, Registry> {
+    //! Same as `Class`.
+    using virtual_type = Class;
 
-    static auto peek(const T& arg) -> const T& {
+    //! Return a reference to a non-modifiable `Class` object.
+    //! @param arg A reference to a non-modifiable `Class` object.
+    //! @return A reference to the same object.
+    static auto peek(const Class& arg) -> const Class& {
         return arg;
     }
 
-    template<typename D>
-    static auto cast(T&& obj) -> D&& {
-        return detail::optimal_cast<Registry, D&&>(obj);
+    //! Cast to another type.
+    //!
+    //! Cast an object to another type. If possible, use `static_cast`.
+    //! Otherwise, use `Registry::rtti::dynamic_cast_ref`.
+    //!
+    //! @tparam Derived A rvalue reference type.
+    //! @param obj A reference to a `Class` object.
+    //! @return A reference to the same object, cast to `Derived`.
+    template<typename Derived>
+    static auto cast(Class&& obj) -> Derived {
+        static_assert(std::is_rvalue_reference_v<Derived>);
+        return detail::optimal_cast<Registry, Derived>(obj);
     }
 };
 
-template<typename T, class Registry>
-struct virtual_traits<T*, Registry> {
-    using virtual_type = std::remove_cv_t<T>;
+//! Specialize virtual_traits for pointer types.
+//!
+//! @tparam Class A class type, possibly cv-qualified.
+//! @tparam Registry A @ref registry.
+template<class Class, class Registry>
+struct virtual_traits<Class*, Registry> {
+    //! `Class`, stripped from cv-qualifiers.
+    using virtual_type = std::remove_cv_t<Class>;
 
-    static auto peek(T* arg) -> const T& {
+    //! Return a reference to a non-modifiable `Class` object.
+    //! @param arg A pointer to a non-modifiable `Class` object.
+    //! @return A const reference to the same object.
+    static auto peek(const Class* arg) -> const Class& {
         return *arg;
     }
 
-    template<typename D>
-    static auto cast(T* ptr) {
-        static_assert(
-            std::is_base_of_v<
-                virtual_type, std::remove_pointer_t<std::remove_cv_t<D>>>);
-        if constexpr (detail::requires_dynamic_cast<T*, D>) {
-            return dynamic_cast<D>(ptr);
+    //! Cast to another type.
+    //!
+    //! Cast an object to another type. If possible, use `static_cast`.
+    //! Otherwise, use `Registry::rtti::dynamic_cast_ref`.
+    //!
+    //! @tparam Derived A pointer type.
+    //! @param obj A pointer to a `Class` object.
+    //! @return A pointer to the same object, cast to `Derived`.
+    template<typename Derived>
+    static auto cast(Class* ptr) -> Derived {
+        static_assert(std::is_pointer_v<Derived>);
+
+        if constexpr (detail::requires_dynamic_cast<Class*, Derived>) {
+            return dynamic_cast<Derived>(ptr);
         } else {
-            return static_cast<D>(ptr);
+            return static_cast<Derived>(ptr);
         }
     }
 };
@@ -1687,46 +1756,82 @@ auto operator!=(
     return !(left == right);
 }
 
+//! Specialize virtual_traits for `virtual_ptr`.
+//!
+//! Specialize virtual_traits for `virtual_ptr`\'s passed by value.
+//!
+//! @tparam Class A class type, possibly cv-qualified.
+//! @tparam Registry A @ref registry.
 template<class Class, class Registry>
 struct virtual_traits<virtual_ptr<Class, Registry>, Registry> {
+    //! `Class`, stripped from cv-qualifiers.
     using virtual_type = typename virtual_ptr<Class, Registry>::element_type;
 
+    //! Return a reference to a non-modifiable `Class` object.
+    //! @param arg A reference to a non-modifiable `Class` object.
+    //! @return A reference to the same object.
     static auto peek(const virtual_ptr<Class, Registry>& ptr)
         -> const virtual_ptr<Class, Registry>& {
         return ptr;
     }
 
+    //! Cast to another type.
+    //!
+    //! Cast a `virtual_ptr` to another type, using its `cast` member function.
+    //!
+    //! @param obj A lvalue reference to a `virtual_ptr`.
+    //! @return A lvalue reference to a `virtual_ptr` to the same object, cast
+    //! to `Derived::element_type`.
     template<typename Derived>
     static auto
     cast(const virtual_ptr<Class, Registry>& ptr) -> decltype(auto) {
         return ptr.template cast<typename Derived::element_type>();
     }
 
+    //! Cast to another type.
+    //!
+    //! Cast a `virtual_ptr` to another type, using its `cast` member function.
+    //!
+    //! @param obj A xvalue reference to a `virtual_ptr`.
+    //! @return A xvalue reference to a `virtual_ptr` to the same object, cast
+    //! to `Derived::element_type`.
     template<typename Derived>
     static auto cast(virtual_ptr<Class, Registry>&& ptr) -> decltype(auto) {
         return std::move(ptr).template cast<typename Derived::element_type>();
     }
 };
 
+//! Specialize virtual_traits for `virtual_ptr`.
+//!
+//! Specialize virtual_traits for `virtual_ptr`\'s passed by const reference.
+//!
+//! @tparam Class A class type, possibly cv-qualified.
+//! @tparam Registry A @ref registry.
 template<class Class, class Registry>
 struct virtual_traits<const virtual_ptr<Class, Registry>&, Registry> {
+    //! `Class`, stripped from cv-qualifiers.
     using virtual_type = typename virtual_ptr<Class, Registry>::element_type;
 
+    //! Return a reference to a non-modifiable `Class` object.
+    //! @param arg A reference to a non-modifiable `Class` object.
+    //! @return A reference to the same object.
     static auto peek(const virtual_ptr<Class, Registry>& ptr)
         -> const virtual_ptr<Class, Registry>& {
         return ptr;
     }
 
+    //! Cast to another type.
+    //!
+    //! Cast a `virtual_ptr` to another type, using its `cast` member function.
+    //!
+    //! @param obj A lvalue reference to a `virtual_ptr`.
+    //! @return A lvalue reference to a `virtual_ptr` to the same object, cast
+    //! to `Derived::element_type`.
     template<typename Derived>
     static auto
     cast(const virtual_ptr<Class, Registry>& ptr) -> decltype(auto) {
         return ptr.template cast<
             typename std::remove_reference_t<Derived>::element_type>();
-    }
-
-    template<typename Derived>
-    static auto cast(virtual_ptr<Class, Registry>&& ptr) -> decltype(auto) {
-        return std::move(ptr).template cast<typename Derived::element_type>();
     }
 };
 
@@ -2599,6 +2704,67 @@ using boost::openmethod::virtual_;
 using boost::openmethod::virtual_ptr;
 
 } // namespace aliases
+
+// ==============================================================================
+// Exposition only
+
+#ifdef __MRDOCS__
+
+namespace detail {
+struct unspecified;
+}
+
+//! Blueprint for a specialization of @ref virtual_traits (exposition only).
+//!
+//! Specializations of @ref virtual_traits must implement the members listed
+//! here.
+template<typename T, class Registry>
+struct VirtualTraits {
+    //! Class to use for dispatch.
+    //!
+    //! This is the class that is used during method dispatch to determine which
+    //! overrider to select, and which type_id to use for error reporting.
+    //! `virtual_type` aliases to `Class` if `T` is `Class&`, `const
+    //! Class&`, `Class\*`, `const Class\*`, `virtual_ptr<Class>`,
+    //! `virtual_ptr<const Class>`, `std::shared_ptr<Class>`,
+    //! `std::shared_ptr<const Class>`, `virtual_ptr<std::shared_ptr<Class>>`,
+    //! etc.
+    using virtual_type = detail::unspecified;
+
+    //! Return a reference to the object to use for dispatch.
+    //!
+    //! Return a reference to the object to use for dispatch. `arg` may not be
+    //! copied, moved or altered in any way.
+    //!
+    //! @param arg An argument passed to the method call.
+    //! @return A reference to an object.
+    static auto peek(T arg) -> const virtual_type&;
+
+    //! Cast virtual argument.
+    //!
+    //! Cast virtual argument to the type expected by the overrider.
+    //!
+    //! @tparam U The type to cast to.
+    //! @param arg An argument passed to the method call.
+    //! @return A reference to an object.
+    template<typename U>
+    static auto cast(T arg) -> U;
+
+    //! Rebind smart pointer to a different element type.
+    //!
+    //! If `T` is a smart pointer, `rebind<U>` is the same kind of smart
+    //! pointer, but pointing to a `U`.
+    //!
+    //! @note `rebind` must be implemented @em only for smart pointer types that
+    //! can be used as object pointers by @ref virtual_ptr in place of plain
+    //! pointers.
+    //!
+    //! @tparam U The new element type.
+    template<class U>
+    using rebind = detail::unspecified;
+};
+
+#endif
 
 } // namespace boost::openmethod
 

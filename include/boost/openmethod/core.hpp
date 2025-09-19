@@ -2602,10 +2602,37 @@ method<Id, ReturnType(Parameters...), Registry>::fn_ambiguous(
 // thunk
 
 namespace detail {
-template<typename T, typename U>
-constexpr bool is_virtual_ptr_compatible =
-    is_virtual_ptr<T> == is_virtual_ptr<U>;
-}
+
+template<class T, class U>
+struct compatible_parameters : std::is_same<T, U> {
+    static_assert(
+        compatible_parameters::value,
+        "non-virtual parameters must have the same type");
+};
+
+template<class T, class U>
+struct compatible_parameters<virtual_<T>, U> : std::true_type {};
+
+template<class T, class U>
+struct compatible_parameters<virtual_<T>, virtual_<U>> : std::false_type {
+    static_assert(
+        false, "virtual_<> is not allowed in overrider parameter lists");
+};
+
+template<class T, class U, class Registry>
+struct compatible_parameters<virtual_ptr<T, Registry>, virtual_ptr<U, Registry>>
+    : std::true_type {};
+
+template<class T, class U, class Registry>
+struct compatible_parameters<
+    const virtual_ptr<T, Registry>&, const virtual_ptr<U, Registry>&>
+    : std::true_type {};
+
+template<class T, class U, class Registry>
+struct compatible_parameters<
+    virtual_ptr<T, Registry>&&, virtual_ptr<U, Registry>&&> : std::true_type {};
+
+} // namespace detail
 
 template<
     typename Id, typename... Parameters, typename ReturnType, class Registry>
@@ -2616,9 +2643,8 @@ auto method<Id, ReturnType(Parameters...), Registry>::
         detail::remove_virtual_<Parameters>... arg) -> ReturnType {
     using namespace detail;
     static_assert(
-        (true && ... &&
-         is_virtual_ptr_compatible<Parameters, OverriderParameters>),
-        "virtual_ptr mismatch");
+        (compatible_parameters<Parameters, OverriderParameters>::value && ...),
+        "virtual_ptr category mismatch");
     return Overrider(
         detail::parameter_traits<Parameters, Registry>::template cast<
             OverriderParameters>(
@@ -2750,7 +2776,7 @@ struct VirtualTraits {
     template<typename U>
     static auto cast(T arg) -> U;
 
-    //! Rebind smart pointer to a different element type.
+    //! Rebind to a another class (smart pointers only).
     //!
     //! If `T` is a smart pointer, `rebind<U>` is the same kind of smart
     //! pointer, but pointing to a `U`.

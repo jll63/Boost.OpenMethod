@@ -57,6 +57,8 @@ struct indirect_map : direct_map::with<indirect_vptr> {};
 using test_policies = boost::mp11::mp_list<
     direct_vector, indirect_vector, direct_map, indirect_map>;
 
+using test_classes = boost::mp11::mp_list<Dog, Cat>;
+
 template<
     template<class... Class> class smart_ptr,
     template<class... Class> class other_smart_ptr, class Registry>

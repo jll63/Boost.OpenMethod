@@ -12,30 +12,24 @@
 namespace boost::openmethod {
 namespace detail {
 
-template<typename Class>
-struct shared_ptr_traits {
-    static const bool is_shared_ptr = false;
+template<class T>
+struct shared_ptr_cast_traits {
+    static_assert(false, "invalid cast");
 };
 
-template<typename Class>
-struct shared_ptr_traits<std::shared_ptr<Class>> {
-    static const bool is_shared_ptr = true;
-    static const bool is_const_ref = false;
-    using virtual_type = Class;
+template<class T>
+struct shared_ptr_cast_traits<std::shared_ptr<T>> {
+    using virtual_type = T;
 };
 
-template<typename Class>
-struct shared_ptr_traits<const std::shared_ptr<Class>&> {
-    static const bool is_shared_ptr = true;
-    static const bool is_const_ref = true;
-    using virtual_type = Class;
+template<class T>
+struct shared_ptr_cast_traits<const std::shared_ptr<T>&> {
+    using virtual_type = T;
 };
 
-template<typename Class>
-struct shared_ptr_traits<std::shared_ptr<Class>&&> {
-    static const bool is_shared_ptr = true;
-    static const bool is_const_ref = false;
-    using virtual_type = Class;
+template<class T>
+struct shared_ptr_cast_traits<std::shared_ptr<T>&&> {
+    using virtual_type = T;
 };
 
 } // namespace detail
@@ -46,21 +40,6 @@ struct shared_ptr_traits<std::shared_ptr<Class>&&> {
 //! @tparam Registry A @ref registry.
 template<typename Class, class Registry>
 struct virtual_traits<std::shared_ptr<Class>, Registry> {
-  private:
-    template<class Other>
-    static void check_cast() {
-        using namespace boost::openmethod::detail;
-
-        static_assert(shared_ptr_traits<Other>::is_shared_ptr);
-        static_assert(
-            !shared_ptr_traits<Other>::is_const_ref,
-            "cannot cast from 'const shared_ptr<base>&' to "
-            "'shared_ptr<derived>'");
-        static_assert(
-            std::is_class_v<typename shared_ptr_traits<Other>::virtual_type>);
-    }
-
-  public:
     //! Rebind to a different element type.
     //!
     //! @tparam Other The new element type.
@@ -90,23 +69,26 @@ struct virtual_traits<std::shared_ptr<Class>, Registry> {
     static auto cast(const std::shared_ptr<Class>& obj) -> decltype(auto) {
         using namespace boost::openmethod::detail;
 
-        check_cast<Derived>();
-
-        if constexpr (detail::requires_dynamic_cast<
+        if constexpr (requires_dynamic_cast<
                           Class*, typename Derived::element_type*>) {
             return std::dynamic_pointer_cast<
-                typename shared_ptr_traits<Derived>::virtual_type>(obj);
+                typename shared_ptr_cast_traits<Derived>::virtual_type>(obj);
         } else {
             return std::static_pointer_cast<
-                typename shared_ptr_traits<Derived>::virtual_type>(obj);
+                typename shared_ptr_cast_traits<Derived>::virtual_type>(obj);
         }
     }
 
-    //! Cast to another type.
+#if __cplusplus >= 202002L
+    //! Move-cast to another type (since c++20)
     //!
     //! Cast to a `std::shared_ptr` xvalue reference to another type. If
     //! possible, use `std::static_pointer_cast`. Otherwise, use
     //! `std::dynamic_pointer_cast`.
+    //!
+    //! @note This overload is only available for C++20 and above, because
+    //! rvalue references overloads of `std::static_pointer_cast` and
+    //! `std::dynamic_pointer_cast` were not available before.
     //!
     //! @tparam Derived A xvalue reference to a `std::shared_ptr`.
     //! @param obj A xvalue reference to a `shared_ptr<Class>`.
@@ -116,41 +98,31 @@ struct virtual_traits<std::shared_ptr<Class>, Registry> {
     static auto cast(std::shared_ptr<Class>&& obj) -> decltype(auto) {
         using namespace boost::openmethod::detail;
 
-        check_cast<Derived>();
-
-        if constexpr (detail::requires_dynamic_cast<
+        if constexpr (requires_dynamic_cast<
                           Class*, decltype(std::declval<Derived>().get())>) {
             return std::dynamic_pointer_cast<
-                typename shared_ptr_traits<Derived>::virtual_type>(
+                typename shared_ptr_cast_traits<Derived>::virtual_type>(
                 std::move(obj));
         } else {
             return std::static_pointer_cast<
-                typename shared_ptr_traits<Derived>::virtual_type>(
+                typename shared_ptr_cast_traits<Derived>::virtual_type>(
                 std::move(obj));
         }
     }
+#endif
 };
 
 //! Specialize virtual_traits for std::shared_ptr by reference.
+//!
+//! @note Passing a `std::shared_ptr` in a method call by const reference
+//! creates a temporary `std::shared_ptr` and passes it by const reference to
+//! the overrider. This is necessary because virtual arguments need to be cast
+//! to the type expected by the overrider.
 //!
 //! @tparam Class A class type, possibly cv-qualified.
 //! @tparam Registry A @ref registry.
 template<class Class, class Registry>
 struct virtual_traits<const std::shared_ptr<Class>&, Registry> {
-  private:
-    template<class Other>
-    static void check_cast() {
-        using namespace boost::openmethod::detail;
-
-        static_assert(shared_ptr_traits<Other>::is_shared_ptr);
-        static_assert(
-            shared_ptr_traits<Other>::is_const_ref,
-            "cannot cast from 'const shared_ptr<base>&' to "
-            "'shared_ptr<derived>'");
-        static_assert(
-            std::is_class_v<typename shared_ptr_traits<Other>::virtual_type>);
-    }
-
   public:
     //! Rebind to a different element type.
     //!
@@ -181,21 +153,34 @@ struct virtual_traits<const std::shared_ptr<Class>&, Registry> {
     static auto cast(const std::shared_ptr<Class>& obj) {
         using namespace boost::openmethod::detail;
 
-        check_cast<Other>();
-
-        if constexpr (detail::requires_dynamic_cast<Class*, Other>) {
+        if constexpr (requires_dynamic_cast<Class*, Other>) {
             return std::dynamic_pointer_cast<
-                typename shared_ptr_traits<Other>::virtual_type>(obj);
+                typename shared_ptr_cast_traits<Other>::virtual_type>(obj);
         } else {
             return std::static_pointer_cast<
-                typename shared_ptr_traits<Other>::virtual_type>(obj);
+                typename shared_ptr_cast_traits<Other>::virtual_type>(obj);
         }
     }
 };
 
+//! Alias for a `virtual_ptr<std::shared_ptr<T>>`.
 template<class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY>
 using shared_virtual_ptr = virtual_ptr<std::shared_ptr<Class>, Registry>;
 
+//! Create a new object and return a `shared_virtual_ptr` to it.
+//!
+//! Create an object using `std::make_shared`, and return a @ref
+//! shared_virtual_ptr pointing to it. Since the exact class of the object is
+//! known, the `virtual_ptr` is created using @ref final_virtual_ptr.
+//!
+//! `Class` is _not_ required to be a polymorphic class.
+//!
+//! @tparam Class The class of the object to create.
+//! @tparam Registry A @ref registry.
+//! @tparam T Types of the arguments to pass to the constructor of `Class`.
+//! @param args Arguments to pass to the constructor of `Class`.
+//! @return A `shared_virtual_ptr<Class, Registry>` pointing to a newly
+//! created object of type `Class`.
 template<
     class Class, class Registry = BOOST_OPENMETHOD_DEFAULT_REGISTRY,
     typename... T>

@@ -8,6 +8,8 @@
 #define BOOST_TEST_MODULE openmethod
 #include <boost/test/unit_test.hpp>
 
+#include <boost/utility/identity_type.hpp>
+
 #include "test_virtual_ptr_value_semantics.hpp"
 
 #include <memory>
@@ -273,10 +275,6 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
         !construct_assign_ok<shared_virtual_ptr<Dog, Registry>, const Dog&>);
     static_assert(
         !construct_assign_ok<shared_virtual_ptr<Dog, Registry>, const Dog*>);
-
-    // casts
-
-    {}
 }
 
 BOOST_AUTO_TEST_CASE(cast_shared_ptr_value) {
@@ -294,46 +292,53 @@ BOOST_AUTO_TEST_CASE(cast_shared_ptr_lvalue_reference) {
     BOOST_TEST(dog.get() == animal.get());
 }
 
+#if __cplusplus >= 202002L
 BOOST_AUTO_TEST_CASE(cast_shared_ptr_xvalue_reference) {
     std::shared_ptr<Animal> animal = std::make_shared<Dog>();
     auto p = animal.get();
     auto dog = virtual_traits<std::shared_ptr<Animal>, default_registry>::cast<
-        std::shared_ptr<Dog>&&>(std::move(animal));
+        std::shared_ptr<Dog>>(std::move(animal));
     BOOST_TEST(dog.get() == p);
     BOOST_TEST(animal.get() == nullptr);
 }
+#endif
 
-BOOST_AUTO_TEST_CASE(cast_shared_virtual_ptr_value) {
-    shared_virtual_ptr<Animal> animal = make_shared_virtual<Dog>();
-    auto dog =
+BOOST_AUTO_TEST_CASE_TEMPLATE(
+    cast_shared_virtual_ptr_value, Class, test_classes) {
+    shared_virtual_ptr<Animal> base = make_shared_virtual<Class>();
+    auto derived =
         virtual_traits<shared_virtual_ptr<Animal>, default_registry>::cast<
-            shared_virtual_ptr<Dog>>(animal);
-    BOOST_TEST(dog.get() == animal.get());
-    BOOST_TEST(animal.vptr() == default_registry::static_vptr<Dog>);
-    BOOST_TEST(dog.vptr() == default_registry::static_vptr<Dog>);
+            shared_virtual_ptr<Class>>(base);
+    BOOST_TEST(derived.get() == base.get());
+    BOOST_TEST(base.vptr() == default_registry::static_vptr<Class>);
+    BOOST_TEST(derived.vptr() == default_registry::static_vptr<Class>);
 }
 
-BOOST_AUTO_TEST_CASE(cast_shared_virtual_ptr_lvalue_reference) {
-    shared_virtual_ptr<Animal> animal = make_shared_virtual<Dog>();
-    auto dog =
+BOOST_AUTO_TEST_CASE_TEMPLATE(
+    cast_shared_virtual_ptr_lvalue_reference, Class, test_classes) {
+    shared_virtual_ptr<Animal> base = make_shared_virtual<Class>();
+    auto derived =
         virtual_traits<const shared_virtual_ptr<Animal>&, default_registry>::
-            cast<shared_virtual_ptr<Dog>>(animal);
-    BOOST_TEST(dog.get() == animal.get());
-    BOOST_TEST(animal.vptr() == default_registry::static_vptr<Dog>);
-    BOOST_TEST(dog.vptr() == default_registry::static_vptr<Dog>);
+            cast<shared_virtual_ptr<Class>>(base);
+    BOOST_TEST(derived.get() == base.get());
+    BOOST_TEST(base.vptr() == default_registry::static_vptr<Class>);
+    BOOST_TEST(derived.vptr() == default_registry::static_vptr<Class>);
 }
 
-BOOST_AUTO_TEST_CASE(cast_shared_virtual_ptr_rvalue_reference) {
-    shared_virtual_ptr<Animal> animal = make_shared_virtual<Dog>();
-    auto p = animal.get();
-    auto dog =
-        virtual_traits<shared_virtual_ptr<Animal>, default_registry>::
-            cast<shared_virtual_ptr<Dog>>(std::move(animal));
-    BOOST_TEST(dog.get() == p);
-    BOOST_TEST(dog.vptr() == default_registry::static_vptr<Dog>);
-    BOOST_TEST(animal.get() == nullptr);
-    BOOST_TEST(animal.vptr() == nullptr);
+#if __cplusplus >= 202002L
+BOOST_AUTO_TEST_CASE_TEMPLATE(
+    cast_shared_virtual_ptr_xvalue_reference, Class, test_classes) {
+    shared_virtual_ptr<Animal> base = make_shared_virtual<Class>();
+    auto p = base.get();
+    auto derived =
+        virtual_traits<shared_virtual_ptr<Animal>, default_registry>::cast<
+            shared_virtual_ptr<Class>>(std::move(base));
+    BOOST_TEST(derived.get() == p);
+    BOOST_TEST(derived.vptr() == default_registry::static_vptr<Class>);
+    BOOST_TEST(base.get() == nullptr);
+    BOOST_TEST(base.vptr() == nullptr);
 }
+#endif
 
 template struct check_illegal_smart_ops<
     std::shared_ptr, std::unique_ptr, direct_vector>;

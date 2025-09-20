@@ -14,7 +14,7 @@ namespace detail {
 
 template<class T>
 struct shared_ptr_cast_traits {
-    static_assert(false, "invalid cast");
+    static_assert(false_t<T>, "cast only allowed to a shared_ptr");
 };
 
 template<class T>
@@ -30,6 +30,23 @@ struct shared_ptr_cast_traits<const std::shared_ptr<T>&> {
 template<class T>
 struct shared_ptr_cast_traits<std::shared_ptr<T>&&> {
     using virtual_type = T;
+};
+
+template<typename T, class Registry>
+struct check_method_parameter<std::shared_ptr<T>&, Registry, void>
+    : std::false_type {
+    static_assert(
+        false_t<T>,
+        "std::shared_ptr cannot be passed by non-const lvalue reference");
+};
+
+template<typename T, class Registry>
+struct check_method_parameter<
+    virtual_ptr<std::shared_ptr<T>, Registry>&, Registry, void>
+    : std::false_type {
+    static_assert(
+        false_t<T>,
+        "std::shared_ptr cannot be passed by non-const lvalue reference");
 };
 
 } // namespace detail

@@ -28,17 +28,16 @@ struct virtual_traits<std::unique_ptr<Class>, Registry> {
         return *arg;
     }
 
-    //! Cast to another type.
+    //! Cast to a type.
     //!
-    //! Cast the object pointed to another type, using `static_cast` if
-    //! possible, and `Registry::rtti::dynamic_cast_ref` otherwise. If the
-    //! cast succeeds, return a `std::unique_ptr` to the object,
-    //! transferring ownership to it.
+    //! Cast a reference to the managed object, using `static_cast` if possible,
+    //! and `Registry::rtti::dynamic_cast_ref` otherwise. If the cast succeeds,
+    //! transfer ownership to a `std::unique_ptr` to the target type, and return
+    //! it.
     //!
-    //! @tparam Derived A lvalue reference type to a `std::unique_ptr`.
-    //! @param obj A xvalue reference to a `unique_ptr<Class>`.
-    //! @return A `std::unique_ptr` to the same object, cast to
-    //! `Derived::element_type`.
+    //! @tparam Derived A xvalue reference to a `std::unique_ptr`.
+    //! @param obj A xvalue reference to a `std::unique_ptr`.
+    //! @return A `std::unique_ptr<Derived::element_type>`.
     template<typename Derived>
     static auto cast(std::unique_ptr<Class>&& ptr) {
         if constexpr (detail::requires_dynamic_cast<Class&, Derived&>) {

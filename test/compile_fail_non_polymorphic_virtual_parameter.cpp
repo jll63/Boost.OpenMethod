@@ -9,4 +9,9 @@ using boost::openmethod::virtual_;
 
 struct Cat {};
 
-BOOST_OPENMETHOD(poke, (virtual_<Cat>), void);
+BOOST_OPENMETHOD(poke, (virtual_<Cat&>), void);
+
+int main() {
+    poke(Cat{});
+    return 0;
+}

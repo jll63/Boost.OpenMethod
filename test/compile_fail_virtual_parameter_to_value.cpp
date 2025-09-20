@@ -5,7 +5,14 @@
 
 #include <boost/openmethod.hpp>
 
-struct Cat {};
+using boost::openmethod::virtual_;
 
-Cat felix;
-boost::openmethod::virtual_ptr<Cat> p(felix);
+struct Cat { virtual ~Cat() {} };
+
+BOOST_OPENMETHOD(poke, (virtual_<Cat>), void);
+
+int main() {
+    Cat felix;
+    poke(felix);
+    return 0;
+}

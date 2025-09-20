@@ -8,10 +8,16 @@
 
 using namespace boost::openmethod;
 
-struct Animal {};
+struct Animal { virtual ~Animal() {} };
 struct Cat : Animal {};
 
 BOOST_OPENMETHOD(poke, (shared_virtual_ptr<Animal>&), void);
 
 BOOST_OPENMETHOD_OVERRIDE(poke, (shared_virtual_ptr<Cat>&), void) {
+}
+
+int main() {
+    Cat felix;
+    poke(felix);
+    return 0;
 }

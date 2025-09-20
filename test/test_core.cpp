@@ -129,35 +129,10 @@ static_assert(
 struct registry1 : default_registry::with<unique<registry1>> {};
 struct registry2 : default_registry::with<unique<registry2>> {};
 
-static_assert(
-    detail::using_same_registry<registry1, virtual_ptr<a, registry1>>::value);
-
-static_assert(detail::using_same_registry<registry1, int>::value);
-static_assert(
-    !detail::using_same_registry<registry1, virtual_ptr<a, registry2>>::value);
-
-static_assert(valid_method_parameter<default_registry, virtual_<a&>>::value);
-static_assert(
-    valid_method_parameter<default_registry, virtual_<const a&>>::value);
-static_assert(valid_method_parameter<default_registry, int>::value);
-
-struct non_polymorphic {};
-
-static_assert(!valid_method_parameter<
-              virtual_<non_polymorphic&>, default_registry>::value);
-
 struct non_polymorphic_inplace_vptr {};
 
 auto boost_openmethod_vptr(const non_polymorphic_inplace_vptr&, void*)
     -> vptr_type;
-
-static_assert(
-    valid_method_parameter<
-        virtual_<non_polymorphic_inplace_vptr&>, default_registry>::value);
-
-static_assert(valid_method_parameter<
-              virtual_<const non_polymorphic_inplace_vptr&>,
-              default_registry>::value);
 
 // clang-format on
 

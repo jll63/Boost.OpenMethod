@@ -7,10 +7,16 @@
 
 using namespace boost::openmethod;
 
-struct Animal {};
+struct Animal { virtual ~Animal() {} };
 struct Cat : Animal {};
 
 BOOST_OPENMETHOD(poke, (const virtual_ptr<Animal>&), void);
 
 BOOST_OPENMETHOD_OVERRIDE(poke, (virtual_ptr<Cat>), void) {
+}
+
+int main() {
+    Cat felix;
+    poke(felix);
+    return 0;
 }

@@ -5,15 +5,11 @@
 
 #include <boost/openmethod.hpp>
 
-using namespace boost::openmethod;
-
-struct Cat { virtual ~Cat() {} };
-
-BOOST_OPENMETHOD(
-    poke, (virtual_ptr<Cat, release_registry>), void, debug_registry);
+struct Cat {};
 
 int main() {
     Cat felix;
-    poke(felix);
+    boost::openmethod::virtual_ptr<Cat> p(felix);
+
     return 0;
 }

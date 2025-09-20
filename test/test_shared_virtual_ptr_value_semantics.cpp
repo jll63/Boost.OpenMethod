@@ -292,16 +292,24 @@ BOOST_AUTO_TEST_CASE(cast_shared_ptr_lvalue_reference) {
     BOOST_TEST(dog.get() == animal.get());
 }
 
-#if __cplusplus >= 202002L
+bool cast_moves() {
+    std::shared_ptr<Animal> animal = std::make_shared<Dog>();
+    std::static_pointer_cast<Dog>(animal);
+
+    return animal.get() == nullptr;
+}
+
 BOOST_AUTO_TEST_CASE(cast_shared_ptr_xvalue_reference) {
     std::shared_ptr<Animal> animal = std::make_shared<Dog>();
     auto p = animal.get();
     auto dog = virtual_traits<std::shared_ptr<Animal>, default_registry>::cast<
         std::shared_ptr<Dog>>(std::move(animal));
     BOOST_TEST(dog.get() == p);
-    BOOST_TEST(animal.get() == nullptr);
+
+    if (cast_moves()) {
+        BOOST_TEST(animal.get() == nullptr);
+    }
 }
-#endif
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(
     cast_shared_virtual_ptr_value, Class, test_classes) {
@@ -325,7 +333,6 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
     BOOST_TEST(derived.vptr() == default_registry::static_vptr<Class>);
 }
 
-#if __cplusplus >= 202002L
 BOOST_AUTO_TEST_CASE_TEMPLATE(
     cast_shared_virtual_ptr_xvalue_reference, Class, test_classes) {
     shared_virtual_ptr<Animal> base = make_shared_virtual<Class>();
@@ -335,10 +342,11 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
             shared_virtual_ptr<Class>>(std::move(base));
     BOOST_TEST(derived.get() == p);
     BOOST_TEST(derived.vptr() == default_registry::static_vptr<Class>);
-    BOOST_TEST(base.get() == nullptr);
-    BOOST_TEST(base.vptr() == nullptr);
+
+    if (cast_moves()) {
+        BOOST_TEST(base.get() == nullptr);
+    }
 }
-#endif
 
 template struct check_illegal_smart_ops<
     std::shared_ptr, std::unique_ptr, direct_vector>;

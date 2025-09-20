@@ -52,8 +52,8 @@ inline auto operator<<(ostdstream& os, const char* str) -> ostdstream& {
     return os;
 }
 
-inline auto operator<<(ostdstream& os, const std::string_view& view)
-    -> ostdstream& {
+inline auto
+operator<<(ostdstream& os, const std::string_view& view) -> ostdstream& {
     if (os.stream) {
         fwrite(view.data(), sizeof(*view.data()), view.length(), os.stream);
     }

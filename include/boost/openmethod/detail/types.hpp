@@ -168,7 +168,6 @@ struct final_error : openmethod_error {
     auto write(Stream& os) const -> void;
 };
 
-
 //! For future use
 struct static_offset_error : openmethod_error {
     type_id method;

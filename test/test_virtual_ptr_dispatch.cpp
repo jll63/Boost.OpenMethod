@@ -217,9 +217,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
     using poke = method<
         BOOST_OPENMETHOD_ID(poke),
         auto(virtual_ptr<Player, Registry>)->std::string, Registry>;
-    BOOST_OPENMETHOD_REGISTER(
-        typename poke::template override<
-            poke_bear<virtual_ptr<Player, Registry>>>);
+    BOOST_OPENMETHOD_REGISTER(typename poke::template override<
+                              poke_bear<virtual_ptr<Player, Registry>>>);
 
     Registry::initialize();
 
@@ -270,9 +269,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
     using poke = method<
         BOOST_OPENMETHOD_ID(poke),
         auto(virtual_ptr<Player, Registry>)->std::string, Registry>;
-    BOOST_OPENMETHOD_REGISTER(
-        typename poke::template override<
-            poke_bear<virtual_ptr<Player, Registry>>>);
+    BOOST_OPENMETHOD_REGISTER(typename poke::template override<
+                              poke_bear<virtual_ptr<Player, Registry>>>);
 
     using fight = method<
         BOOST_OPENMETHOD_ID(fight),
@@ -314,9 +312,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
         BOOST_OPENMETHOD_ID(poke),
         auto(shared_virtual_ptr<Player, Registry>)->std::string, Registry>;
 
-    BOOST_OPENMETHOD_REGISTER(
-        typename poke::template override<
-            poke_bear<shared_virtual_ptr<Player, Registry>>>);
+    BOOST_OPENMETHOD_REGISTER(typename poke::template override<
+                              poke_bear<shared_virtual_ptr<Player, Registry>>>);
 
     using fight = method<
         BOOST_OPENMETHOD_ID(fight),
@@ -327,11 +324,10 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(
             ->std::string,
         Registry>;
 
-    BOOST_OPENMETHOD_REGISTER(
-        typename fight::template override<fight_bear<
-            shared_virtual_ptr<Player, Registry>,
-            shared_virtual_ptr<Object, Registry>,
-            shared_virtual_ptr<Player, Registry>>>);
+    BOOST_OPENMETHOD_REGISTER(typename fight::template override<fight_bear<
+                                  shared_virtual_ptr<Player, Registry>,
+                                  shared_virtual_ptr<Object, Registry>,
+                                  shared_virtual_ptr<Player, Registry>>>);
 
     Registry::initialize();
 

@@ -76,8 +76,8 @@ class inplace_vptr_aux<Class, Registry, true> {
         boost_openmethod_vptr = nullptr;
     }
 
-    friend auto boost_openmethod_vptr(const Class& obj, Registry*)
-        -> vptr_type {
+    friend auto
+    boost_openmethod_vptr(const Class& obj, Registry*) -> vptr_type {
         if constexpr (Registry::has_indirect_vptr) {
             return *obj.boost_openmethod_vptr;
         } else {
@@ -148,13 +148,13 @@ struct inplace_vptr<Class, Base1, Base2, MoreBases...>
         (detail::update_vptr<MoreBases>(static_cast<Base2*>(obj)), ...);
     }
 
-    friend auto boost_openmethod_registry(Class*)
-        -> detail::inplace_vptr_registry<Base1>;
-    friend auto boost_openmethod_bases(Class*)
-        -> mp11::mp_list<Base1, Base2, MoreBases...>;
+    friend auto
+    boost_openmethod_registry(Class*) -> detail::inplace_vptr_registry<Base1>;
+    friend auto
+    boost_openmethod_bases(Class*) -> mp11::mp_list<Base1, Base2, MoreBases...>;
     friend auto boost_openmethod_vptr(
-        const Class& obj, detail::inplace_vptr_registry<Base1>* registry)
-        -> vptr_type {
+        const Class& obj,
+        detail::inplace_vptr_registry<Base1>* registry) -> vptr_type {
         return boost_openmethod_vptr(static_cast<const Base1&>(obj), registry);
     }
 };

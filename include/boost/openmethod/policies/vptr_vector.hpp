@@ -63,8 +63,8 @@ struct vptr_vector : vptr {
         //! @param first The beginning of the range.
         //! @param last The end of the range.
         template<typename ForwardIterator>
-        static auto initialize(ForwardIterator first, ForwardIterator last)
-            -> void {
+        static auto
+        initialize(ForwardIterator first, ForwardIterator last) -> void {
             std::size_t size;
             if constexpr (has_type_hash) {
                 auto [_, max_value] = type_hash::initialize(first, last);

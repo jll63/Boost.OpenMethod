@@ -46,8 +46,7 @@ BOOST_OPENMETHOD_OVERRIDE(
 }
 
 static_assert(std::is_same_v<
-              detail::virtual_type<std::unique_ptr<matrix>, n2216>,
-              matrix>);
+              detail::virtual_type<std::unique_ptr<matrix>, n2216>, matrix>);
 
 BOOST_AUTO_TEST_CASE(covariant_return_type) {
     auto compiler = n2216::initialize();

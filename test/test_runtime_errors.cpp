@@ -35,9 +35,8 @@ struct errors_ : test_registry_<N, capture_output> {
 
         capture() {
             prev = error_handler::set(
-                [this](
-                    const policies::default_error_handler::error_variant&
-                        error) {
+                [this](const policies::default_error_handler::error_variant&
+                           error) {
                     prev(error);
                     std::visit([](auto&& arg) { throw arg; }, error);
                 });

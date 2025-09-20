@@ -7,7 +7,10 @@
 
 using namespace boost::openmethod;
 
-struct Animal { virtual ~Animal() {} };
+struct Animal {
+    virtual ~Animal() {
+    }
+};
 struct Cat : Animal {};
 
 BOOST_OPENMETHOD(poke, (virtual_ptr<Animal>), void);

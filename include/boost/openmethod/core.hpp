@@ -481,8 +481,7 @@ template<class Class, class Registry>
 struct is_virtual<virtual_ptr<Class, Registry, void>> : std::true_type {};
 
 template<class Class, class Registry>
-struct is_virtual<virtual_ptr<Class, Registry, void>&> : std::true_type {
-};
+struct is_virtual<virtual_ptr<Class, Registry, void>&> : std::true_type {};
 
 template<class Class, class Registry>
 struct is_virtual<const virtual_ptr<Class, Registry, void>&> : std::true_type {
@@ -1955,32 +1954,32 @@ template<typename...>
 constexpr bool false_t = false; // workaround before CWG2518/P2593R1
 
 template<typename T, class Registry, typename = void>
-struct check_method_parameter : std::true_type {};
+struct validate_method_parameter : std::true_type {};
 
 template<typename T, class Registry, typename U>
-struct check_method_parameter<virtual_<T>, Registry, U> : std::false_type {
+struct validate_method_parameter<virtual_<T>, Registry, U> : std::false_type {
     static_assert(false_t<T>, "virtual_traits not specialized for type");
 };
 
 template<typename T, class Registry>
-struct check_method_parameter<
+struct validate_method_parameter<
     virtual_<T>, Registry,
     std::void_t<typename virtual_traits<T, Registry>::virtual_type>>
     : std::bool_constant<
           has_vptr_fn<virtual_type<T, Registry>, Registry> ||
           Registry::rtti::template is_polymorphic<virtual_type<T, Registry>>> {
     static_assert(
-        check_method_parameter::value,
+        validate_method_parameter::value,
         "virtual_<> parameter is not a polymorphic class and no "
         "boost_openmethod_vptr is applicable");
 };
 
 template<class Class, class Registry>
-struct check_method_parameter<virtual_ptr<Class, Registry>, Registry, void>
+struct validate_method_parameter<virtual_ptr<Class, Registry>, Registry, void>
     : std::true_type {};
 
 template<class Class, class Registry, class MethodRegistry>
-struct check_method_parameter<
+struct validate_method_parameter<
     virtual_ptr<Class, Registry>, MethodRegistry, void> : std::false_type {
     static_assert(
         false_t<Class, Registry, MethodRegistry>, "registry mismatch");
@@ -2199,8 +2198,8 @@ class method<Id, ReturnType(Parameters...), Registry>
         mp11::mp_list<Parameters...>, detail::is_virtual>::value;
 
     // sanity checks
-    static_assert(
-        (detail::check_method_parameter<Parameters, Registry>::value && ...));
+    static_assert((
+        detail::validate_method_parameter<Parameters, Registry>::value && ...));
     static_assert(Arity > 0, "method has no virtual parameters");
 
     type_id vp_type_ids[Arity];
@@ -2623,13 +2622,13 @@ struct same_reference_category {
          std::is_rvalue_reference<U>::value);
 };
 template<class T1, class T2, typename = void>
-struct check_overrider_parameter : std::false_type {
+struct validate_overrider_parameter : std::false_type {
     static_assert(
         false_t<T1, T2>, "non-virtual parameter types must match exactly");
 };
 
 template<class T1, class T2>
-struct check_overrider_parameter<
+struct validate_overrider_parameter<
     T1, T2,
     std::enable_if_t<
         is_virtual_ptr<T1> && is_virtual_ptr<T2> &&
@@ -2639,7 +2638,7 @@ struct check_overrider_parameter<
 };
 
 template<class T1, class T2>
-struct check_overrider_parameter<
+struct validate_overrider_parameter<
     T1, T2, std::enable_if_t<is_virtual_ptr<T1> && !is_virtual_ptr<T2>>>
     : std::false_type {
     static_assert(
@@ -2649,36 +2648,36 @@ struct check_overrider_parameter<
 };
 
 template<class T>
-struct check_overrider_parameter<T, T, void> : std::true_type {};
+struct validate_overrider_parameter<T, T, void> : std::true_type {};
 
 template<class T1, class T2>
-struct check_overrider_parameter<virtual_<T1>, T2, void> : std::true_type {};
+struct validate_overrider_parameter<virtual_<T1>, T2, void> : std::true_type {};
 
 template<class T1, class T2>
-struct check_overrider_parameter<virtual_<T1>, virtual_<T2>, void>
+struct validate_overrider_parameter<virtual_<T1>, virtual_<T2>, void>
     : std::false_type {
     static_assert(false_t<T1, T2>, "virtual_<> is not allowed in overriders");
 };
 
 template<class T, class R>
-struct check_overrider_parameter<virtual_ptr<T, R>, virtual_ptr<T, R>, void>
+struct validate_overrider_parameter<virtual_ptr<T, R>, virtual_ptr<T, R>, void>
     : std::true_type {};
 
 template<class T1, class R1, class T2, class R2>
-struct check_overrider_parameter<virtual_ptr<T1, R1>, virtual_ptr<T2, R2>, void>
-    : std::is_same<R1, R2> {
-    static_assert(check_overrider_parameter::value, "registry mismatch");
+struct validate_overrider_parameter<
+    virtual_ptr<T1, R1>, virtual_ptr<T2, R2>, void> : std::is_same<R1, R2> {
+    static_assert(validate_overrider_parameter::value, "registry mismatch");
 };
 
 template<class T1, class R1, class T2, class R2>
-struct check_overrider_parameter<
+struct validate_overrider_parameter<
     const virtual_ptr<T1, R1>&, const virtual_ptr<T2, R2>&, void>
-    : check_overrider_parameter<virtual_ptr<T1, R1>, virtual_ptr<T2, R2>> {};
+    : validate_overrider_parameter<virtual_ptr<T1, R1>, virtual_ptr<T2, R2>> {};
 
 template<class T1, class R1, class T2, class R2>
-struct check_overrider_parameter<
+struct validate_overrider_parameter<
     virtual_ptr<T1, R1>&&, virtual_ptr<T2, R2>&&, void>
-    : check_overrider_parameter<virtual_ptr<T1, R1>, virtual_ptr<T2, R2>> {};
+    : validate_overrider_parameter<virtual_ptr<T1, R1>, virtual_ptr<T2, R2>> {};
 
 } // namespace detail
 
@@ -2691,7 +2690,7 @@ auto method<Id, ReturnType(Parameters...), Registry>::
         detail::remove_virtual_<Parameters>... arg) -> ReturnType {
     using namespace detail;
     static_assert(
-        (check_overrider_parameter<Parameters, OverriderParameters>::value &&
+        (validate_overrider_parameter<Parameters, OverriderParameters>::value &&
          ...),
         "virtual_ptr category mismatch");
     return Overrider(

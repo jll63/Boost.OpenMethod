@@ -36,8 +36,8 @@ struct default_error_handler : error_handler {
     //! openmethod_error.
     using error_variant = std::variant<
         not_initialized_error, not_implemented_error, ambiguous_error,
-        unknown_class_error, fast_perfect_hash_error, final_error, static_slot_error,
-        static_stride_error>;
+        unknown_class_error, fast_perfect_hash_error, final_error,
+        static_slot_error, static_stride_error>;
 
     //! The type of the error handler function object.
     using function_type = std::function<void(const error_variant& error)>;

@@ -33,7 +33,7 @@ struct shared_ptr_cast_traits<std::shared_ptr<T>&&> {
 };
 
 template<typename T, class Registry>
-struct check_method_parameter<std::shared_ptr<T>&, Registry, void>
+struct validate_method_parameter<std::shared_ptr<T>&, Registry, void>
     : std::false_type {
     static_assert(
         false_t<T>,
@@ -41,7 +41,7 @@ struct check_method_parameter<std::shared_ptr<T>&, Registry, void>
 };
 
 template<typename T, class Registry>
-struct check_method_parameter<
+struct validate_method_parameter<
     virtual_ptr<std::shared_ptr<T>, Registry>&, Registry, void>
     : std::false_type {
     static_assert(

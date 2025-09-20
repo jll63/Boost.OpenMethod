@@ -427,7 +427,7 @@ namespace test_comma_in_return_type {
 using test_registry = test_registry_<__COUNTER__>;
 
 struct Test {
-    virtual ~Test() {};
+    virtual ~Test(){};
 };
 
 BOOST_OPENMETHOD_CLASSES(Test, test_registry);

@@ -7,7 +7,10 @@
 
 using namespace boost::openmethod;
 
-struct Cat { virtual ~Cat() {} };
+struct Cat {
+    virtual ~Cat() {
+    }
+};
 
 BOOST_OPENMETHOD(
     poke, (virtual_ptr<Cat, release_registry>), void, debug_registry);

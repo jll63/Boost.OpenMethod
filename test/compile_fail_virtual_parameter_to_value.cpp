@@ -7,7 +7,10 @@
 
 using boost::openmethod::virtual_;
 
-struct Cat { virtual ~Cat() {} };
+struct Cat {
+    virtual ~Cat() {
+    }
+};
 
 BOOST_OPENMETHOD(poke, (virtual_<Cat>), void);
 

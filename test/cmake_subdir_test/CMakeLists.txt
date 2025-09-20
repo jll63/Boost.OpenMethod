@@ -26,10 +26,7 @@ preprocessor
 static_assert
 throw_exception
 container_hash
-integer
-move
 describe
-type_traits
 )
 
 foreach(dep IN LISTS deps)

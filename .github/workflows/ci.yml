@@ -236,6 +236,8 @@ jobs:
       - name: Setup coverage collection
         if: matrix.coverage
         run: ci/github/codecov.sh "setup"
+        env:
+          CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
 
       - name: Run tests
         if: '!matrix.coverity'
